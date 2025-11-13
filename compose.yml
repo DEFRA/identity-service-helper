@@ -1,4 +1,4 @@
-version: '3.4'
+
 services:
   localstack:
     image: localstack/localstack:3.0.2
@@ -40,32 +40,35 @@ services:
     volumes:
       - mongodb-data:/data
     restart: always
-
-  ################################################################################
-
-  # your-frontend:
-  #   image: defradigital/your-frontend:${YOUR_FRONTEND_VERSION:-latest}
-  #   ports:
-  #     - '3000:3000'
-  #   links:
-  #     - 'localstack:localstack'
-  #     - 'redis:redis'
-  #   depends_on:
-  #     localstack:
-  #       condition: service_healthy
-  #     redis:
-  #       condition: service_started
-  #   env_file:
-  #     - 'compose/aws.env'
-  #   environment:
-  #     PORT: 3000
-  #     NODE_ENV: development
-  #     REDIS_HOST: redis
-  #     LOCALSTACK_ENDPOINT: http://localstack:4566
-  #     USE_SINGLE_INSTANCE_CACHE: true
-  #   networks:
-  #     - cdp-tenant
-
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: livestock_auth
+    networks:
+      - cdp-tenant
+    volumes:
+      - postgres-data:/data
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d livestock_auth" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+  liquibase:
+    image: liquibase/liquibase
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./changelog:/liquibase/changelog
+    command: --url=jdbc:postgresql://localhost:5432/livestock_auth --username=postgres --password=postgres --changelog-file=changelog/db.changelog.xml update
+    networks:
+      - cdp-tenant
   your-backend:
     build: ./
     ports:
@@ -73,10 +76,13 @@ services:
     links:
       - 'localstack:localstack'
       - 'mongodb:mongodb'
+      - 'postgres:postgres'
     depends_on:
       localstack:
         condition: service_healthy
       mongodb:
+        condition: service_started
+      postgres:
         condition: service_started
     env_file:
       - 'compose/aws.env'
@@ -84,13 +90,12 @@ services:
       PORT: 8080
       LOCALSTACK_ENDPOINT: http://localstack:4566
       MONGO_URI: mongodb://mongodb:27017/
+      POSTGRES_URI: http://localhost:5432
     networks:
       - cdp-tenant
-
-################################################################################
-
 volumes:
   mongodb-data:
+  postgres-data:
 
 networks:
   cdp-tenant:

@@ -1,6 +1,6 @@
-# identity-service-helper
+# auth-livestock-poc
 
-Core delivery C# ASP.NET backend template.
+POC Core delivery C# ASP.NET backend template.
 
 * [Install MongoDB](#install-mongodb)
 * [Inspect MongoDB](#inspect-mongodb)
@@ -18,11 +18,32 @@ A local environment with:
 - Localstack for AWS services (S3, SQS)
 - Redis
 - MongoDB
+- Postgres
 - This service.
 - A commented out frontend example.
 
 ```bash
 docker compose up --build -d
+```
+
+### PostgreSQL
+
+The database is configured to use PostgreSQL and to use Liquibase to manage migrations.
+
+Thew best way to run liquibase locally is to use Homebrew to install
+```shell
+brew install liquibase
+```
+
+Liquibase properties file in the root of the project defines all the properties that can be used to configure the database.
+
+
+Running liquibase migrations locally:
+ 
+
+``` bash
+ liquibase update 
+
 ```
 
 A more extensive setup is available in [github.com/DEFRA/cdp-local-environment](https://github.com/DEFRA/cdp-local-environment)
@@ -77,7 +98,7 @@ dotnet test
 
 Run CDP-Deployments application:
 ```bash
-dotnet run --project IdentityServiceHelper --launch-profile Development
+dotnet run --project AuthLivestockPoc --launch-profile Development
 ```
 
 ### SonarCloud

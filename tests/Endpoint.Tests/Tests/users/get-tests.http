@@ -1,0 +1,11 @@
+### GET request to example server
+GET {{host}}/users
+
+###
+
+< {% 
+    request.variables.set("id", "fbef48a4-78f2-4340-80eb-e8c1cf4549bf")
+
+%}
+
+GET {{host}}/users/{{id}}

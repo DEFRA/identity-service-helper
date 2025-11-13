@@ -1,5 +1,5 @@
 ﻿# Base dotnet image
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
@@ -12,17 +12,16 @@ RUN apt update && \
     rm -rf /var/lib/apt/lists/*
 
 # Build stage image
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /src
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+WORKDIR /
 
 COPY . .
-WORKDIR "/src"
+WORKDIR "/"
 
-# unit test and code coverage
-RUN dotnet test IdentityServiceHelper.Test
+RUN dotnet test tests/Unit.Tests
 
 FROM build AS publish
-RUN dotnet publish IdentityServiceHelper -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish src/Api -c Release -o /app/publish /p:UseAppHost=false
 
 
 ENV ASPNETCORE_FORWARDEDHEADERS_ENABLED=true
@@ -32,4 +31,4 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 EXPOSE 8085
-ENTRYPOINT ["dotnet", "IdentityServiceHelper.dll"]
+ENTRYPOINT ["dotnet", "Livestock.Auth.Api.dll"]

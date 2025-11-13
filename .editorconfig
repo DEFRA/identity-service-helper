@@ -1,3 +1,4 @@
+root = true
 [*]
 charset = utf-8
 end_of_line = lf
@@ -51,6 +52,10 @@ resharper_suggest_var_or_type_simple_types_highlighting = hint
 resharper_web_config_module_not_resolved_highlighting = warning
 resharper_web_config_type_not_resolved_highlighting = warning
 resharper_web_config_wrong_module_highlighting = warning
+
+dotnet_diagnostic.SA1600.severity = none # do not force item documentation
+dotnet_diagnostic.SA1101.severity = none # prefix with this.
+dotnet_diagnostic.SA1309.severity = none # field should start with _.
 
 [*.cs]
 # Newline settings

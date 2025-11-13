@@ -1,0 +1,17 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <RootNamespace>Livestock.Auth</RootNamespace>
+    <ProductName>Livestock.Auth</ProductName>
+  </PropertyGroup>
+  
+  <!-- global packages -->
+  <ItemGroup>
+    <Using Include="Microsoft" />
+    <PackageReference Include="Microsoft.VisualStudio.Validation" />
+  </ItemGroup>
+</Project>
+
