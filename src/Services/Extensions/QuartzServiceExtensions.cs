@@ -1,7 +1,9 @@
 ﻿using Livestock.Auth.Services.Config;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Quartz;
 
-namespace Livestock.Auth.Api.Extensions;
+namespace Livestock.Auth.Services.Extensions;
 
 public static class QuartzServiceExtensions
 {
