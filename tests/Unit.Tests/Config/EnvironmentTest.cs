@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Builder;
+using Environment = Livestock.Auth.Api.Config.Environment;
 
 namespace Livestock.Auth.Config;
 

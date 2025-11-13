@@ -1,9 +1,7 @@
-﻿using Livestock.Auth.Config;
-using Livestock.Auth.Services;
-using Livestock.Auth.Services.Config;
+﻿using Livestock.Auth.Services.Config;
 using Quartz;
 
-namespace Livestock.Auth.Extensions;
+namespace Livestock.Auth.Api.Extensions;
 
 public static class QuartzServiceExtensions
 {

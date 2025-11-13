@@ -3,7 +3,7 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson.Serialization.IdGenerators;
 
-namespace Livestock.Auth.Example.Models;
+namespace Livestock.Auth.Api.Example.Models;
 
 public class ExampleModel
 {

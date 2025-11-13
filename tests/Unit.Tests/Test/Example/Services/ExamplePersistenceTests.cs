@@ -1,14 +1,14 @@
 using System;
 using System.Threading.Tasks;
-using Livestock.Auth.Example.Models;
-using Livestock.Auth.Example.Services;
-using Livestock.Auth.Utils.Mongo;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using NSubstitute;
 using FluentAssertions;
+using Livestock.Auth.Api.Example.Models;
+using Livestock.Auth.Api.Example.Services;
+using Livestock.Auth.Api.Utils.Mongo;
 
 namespace Livestock.Auth.Test.Example.Services;
 

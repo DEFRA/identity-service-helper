@@ -1,4 +1,4 @@
-namespace Livestock.Auth.Config;
+namespace Livestock.Auth.Api.Config;
 
 public static class Environment
 {

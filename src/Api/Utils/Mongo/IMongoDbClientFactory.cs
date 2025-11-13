@@ -1,6 +1,6 @@
 using MongoDB.Driver;
 
-namespace Livestock.Auth.Utils.Mongo;
+namespace Livestock.Auth.Api.Utils.Mongo;
 
 public interface IMongoDbClientFactory
 {

@@ -1,11 +1,10 @@
-﻿using FluentValidation;
+﻿using System.Diagnostics.CodeAnalysis;
+using FluentValidation;
 using FluentValidation.Results;
-using System.Diagnostics.CodeAnalysis;
-using Livestock.Auth.Database;
-using Livestock.Auth.Example.Models;
-using Livestock.Auth.Example.Services;
+using Livestock.Auth.Api.Example.Models;
+using Livestock.Auth.Api.Example.Services;
 
-namespace Livestock.Auth.Example.Endpoints;
+namespace Livestock.Auth.Api.Example.Endpoints;
 
 [ExcludeFromCodeCoverage]
 public static class ExampleEndpoints

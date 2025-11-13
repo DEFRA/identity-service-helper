@@ -1,5 +1,5 @@
 using System;
-using Livestock.Auth.Utils.Http;
+using Livestock.Auth.Api.Utils.Http;
 
 namespace Livestock.Auth.Test.Utils.Http;
 

@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
-using Livestock.Auth.Example.Models;
+using Livestock.Auth.Api.Example.Models;
 
-namespace Livestock.Auth.Example.Validators;
+namespace Livestock.Auth.Api.Example.Validators;
 
 public class ExampleValidator : AbstractValidator<ExampleModel>
 {

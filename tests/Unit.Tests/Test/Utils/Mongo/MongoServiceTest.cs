@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Livestock.Auth.Utils.Mongo;
+using Livestock.Auth.Api.Utils.Mongo;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using MongoDB.Driver;

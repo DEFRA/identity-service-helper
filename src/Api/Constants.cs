@@ -1,4 +1,4 @@
-namespace Livestock.Auth;
+namespace Livestock.Auth.Api;
 
 internal static class Constants
 {
