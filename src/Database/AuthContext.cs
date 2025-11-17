@@ -7,6 +7,10 @@ using System.Diagnostics.CodeAnalysis;
 
 public class AuthContext(DbContextOptions<AuthContext> options): DbContext(options)
 {
+    public virtual DbSet<Application> Applications { get; set; }
+    public virtual DbSet<Federation> Federations { get; set; }
+    public virtual DbSet<Enrolment> Enrolments { get; set; }
+    public virtual DbSet<KrdsSyncLog> KrdsSyncLogs { get; set; }
     public virtual DbSet<UserAccount> Users { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)

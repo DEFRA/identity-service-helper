@@ -23,6 +23,11 @@ public class MigrationTests(PostgreContainerFixture fixture) : BaseTests(fixture
     {
         // Check Base tables exist
         Context.Set<UserAccount>().ShouldNotBeNull();
-     
+        Context.Set<Application>().ShouldNotBeNull();
+        Context.Set<Enrolment>().ShouldNotBeNull();
+        Context.Set<Federation>().ShouldNotBeNull();
+        Context.Set<KrdsSyncLog>().ShouldNotBeNull();
+        
+
     }
 }

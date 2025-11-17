@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Livestock.Auth.Database.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -35,6 +35,27 @@ namespace Livestock.Auth.Database.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_application", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "KrdsSyncLogs",
+                schema: "defra-ci",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    CorrelationId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Upn = table.Column<string>(type: "text", nullable: false),
+                    PayloadSha256 = table.Column<string>(type: "text", nullable: false),
+                    SourceEndpoint = table.Column<string>(type: "text", nullable: false),
+                    HttpStatus = table.Column<int>(type: "integer", nullable: false),
+                    ProcessedOk = table.Column<bool>(type: "boolean", nullable: false),
+                    Message = table.Column<string>(type: "text", nullable: false),
+                    ReceivedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ProcessedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_KrdsSyncLogs", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -157,6 +178,10 @@ namespace Livestock.Auth.Database.Migrations
 
             migrationBuilder.DropTable(
                 name: "federation",
+                schema: "defra-ci");
+
+            migrationBuilder.DropTable(
+                name: "KrdsSyncLogs",
                 schema: "defra-ci");
 
             migrationBuilder.DropTable(

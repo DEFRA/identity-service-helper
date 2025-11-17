@@ -207,6 +207,48 @@ namespace Livestock.Auth.Database.Migrations
                     b.ToTable("federation", "defra-ci");
                 });
 
+            modelBuilder.Entity("Livestock.Auth.Database.Entities.KrdsSyncLog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CorrelationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("HttpStatus")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PayloadSha256")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("ProcessedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("ProcessedOk")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("ReceivedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("SourceEndpoint")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Upn")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("KrdsSyncLogs", "defra-ci");
+                });
+
             modelBuilder.Entity("Livestock.Auth.Database.Entities.UserAccount", b =>
                 {
                     b.Property<Guid>("Id")

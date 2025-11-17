@@ -14,7 +14,7 @@ public class PostgreContainerFixture : IAsyncLifetime
     public string ConnectionString => _container.GetConnectionString();
     public async ValueTask DisposeAsync()
     {
-        // TODO release managed resources here
+        await _container.StopAsync();
     }
 
     public async ValueTask InitializeAsync()
