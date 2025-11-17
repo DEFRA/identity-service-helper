@@ -1,4 +1,21 @@
 <Project>
   <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))"/>
+  <PropertyGroup>
+    <IsPackable>False</IsPackable>
+    <IsTestProject>true</IsTestProject>
 
+      <RootNamespace>$(RootNamespace).$(MSBuildProjectName)</RootNamespace>
+      <AssemblyName>$(RootNamespace).QA</AssemblyName>
+    </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="coverlet.msbuild"  />
+    <PackageReference Include="FluentAssertions"  />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk"  />
+    <PackageReference Include="Microsoft.VisualStudio.Validation" />
+    <PackageReference Include="NSubstitute"  />
+    <PackageReference Include="xunit.runner.visualstudio"/>
+    <PackageReference Include="xunit.v3" />
+  </ItemGroup>
 </Project>

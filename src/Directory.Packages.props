@@ -1,0 +1,32 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageVersion Include="AWS.Extensions" Version="1.5.26.1"/>
+    <PackageVersion Include="AWSSDK.Extensions.NETCore.Setup" Version="4.0.3.7"/>
+    <PackageVersion Include="AWSSDK.SecretsManager" Version="4.0.1.9"/>
+    <PackageVersion Include="Elastic.CommonSchema.Serilog" Version="9.0.0"/>
+    <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0"/>
+    <PackageVersion Include="Microsoft.AspNetCore.HeaderPropagation" Version="9.0.11"/>
+     <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.11"/>
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.11"/>
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.11"/>
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.11"/>
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.11"/>
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.11"/>
+    <PackageVersion Include="Microsoft.VisualStudio.Validation" Version="17.13.22"/>
+    <PackageVersion Include="MongoDB.Driver" Version="3.5.0"/>
+    <PackageVersion Include="Npgsql" Version="9.0.4"/>
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4"/>
+    <PackageVersion Include="Quartz" Version="3.15.1"/>
+    <PackageVersion Include="Quartz.Extensions.DependencyInjection" Version="3.15.1"/>
+    <PackageVersion Include="Quartz.Extensions.Hosting" Version="3.15.1"/>
+    <PackageVersion Include="Serilog.AspNetCore" Version="8.0.2"/>
+    <PackageVersion Include="Serilog.Enrichers.ClientInfo" Version="2.1.2"/>
+    <PackageVersion Include="Serilog.Enrichers.Environment" Version="3.0.1"/>
+    <PackageVersion Include="Serilog.Extensions.Hosting" Version="8.0.0"/>
+    <PackageVersion Include="Serilog.Settings.Configuration" Version="8.0.2"/>
+  </ItemGroup>
+</Project>
