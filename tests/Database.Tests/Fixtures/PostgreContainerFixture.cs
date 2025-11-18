@@ -1,7 +1,6 @@
 
 using Microsoft.EntityFrameworkCore;
 using Testcontainers.PostgreSql;
-using Xunit;
 
 namespace Livestock.Auth.Database.Tests.Fixtures;
 

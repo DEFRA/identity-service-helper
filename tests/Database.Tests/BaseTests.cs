@@ -2,7 +2,6 @@ using Livestock.Auth.Database.Tests.Fixtures;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Xunit;
 
 namespace Livestock.Auth.Database.Tests;
 

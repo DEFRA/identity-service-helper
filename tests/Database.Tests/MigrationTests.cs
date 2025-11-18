@@ -2,11 +2,9 @@ using System.ComponentModel;
 using Livestock.Auth.Database.Entities;
 using Livestock.Auth.Database.Tests.Collections;
 using Livestock.Auth.Database.Tests.Fixtures;
-using Microsoft.EntityFrameworkCore;
 
 namespace Livestock.Auth.Database.Tests;
 
-using FluentAssertions;
 using Shouldly;
 
 [Collection(nameof(PostgreCollection))]

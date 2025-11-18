@@ -1,5 +1,4 @@
 using Livestock.Auth.Database.Tests.Fixtures;
-using Xunit;
 
 namespace Livestock.Auth.Database.Tests.Collections;
 

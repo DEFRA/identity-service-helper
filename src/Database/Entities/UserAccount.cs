@@ -4,7 +4,6 @@
 
 namespace Livestock.Auth.Database.Entities;
 
-using System.Data;
 using Livestock.Auth.Database.Entities.Base;
 
 public class UserAccount : BaseUpdateEntity

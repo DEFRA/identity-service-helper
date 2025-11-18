@@ -5,7 +5,6 @@
 namespace Livestock.Auth.Database.Entities;
 
 using Livestock.Auth.Database.Entities.Base;
-using Microsoft.AspNetCore.Identity;
 
 public class KrdsSyncLog : BaseProcessingEntity
 {
