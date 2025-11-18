@@ -1,7 +1,7 @@
+namespace Livestock.Auth.Unit.Tests.Test.Utils.Http;
+
 using System;
 using Livestock.Auth.Api.Utils.Http;
-
-namespace Livestock.Auth.Test.Utils.Http;
 
 public class ProxyHttpMessageHandlerTests
 {

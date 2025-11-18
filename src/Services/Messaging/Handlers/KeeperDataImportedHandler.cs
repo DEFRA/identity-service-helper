@@ -7,9 +7,9 @@ namespace Livestock.Auth.Services.Messaging.Handlers;
 using Amazon.SQS;
 using Amazon.SQS.Model;
 using Livestock.Auth.Services.Messaging.Messages;
-using Livestock.Auth.Utils;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Utils;
 
 public class KeeperDataImportedHandler(
     ILogger<KeeperDataImportedHandler> logger)

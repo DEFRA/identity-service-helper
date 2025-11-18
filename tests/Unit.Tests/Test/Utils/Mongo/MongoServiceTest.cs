@@ -1,12 +1,12 @@
-using System.Collections.Generic;
-using Livestock.Auth.Api.Utils.Mongo;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
-using MongoDB.Driver;
-using NSubstitute;
-
-namespace Livestock.Auth.Test.Utils.Mongo
+namespace Livestock.Auth.Unit.Tests.Test.Utils.Mongo
 {
+    using System.Collections.Generic;
+    using Livestock.Auth.Api.Utils.Mongo;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
+    using MongoDB.Driver;
+    using NSubstitute;
+
     public class MongoServiceTests
     {
         private readonly IMongoDbClientFactory _connectionFactoryMock;

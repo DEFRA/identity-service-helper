@@ -1,16 +1,17 @@
+namespace Livestock.Auth.Unit.Tests.Test.Example.Services;
+
 using System;
 using System.Threading.Tasks;
+using FluentAssertions;
+using Livestock.Auth.Api.Example.Models;
+using Livestock.Auth.Api.Example.Services;
+using Livestock.Auth.Api.Utils.Mongo;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using NSubstitute;
-using FluentAssertions;
-using Livestock.Auth.Api.Example.Models;
-using Livestock.Auth.Api.Example.Services;
-using Livestock.Auth.Api.Utils.Mongo;
-
-namespace Livestock.Auth.Test.Example.Services;
+using Shouldly;
 
 public class ExamplePersistenceTests
 {
@@ -58,7 +59,7 @@ public class ExamplePersistenceTests
          Counter = 0
       };
       var result = await this._persistence.CreateAsync(example);
-      result.Should().BeTrue();
+      result.ShouldBeTrue();
    }
 
    [Fact]

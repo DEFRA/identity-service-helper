@@ -8,24 +8,23 @@
     <PackageVersion Include="AWSSDK.Extensions.NETCore.Setup" Version="4.0.3.7" />
     <PackageVersion Include="AWSSDK.SecretsManager" Version="4.0.1.9" />
     <PackageVersion Include="AWSSDK.SQS" Version="4.0.2.3" />
-    <PackageVersion Include="coverlet.collector" Version="6.0.4" />
-    <PackageVersion Include="coverlet.msbuild" Version="6.0.4" />
+ 
     <PackageVersion Include="Elastic.CommonSchema.Serilog" Version="9.0.0" />
-    <PackageVersion Include="FluentAssertions" Version="6.12.2" />
+ 
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageVersion Include="Microsoft.AspNetCore.HeaderPropagation" Version="9.0.11" />
-    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.11" />
+
     <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.11" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.11" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.11" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.11" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.11" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.11" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+  
     <PackageVersion Include="Microsoft.VisualStudio.Validation" Version="17.13.22" />
     <PackageVersion Include="MongoDB.Driver" Version="3.5.0" />
-    <PackageVersion Include="NSubstitute" Version="5.3.0" />
+   
     <PackageVersion Include="Npgsql" Version="9.0.4" />
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
     <PackageVersion Include="Quartz" Version="3.15.1" />
@@ -37,8 +36,6 @@
     <PackageVersion Include="Serilog.Extensions.Hosting" Version="8.0.0" />
     <PackageVersion Include="Serilog.Settings.Configuration" Version="8.0.2" />
     <PackageVersion Include="StyleCop.Analyzers" Version="1.2.0-beta.556" />
-    <PackageVersion Include="Testcontainers.PostgreSql" Version="4.8.1" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
-    <PackageVersion Include="xunit.v3" Version="3.2.0" />
+  
   </ItemGroup>
 </Project>

@@ -5,10 +5,10 @@
 namespace Livestock.Auth.Services.Polling.Services;
 
 using Livestock.Auth.Services.Polling.Config;
-using Livestock.Auth.Utils;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Quartz;
+using Utils;
 
 public class AzureB2CSyncService(
     ILogger<AzureB2CSyncService> logger,
