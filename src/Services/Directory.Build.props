@@ -1,15 +1,21 @@
 <Project>
-  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))"/>
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
   <PropertyGroup>
     <RootNamespace>Livestock.Auth.Services</RootNamespace>
     <AssemblyName>Livestock.Auth.Services</AssemblyName>
   </PropertyGroup>
- 
+
   <ItemGroup>
     <Using Include="Microsoft.EntityFrameworkCore" />
   </ItemGroup>
-  
+
   <ItemGroup>
+    <PackageReference Include="AWS.Messaging" />
+    <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" />
+    <PackageReference Include="AWSSDK.SQS" />
+    <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="Quartz" />
+    <PackageReference Include="Quartz.Extensions.DependencyInjection" />
+    <PackageReference Include="Quartz.Extensions.Hosting" />
   </ItemGroup>
 </Project>

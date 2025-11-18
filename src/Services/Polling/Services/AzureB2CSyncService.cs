@@ -1,9 +1,14 @@
-﻿using Livestock.Auth.Services.Config;
+﻿// <copyright file="AzureB2CSyncService.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
+namespace Livestock.Auth.Services.Polling.Services;
+
+using Livestock.Auth.Services.Polling.Config;
+using Livestock.Auth.Utils;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Quartz;
-
-namespace Livestock.Auth.Services;
 
 public class AzureB2CSyncService(
     ILogger<AzureB2CSyncService> logger,
@@ -12,10 +17,9 @@ public class AzureB2CSyncService(
 {
     public async Task Execute(IJobExecutionContext context)
     {
-        logger.LogInformation($"{nameof(AzureB2CSyncService)} starting");
+        var config = options.Value;
+        using var stopwatch = new StopwatchLogger(logger);
 
         await Task.Delay(TimeSpan.FromSeconds(5), context.CancellationToken);
-
-        logger.LogInformation($"{nameof(AzureB2CSyncService)} finished");
     }
 }

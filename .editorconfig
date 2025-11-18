@@ -58,6 +58,10 @@ dotnet_diagnostic.SA1101.severity = none # prefix with this.
 dotnet_diagnostic.SA1309.severity = none # field should start with _.
 
 [*.cs]
+# file layout
+csharp_using_directive_placement = inside_namespace:warning
+dotnet_diagnostic.IDE0065.severity = warning
+
 # Newline settings
 csharp_new_line_before_open_brace = all
 csharp_new_line_before_else = true
@@ -94,7 +98,7 @@ dotnet_naming_style.camel_case_underscore_style.required_prefix = _
 dotnet_naming_style.camel_case_underscore_style.capitalization = camel_case
 
 # Xml config files
-[*.{xml,config,*proj,nuspec,props,resx,targets,yml,tasks,ruleset,vsixmanifest,vsct}]
+[*.{xml,config,*proj,nuspec,props,resx,targets,yml,tasks,ruleset,vsixmanifest,vsct,slnx}]
 indent_size = 2
 resharper_xml_space_before_self_closing = true
 ij_xml_space_inside_empty_tag = true

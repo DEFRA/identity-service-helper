@@ -1,3 +1,9 @@
+// <copyright file="Program.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
+namespace Livestock.Auth.Api;
+
 using System.Diagnostics.CodeAnalysis;
 using FluentValidation;
 using Livestock.Auth.Api.Endpoints.Users;
@@ -5,13 +11,13 @@ using Livestock.Auth.Config;
 using Livestock.Auth.Database;
 using Livestock.Auth.Database.Entities;
 using Livestock.Auth.Services;
-using Livestock.Auth.Services.Extensions;
+using Livestock.Auth.Services.Config;
+using Livestock.Auth.Services.Messaging.Extensions;
+using Livestock.Auth.Services.Polling.Extensions;
 using Livestock.Auth.Utils.Http;
 using Livestock.Auth.Utils.Logging;
 using Livestock.Auth.Utils.Mongo;
 using Serilog;
-
-namespace Livestock.Auth.Api;
 
 public class Program
 {
@@ -26,14 +32,14 @@ public class Program
     private static WebApplication CreateWebApplication(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        
+
         var configuration = builder.Configuration
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
             .AddEnvironmentVariables()
             .AddCommandLine(args);
-        
+
         ConfigureBuilder(builder, configuration.Build());
 
         var app = builder.Build();
@@ -45,7 +51,6 @@ public class Program
         WebApplicationBuilder builder,
         IConfigurationRoot configuration)
     {
-
         // Configure logging to use the CDP Platform standards.
         builder.Services.AddHttpContextAccessor();
         builder.Host.UseSerilog(CdpLogging.Configuration);
@@ -61,6 +66,7 @@ public class Program
             .AddHttpClient("proxy")
             .ConfigurePrimaryHttpMessageHandler<ProxyHttpMessageHandler>();
         builder.Services.AddAuthDatabase(builder.Configuration);
+
         // Propagate trace header.
         builder.Services.AddHeaderPropagation(options =>
         {
@@ -71,15 +77,22 @@ public class Program
             }
         });
 
-
         // Set up the MongoDB client. Config and credentials are injected automatically at runtime.
         builder.Services.Configure<MongoConfig>(builder.Configuration.GetSection("Mongo"));
         builder.Services.AddSingleton<IMongoDbClientFactory, MongoDbClientFactory>();
 
-        builder.Services.AddQuartzServices(configuration);
+        // Add AWS defaults
+        builder.Services
+            .Configure<AwsConfiguration>(builder.Configuration.GetSection("AWS"))
+            .AddDefaultAWSOptions(configuration.GetAWSOptions("AWS"));
+
+        // Add services
+        builder.Services
+            .AddQuartzServices(configuration)
+            .AddMessagingDependencies(configuration);
+
         builder.Services.AddHealthChecks();
         builder.Services.AddValidatorsFromAssemblyContaining<Program>();
-
 
         // Set up the endpoints and their dependencies
 
