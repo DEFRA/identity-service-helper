@@ -32,7 +32,6 @@ public static class ServiceCollectionExtensions
     /// </summary>
     private static readonly string[] s_errorCodes = ["40001", "40P01", "55P03", "57P03"];
 
-
     public static void AddAuthDatabase(this IServiceCollection services, IConfiguration configuration)
     {
         var connectionString = configuration.GetConnectionString(DatabaseConstants.ConnectionStringName);

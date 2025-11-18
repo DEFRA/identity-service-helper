@@ -16,5 +16,4 @@ public class Federation : BaseUpdateEntity
     public required string SyncStatus { get; set; }
     public required DateTime LastSyncedAt { get; set; }
 
-    
 }

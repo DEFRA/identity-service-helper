@@ -60,7 +60,6 @@ public class ExamplePersistence(IMongoDbClientFactory connectionFactory, ILogger
         return await Collection.Find(_ => true).ToListAsync();
     }
 
-
     [ExcludeFromCodeCoverage]
     public async Task<IEnumerable<ExampleModel>> SearchByValueAsync(string searchTerm)
     {

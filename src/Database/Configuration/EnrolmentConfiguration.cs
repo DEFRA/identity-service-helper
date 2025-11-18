@@ -52,12 +52,10 @@ internal class EnrolmentConfiguration : BaseUpdateEntityConfiguration<Enrolment>
             .HasColumnType(ColumnTypes.Timestamp)
             .HasDefaultValueSql("now()");
 
-        
         builder.Property(x => x.ExpiresAt)
             .HasColumnName(nameof(Enrolment.ExpiresAt).ToSnakeCase())
             .HasColumnType(ColumnTypes.Timestamp);
-        
-        
+
         base.Configure(builder);
     }
 }
