@@ -6,17 +6,17 @@ namespace Livestock.Auth.Api;
 
 using System.Diagnostics.CodeAnalysis;
 using FluentValidation;
+using Livestock.Auth.Api.Config;
 using Livestock.Auth.Api.Endpoints.Users;
-using Livestock.Auth.Config;
+using Livestock.Auth.Api.Utils.Http;
+using Livestock.Auth.Api.Utils.Logging;
+using Livestock.Auth.Api.Utils.Mongo;
 using Livestock.Auth.Database;
 using Livestock.Auth.Database.Entities;
 using Livestock.Auth.Services;
 using Livestock.Auth.Services.Config;
 using Livestock.Auth.Services.Messaging.Extensions;
 using Livestock.Auth.Services.Polling.Extensions;
-using Livestock.Auth.Utils.Http;
-using Livestock.Auth.Utils.Logging;
-using Livestock.Auth.Utils.Mongo;
 using Serilog;
 
 public class Program

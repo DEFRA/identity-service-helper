@@ -1,7 +1,11 @@
-using Livestock.Auth.Database.Entities;
-using Livestock.Auth.Services;
+// <copyright file="UseUsersEndpoints.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
 
 namespace Livestock.Auth.Api.Endpoints.Users;
+
+using Livestock.Auth.Database.Entities;
+using Livestock.Auth.Services;
 
 public static class UsersEndpoints
 {

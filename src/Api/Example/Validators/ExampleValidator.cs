@@ -1,7 +1,11 @@
-﻿using FluentValidation;
-using Livestock.Auth.Api.Example.Models;
+﻿// <copyright file="ExampleValidator.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
 
 namespace Livestock.Auth.Api.Example.Validators;
+
+using FluentValidation;
+using Livestock.Auth.Api.Example.Models;
 
 public class ExampleValidator : AbstractValidator<ExampleModel>
 {

@@ -1,9 +1,13 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿// <copyright file="ExamplePersistence.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
+namespace Livestock.Auth.Api.Example.Services;
+
+using System.Diagnostics.CodeAnalysis;
 using Livestock.Auth.Api.Example.Models;
 using Livestock.Auth.Api.Utils.Mongo;
 using MongoDB.Driver;
-
-namespace Livestock.Auth.Api.Example.Services;
 
 public interface IExamplePersistence
 {

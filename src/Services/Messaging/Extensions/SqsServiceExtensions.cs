@@ -4,13 +4,11 @@
 
 namespace Livestock.Auth.Services.Messaging.Extensions;
 
-using Amazon;
 using Amazon.Runtime;
 using Amazon.SQS;
 using Livestock.Auth.Services.Config;
 using Livestock.Auth.Services.Messaging.Config;
 using Livestock.Auth.Services.Messaging.Handlers;
-using Livestock.Auth.Services.Messaging.Messages;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

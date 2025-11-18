@@ -1,7 +1,11 @@
-using System.Diagnostics.CodeAnalysis;
-using System.Net;
+// <copyright file="ProxyHttpMessageHandler.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
 
 namespace Livestock.Auth.Api.Utils.Http;
+
+using System.Diagnostics.CodeAnalysis;
+using System.Net;
 
 public class ProxyHttpMessageHandler : HttpClientHandler
 {

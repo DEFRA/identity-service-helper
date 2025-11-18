@@ -1,7 +1,11 @@
-using Livestock.Auth.Database.Entities.Base;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+// <copyright file="BaseProcessingEntityConfiguration.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
 
 namespace Livestock.Auth.Database.Configuration.Base;
+
+using Livestock.Auth.Database.Entities.Base;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 public abstract class BaseProcessingEntityConfiguration<TEntity> : IEntityTypeConfiguration<TEntity> where TEntity: BaseProcessingEntity
 {

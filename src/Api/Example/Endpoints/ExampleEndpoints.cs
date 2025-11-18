@@ -1,10 +1,14 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿// <copyright file="ExampleEndpoints.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
+namespace Livestock.Auth.Api.Example.Endpoints;
+
+using System.Diagnostics.CodeAnalysis;
 using FluentValidation;
 using FluentValidation.Results;
 using Livestock.Auth.Api.Example.Models;
 using Livestock.Auth.Api.Example.Services;
-
-namespace Livestock.Auth.Api.Example.Endpoints;
 
 [ExcludeFromCodeCoverage]
 public static class ExampleEndpoints

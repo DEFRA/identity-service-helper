@@ -1,6 +1,10 @@
-using Livestock.Auth.Database.Entities.Base;
+// <copyright file="Application.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
 
 namespace Livestock.Auth.Database.Entities;
+
+using Livestock.Auth.Database.Entities.Base;
 
 public class Application : BaseUpdateEntity
 {

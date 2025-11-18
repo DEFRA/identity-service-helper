@@ -1,10 +1,14 @@
+// <copyright file="ServiceCollectionExtensions.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
+namespace Livestock.Auth.Database;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-
-namespace Livestock.Auth.Database;
 
 public static class ServiceCollectionExtensions
 {

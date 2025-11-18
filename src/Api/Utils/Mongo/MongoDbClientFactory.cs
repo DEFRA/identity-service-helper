@@ -1,10 +1,14 @@
+// <copyright file="MongoDbClientFactory.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
+namespace Livestock.Auth.Api.Utils.Mongo;
+
 using System.Diagnostics.CodeAnalysis;
 using Livestock.Auth.Api.Config;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Driver;
-
-namespace Livestock.Auth.Api.Utils.Mongo;
 
 [ExcludeFromCodeCoverage]
 public class MongoDbClientFactory : IMongoDbClientFactory

@@ -1,3 +1,7 @@
+// <copyright file="ColumnTypes.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
 namespace Livestock.Auth.Database;
 
 public static class ColumnTypes

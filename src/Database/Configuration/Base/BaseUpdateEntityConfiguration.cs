@@ -1,8 +1,12 @@
+// <copyright file="BaseUpdateEntityConfiguration.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
+namespace Livestock.Auth.Database.Configuration.Base;
+
 using Livestock.Auth.Database.Entities;
 using Livestock.Auth.Database.Entities.Base;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
-namespace Livestock.Auth.Database.Configuration.Base;
 
 public abstract class BaseUpdateEntityConfiguration<TEntity> : IEntityTypeConfiguration<TEntity> where TEntity: BaseUpdateEntity
 {

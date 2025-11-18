@@ -4,7 +4,6 @@
 
 namespace Livestock.Auth.Services.Messaging.Handlers;
 
-using System.Diagnostics;
 using Amazon.SQS;
 using Amazon.SQS.Model;
 using Livestock.Auth.Services.Messaging.Messages;

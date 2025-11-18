@@ -1,7 +1,11 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using MongoDB.Driver;
+﻿// <copyright file="MongoService.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
 
 namespace Livestock.Auth.Api.Utils.Mongo;
+
+using System.Diagnostics.CodeAnalysis;
+using MongoDB.Driver;
 
 [ExcludeFromCodeCoverage]
 public abstract class MongoService<T>
