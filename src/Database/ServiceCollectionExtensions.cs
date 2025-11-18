@@ -62,8 +62,13 @@ public static class ServiceCollectionExtensions
 
         // Temporary Development migrations 
         var env = scope.ServiceProvider.GetRequiredService<IHostEnvironment>();
-      
-        if (env.IsDevelopment()) context.Database.Migrate();
+        
+        #if DEBUG
+        if (env.IsDevelopment())
+        {
+            context.Database.Migrate();
+        }
+        #endif
         
         if (context.Database.CanConnect())
             context.Database.OpenConnection();
