@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Livestock.Auth.Database.Configuration.Base;
 
-public class BaseProcessingEntityConfiguration<TEntity> where TEntity: BaseProcessingEntity
+public abstract class BaseProcessingEntityConfiguration<TEntity> : IEntityTypeConfiguration<TEntity> where TEntity: BaseProcessingEntity
 {
     public virtual void Configure(EntityTypeBuilder<TEntity> builder)
     {

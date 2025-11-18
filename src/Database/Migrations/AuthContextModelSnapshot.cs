@@ -211,42 +211,60 @@ namespace Livestock.Auth.Database.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<Guid>("CorrelationId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("correlation_id");
 
                     b.Property<int>("HttpStatus")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("http_status");
 
                     b.Property<string>("Message")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("message");
 
                     b.Property<string>("PayloadSha256")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("payload_sha256");
 
                     b.Property<DateTime>("ProcessedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TimestampTz")
+                        .HasColumnName("processed_at")
+                        .HasDefaultValueSql("now()");
 
                     b.Property<bool>("ProcessedOk")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("processed_ok");
 
                     b.Property<DateTime>("ReceivedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TimestampTz")
+                        .HasColumnName("received_at")
+                        .HasDefaultValueSql("now()");
 
                     b.Property<string>("SourceEndpoint")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("source_endpoint");
 
                     b.Property<string>("Upn")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("citext")
+                        .HasColumnName("upn");
 
                     b.HasKey("Id");
 
-                    b.ToTable("KrdsSyncLogs", "defra-ci");
+                    b.HasIndex("ReceivedAt");
+
+                    b.HasIndex("Upn");
+
+                    b.ToTable("krds_sync_log", "defra-ci");
                 });
 
             modelBuilder.Entity("Livestock.Auth.Database.Entities.UserAccount", b =>

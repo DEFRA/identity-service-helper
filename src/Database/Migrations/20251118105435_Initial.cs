@@ -38,24 +38,24 @@ namespace Livestock.Auth.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "KrdsSyncLogs",
+                name: "krds_sync_log",
                 schema: "defra-ci",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    CorrelationId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Upn = table.Column<string>(type: "text", nullable: false),
-                    PayloadSha256 = table.Column<string>(type: "text", nullable: false),
-                    SourceEndpoint = table.Column<string>(type: "text", nullable: false),
-                    HttpStatus = table.Column<int>(type: "integer", nullable: false),
-                    ProcessedOk = table.Column<bool>(type: "boolean", nullable: false),
-                    Message = table.Column<string>(type: "text", nullable: false),
-                    ReceivedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ProcessedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    correlation_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    upn = table.Column<string>(type: "citext", nullable: false),
+                    payload_sha256 = table.Column<string>(type: "text", nullable: false),
+                    source_endpoint = table.Column<string>(type: "text", nullable: false),
+                    http_status = table.Column<int>(type: "integer", nullable: false),
+                    processed_ok = table.Column<bool>(type: "boolean", nullable: false),
+                    message = table.Column<string>(type: "text", nullable: false),
+                    received_at = table.Column<DateTime>(type: "TimestampTz", nullable: false, defaultValueSql: "now()"),
+                    processed_at = table.Column<DateTime>(type: "TimestampTz", nullable: false, defaultValueSql: "now()")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_KrdsSyncLogs", x => x.Id);
+                    table.PrimaryKey("PK_krds_sync_log", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -163,6 +163,18 @@ namespace Livestock.Auth.Database.Migrations
                 column: "user_account_id");
 
             migrationBuilder.CreateIndex(
+                name: "IX_krds_sync_log_received_at",
+                schema: "defra-ci",
+                table: "krds_sync_log",
+                column: "received_at");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_krds_sync_log_upn",
+                schema: "defra-ci",
+                table: "krds_sync_log",
+                column: "upn");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_user_account_upn",
                 schema: "defra-ci",
                 table: "user_account",
@@ -181,7 +193,7 @@ namespace Livestock.Auth.Database.Migrations
                 schema: "defra-ci");
 
             migrationBuilder.DropTable(
-                name: "KrdsSyncLogs",
+                name: "krds_sync_log",
                 schema: "defra-ci");
 
             migrationBuilder.DropTable(

@@ -1,6 +1,10 @@
-﻿CREATE SCHEMA "defra-ci";
+﻿
+
+CREATE SCHEMA "defra-ci";
+  
 
 CREATE EXTENSION IF NOT EXISTS citext;
+
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
@@ -20,18 +24,18 @@ COMMENT ON COLUMN "defra-ci".application.client_id IS 'Azure AD B2C application 
 COMMENT ON COLUMN "defra-ci".application.tenant_name IS 'Azure AD B2C tenant name e.g defra.onmicrosoft.com';
 COMMENT ON COLUMN "defra-ci".application.status IS 'active/inactive/deprecated';
 
-CREATE TABLE "defra-ci"."KrdsSyncLogs" (
-    "Id" uuid NOT NULL,
-    "CorrelationId" uuid NOT NULL,
-    "Upn" text NOT NULL,
-    "PayloadSha256" text NOT NULL,
-    "SourceEndpoint" text NOT NULL,
-    "HttpStatus" integer NOT NULL,
-    "ProcessedOk" boolean NOT NULL,
-    "Message" text NOT NULL,
-    "ReceivedAt" timestamp with time zone NOT NULL,
-    "ProcessedAt" timestamp with time zone NOT NULL,
-    CONSTRAINT "PK_KrdsSyncLogs" PRIMARY KEY ("Id")
+CREATE TABLE "defra-ci".krds_sync_log (
+    id uuid NOT NULL,
+    correlation_id uuid NOT NULL,
+    upn citext NOT NULL,
+    payload_sha256 text NOT NULL,
+    source_endpoint text NOT NULL,
+    http_status integer NOT NULL,
+    processed_ok boolean NOT NULL,
+    message text NOT NULL,
+    received_at TimestampTz NOT NULL DEFAULT (now()),
+    processed_at TimestampTz NOT NULL DEFAULT (now()),
+    CONSTRAINT "PK_krds_sync_log" PRIMARY KEY (id)
 );
 
 CREATE TABLE "defra-ci".user_account (
@@ -83,8 +87,10 @@ CREATE INDEX "IX_federation_object_id_tenant_name" ON "defra-ci".federation (obj
 
 CREATE INDEX "IX_federation_user_account_id" ON "defra-ci".federation (user_account_id);
 
+CREATE INDEX "IX_krds_sync_log_received_at" ON "defra-ci".krds_sync_log (received_at);
+
+CREATE INDEX "IX_krds_sync_log_upn" ON "defra-ci".krds_sync_log (upn);
+
 CREATE INDEX "IX_user_account_upn" ON "defra-ci".user_account (upn);
-
-
 
 
