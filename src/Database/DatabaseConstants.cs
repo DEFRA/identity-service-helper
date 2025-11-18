@@ -4,7 +4,7 @@
 
 namespace Livestock.Auth.Database;
 
-internal static class Constants
+internal static class DatabaseConstants
 {
     internal const string SchemaName = "defra-ci";
     internal const string ConnectionStringName = "Auth";

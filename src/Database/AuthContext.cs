@@ -23,7 +23,7 @@ public class AuthContext(DbContextOptions<AuthContext> options) : DbContext(opti
     {
         Requires.NotNull(modelBuilder);
 
-        modelBuilder.HasDefaultSchema(Constants.SchemaName);
+        modelBuilder.HasDefaultSchema(DatabaseConstants.SchemaName);
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         modelBuilder.HasPostgresExtension(PostgreExtensions.UuidGenerator);
         modelBuilder.HasPostgresExtension(PostgreExtensions.Citext);

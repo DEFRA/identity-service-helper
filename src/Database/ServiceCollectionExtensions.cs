@@ -35,7 +35,7 @@ public static class ServiceCollectionExtensions
 
     public static void AddAuthDatabase(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString(Constants.ConnectionStringName);
+        var connectionString = configuration.GetConnectionString(DatabaseConstants.ConnectionStringName);
         services
             .AddPooledDbContextFactory<AuthContext>((sp, options) =>
             {
