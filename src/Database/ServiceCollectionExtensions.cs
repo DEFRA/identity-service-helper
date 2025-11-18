@@ -60,11 +60,11 @@ public static class ServiceCollectionExtensions
         var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<AuthContext>>();
         using var context = factory.CreateDbContext();
 
-        // Temporary Development migrations 
-        var env = scope.ServiceProvider.GetRequiredService<IHostEnvironment>();
+     
         
         #if DEBUG
-        if (env.IsDevelopment())
+        // Migrate the database on startup in development mode
+        if (scope.ServiceProvider.GetRequiredService<IHostEnvironment>().IsDevelopment())
         {
             context.Database.Migrate();
         }
