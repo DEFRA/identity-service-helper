@@ -1,6 +1,8 @@
 <Project>
   <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
-
+  <PropertyGroup>
+    <AssemblyName>Database.Tests</AssemblyName>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Testcontainers.PostgreSql"/>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational"/>
