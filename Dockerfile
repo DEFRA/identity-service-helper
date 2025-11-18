@@ -18,7 +18,7 @@ WORKDIR /
 COPY . .
 WORKDIR "/"
 
-RUN dotnet test tests/Unit.Tests
+RUN dotnet test /IdentityServiceHelper.slnx
 
 FROM build AS publish
 RUN dotnet publish src/Api -c Release -o /app/publish /p:UseAppHost=false

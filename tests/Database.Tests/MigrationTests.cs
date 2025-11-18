@@ -3,7 +3,6 @@ using Livestock.Auth.Database.Entities;
 using Livestock.Auth.Database.Tests.Collections;
 using Livestock.Auth.Database.Tests.Fixtures;
 using Microsoft.EntityFrameworkCore;
-using Xunit;
 
 namespace Livestock.Auth.Database.Tests;
 
@@ -28,6 +27,5 @@ public class MigrationTests(PostgreContainerFixture fixture) : BaseTests(fixture
         Context.Set<Enrolment>().Should().NotBeNull();
         Context.Set<Federation>().Should().NotBeNull();
         Context.Set<KrdsSyncLog>().Should().NotBeNull();
-        
     }
 }
