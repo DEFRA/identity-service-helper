@@ -1,6 +1,10 @@
-using System.Text;
+// <copyright file="StringExtensions.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
 
 namespace Livestock.Auth.Database;
+
+using System.Text;
 
 public static class StringExtensions
 {

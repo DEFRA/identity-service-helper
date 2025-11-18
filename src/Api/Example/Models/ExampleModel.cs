@@ -1,9 +1,13 @@
-﻿using System.Text.Json.Serialization;
+﻿// <copyright file="ExampleModel.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
+namespace Livestock.Auth.Api.Example.Models;
+
+using System.Text.Json.Serialization;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson.Serialization.IdGenerators;
-
-namespace Livestock.Auth.Api.Example.Models;
 
 public class ExampleModel
 {

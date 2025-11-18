@@ -1,7 +1,11 @@
-using System.Diagnostics.CodeAnalysis;
-using Serilog;
+// <copyright file="CdpLogging.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
 
 namespace Livestock.Auth.Api.Utils.Logging;
+
+using System.Diagnostics.CodeAnalysis;
+using Serilog;
 
 public static class CdpLogging
 {

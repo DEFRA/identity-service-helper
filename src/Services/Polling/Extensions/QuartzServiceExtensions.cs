@@ -1,7 +1,13 @@
-﻿using Livestock.Auth.Services.Config;
-using Quartz;
+﻿// <copyright file="QuartzServiceExtensions.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
 
-namespace Livestock.Auth.Api.Extensions;
+namespace Livestock.Auth.Services.Polling.Extensions;
+
+using Livestock.Auth.Services.Polling.Config;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Quartz;
 
 public static class QuartzServiceExtensions
 {
@@ -16,41 +22,36 @@ public static class QuartzServiceExtensions
             {
                 var baseConfig = serviceConfig.Get<BasePollingServiceConfiguration>();
                 Requires.NotNull(baseConfig);
-        
+
                 var serviceType = GetType(baseConfig.ServiceType);
                 var interfaceType = GetType(baseConfig.InterfaceType);
                 var configType = GetType(baseConfig.ConfigurationType);
-                
+
                 sc.AddTransient(interfaceType, serviceType);
                 var configureMethod = typeof(OptionsConfigurationServiceCollectionExtensions)
                     .GetMethods()
-                    .First(m => m.Name == "Configure" 
-                                && m.GetParameters().Length == 2 
+                    .First(m => m.Name == "Configure"
+                                && m.GetParameters().Length == 2
                                 && m.GetParameters()[1].ParameterType == typeof(IConfiguration))
                     .MakeGenericMethod(configType);
-    
+
                 configureMethod.Invoke(null, [sc, serviceConfig]);
-                
+
                 var jobKey = new JobKey(serviceConfig.Key, "PolledServices");
-        
+
                 q.AddJob(serviceType, jobKey, j => j
-                    .WithDescription(baseConfig.Description)
-                );
+                    .WithDescription(baseConfig.Description));
 
                 q.AddTrigger(t => t
                     .WithIdentity($"{serviceConfig.Key} Cron Trigger")
                     .ForJob(jobKey)
                     .StartNow()
-                    .WithCronSchedule(baseConfig.CronSchedule)
-                );
+                    .WithCronSchedule(baseConfig.CronSchedule));
             }
         });
 
-        sc.AddQuartzHostedService(options =>
-        {
-            options.WaitForJobsToComplete = true;
-        });
-        
+        sc.AddQuartzHostedService(options => { options.WaitForJobsToComplete = true; });
+
         return sc;
     }
 
@@ -62,11 +63,6 @@ public static class QuartzServiceExtensions
             .SelectMany(asm => asm.GetTypes())
             .FirstOrDefault(t => string.Equals(t.FullName, typeName, StringComparison.OrdinalIgnoreCase));
 
-        if (serviceType == null)
-        {
-            throw new InvalidOperationException($"Type '{typeName}' not found");
-        }
-
-        return serviceType;
+        return serviceType ?? throw new InvalidOperationException($"Type '{typeName}' not found");
     }
 }

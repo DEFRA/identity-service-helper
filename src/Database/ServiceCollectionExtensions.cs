@@ -1,10 +1,14 @@
+// <copyright file="ServiceCollectionExtensions.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
+namespace Livestock.Auth.Database;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-
-namespace Livestock.Auth.Database;
 
 public static class ServiceCollectionExtensions
 {
@@ -60,8 +64,6 @@ public static class ServiceCollectionExtensions
         var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<AuthContext>>();
         using var context = factory.CreateDbContext();
 
-     
-        
         #if DEBUG
         // Migrate the database on startup in development mode
         if (scope.ServiceProvider.GetRequiredService<IHostEnvironment>().IsDevelopment())

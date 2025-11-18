@@ -1,8 +1,12 @@
+// <copyright file="ApplicationConfiguration.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
+namespace Livestock.Auth.Database.Configuration;
+
 using Livestock.Auth.Database.Configuration.Base;
 using Livestock.Auth.Database.Entities;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
-namespace Livestock.Auth.Database.Configuration;
 
 internal class ApplicationConfiguration :BaseUpdateEntityConfiguration<Application>
 {

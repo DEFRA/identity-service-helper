@@ -23,7 +23,7 @@ jobs:
         with:
           dotnet-version: |
             9.0
-      - run: dotnet test
+      - run: dotnet test IdentityServiceHelper.slnx
     ## SonarCloud
     ## Uncomment to unable SonarCloud scan
     ## Requires project to be set up in SonarCloud

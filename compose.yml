@@ -1,7 +1,7 @@
 
 services:
   localstack:
-    image: localstack/localstack:3.0.2
+    image: localstack/localstack:4.10.0
     ports:
       - '4566:4566' # LocalStack Gateway
       - '4510-4559:4510-4559' # external services port range
@@ -40,6 +40,7 @@ services:
     volumes:
       - mongodb-data:/data
     restart: always
+    
   postgres:
     image: postgres:16-alpine
     ports:
@@ -59,6 +60,7 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+      
   liquibase:
     image: liquibase/liquibase
     depends_on:
@@ -69,7 +71,10 @@ services:
     command: --url=jdbc:postgresql://localhost:5432/livestock_auth --username=postgres --password=postgres --changelog-file=changelog/db.changelog.xml update
     networks:
       - cdp-tenant
-  your-backend:
+      
+  identity-service-helper:
+    container_name: identity-service-helper
+    platform: linux
     build: ./
     ports:
       - '8080:8080'
@@ -93,6 +98,7 @@ services:
       POSTGRES_URI: http://localhost:5432
     networks:
       - cdp-tenant
+
 volumes:
   mongodb-data:
   postgres-data:

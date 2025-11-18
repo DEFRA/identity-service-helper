@@ -1,7 +1,11 @@
-using System.Diagnostics.CodeAnalysis;
-using Microsoft.EntityFrameworkCore.Design;
+// <copyright file="AuthContextFactory.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
 
 namespace Livestock.Auth.Database;
+
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.EntityFrameworkCore.Design;
 
 [ExcludeFromCodeCoverage]
 /// <summary>

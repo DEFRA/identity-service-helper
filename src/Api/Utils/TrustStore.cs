@@ -1,9 +1,13 @@
+// <copyright file="TrustStore.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
+namespace Livestock.Auth.Api.Utils;
+
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-
-namespace Livestock.Auth.Api.Utils;
 
 [ExcludeFromCodeCoverage]
 public static class TrustStore

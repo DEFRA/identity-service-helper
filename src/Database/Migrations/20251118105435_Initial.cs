@@ -1,10 +1,14 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿// <copyright file="20251118105435_Initial.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
 
 #nullable disable
 
 namespace Livestock.Auth.Database.Migrations
 {
+    using System;
+    using Microsoft.EntityFrameworkCore.Migrations;
+
     /// <inheritdoc />
     public partial class Initial : Migration
     {
