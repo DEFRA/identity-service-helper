@@ -1,95 +1,90 @@
-﻿CREATE TABLE IF NOT EXISTS "__EFMigrationsHistory" (
-                                                       "MigrationId" character varying(150) NOT NULL,
-                                                       "ProductVersion" character varying(32) NOT NULL,
-                                                       CONSTRAINT "PK___EFMigrationsHistory" PRIMARY KEY ("MigrationId")
-);
-
-START TRANSACTION;
-DO $EF$
-    BEGIN
-        IF NOT EXISTS(SELECT 1 FROM pg_namespace WHERE nspname = 'defra-ci') THEN
-            CREATE SCHEMA "defra-ci";
-        END IF;
-    END $EF$;
-
-DO $EF$
-    BEGIN
-        IF NOT EXISTS(SELECT 1 FROM pg_namespace WHERE nspname = 'defra-ci') THEN
-            CREATE SCHEMA "defra-ci";
-        END IF;
-    END $EF$;
+﻿CREATE SCHEMA "defra-ci";
 
 CREATE EXTENSION IF NOT EXISTS citext;
-DO $EF$
-    BEGIN
-        IF NOT EXISTS(SELECT 1 FROM pg_namespace WHERE nspname = 'defra-ci') THEN
-            CREATE SCHEMA "defra-ci";
-        END IF;
-    END $EF$;
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE "defra-ci".application (
-                                        id uuid NOT NULL,
-                                        name text NOT NULL,
-                                        b2c_client_id uuid NOT NULL,
-                                        b2c_tenant text NOT NULL,
-                                        description text NOT NULL,
-                                        status text NOT NULL DEFAULT 'active',
-                                        created_at TimestampTz NOT NULL DEFAULT (now()),
-                                        updated_at TimestampTz NOT NULL DEFAULT (now()),
-                                        CONSTRAINT "PK_application" PRIMARY KEY (id)
+    id uuid NOT NULL,
+    name text NOT NULL,
+    client_id uuid NOT NULL,
+    tenant_name text NOT NULL,
+    description text NOT NULL,
+    status text NOT NULL DEFAULT 'active',
+    created_at TimestampTz NOT NULL DEFAULT (now()),
+    updated_at TimestampTz NOT NULL DEFAULT (now()),
+    CONSTRAINT "PK_application" PRIMARY KEY (id)
 );
+COMMENT ON COLUMN "defra-ci".application.name IS 'Human readable name for the application e.g Keeper Portal';
+COMMENT ON COLUMN "defra-ci".application.client_id IS 'Azure AD B2C application Client ID';
+COMMENT ON COLUMN "defra-ci".application.tenant_name IS 'Azure AD B2C tenant name e.g defra.onmicrosoft.com';
+COMMENT ON COLUMN "defra-ci".application.status IS 'active/inactive/deprecated';
 
-CREATE TABLE "defra-ci".enrolment (
-                                      id uuid NOT NULL,
-                                      b2c_object_id uuid NOT NULL,
-                                      application_id uuid NOT NULL,
-                                      cph_id text NOT NULL,
-                                      role text NOT NULL,
-                                      scope jsonb NOT NULL,
-                                      status text NOT NULL DEFAULT 'active',
-                                      enrolled_at TimestampTz NOT NULL DEFAULT (now()),
-                                      expires_at TimestampTz NOT NULL,
-                                      created_at TimestampTz NOT NULL DEFAULT (now()),
-                                      updated_at TimestampTz NOT NULL DEFAULT (now()),
-                                      CONSTRAINT "PK_enrolment" PRIMARY KEY (id)
+CREATE TABLE "defra-ci"."KrdsSyncLogs" (
+    "Id" uuid NOT NULL,
+    "CorrelationId" uuid NOT NULL,
+    "Upn" text NOT NULL,
+    "PayloadSha256" text NOT NULL,
+    "SourceEndpoint" text NOT NULL,
+    "HttpStatus" integer NOT NULL,
+    "ProcessedOk" boolean NOT NULL,
+    "Message" text NOT NULL,
+    "ReceivedAt" timestamp with time zone NOT NULL,
+    "ProcessedAt" timestamp with time zone NOT NULL,
+    CONSTRAINT "PK_KrdsSyncLogs" PRIMARY KEY ("Id")
 );
 
 CREATE TABLE "defra-ci".user_account (
-                                         id uuid NOT NULL,
-                                         upn citext NOT NULL,
-                                         display_name varchar NOT NULL,
-                                         account_enabled boolean NOT NULL DEFAULT TRUE,
-                                         created_at TimestampTz NOT NULL DEFAULT (now()),
-                                         updated_at TimestampTz NOT NULL DEFAULT (now()),
-                                         CONSTRAINT "PK_user_account" PRIMARY KEY (id)
+    id uuid NOT NULL,
+    upn citext NOT NULL,
+    display_name varchar NOT NULL,
+    account_enabled boolean NOT NULL DEFAULT TRUE,
+    created_at TimestampTz NOT NULL DEFAULT (now()),
+    updated_at TimestampTz NOT NULL DEFAULT (now()),
+    CONSTRAINT "PK_user_account" PRIMARY KEY (id)
+);
+
+CREATE TABLE "defra-ci".enrolment (
+    id uuid NOT NULL,
+    user_account_id uuid NOT NULL,
+    application_id uuid NOT NULL,
+    cph_id text NOT NULL,
+    role text NOT NULL,
+    scope jsonb NOT NULL,
+    status text NOT NULL DEFAULT 'active',
+    enrolled_at TimestampTz NOT NULL DEFAULT (now()),
+    expires_at TimestampTz NOT NULL,
+    created_at TimestampTz NOT NULL DEFAULT (now()),
+    updated_at TimestampTz NOT NULL DEFAULT (now()),
+    CONSTRAINT "PK_enrolment" PRIMARY KEY (id),
+    CONSTRAINT "FK_enrolment_application_application_id" FOREIGN KEY (application_id) REFERENCES "defra-ci".application (id) ON DELETE CASCADE,
+    CONSTRAINT "FK_enrolment_user_account_user_account_id" FOREIGN KEY (user_account_id) REFERENCES "defra-ci".user_account (id) ON DELETE CASCADE
 );
 
 CREATE TABLE "defra-ci".federation (
-                                       id uuid NOT NULL,
-                                       user_account_id uuid NOT NULL,
-                                       b2c_tenant text NOT NULL,
-                                       b2c_object_id uuid NOT NULL,
-                                       trust_level text NOT NULL DEFAULT 'standard',
-                                       sync_status text NOT NULL DEFAULT 'linked',
-                                       last_synced_at TimestampTz NOT NULL,
-                                       created_at TimestampTz NOT NULL DEFAULT (now()),
-                                       updated_at TimestampTz NOT NULL DEFAULT (now()),
-                                       CONSTRAINT "PK_federation" PRIMARY KEY (id),
-                                       CONSTRAINT "FK_federation_user_account_user_account_id" FOREIGN KEY (user_account_id) REFERENCES "defra-ci".user_account (id)
+    id uuid NOT NULL,
+    user_account_id uuid NOT NULL,
+    tenant_name text NOT NULL,
+    object_id uuid NOT NULL,
+    trust_level text NOT NULL DEFAULT 'standard',
+    sync_status text NOT NULL DEFAULT 'linked',
+    last_synced_at TimestampTz NOT NULL,
+    created_at TimestampTz NOT NULL DEFAULT (now()),
+    updated_at TimestampTz NOT NULL DEFAULT (now()),
+    CONSTRAINT "PK_federation" PRIMARY KEY (id),
+    CONSTRAINT "FK_federation_user_account_user_account_id" FOREIGN KEY (user_account_id) REFERENCES "defra-ci".user_account (id)
 );
 
-CREATE UNIQUE INDEX "IX_enrolment_b2c_object_id_role" ON "defra-ci".enrolment (b2c_object_id, role);
+CREATE INDEX "IX_enrolment_application_id" ON "defra-ci".enrolment (application_id);
 
-CREATE INDEX "IX_federation_b2c_object_id_b2c_tenant" ON "defra-ci".federation (b2c_object_id, b2c_tenant);
+CREATE UNIQUE INDEX "IX_enrolment_user_account_id_role" ON "defra-ci".enrolment (user_account_id, role);
+
+CREATE INDEX "IX_federation_object_id_tenant_name" ON "defra-ci".federation (object_id, tenant_name);
 
 CREATE INDEX "IX_federation_user_account_id" ON "defra-ci".federation (user_account_id);
 
 CREATE INDEX "IX_user_account_upn" ON "defra-ci".user_account (upn);
 
-INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-VALUES ('20251112134625_initial', '9.0.11');
 
-COMMIT;
+
 

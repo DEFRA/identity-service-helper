@@ -28,6 +28,5 @@ public class MigrationTests(PostgreContainerFixture fixture) : BaseTests(fixture
         Context.Set<Federation>().ShouldNotBeNull();
         Context.Set<KrdsSyncLog>().ShouldNotBeNull();
         
-
     }
 }
