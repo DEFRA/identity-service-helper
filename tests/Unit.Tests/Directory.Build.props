@@ -4,4 +4,9 @@
   <PackageReference Include="xunit.v3" />
   <PackageReference Include="Shouldly" />
 </ItemGroup>
+  <ItemGroup>
+    <Using Include="Xunit"/>
+    <Using Include="Xunit.v3"/>
+    <Using Include="Shouldly" />
+  </ItemGroup>
 </Project>
