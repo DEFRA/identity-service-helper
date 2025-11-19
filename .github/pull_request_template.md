@@ -31,4 +31,4 @@ From the command line, go to the root of the project and run:
 ```
 
 ## Notes for reviewers
-Any special notes, areas that need close review, and rationale for large changes.
+_Any special notes, areas that need close review, and rationale for large changes._
