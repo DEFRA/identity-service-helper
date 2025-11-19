@@ -5,8 +5,8 @@ using Livestock.Auth.Database.Tests.Fixtures;
 
 namespace Livestock.Auth.Database.Tests;
 
-using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Shouldly;
 
 [Collection(nameof(PostgreCollection))]
 public class MigrationTests(PostgreContainerFixture fixture) : BaseTests(fixture)
@@ -15,17 +15,17 @@ public class MigrationTests(PostgreContainerFixture fixture) : BaseTests(fixture
     public async Task ShouldMigrateAndAppliedMigrations()
     {
         var migrations = await Context.Database.GetAppliedMigrationsAsync(cancellationToken: TestContext.Current.CancellationToken);
-        migrations.Should().NotBeEmpty();
+        migrations.ShouldNotBeEmpty();
     }
 
     [Fact,Description("All Base tables should exist")]
     public void ShouldAllBaseTablesExist()
     {
         // Check Base tables exist
-        Context.Set<UserAccount>().Should().NotBeNull();
-        Context.Set<Application>().Should().NotBeNull();
-        Context.Set<Enrolment>().Should().NotBeNull();
-        Context.Set<Federation>().Should().NotBeNull();
-        Context.Set<KrdsSyncLog>().Should().NotBeNull();
+        Context.Set<UserAccount>().ShouldNotBeNull();
+        Context.Set<Application>().ShouldNotBeNull();
+        Context.Set<Enrolment>().ShouldNotBeNull();
+        Context.Set<Federation>().ShouldNotBeNull();
+        Context.Set<KrdsSyncLog>().ShouldNotBeNull();
     }
 }

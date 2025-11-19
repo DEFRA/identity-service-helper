@@ -17,38 +17,31 @@ internal class KrdsSyncLogConfiguration : BaseProcessingEntityConfiguration<Krds
 
         builder.Property(x => x.CorrelationId)
             .HasColumnName(nameof(KrdsSyncLog.CorrelationId).ToSnakeCase())
-            .HasColumnType(ColumnTypes.UniqueIdentifier)
-            .IsRequired();
+            .HasColumnType(ColumnTypes.UniqueIdentifier);
 
         builder.Property(x => x.Upn)
             .HasColumnName(nameof(KrdsSyncLog.Upn).ToSnakeCase())
-            .HasColumnType(ColumnTypes.CiText)
-            .IsRequired();
+            .HasColumnType(ColumnTypes.CiText);
 
         builder.Property(x => x.PayloadSha256)
             .HasColumnName(nameof(KrdsSyncLog.PayloadSha256).ToSnakeCase())
-            .HasColumnType(ColumnTypes.Text)
-            .IsRequired();
+            .HasColumnType(ColumnTypes.Text);
 
         builder.Property(x => x.SourceEndpoint)
             .HasColumnName(nameof(KrdsSyncLog.SourceEndpoint).ToSnakeCase())
-            .HasColumnType(ColumnTypes.Text)
-            .IsRequired();
+            .HasColumnType(ColumnTypes.Text);
 
         builder.Property(x => x.HttpStatus)
             .HasColumnName(nameof(KrdsSyncLog.HttpStatus).ToSnakeCase())
-            .HasColumnType(ColumnTypes.Integer)
-            .IsRequired();
+            .HasColumnType(ColumnTypes.Integer);
 
         builder.Property(x => x.ProcessedOk)
             .HasColumnName(nameof(KrdsSyncLog.ProcessedOk).ToSnakeCase())
-            .HasColumnType(ColumnTypes.Boolean)
-            .IsRequired();
+            .HasColumnType(ColumnTypes.Boolean);
 
         builder.Property(x => x.Message)
             .HasColumnName(nameof(KrdsSyncLog.Message).ToSnakeCase())
-            .HasColumnType(ColumnTypes.Text)
-            .IsRequired();
+            .HasColumnType(ColumnTypes.Text);
 
         base.Configure(builder);
     }

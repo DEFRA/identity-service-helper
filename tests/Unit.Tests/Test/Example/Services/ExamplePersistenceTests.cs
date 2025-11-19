@@ -2,7 +2,6 @@ namespace Livestock.Auth.Unit.Tests.Test.Example.Services;
 
 using System;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Livestock.Auth.Api.Example.Models;
 using Livestock.Auth.Api.Example.Services;
 using Livestock.Auth.Api.Utils.Mongo;
@@ -58,7 +57,7 @@ public class ExamplePersistenceTests
          Counter = 0
       };
       var result = await persistence.CreateAsync(example);
-      result.Should().BeTrue();
+      result.ShouldBeTrue();
    }
 
     [Fact]
@@ -85,6 +84,6 @@ public class ExamplePersistenceTests
 
         var result = await persistence.CreateAsync(example);
 
-        result.Should().BeFalse();
+        result.ShouldBeFalse();
     }
 }

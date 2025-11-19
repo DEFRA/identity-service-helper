@@ -14,9 +14,9 @@ public class Application : BaseUpdateEntity
 
     public required string TenantName { get; set; }
 
-    public string? Description { get; set; }
+    public string Description { get; set; }
 
-    public required string Status { get; set; }
+    public string Status { get; set; }
 
     public ICollection<Enrolment> Enrolments { get; set; } = new List<Enrolment>();
 }

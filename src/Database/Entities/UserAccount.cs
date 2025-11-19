@@ -9,13 +9,13 @@ using Livestock.Auth.Database.Entities.Base;
 
 public class UserAccount : BaseUpdateEntity
 {
-    public required string Upn { get; set; }
+    public string Upn { get; set; }
 
     public string DisplayName { get; set; } = string.Empty;
 
     public bool AccountEnabled { get; set; }
 
-    public ICollection<Federation> Federations { get; set; } = new List<Federation>();
+    public ICollection<Federation> Federations { get; set; }
 
-    public ICollection<Enrolment> Enrolments { get; set; } = new List<Enrolment>();
+    public ICollection<Enrolment> Enrolments { get; set; }
 }

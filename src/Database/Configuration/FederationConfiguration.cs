@@ -13,8 +13,7 @@ internal class FederationConfiguration : BaseUpdateEntityConfiguration<Federatio
     {
         builder.Property(x => x.UserAccountId)
             .HasColumnName(nameof(Federation.UserAccountId).ToSnakeCase())
-            .HasColumnType(ColumnTypes.UniqueIdentifier)
-            .IsRequired();
+            .HasColumnType(ColumnTypes.UniqueIdentifier);
 
         builder.Property(x => x.TenantName)
             .HasColumnName(nameof(Federation.TenantName).ToSnakeCase())
@@ -40,8 +39,7 @@ internal class FederationConfiguration : BaseUpdateEntityConfiguration<Federatio
 
         builder.Property(x => x.LastSyncedAt)
             .HasColumnName(nameof(Federation.LastSyncedAt).ToSnakeCase())
-            .HasColumnType(ColumnTypes.Timestamp)
-            .IsRequired();
+            .HasColumnType(ColumnTypes.Timestamp);
 
         builder.HasOne(u => u.UserAccount)
             .WithMany(o => o.Federations)
