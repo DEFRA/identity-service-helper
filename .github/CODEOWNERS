@@ -1,0 +1,3 @@
+# CODEOWNERS: specify who owns what. Use @teams or @users.
+# Example: all files owned by you as a default
+* @DEFRA/ids-devteam
