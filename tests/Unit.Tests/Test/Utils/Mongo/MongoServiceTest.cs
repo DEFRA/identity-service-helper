@@ -18,26 +18,26 @@ namespace Livestock.Auth.Unit.Tests.Test.Utils.Mongo
 
         public MongoServiceTests()
         {
-            this._connectionFactoryMock = Substitute.For<IMongoDbClientFactory>();
-            this._loggerFactoryMock = Substitute.For<ILoggerFactory>();
-            this._clientMock = Substitute.For<IMongoClient>();
-            this._collectionMock = Substitute.For<IMongoCollection<TestModel>>();
+            _connectionFactoryMock = Substitute.For<IMongoDbClientFactory>();
+            _loggerFactoryMock = Substitute.For<ILoggerFactory>();
+            _clientMock = Substitute.For<IMongoClient>();
+            _collectionMock = Substitute.For<IMongoCollection<TestModel>>();
 
-            this._connectionFactoryMock
+            _connectionFactoryMock
                 .GetClient()
                 .Returns(Substitute.For<IMongoClient>());
 
-            this._connectionFactoryMock
+            _connectionFactoryMock
                 .GetCollection<TestModel>(Arg.Any<string>())
-                .Returns(this._collectionMock);
+                .Returns(_collectionMock);
 
-            this._collectionMock.CollectionNamespace.Returns(new CollectionNamespace("test", "example"));
-            this._collectionMock.Database.DatabaseNamespace.Returns(new DatabaseNamespace("test"));
+            _collectionMock.CollectionNamespace.Returns(new CollectionNamespace("test", "example"));
+            _collectionMock.Database.DatabaseNamespace.Returns(new DatabaseNamespace("test"));
 
 
-            this._service = new TestMongoService(this._connectionFactoryMock, "testCollection", NullLoggerFactory.Instance);
+            _service = new TestMongoService(_connectionFactoryMock, "testCollection", NullLoggerFactory.Instance);
 
-            this._collectionMock.DidNotReceive().Indexes.CreateMany(Arg.Any<IEnumerable<CreateIndexModel<TestModel>>>());
+            _collectionMock.DidNotReceive().Indexes.CreateMany(Arg.Any<IEnumerable<CreateIndexModel<TestModel>>>());
         }
 
         [Fact]
@@ -47,19 +47,19 @@ namespace Livestock.Auth.Unit.Tests.Test.Utils.Mongo
             {
                 new(Builders<TestModel>.IndexKeys.Ascending(x => x.Name)),
             };
-            this._service.SetIndexes(indexes);
-            this._service.RunEnsureIndexes();
+            _service.SetIndexes(indexes);
+            _service.RunEnsureIndexes();
 
-            this._collectionMock.Received(1).Indexes.CreateMany(indexes);
+            _collectionMock.Received(1).Indexes.CreateMany(indexes, TestContext.Current.CancellationToken);
         }
 
         [Fact]
         public void EnsureIndexes_DoesNotCreateIndexes_WhenIndexesAreNotDefined()
         {
-            this._service.SetIndexes(new List<CreateIndexModel<TestModel>>());
-            this._service.RunEnsureIndexes();
+            _service.SetIndexes(new List<CreateIndexModel<TestModel>>());
+            _service.RunEnsureIndexes();
 
-            this._collectionMock.DidNotReceive().Indexes.CreateMany(Arg.Any<IEnumerable<CreateIndexModel<TestModel>>>());
+            _collectionMock.DidNotReceive().Indexes.CreateMany(Arg.Any<IEnumerable<CreateIndexModel<TestModel>>>(), TestContext.Current.CancellationToken);
         }
 
         public class TestModel
@@ -85,28 +85,28 @@ namespace Livestock.Auth.Unit.Tests.Test.Utils.Mongo
 
             public List<CreateIndexModel<TestModel>> GetIndexes()
             {
-                return this.Indexes;
+                return Indexes;
             }
 
             public void SetIndexes(List<CreateIndexModel<TestModel>> indexes)
             {
-                this.Indexes = indexes;
+                Indexes = indexes;
             }
 
             protected override List<CreateIndexModel<TestModel>> DefineIndexes(
                 IndexKeysDefinitionBuilder<TestModel> builder)
             {
-                if (this.GetIndexes() == null)
+                if (GetIndexes() == null)
                 {
-                    throw new System.Exception("Indexes not defined");
+                    throw new Exception("Indexes not defined");
                 }
 
-                return this.GetIndexes();
+                return GetIndexes();
             }
 
             public void RunEnsureIndexes()
             {
-                base.EnsureIndexes();
+                EnsureIndexes();
             }
         }
     }

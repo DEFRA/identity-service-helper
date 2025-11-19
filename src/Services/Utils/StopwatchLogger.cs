@@ -1,4 +1,4 @@
-// <copyright file="StopWatchLoggerExtensions.cs" company="Defra">
+// <copyright file="StopwatchLogger.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 

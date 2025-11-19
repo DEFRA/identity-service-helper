@@ -9,21 +9,6 @@ using Livestock.Auth.Api.Example.Models;
 using Livestock.Auth.Api.Utils.Mongo;
 using MongoDB.Driver;
 
-public interface IExamplePersistence
-{
-    public Task<bool> CreateAsync(ExampleModel example);
-
-    public Task<ExampleModel?> GetByExampleName(string name);
-
-    public Task<IEnumerable<ExampleModel>> GetAllAsync();
-
-    public Task<IEnumerable<ExampleModel>> SearchByValueAsync(string searchTerm);
-
-    public Task<bool> UpdateAsync(ExampleModel example);
-
-    public Task<bool> DeleteAsync(string name);
-}
-
 /**
  * An example of how to persist data in MongoDB.
  * The base class `MongoService` provides access to the db collection as well as providing helpers to

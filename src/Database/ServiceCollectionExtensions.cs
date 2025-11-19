@@ -30,7 +30,7 @@ public static class ServiceCollectionExtensions
     /// 58030: I/O error
     /// 08000/08003/08006/08001/08004/08007/08P01: Connection-related errors (connection exception class 08)
     /// </summary>
-    private static readonly string[] s_errorCodes = ["40001", "40P01", "55P03", "57P03"];
+    private static readonly string[] ErrorCodes = ["40001", "40P01", "55P03", "57P03"];
 
     public static void AddAuthDatabase(this IServiceCollection services, IConfiguration configuration)
     {
@@ -49,7 +49,7 @@ public static class ServiceCollectionExtensions
                             npgsqlOptions.EnableRetryOnFailure(
                                 maxRetryCount: MaxRetryCount,
                                 maxRetryDelay: TimeSpan.FromSeconds(MaxRetryDelay),
-                                errorCodesToAdd: s_errorCodes);
+                                errorCodesToAdd: ErrorCodes);
                             npgsqlOptions.CommandTimeout(CommandTimeout);
                         })
                     .EnableSensitiveDataLogging(isProd);
@@ -70,8 +70,10 @@ public static class ServiceCollectionExtensions
             context.Database.Migrate();
         }
         #endif
-        
+
         if (context.Database.CanConnect())
+        {
             context.Database.OpenConnection();
+        }
     }
 }

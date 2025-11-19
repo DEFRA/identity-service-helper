@@ -30,14 +30,19 @@ public static class ExampleEndpoints
         ExampleModel example, IExamplePersistence examplePersistence, IValidator<ExampleModel> validator)
     {
         var validationResult = await validator.ValidateAsync(example);
-        if (!validationResult.IsValid) return Results.BadRequest(validationResult.Errors);
+        if (!validationResult.IsValid)
+        {
+            return Results.BadRequest(validationResult.Errors);
+        }
 
         var created = await examplePersistence.CreateAsync(example);
         if (!created)
+        {
             return Results.BadRequest(new List<ValidationFailure>
             {
-                new("Example", "An example record with this name already exists")
+                new("Example", "An example record with this name already exists"),
             });
+        }
 
         return Results.Created($"/example/{example.Name}", example);
     }
@@ -45,7 +50,6 @@ public static class ExampleEndpoints
     private static async Task<IResult> GetAll(
         IExamplePersistence examplePersistence, string? searchTerm)
     {
-        
         if (searchTerm is not null && !string.IsNullOrWhiteSpace(searchTerm))
         {
             var matched = await examplePersistence.SearchByValueAsync(searchTerm);
@@ -64,12 +68,17 @@ public static class ExampleEndpoints
     }
 
     private static async Task<IResult> Update(
-        string name, ExampleModel example, IExamplePersistence examplePersistence,
+        string name,
+        ExampleModel example,
+        IExamplePersistence examplePersistence,
         IValidator<ExampleModel> validator)
     {
         example.Name = name;
         var validationResult = await validator.ValidateAsync(example);
-        if (!validationResult.IsValid) return Results.BadRequest(validationResult.Errors);
+        if (!validationResult.IsValid)
+        {
+            return Results.BadRequest(validationResult.Errors);
+        }
 
         var updated = await examplePersistence.UpdateAsync(example);
         return updated ? Results.Ok(example) : Results.NotFound();

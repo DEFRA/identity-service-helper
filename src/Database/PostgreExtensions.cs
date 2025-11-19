@@ -14,5 +14,4 @@ public static class PostgreExtensions
     public const string PgTerm = "pg_term";
     public const string FuzzyStrMatch = "fuzzystrmatch";
     public const string Citext = "citext";
-
 }

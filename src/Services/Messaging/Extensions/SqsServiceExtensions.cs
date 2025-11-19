@@ -28,7 +28,7 @@ public static class SqsServiceExtensions
             .AddTransient<KeeperDataImportedHandler>()
             .AddHostedService<KeeperDataImportService>();
 
-        if (awsConfig.UseLocalStack)
+        if (awsConfig is { UseLocalStack: true })
         {
             services.AddSingleton<IAmazonSQS>(_ => new AmazonSQSClient(
                 new BasicAWSCredentials(

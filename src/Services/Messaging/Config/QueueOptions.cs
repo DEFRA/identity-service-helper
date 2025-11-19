@@ -12,5 +12,5 @@ public class QueueOptions
 
     public int MaxNumberOfMessages { get; set; } = 1;
 
-    public List<string> SupportedMessageTypes { get; set; } = new ();
+    public List<string> SupportedMessageTypes { get; set; } = new();
 }

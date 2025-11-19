@@ -87,6 +87,7 @@ namespace Livestock.Auth.Database.Migrations
                         .HasColumnName("id");
 
                     b.Property<Guid>("ApplicationId")
+                        .IsRequired()
                         .HasColumnType("uuid")
                         .HasColumnName("application_id");
 
@@ -135,6 +136,7 @@ namespace Livestock.Auth.Database.Migrations
                         .HasDefaultValueSql("now()");
 
                     b.Property<Guid>("UserAccountId")
+                        .IsRequired()
                         .HasColumnType("uuid")
                         .HasColumnName("user_account_id");
 
@@ -166,6 +168,7 @@ namespace Livestock.Auth.Database.Migrations
                         .HasColumnName("last_synced_at");
 
                     b.Property<Guid>("ObjectId")
+                        .IsRequired()
                         .HasColumnType("uuid")
                         .HasColumnName("object_id");
 
@@ -195,6 +198,7 @@ namespace Livestock.Auth.Database.Migrations
                         .HasDefaultValueSql("now()");
 
                     b.Property<Guid>("UserAccountId")
+                        .IsRequired()
                         .HasColumnType("uuid")
                         .HasColumnName("user_account_id");
 
@@ -215,10 +219,12 @@ namespace Livestock.Auth.Database.Migrations
                         .HasColumnName("id");
 
                     b.Property<Guid>("CorrelationId")
+                        .IsRequired()
                         .HasColumnType("uuid")
                         .HasColumnName("correlation_id");
 
                     b.Property<int>("HttpStatus")
+                        .IsRequired()
                         .HasColumnType("integer")
                         .HasColumnName("http_status");
 
@@ -239,6 +245,7 @@ namespace Livestock.Auth.Database.Migrations
                         .HasDefaultValueSql("now()");
 
                     b.Property<bool>("ProcessedOk")
+                        .IsRequired()
                         .HasColumnType("boolean")
                         .HasColumnName("processed_ok");
 

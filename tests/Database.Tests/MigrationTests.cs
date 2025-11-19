@@ -17,7 +17,7 @@ public class MigrationTests(PostgreContainerFixture fixture) : BaseTests(fixture
         var migrations = await Context.Database.GetAppliedMigrationsAsync(cancellationToken: TestContext.Current.CancellationToken);
         migrations.ShouldNotBeEmpty();
     }
-    
+
     [Fact,Description("All Base tables should exist")]
     public void ShouldAllBaseTablesExist()
     {

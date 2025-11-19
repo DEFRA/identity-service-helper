@@ -36,7 +36,10 @@ public class Program
         var configuration = builder.Configuration
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+            .AddJsonFile(
+                $"appsettings.{builder.Environment.EnvironmentName}.json",
+                optional: true,
+                reloadOnChange: true)
             .AddEnvironmentVariables()
             .AddCommandLine(args);
 
@@ -95,7 +98,6 @@ public class Program
         builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
         // Set up the endpoints and their dependencies
-
         builder.Services.AddTransient<IRepository<UserAccount>, UsersRepository>(service =>
             new UsersRepository(service.GetRequiredService<AuthContext>()));
     }

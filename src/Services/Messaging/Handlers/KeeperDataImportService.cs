@@ -28,8 +28,8 @@ public class KeeperDataImportService : BackgroundService
         ILogger<KeeperDataImportService> logger)
     {
         this.sqs = sqs;
-        this.queueUrl = queueOptions.Value.Url;
-        this.supportedMessageTypes = queueOptions.Value.SupportedMessageTypes;
+        queueUrl = queueOptions.Value.Url;
+        supportedMessageTypes = queueOptions.Value.SupportedMessageTypes;
         this.logger = logger;
         this.handler = handler;
     }
