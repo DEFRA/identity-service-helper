@@ -12,20 +12,11 @@ internal class KrdsSyncLogConfiguration : BaseProcessingEntityConfiguration<Krds
 {
     public override void Configure(EntityTypeBuilder<KrdsSyncLog> builder)
     {
-        builder.HasIndex(x => x.Upn);
         builder.HasIndex(x => x.ReceivedAt);
 
         builder.Property(x => x.CorrelationId)
             .HasColumnName(nameof(KrdsSyncLog.CorrelationId).ToSnakeCase())
             .HasColumnType(ColumnTypes.UniqueIdentifier);
-
-        builder.Property(x => x.Upn)
-            .HasColumnName(nameof(KrdsSyncLog.Upn).ToSnakeCase())
-            .HasColumnType(ColumnTypes.CiText);
-
-        builder.Property(x => x.PayloadSha256)
-            .HasColumnName(nameof(KrdsSyncLog.PayloadSha256).ToSnakeCase())
-            .HasColumnType(ColumnTypes.Text);
 
         builder.Property(x => x.SourceEndpoint)
             .HasColumnName(nameof(KrdsSyncLog.SourceEndpoint).ToSnakeCase())

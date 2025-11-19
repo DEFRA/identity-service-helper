@@ -103,7 +103,31 @@ before the script is applied there may be some manual steps required to edit the
 Once you have edited your script to make it parseable and usable in Liquibase. Then you can add the script to the Liquibase
 changelog file.
 
+``` bash
 
+# Remove any references to Migrations table creations etc
+
+CREATE TABLE IF NOT EXISTS "__EFMigrationsHistory" (
+    "MigrationId" character varying(150) NOT NULL,
+    "ProductVersion" character varying(32) NOT NULL,
+    CONSTRAINT "PK___EFMigrationsHistory" PRIMARY KEY ("MigrationId")
+);
+
+
+# Remove any Transaction Scope statements
+# Liquibase will wrap everything in a transaction scope by default 
+
+START TRANSACTION;
+DO $EF$
+BEGIN
+    IF NOT EXISTS(SELECT 1 FROM pg_namespace WHERE nspname = 'defra-ci') THEN
+        CREATE SCHEMA "defra-ci";
+    END IF;
+END $EF$;
+
+## Should just become 
+ CREATE SCHEMA "defra-ci";
+```
 
 A more extensive setup is available in [github.com/DEFRA/cdp-local-environment](https://github.com/DEFRA/cdp-local-environment)
 
