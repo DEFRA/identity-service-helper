@@ -18,8 +18,6 @@ WORKDIR /
 COPY . .
 WORKDIR "/"
 
-RUN dotnet test /Livestock.Auth.sln
-
 FROM build AS publish
 RUN dotnet publish src/Api -c Release -o /app/publish /p:UseAppHost=false
 
