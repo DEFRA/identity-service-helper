@@ -1,11 +1,12 @@
 <Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Api/Api.csproj" />
+    <Project Path="src/Database/Database.csproj" />
+    <Project Path="src/Services/Services.csproj" />
+  </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Database.Tests/Database.Tests.csproj" />
     <Project Path="tests/Endpoint.Tests/Endpoint.Tests.csproj" />
     <Project Path="tests/Unit.Tests/Unit.Tests.csproj" />
   </Folder>
-
-  <Project Path="src/Api/Api.csproj" />
-  <Project Path="src/Database/Database.csproj" />
-  <Project Path="src/Services/Services.csproj" />
 </Solution>
