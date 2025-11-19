@@ -21,7 +21,10 @@ public class KeeperDataImportedHandler(
     {
         using var stopwatch = new StopwatchLogger(logger);
         KeeperDataImportedMessage? tmp = JsonConvert.DeserializeObject<KeeperDataImportedMessage>(message.Body);
-        Requires.NotNull(tmp);
+        if (tmp is null)
+        {
+            throw new InvalidOperationException("Unable to deserialize message");
+        }
 
         logger.LogInformation("Received {id} message {Message} from queue {QueueUrl}", tmp.MessageId, tmp.Message, message.ReceiptHandle);
 

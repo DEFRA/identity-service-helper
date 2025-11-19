@@ -1,10 +1,15 @@
-﻿using System.Linq.Expressions;
-using Livestock.Auth.Database;
-using Livestock.Auth.Database.Entities;
+﻿// <copyright file="UsersRepository.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
 
 namespace Livestock.Auth.Services;
 
-public class UsersRepository(AuthContext context): IRepository<UserAccount>
+using System.Linq.Expressions;
+using Livestock.Auth.Database;
+using Livestock.Auth.Database.Entities;
+
+public class UsersRepository(AuthContext context)
+    : IRepository<UserAccount>
 {
     public async Task<List<UserAccount>> GetAll()
     {

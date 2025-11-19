@@ -11,10 +11,10 @@ public static class CdpLogging
 {
     [ExcludeFromCodeCoverage]
     public static void Configuration(HostBuilderContext ctx, LoggerConfiguration config)
-    { 
+    {
         var httpAccessor = ctx.Configuration.Get<HttpContextAccessor>();
         var traceIdHeader = ctx.Configuration.GetValue<string>("TraceHeader");
-        var serviceVersion = Environment.GetEnvironmentVariable("SERVICE_VERSION") ?? "";
+        var serviceVersion = Environment.GetEnvironmentVariable("SERVICE_VERSION") ?? string.Empty;
 
         config
             .ReadFrom.Configuration(ctx.Configuration)

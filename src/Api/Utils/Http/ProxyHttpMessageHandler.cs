@@ -25,8 +25,8 @@ public class ProxyHttpMessageHandler : HttpClientHandler
             }
 
             // Remove credentials from URI to so they don't get logged.
-            uri.UserName = "";
-            uri.Password = "";
+            uri.UserName = string.Empty;
+            uri.Password = string.Empty;
             proxy.Address = uri.Uri;
         }
 
@@ -38,7 +38,11 @@ public class ProxyHttpMessageHandler : HttpClientHandler
     {
         var username = uri.UserName;
         var password = uri.Password;
-        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password)) return null;
+        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+        {
+            return null;
+        }
+
         return new NetworkCredential(username, password);
     }
 }

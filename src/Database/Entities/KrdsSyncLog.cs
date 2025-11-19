@@ -8,17 +8,17 @@ using Livestock.Auth.Database.Entities.Base;
 
 public class KrdsSyncLog : BaseProcessingEntity
 {
-    public Guid CorrelationId { get; set; }
+    public required Guid CorrelationId { get; set; }
 
-    public string Upn { get; set; }
+    public required string Upn { get; set; }
 
-    public string PayloadSha256 { get; set; }
+    public required string PayloadSha256 { get; set; }
 
-    public string SourceEndpoint { get; set; }
+    public required string SourceEndpoint { get; set; }
 
-    public int HttpStatus { get; set; }
+    public required int HttpStatus { get; set; }
 
-    public bool ProcessedOk { get; set; }
+    public required bool ProcessedOk { get; set; }
 
-    public string Message { get; set; }
+    public required string Message { get; set; }
 }

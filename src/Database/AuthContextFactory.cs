@@ -7,7 +7,6 @@ namespace Livestock.Auth.Database;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore.Design;
 
-[ExcludeFromCodeCoverage]
 /// <summary>
 ///     This is a factory class that is used by the EF Core tools to create an instance of the application db
 ///     context only for the purpose of generating the migrations.
@@ -17,6 +16,7 @@ using Microsoft.EntityFrameworkCore.Design;
 ///     and it is not meant to be pointed to any real database or Local DB instance.
 ///     Intentionally excluded from Code Coverage because this is just for development use
 /// </summary>
+[ExcludeFromCodeCoverage]
 internal class AuthContextFactory : IDesignTimeDbContextFactory<AuthContext>
 {
     private const string LocalBuild = "LocalBuild";

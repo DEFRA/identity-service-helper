@@ -21,8 +21,11 @@ public static class StringExtensions
                 stringBuilder.Append(char.ToLowerInvariant(c));
             }
             else
+            {
                 stringBuilder.Append(c);
+            }
         }
+
         return stringBuilder.ToString();
     }
 }

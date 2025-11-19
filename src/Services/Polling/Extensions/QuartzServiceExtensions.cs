@@ -4,6 +4,7 @@
 
 namespace Livestock.Auth.Services.Polling.Extensions;
 
+using System.Diagnostics;
 using Livestock.Auth.Services.Polling.Config;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,7 +22,10 @@ public static class QuartzServiceExtensions
             foreach (var serviceConfig in polledServices.GetChildren())
             {
                 var baseConfig = serviceConfig.Get<BasePollingServiceConfiguration>();
-                Requires.NotNull(baseConfig);
+                if (baseConfig == null)
+                {
+                    throw new InvalidOperationException($"Invalid configuration for service '{serviceConfig.Key}'");
+                }
 
                 var serviceType = GetType(baseConfig.ServiceType);
                 var interfaceType = GetType(baseConfig.InterfaceType);

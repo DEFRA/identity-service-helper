@@ -34,7 +34,7 @@ namespace Livestock.Auth.Database.Migrations
                     description = table.Column<string>(type: "text", nullable: false),
                     status = table.Column<string>(type: "text", nullable: false, defaultValue: "active", comment: "active/inactive/deprecated"),
                     created_at = table.Column<DateTime>(type: "TimestampTz", nullable: false, defaultValueSql: "now()"),
-                    updated_at = table.Column<DateTime>(type: "TimestampTz", nullable: false, defaultValueSql: "now()")
+                    updated_at = table.Column<DateTime>(type: "TimestampTz", nullable: false, defaultValueSql: "now()"),
                 },
                 constraints: table =>
                 {
@@ -55,7 +55,7 @@ namespace Livestock.Auth.Database.Migrations
                     processed_ok = table.Column<bool>(type: "boolean", nullable: false),
                     message = table.Column<string>(type: "text", nullable: false),
                     received_at = table.Column<DateTime>(type: "TimestampTz", nullable: false, defaultValueSql: "now()"),
-                    processed_at = table.Column<DateTime>(type: "TimestampTz", nullable: false, defaultValueSql: "now()")
+                    processed_at = table.Column<DateTime>(type: "TimestampTz", nullable: false, defaultValueSql: "now()"),
                 },
                 constraints: table =>
                 {
@@ -72,7 +72,7 @@ namespace Livestock.Auth.Database.Migrations
                     display_name = table.Column<string>(type: "varchar", maxLength: 256, nullable: false),
                     account_enabled = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
                     created_at = table.Column<DateTime>(type: "TimestampTz", nullable: false, defaultValueSql: "now()"),
-                    updated_at = table.Column<DateTime>(type: "TimestampTz", nullable: false, defaultValueSql: "now()")
+                    updated_at = table.Column<DateTime>(type: "TimestampTz", nullable: false, defaultValueSql: "now()"),
                 },
                 constraints: table =>
                 {
@@ -94,7 +94,7 @@ namespace Livestock.Auth.Database.Migrations
                     enrolled_at = table.Column<DateTime>(type: "TimestampTz", nullable: false, defaultValueSql: "now()"),
                     expires_at = table.Column<DateTime>(type: "TimestampTz", nullable: false),
                     created_at = table.Column<DateTime>(type: "TimestampTz", nullable: false, defaultValueSql: "now()"),
-                    updated_at = table.Column<DateTime>(type: "TimestampTz", nullable: false, defaultValueSql: "now()")
+                    updated_at = table.Column<DateTime>(type: "TimestampTz", nullable: false, defaultValueSql: "now()"),
                 },
                 constraints: table =>
                 {
@@ -128,7 +128,7 @@ namespace Livestock.Auth.Database.Migrations
                     sync_status = table.Column<string>(type: "text", nullable: false, defaultValue: "linked"),
                     last_synced_at = table.Column<DateTime>(type: "TimestampTz", nullable: false),
                     created_at = table.Column<DateTime>(type: "TimestampTz", nullable: false, defaultValueSql: "now()"),
-                    updated_at = table.Column<DateTime>(type: "TimestampTz", nullable: false, defaultValueSql: "now()")
+                    updated_at = table.Column<DateTime>(type: "TimestampTz", nullable: false, defaultValueSql: "now()"),
                 },
                 constraints: table =>
                 {

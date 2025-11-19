@@ -7,16 +7,36 @@ namespace Livestock.Auth.Database;
 using System.Reflection;
 using Livestock.Auth.Database.Entities;
 
-public class AuthContext(DbContextOptions<AuthContext> options) : DbContext(options)
+/// <summary>
+/// The Authorisation DbContext.
+/// </summary>
+/// <param name="options">options to apply to the context.</param>
+public class AuthContext(DbContextOptions<AuthContext> options)
+    : DbContext(options)
 {
+    /// <summary>
+    /// The Applications DbSet.
+    /// </summary>
     public virtual DbSet<Application> Applications { get; set; }
 
+    /// <summary>
+    /// The Federations DbSet.
+    /// </summary>
     public virtual DbSet<Federation> Federations { get; set; }
 
+    /// <summary>
+    /// The Enrolments DbSet.
+    /// </summary>
     public virtual DbSet<Enrolment> Enrolments { get; set; }
 
+    /// <summary>
+    /// The KrdsSyncLogs DbSet.
+    /// </summary>
     public virtual DbSet<KrdsSyncLog> KrdsSyncLogs { get; set; }
 
+    /// <summary>
+    /// The Users DbSet.
+    /// </summary>
     public virtual DbSet<UserAccount> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

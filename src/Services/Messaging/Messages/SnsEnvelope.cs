@@ -1,4 +1,10 @@
+// <copyright file="SnsEnvelope.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
 namespace Livestock.Auth.Services.Messaging.Messages;
+
+using Newtonsoft.Json;
 
 public class SnsEnvelope
 {
@@ -16,7 +22,9 @@ public class SnsEnvelope
 
     public required string Signature { get; set; }
 
-    public required string SigningCertURL { get; set; }
+    [JsonProperty("SigningCertURL")]
+    public required string SigningCertUrl { get; set; }
 
-    public required string UnsubscribeURL { get; set; }
+    [JsonProperty("UnsubscribeURL")]
+    public required string UnsubscribeUrl { get; set; }
 }
