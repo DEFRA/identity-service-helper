@@ -5,11 +5,14 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Livestock.Auth.Database.Tests;
 
+using Collections;
+
+[Collection(nameof(PostgreCollection))]
 public abstract class BaseTests(PostgreContainerFixture fixture) : IAsyncLifetime
 {
 
     protected AuthContext Context { get; private set; } = null!;
-    
+
     public async ValueTask DisposeAsync()
     {
         await Context.DisposeAsync();
@@ -29,11 +32,11 @@ public abstract class BaseTests(PostgreContainerFixture fixture) : IAsyncLifetim
         var serviceProvider = builder.Services.BuildServiceProvider();
         Context =  serviceProvider.GetRequiredService<AuthContext>();
     }
-    
+
     private Dictionary<string, string> ConnectionStringConfiguration => new()
     {
         { $"ConnectionStrings:{DatabaseConstants.ConnectionStringName}", $"{fixture.ConnectionString}" },
         { "Deployment:Environment", "Dev" },
-        
+
     };
 }

@@ -8,11 +8,13 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational"/>
     <PackageReference Include="Npgsql"/>
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+    <PackageReference Include="NBuilder" />
   </ItemGroup>
   <ItemGroup>
     <Using Include="Xunit"/>
     <Using Include="Xunit.v3"/>
     <Using Include="Shouldly" />
+    <Using Include="Livestock.Auth.Database.Tests.Fixtures" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Database\Database.csproj" />
