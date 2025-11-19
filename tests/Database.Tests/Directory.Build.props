@@ -8,8 +8,6 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational"/>
     <PackageReference Include="Npgsql"/>
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
-    <PackageReference Include="xunit.v3" />
-    <PackageReference Include="Shouldly" />
   </ItemGroup>
   <ItemGroup>
     <Using Include="Xunit"/>
