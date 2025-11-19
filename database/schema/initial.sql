@@ -1,8 +1,5 @@
-﻿
-
-CREATE SCHEMA "defra-ci";
-  
-
+﻿CREATE SCHEMA "defra-ci";
+ 
 CREATE EXTENSION IF NOT EXISTS citext;
 
 
