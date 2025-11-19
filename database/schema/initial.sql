@@ -1,8 +1,5 @@
 ﻿CREATE SCHEMA "defra-ci";
- 
 CREATE EXTENSION IF NOT EXISTS citext;
-
-
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE "defra-ci".application (
@@ -24,8 +21,6 @@ COMMENT ON COLUMN "defra-ci".application.status IS 'active/inactive/deprecated';
 CREATE TABLE "defra-ci".krds_sync_log (
     id uuid NOT NULL,
     correlation_id uuid NOT NULL,
-    upn citext NOT NULL,
-    payload_sha256 text NOT NULL,
     source_endpoint text NOT NULL,
     http_status integer NOT NULL,
     processed_ok boolean NOT NULL,
@@ -85,8 +80,6 @@ CREATE INDEX "IX_federation_object_id_tenant_name" ON "defra-ci".federation (obj
 CREATE INDEX "IX_federation_user_account_id" ON "defra-ci".federation (user_account_id);
 
 CREATE INDEX "IX_krds_sync_log_received_at" ON "defra-ci".krds_sync_log (received_at);
-
-CREATE INDEX "IX_krds_sync_log_upn" ON "defra-ci".krds_sync_log (upn);
 
 CREATE INDEX "IX_user_account_upn" ON "defra-ci".user_account (upn);
 

@@ -18,7 +18,7 @@ namespace Livestock.Auth.Database.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("defra-ci")
-                .HasAnnotation("ProductVersion", "9.0.11")
+                .HasAnnotation("ProductVersion", "10.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "citext");
@@ -87,7 +87,6 @@ namespace Livestock.Auth.Database.Migrations
                         .HasColumnName("id");
 
                     b.Property<Guid>("ApplicationId")
-                        .IsRequired()
                         .HasColumnType("uuid")
                         .HasColumnName("application_id");
 
@@ -136,7 +135,6 @@ namespace Livestock.Auth.Database.Migrations
                         .HasDefaultValueSql("now()");
 
                     b.Property<Guid>("UserAccountId")
-                        .IsRequired()
                         .HasColumnType("uuid")
                         .HasColumnName("user_account_id");
 
@@ -168,7 +166,6 @@ namespace Livestock.Auth.Database.Migrations
                         .HasColumnName("last_synced_at");
 
                     b.Property<Guid>("ObjectId")
-                        .IsRequired()
                         .HasColumnType("uuid")
                         .HasColumnName("object_id");
 
@@ -198,7 +195,6 @@ namespace Livestock.Auth.Database.Migrations
                         .HasDefaultValueSql("now()");
 
                     b.Property<Guid>("UserAccountId")
-                        .IsRequired()
                         .HasColumnType("uuid")
                         .HasColumnName("user_account_id");
 
@@ -219,12 +215,10 @@ namespace Livestock.Auth.Database.Migrations
                         .HasColumnName("id");
 
                     b.Property<Guid>("CorrelationId")
-                        .IsRequired()
                         .HasColumnType("uuid")
                         .HasColumnName("correlation_id");
 
                     b.Property<int>("HttpStatus")
-                        .IsRequired()
                         .HasColumnType("integer")
                         .HasColumnName("http_status");
 
@@ -233,11 +227,6 @@ namespace Livestock.Auth.Database.Migrations
                         .HasColumnType("text")
                         .HasColumnName("message");
 
-                    b.Property<string>("PayloadSha256")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("payload_sha256");
-
                     b.Property<DateTime>("ProcessedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TimestampTz")
@@ -245,7 +234,6 @@ namespace Livestock.Auth.Database.Migrations
                         .HasDefaultValueSql("now()");
 
                     b.Property<bool>("ProcessedOk")
-                        .IsRequired()
                         .HasColumnType("boolean")
                         .HasColumnName("processed_ok");
 
@@ -260,16 +248,9 @@ namespace Livestock.Auth.Database.Migrations
                         .HasColumnType("text")
                         .HasColumnName("source_endpoint");
 
-                    b.Property<string>("Upn")
-                        .IsRequired()
-                        .HasColumnType("citext")
-                        .HasColumnName("upn");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ReceivedAt");
-
-                    b.HasIndex("Upn");
 
                     b.ToTable("krds_sync_log", "defra-ci");
                 });

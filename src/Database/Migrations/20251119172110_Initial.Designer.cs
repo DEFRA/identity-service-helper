@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Livestock.Auth.Database.Migrations
 {
     [DbContext(typeof(AuthContext))]
-    [Migration("20251118105435_Initial")]
+    [Migration("20251119172110_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -21,7 +21,7 @@ namespace Livestock.Auth.Database.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("defra-ci")
-                .HasAnnotation("ProductVersion", "9.0.11")
+                .HasAnnotation("ProductVersion", "10.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "citext");
@@ -230,11 +230,6 @@ namespace Livestock.Auth.Database.Migrations
                         .HasColumnType("text")
                         .HasColumnName("message");
 
-                    b.Property<string>("PayloadSha256")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("payload_sha256");
-
                     b.Property<DateTime>("ProcessedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TimestampTz")
@@ -256,16 +251,9 @@ namespace Livestock.Auth.Database.Migrations
                         .HasColumnType("text")
                         .HasColumnName("source_endpoint");
 
-                    b.Property<string>("Upn")
-                        .IsRequired()
-                        .HasColumnType("citext")
-                        .HasColumnName("upn");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ReceivedAt");
-
-                    b.HasIndex("Upn");
 
                     b.ToTable("krds_sync_log", "defra-ci");
                 });
