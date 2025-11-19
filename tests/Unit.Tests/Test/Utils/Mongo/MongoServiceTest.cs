@@ -9,35 +9,35 @@ namespace Livestock.Auth.Unit.Tests.Test.Utils.Mongo
 
     public class MongoServiceTests
     {
-        private readonly IMongoDbClientFactory _connectionFactoryMock;
-        private readonly ILoggerFactory _loggerFactoryMock;
-        private readonly IMongoClient _clientMock;
-        private readonly IMongoCollection<TestModel> _collectionMock;
+        private readonly IMongoDbClientFactory connectionFactoryMock;
+        private readonly ILoggerFactory loggerFactoryMock;
+        private readonly IMongoClient clientMock;
+        private readonly IMongoCollection<TestModel> collectionMock;
 
-        private readonly TestMongoService _service;
+        private readonly TestMongoService service;
 
         public MongoServiceTests()
         {
-            _connectionFactoryMock = Substitute.For<IMongoDbClientFactory>();
-            _loggerFactoryMock = Substitute.For<ILoggerFactory>();
-            _clientMock = Substitute.For<IMongoClient>();
-            _collectionMock = Substitute.For<IMongoCollection<TestModel>>();
+            connectionFactoryMock = Substitute.For<IMongoDbClientFactory>();
+            loggerFactoryMock = Substitute.For<ILoggerFactory>();
+            clientMock = Substitute.For<IMongoClient>();
+            collectionMock = Substitute.For<IMongoCollection<TestModel>>();
 
-            _connectionFactoryMock
+            connectionFactoryMock
                 .GetClient()
                 .Returns(Substitute.For<IMongoClient>());
 
-            _connectionFactoryMock
+            connectionFactoryMock
                 .GetCollection<TestModel>(Arg.Any<string>())
-                .Returns(_collectionMock);
+                .Returns(collectionMock);
 
-            _collectionMock.CollectionNamespace.Returns(new CollectionNamespace("test", "example"));
-            _collectionMock.Database.DatabaseNamespace.Returns(new DatabaseNamespace("test"));
+            collectionMock.CollectionNamespace.Returns(new CollectionNamespace("test", "example"));
+            collectionMock.Database.DatabaseNamespace.Returns(new DatabaseNamespace("test"));
 
 
-            _service = new TestMongoService(_connectionFactoryMock, "testCollection", NullLoggerFactory.Instance);
+            service = new TestMongoService(connectionFactoryMock, "testCollection", NullLoggerFactory.Instance);
 
-            _collectionMock.DidNotReceive().Indexes.CreateMany(Arg.Any<IEnumerable<CreateIndexModel<TestModel>>>());
+            collectionMock.DidNotReceive().Indexes.CreateMany(Arg.Any<IEnumerable<CreateIndexModel<TestModel>>>());
         }
 
         [Fact]
@@ -47,19 +47,19 @@ namespace Livestock.Auth.Unit.Tests.Test.Utils.Mongo
             {
                 new(Builders<TestModel>.IndexKeys.Ascending(x => x.Name)),
             };
-            _service.SetIndexes(indexes);
-            _service.RunEnsureIndexes();
+            service.SetIndexes(indexes);
+            service.RunEnsureIndexes();
 
-            _collectionMock.Received(1).Indexes.CreateMany(indexes, TestContext.Current.CancellationToken);
+            collectionMock.Received(1).Indexes.CreateMany(indexes, TestContext.Current.CancellationToken);
         }
 
         [Fact]
         public void EnsureIndexes_DoesNotCreateIndexes_WhenIndexesAreNotDefined()
         {
-            _service.SetIndexes(new List<CreateIndexModel<TestModel>>());
-            _service.RunEnsureIndexes();
+            service.SetIndexes(new List<CreateIndexModel<TestModel>>());
+            service.RunEnsureIndexes();
 
-            _collectionMock.DidNotReceive().Indexes.CreateMany(Arg.Any<IEnumerable<CreateIndexModel<TestModel>>>(), TestContext.Current.CancellationToken);
+            collectionMock.DidNotReceive().Indexes.CreateMany(Arg.Any<IEnumerable<CreateIndexModel<TestModel>>>(), TestContext.Current.CancellationToken);
         }
 
         public class TestModel

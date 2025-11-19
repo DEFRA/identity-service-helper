@@ -16,11 +16,11 @@ public class KeeperDataImportedMessage
 
     public required string Timestamp { get; set; }
 
-    public required string UnsubscribeURL { get; set; }
+    public required string UnsubscribeUrl { get; set; }
 
     public required string SignatureVersion { get; set; }
 
     public required string Signature { get; set; }
 
-    public required string SigningCertURL { get; set; }
+    public required string SigningCertUrl { get; set; }
 }

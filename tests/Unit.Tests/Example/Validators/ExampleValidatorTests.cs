@@ -7,7 +7,7 @@ using MongoDB.Bson;
 
 public class ExampleValidatorTests
 {
-    private readonly ExampleValidator _validator = new();
+    private readonly ExampleValidator validator = new();
 
     [Fact]
     public void ValidModel()
@@ -19,7 +19,7 @@ public class ExampleValidatorTests
             Name = "Test",
             Counter = 0
         };
-        var result = _validator.TestValidate(model);
+        var result = validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
     }
 
@@ -32,7 +32,7 @@ public class ExampleValidatorTests
             Value = "Some value",
             Name = "Test $FOO someName" // letters/numbers/spaces only
         };
-        var result = _validator.TestValidate(model);
+        var result = validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(b => b.Name);
     }
 
@@ -47,7 +47,7 @@ public class ExampleValidatorTests
             Counter = -1
 
         };
-        var result = _validator.TestValidate(model);
+        var result = validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(b => b.Counter);
     }
 
@@ -62,7 +62,7 @@ public class ExampleValidatorTests
             Counter = 0
 
         };
-        var result = _validator.TestValidate(model);
+        var result = validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(b => b.Value);
     }
 

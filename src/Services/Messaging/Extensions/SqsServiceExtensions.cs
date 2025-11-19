@@ -36,7 +36,7 @@ public static class SqsServiceExtensions
                     awsConfig.AccessKey),
                 new AmazonSQSConfig
                 {
-                    ServiceURL = awsConfig.ServiceURL,
+                    ServiceURL = awsConfig.ServiceUrl,
                     AuthenticationRegion = awsConfig.Region,
                 }));
         }

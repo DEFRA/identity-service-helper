@@ -8,7 +8,7 @@ public class AwsConfiguration
 {
     public required bool UseLocalStack { get; init; }
 
-    public string? ServiceURL { get; set; }
+    public string? ServiceUrl { get; set; }
 
     public string? Region { get; set; }
 
