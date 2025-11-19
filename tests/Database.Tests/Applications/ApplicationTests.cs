@@ -27,7 +27,14 @@ public class ApplicationTests(PostgreContainerFixture fixture): BaseTests(fixtur
         result.ShouldSatisfyAllConditions(
             x => x.ShouldNotBeNull(),
             x => x.ShouldBeOfType<Application>(),
-            x => x.CreatedAt.ShouldNotBe(default)
+            x => x.CreatedAt.ShouldNotBe(default),
+            x => x.UpdatedAt.ShouldNotBe(default),
+            x => x.Name.ShouldBe(app.Name),
+            x => x.Description.ShouldBe(app.Description),
+            x => x.Status.ShouldBe(app.Status),
+            x => x.TenantName.ShouldBe(app.TenantName),
+            x => x.ClientId.ShouldBe(app.ClientId),
+            x => x.Id.ShouldNotBe(Guid.Empty)
             );
 
     }
