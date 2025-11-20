@@ -1,8 +1,8 @@
-// <copyright file="Constants.cs" company="Defra">
+// <copyright file="DatabaseConstants.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Livestock.Auth.Database;
+namespace Defra.Identity.Database;
 
 internal static class DatabaseConstants
 {

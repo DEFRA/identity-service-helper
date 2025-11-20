@@ -4,10 +4,8 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <RootNamespace>Livestock.Auth</RootNamespace>
-    <ProductName>Livestock.Auth</ProductName>
-    
-<!--    <GenerateDocumentationFile>true</GenerateDocumentationFile>-->
+    <RootNamespace>Defra.Identity</RootNamespace>
+    <ProductName>Defra.Identity</ProductName>
   </PropertyGroup>
   
   <!-- global packages -->

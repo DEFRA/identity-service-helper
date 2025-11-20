@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Livestock.Auth.Services.Polling.Config;
+namespace Defra.Identity.Services.Polling.Config;
 
 public class BasePollingServiceConfiguration
 {

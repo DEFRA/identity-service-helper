@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Livestock.Auth.Api.Utils.Http;
+namespace Defra.Identity.Api.Utils.Http;
 
 using System.Diagnostics.CodeAnalysis;
 using System.Net;

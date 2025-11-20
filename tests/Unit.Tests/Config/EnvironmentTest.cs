@@ -1,7 +1,8 @@
-using Microsoft.AspNetCore.Builder;
-using Environment = Livestock.Auth.Api.Config.Environment;
+using Environment = Defra.Identity.Api.Config.Environment;
 
-namespace Livestock.Auth.Unit.Tests.Config;
+namespace Defra.Identity.Unit.Tests.Config;
+
+using Microsoft.AspNetCore.Builder;
 
 public class EnvironmentTest
 {

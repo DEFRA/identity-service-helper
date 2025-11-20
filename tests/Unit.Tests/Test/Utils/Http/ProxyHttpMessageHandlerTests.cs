@@ -1,7 +1,7 @@
-namespace Livestock.Auth.Unit.Tests.Test.Utils.Http;
+namespace Defra.Identity.Unit.Tests.Test.Utils.Http;
 
 using System;
-using Livestock.Auth.Api.Utils.Http;
+using Defra.Identity.Api.Utils.Http;
 
 public class ProxyHttpMessageHandlerTests
 {

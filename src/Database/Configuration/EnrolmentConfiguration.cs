@@ -2,10 +2,10 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Livestock.Auth.Database.Configuration;
+namespace Defra.Identity.Database.Configuration;
 
-using Livestock.Auth.Database.Configuration.Base;
-using Livestock.Auth.Database.Entities;
+using Defra.Identity.Database.Configuration.Base;
+using Defra.Identity.Database.Entities;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 internal class EnrolmentConfiguration

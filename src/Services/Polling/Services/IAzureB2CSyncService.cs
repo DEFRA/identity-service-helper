@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Livestock.Auth.Services.Polling.Services;
+namespace Defra.Identity.Services.Polling.Services;
 
 using Quartz;
 

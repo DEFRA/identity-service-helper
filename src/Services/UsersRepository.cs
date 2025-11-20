@@ -2,11 +2,11 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Livestock.Auth.Services;
+namespace Defra.Identity.Services;
 
 using System.Linq.Expressions;
-using Livestock.Auth.Database;
-using Livestock.Auth.Database.Entities;
+using Defra.Identity.Database;
+using Defra.Identity.Database.Entities;
 
 public class UsersRepository(AuthContext context)
     : IRepository<UserAccount>

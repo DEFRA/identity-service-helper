@@ -1,8 +1,8 @@
-namespace Livestock.Auth.Unit.Tests.Example.Validators;
+namespace Defra.Identity.Unit.Tests.Example.Validators;
 
+using Defra.Identity.Api.Example.Models;
+using Defra.Identity.Api.Example.Validators;
 using FluentValidation.TestHelper;
-using Livestock.Auth.Api.Example.Models;
-using Livestock.Auth.Api.Example.Validators;
 using MongoDB.Bson;
 
 public class ExampleValidatorTests

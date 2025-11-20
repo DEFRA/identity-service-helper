@@ -1,8 +1,7 @@
+namespace Defra.Identity.Database.Tests.Fixtures;
 
 using Microsoft.EntityFrameworkCore;
 using Testcontainers.PostgreSql;
-
-namespace Livestock.Auth.Database.Tests.Fixtures;
 
 public class PostgreContainerFixture : IAsyncLifetime
 {

@@ -2,13 +2,14 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Livestock.Auth.Services.Messaging.Extensions;
+// ReSharper disable once CheckNamespace
+namespace Defra.Identity.Extensions;
 
 using Amazon.Runtime;
 using Amazon.SQS;
-using Livestock.Auth.Services.Config;
-using Livestock.Auth.Services.Messaging.Config;
-using Livestock.Auth.Services.Messaging.Handlers;
+using Defra.Identity.Config;
+using Defra.Identity.MessageProcessor.Config;
+using Defra.Identity.MessageProcessor.Handlers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

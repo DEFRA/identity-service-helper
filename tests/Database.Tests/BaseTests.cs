@@ -1,10 +1,9 @@
-using Livestock.Auth.Database.Tests.Fixtures;
+namespace Defra.Identity.Database.Tests;
+
+using Defra.Identity.Database.Tests.Fixtures;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
-namespace Livestock.Auth.Database.Tests;
-
 using Collections;
 
 [Collection(nameof(PostgreCollection))]

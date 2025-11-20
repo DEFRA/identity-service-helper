@@ -2,21 +2,21 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Livestock.Auth.Api;
+namespace Defra.Identity.Api;
 
 using System.Diagnostics.CodeAnalysis;
+using Defra.Identity.Api.Config;
+using Defra.Identity.Api.Endpoints.Users;
+using Defra.Identity.Api.Utils.Http;
+using Defra.Identity.Api.Utils.Logging;
+using Defra.Identity.Api.Utils.Mongo;
+using Defra.Identity.Config;
+using Defra.Identity.Database;
+using Defra.Identity.Database.Entities;
+using Defra.Identity.Extensions;
+using Defra.Identity.Services;
+using Defra.Identity.Services.Polling.Extensions;
 using FluentValidation;
-using Livestock.Auth.Api.Config;
-using Livestock.Auth.Api.Endpoints.Users;
-using Livestock.Auth.Api.Utils.Http;
-using Livestock.Auth.Api.Utils.Logging;
-using Livestock.Auth.Api.Utils.Mongo;
-using Livestock.Auth.Database;
-using Livestock.Auth.Database.Entities;
-using Livestock.Auth.Services;
-using Livestock.Auth.Services.Config;
-using Livestock.Auth.Services.Messaging.Extensions;
-using Livestock.Auth.Services.Polling.Extensions;
 using Serilog;
 
 public class Program

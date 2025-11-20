@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Livestock.Auth.Services;
+namespace Defra.Identity.Services;
 
 using System.Linq.Expressions;
 

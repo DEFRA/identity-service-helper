@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Livestock.Auth.Database.Migrations
+namespace Defra.Identity.Database.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration

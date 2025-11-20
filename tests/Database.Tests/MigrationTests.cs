@@ -1,10 +1,9 @@
+namespace Defra.Identity.Database.Tests;
+
 using System.ComponentModel;
-using Livestock.Auth.Database.Entities;
-using Livestock.Auth.Database.Tests.Collections;
-using Livestock.Auth.Database.Tests.Fixtures;
-
-namespace Livestock.Auth.Database.Tests;
-
+using Defra.Identity.Database.Entities;
+using Defra.Identity.Database.Tests.Collections;
+using Defra.Identity.Database.Tests.Fixtures;
 using Microsoft.EntityFrameworkCore;
 using Shouldly;
 
