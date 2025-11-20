@@ -20,11 +20,11 @@ public abstract class BaseProcessingEntityConfiguration<TEntity> : IEntityTypeCo
         builder.Property(x => x.ReceivedAt)
             .HasColumnName(nameof(BaseProcessingEntity.ReceivedAt).ToSnakeCase())
             .HasColumnType(ColumnTypes.Timestamp)
-            .HasDefaultValueSql("now()");
+            .HasDefaultValueSql(PostgreExtensions.Now)
+            .ValueGeneratedOnAdd();
 
         builder.Property(x => x.ProcessedAt)
             .HasColumnName(nameof(BaseProcessingEntity.ProcessedAt).ToSnakeCase())
-            .HasColumnType(ColumnTypes.Timestamp)
-            .HasDefaultValueSql("now()");
+            .HasColumnType(ColumnTypes.Timestamp);
     }
 }
