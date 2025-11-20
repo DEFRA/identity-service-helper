@@ -5,6 +5,7 @@
 namespace Livestock.Auth.Database;
 
 using System.Reflection;
+using Livestock.Auth.Database.Entities.Base;
 using Livestock.Auth.Database.Entities;
 
 /// <summary>
@@ -47,5 +48,36 @@ public class AuthContext(DbContextOptions<AuthContext> options)
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         modelBuilder.HasPostgresExtension(PostgreExtensions.UuidGenerator);
         modelBuilder.HasPostgresExtension(PostgreExtensions.Citext);
+    }
+
+    public override int SaveChanges()
+    {
+        var processingEntities = ChangeTracker.Entries()
+            .Where(e => e is { Entity: BaseProcessingEntity, State: EntityState.Modified })
+            .Select(x => x.Entity).Cast<BaseProcessingEntity>().ToList();
+        processingEntities.ForEach(entity => { entity.ProcessedAt = DateTime.UtcNow; });
+
+        var updateEntities = ChangeTracker.Entries()
+            .Where(e => e is { Entity: BaseUpdateEntity, State: EntityState.Modified })
+            .Select(x => x.Entity).Cast<BaseUpdateEntity>().ToList();
+
+        updateEntities.ForEach(entity => { entity.UpdatedAt = DateTime.UtcNow; });
+        return base.SaveChanges();
+    }
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        var processingEntities = ChangeTracker.Entries()
+            .Where(e => e is { Entity: BaseProcessingEntity, State: EntityState.Modified })
+            .Select(x => x.Entity).Cast<BaseProcessingEntity>().ToList();
+        processingEntities.ForEach(entity => { entity.ProcessedAt = DateTime.UtcNow; });
+
+        var updateEntities = ChangeTracker.Entries()
+            .Where(e => e is { Entity: BaseUpdateEntity, State: EntityState.Modified })
+            .Select(x => x.Entity).Cast<BaseUpdateEntity>().ToList();
+
+        updateEntities.ForEach(entity => { entity.UpdatedAt = DateTime.UtcNow; });
+
+        return base.SaveChangesAsync(cancellationToken);
     }
 }
