@@ -2,12 +2,12 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Database.Configuration.Base;
+namespace Livestock.Auth.Database.Configuration;
 
-using Defra.Identity.Database.Entities.Base;
+using Livestock.Auth.Database.Entities.Base;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-public abstract class BaseProcessingEntityConfiguration<TEntity> : IEntityTypeConfiguration<TEntity>
+internal abstract class BaseProcessingEntityConfiguration<TEntity> : IEntityTypeConfiguration<TEntity>
     where TEntity : BaseProcessingEntity
 {
     public virtual void Configure(EntityTypeBuilder<TEntity> builder)

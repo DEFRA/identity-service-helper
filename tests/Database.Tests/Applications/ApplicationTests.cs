@@ -76,6 +76,8 @@ public class ApplicationTests(PostgreContainerFixture fixture): BaseTests(fixtur
 
         var checkUpdated = await Context.Applications.SingleAsync(x => x.ClientId.Equals(clientId), TestContext.Current.CancellationToken);
         checkUpdated.ShouldSatisfyAllConditions(
-            application => application.UpdatedAt.ShouldNotBe(default));
+            application => application.UpdatedAt.ShouldNotBe(default),
+            application => application.Name.ShouldBe("Updated Name")
+            );
     }
 }
