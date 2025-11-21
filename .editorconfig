@@ -77,6 +77,7 @@ dotnet_diagnostic.SA1507.severity = error # SA1507: Code should not contain mult
 dotnet_diagnostic.SA1508.severity = error # SA1508: Closing braces should not be preceded by blank line
 dotnet_diagnostic.SA1516.severity = error # SA1516: Elements should be separated by blank line
 dotnet_diagnostic.SA1518.severity = error # SA1518: Use line endings correctly at end of file
+dotnet_diagnostic.SA1633.severity = error # SA1633: File should have header
 
 # Newline settings
 csharp_new_line_before_open_brace = all
