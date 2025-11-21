@@ -15,7 +15,6 @@ using Defra.Identity.Database;
 using Defra.Identity.Database.Entities;
 using Defra.Identity.Extensions;
 using Defra.Identity.Services;
-using Defra.Identity.Services.Polling.Extensions;
 using FluentValidation;
 using Serilog;
 

@@ -2,9 +2,10 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Services.Polling.Extensions;
+// ReSharper disable once CheckNamespace
+namespace Defra.Identity.Extensions;
 
-using Defra.Identity.Services.Polling.Config;
+using Defra.Identity.PollingProcessor.Config;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
