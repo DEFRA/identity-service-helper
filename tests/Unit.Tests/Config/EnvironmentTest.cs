@@ -1,16 +1,19 @@
-using Microsoft.AspNetCore.Builder;
-using Environment = Livestock.Auth.Api.Config.Environment;
+// <copyright file="EnvironmentTest.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
 
-namespace Livestock.Auth.Unit.Tests.Config;
+namespace Defra.Identity.Unit.Tests.Config;
+
+using Microsoft.AspNetCore.Builder;
+using Environment = Defra.Identity.Api.Config.Environment;
 
 public class EnvironmentTest
 {
-
-   [Fact]
-   public void IsNotDevModeByDefault()
-   { 
-       var builder = WebApplication.CreateEmptyBuilder(new WebApplicationOptions());
-       var isDev = Environment.IsDevMode(builder);
-       Assert.False(isDev);
-   }
+    [Fact]
+    public void IsNotDevModeByDefault()
+    {
+        var builder = WebApplication.CreateEmptyBuilder(new WebApplicationOptions());
+        var isDev = Environment.IsDevMode(builder);
+        Assert.False(isDev);
+    }
 }

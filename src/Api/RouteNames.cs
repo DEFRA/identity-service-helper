@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Livestock.Auth.Api;
+namespace Defra.Identity.Api;
 
 internal static class RouteNames
 {

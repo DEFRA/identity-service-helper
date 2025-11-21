@@ -2,14 +2,14 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Livestock.Auth.Services.Messaging.Handlers;
+namespace Defra.Identity.MessageProcessor.Handlers;
 
 using Amazon.SQS;
 using Amazon.SQS.Model;
-using Livestock.Auth.Services.Messaging.Messages;
+using Defra.Identity.MessageProcessor.Messages;
+using Defra.Identity.Utils;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Utils;
 
 public class KeeperDataImportedHandler(
     ILogger<KeeperDataImportedHandler> logger)

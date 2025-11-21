@@ -1,6 +1,6 @@
 ﻿{
   "profiles": {
-    "indentity-service-helper": {
+    "identity-service-helper": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": false,

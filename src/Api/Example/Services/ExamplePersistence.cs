@@ -2,11 +2,11 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Livestock.Auth.Api.Example.Services;
+namespace Defra.Identity.Api.Example.Services;
 
 using System.Diagnostics.CodeAnalysis;
-using Livestock.Auth.Api.Example.Models;
-using Livestock.Auth.Api.Utils.Mongo;
+using Defra.Identity.Api.Example.Models;
+using Defra.Identity.Api.Utils.Mongo;
 using MongoDB.Driver;
 
 /**

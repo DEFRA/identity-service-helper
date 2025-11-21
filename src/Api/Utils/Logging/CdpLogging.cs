@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Livestock.Auth.Api.Utils.Logging;
+namespace Defra.Identity.Api.Utils.Logging;
 
 using System.Diagnostics.CodeAnalysis;
 using Serilog;

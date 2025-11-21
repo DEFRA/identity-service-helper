@@ -1,5 +1,6 @@
 <Project>
   <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))"/>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore"/>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design"/>
@@ -13,6 +14,6 @@
     <Using Include="Microsoft.EntityFrameworkCore.Metadata.Builders" />
   </ItemGroup>
   <ItemGroup>
-    <InternalsVisibleTo Include="Database.Tests"/>
+    <InternalsVisibleTo Include="Defra.Identity.Database.Tests"/>
   </ItemGroup>
 </Project>

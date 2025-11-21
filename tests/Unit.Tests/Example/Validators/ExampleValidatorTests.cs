@@ -1,8 +1,12 @@
-namespace Livestock.Auth.Unit.Tests.Example.Validators;
+// <copyright file="ExampleValidatorTests.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
 
+namespace Defra.Identity.Unit.Tests.Example.Validators;
+
+using Defra.Identity.Api.Example.Models;
+using Defra.Identity.Api.Example.Validators;
 using FluentValidation.TestHelper;
-using Livestock.Auth.Api.Example.Models;
-using Livestock.Auth.Api.Example.Validators;
 using MongoDB.Bson;
 
 public class ExampleValidatorTests
@@ -14,10 +18,10 @@ public class ExampleValidatorTests
     {
         var model = new ExampleModel
         {
-            Id = new ObjectId(),
+            Id = default,
             Value = "some value",
             Name = "Test",
-            Counter = 0
+            Counter = 0,
         };
         var result = validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
@@ -28,9 +32,9 @@ public class ExampleValidatorTests
     {
         var model = new ExampleModel
         {
-            Id = new ObjectId(),
+            Id = default,
             Value = "Some value",
-            Name = "Test $FOO someName" // letters/numbers/spaces only
+            Name = "Test $FOO someName", // letters/numbers/spaces only
         };
         var result = validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(b => b.Name);
@@ -41,11 +45,10 @@ public class ExampleValidatorTests
     {
         var model = new ExampleModel
         {
-            Id = new ObjectId(),
+            Id = default,
             Value = "Some value",
             Name = "Test",
-            Counter = -1
-
+            Counter = -1,
         };
         var result = validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(b => b.Counter);
@@ -56,14 +59,12 @@ public class ExampleValidatorTests
     {
         var model = new ExampleModel
         {
-            Id = new ObjectId(),
-            Value = "",
+            Id = default,
+            Value = string.Empty,
             Name = "Test",
-            Counter = 0
-
+            Counter = 0,
         };
         var result = validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(b => b.Value);
     }
-
 }

@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Livestock.Auth.Api.Example.Models;
+namespace Defra.Identity.Api.Example.Models;
 
 using System.Text.Json.Serialization;
 using MongoDB.Bson;

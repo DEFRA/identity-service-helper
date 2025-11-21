@@ -2,13 +2,13 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Livestock.Auth.Api.Example.Endpoints;
+namespace Defra.Identity.Api.Example.Endpoints;
 
 using System.Diagnostics.CodeAnalysis;
+using Defra.Identity.Api.Example.Models;
+using Defra.Identity.Api.Example.Services;
 using FluentValidation;
 using FluentValidation.Results;
-using Livestock.Auth.Api.Example.Models;
-using Livestock.Auth.Api.Example.Services;
 
 [ExcludeFromCodeCoverage]
 public static class ExampleEndpoints

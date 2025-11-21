@@ -2,12 +2,12 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Livestock.Auth.Services.Messaging.Handlers;
+namespace Defra.Identity.MessageProcessor.Handlers;
 
 using Amazon.SQS;
 using Amazon.SQS.Model;
-using Livestock.Auth.Services.Messaging.Config;
-using Livestock.Auth.Services.Messaging.Messages;
+using Defra.Identity.MessageProcessor.Config;
+using Defra.Identity.MessageProcessor.Messages;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

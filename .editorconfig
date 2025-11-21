@@ -25,6 +25,7 @@ dotnet_style_qualification_for_field = false:error
 dotnet_style_qualification_for_method = false:error
 dotnet_style_qualification_for_property = false:error
 dotnet_style_require_accessibility_modifiers = for_non_interface_members:suggestion
+csharp_qualified_using_at_nested_scope = true
 
 # Resharper config are for those using Visual Studio community, professional and enterprise with Jetbrains R#
 # Those rules are not applied on Jetbrains Rider, as they come by default there, nor do they apply in Visual Studio Code
@@ -71,6 +72,7 @@ dotnet_diagnostic.SA1117.severity = error # SA1117: Parameters should be on same
 dotnet_diagnostic.SA1127.severity = error # SA1127: Generic type constraints should be on their own line
 dotnet_diagnostic.SA1133.severity = error # SA1133: Do not combine attributes
 dotnet_diagnostic.SA1134.severity = error # SA1134: Attributes should not share line
+dotnet_diagnostic.SA1135.severity = error # SA1135: Using directives should be qualified
 dotnet_diagnostic.SA1507.severity = error # SA1507: Code should not contain multiple blank lines in a row
 dotnet_diagnostic.SA1508.severity = error # SA1508: Closing braces should not be preceded by blank line
 dotnet_diagnostic.SA1516.severity = error # SA1516: Elements should be separated by blank line
