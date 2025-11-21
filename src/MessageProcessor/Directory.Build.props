@@ -7,7 +7,6 @@
     <PackageReference Include="AWSSDK.SQS" />
     <PackageReference Include="Elastic.CommonSchema.Serilog" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
-    <PackageReference Include="MongoDB.Driver" />
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="Serilog.AspNetCore" />
     <PackageReference Include="Serilog.Enrichers.ClientInfo" />

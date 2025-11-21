@@ -1,21 +1,4 @@
 <Project>
   <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))"/>
-  <PropertyGroup>
-    <RootNamespace>$(RootNamespace).$(MSBuildProjectName)</RootNamespace>
-    <AssemblyName>$(RootNamespace)</AssemblyName>
-  </PropertyGroup>
   
-  <!-- Code analysis packages and configuration-->
-  <ItemGroup>
-    <AdditionalFiles Include="$(MSBuildThisFileDirectory)../stylecop.json">
-      <Link>Properties\stylecop.json</Link>
-    </AdditionalFiles>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="StyleCop.Analyzers">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
 </Project>

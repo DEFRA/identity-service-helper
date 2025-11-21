@@ -1,3 +1,7 @@
+// <copyright file="ProxyHttpMessageHandlerTests.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
 namespace Defra.Identity.Unit.Tests.Test.Utils.Http;
 
 using System;
@@ -18,7 +22,8 @@ public class ProxyHttpMessageHandlerTests
     [Fact]
     public void DoNotExtractCredentialsFromUriWithoutThem()
     {
-        var creds = ProxyHttpMessageHandler.GetCredentialsFromUri(new UriBuilder("http://www.example.com"));
+        var creds = ProxyHttpMessageHandler.GetCredentialsFromUri(
+            new UriBuilder("http://www.example.com"));
         Assert.Null(creds);
     }
 }

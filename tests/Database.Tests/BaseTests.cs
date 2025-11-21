@@ -1,16 +1,25 @@
+// <copyright file="BaseTests.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
 namespace Defra.Identity.Database.Tests;
 
+using Defra.Identity.Database.Tests.Collections;
 using Defra.Identity.Database.Tests.Fixtures;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Collections;
 
 [Collection(nameof(PostgreCollection))]
 public abstract class BaseTests(PostgreContainerFixture fixture) : IAsyncLifetime
 {
-
     protected AuthContext Context { get; private set; } = null!;
+
+    private Dictionary<string, string> ConnectionStringConfiguration => new()
+    {
+        { $"ConnectionStrings:{DatabaseConstants.ConnectionStringName}", $"{fixture.ConnectionString}" },
+        { "Deployment:Environment", "Dev" },
+    };
 
     public async ValueTask DisposeAsync()
     {
@@ -29,13 +38,6 @@ public abstract class BaseTests(PostgreContainerFixture fixture) : IAsyncLifetim
 
         app.UseAuthDatabase();
         var serviceProvider = builder.Services.BuildServiceProvider();
-        Context =  serviceProvider.GetRequiredService<AuthContext>();
+        Context = serviceProvider.GetRequiredService<AuthContext>();
     }
-
-    private Dictionary<string, string> ConnectionStringConfiguration => new()
-    {
-        { $"ConnectionStrings:{DatabaseConstants.ConnectionStringName}", $"{fixture.ConnectionString}" },
-        { "Deployment:Environment", "Dev" },
-
-    };
 }

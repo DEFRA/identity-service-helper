@@ -1,15 +1,21 @@
+// <copyright file="PostgreContainerFixture.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
 namespace Defra.Identity.Database.Tests.Fixtures;
 
 using Microsoft.EntityFrameworkCore;
 using Testcontainers.PostgreSql;
 
-public class PostgreContainerFixture : IAsyncLifetime
+public class PostgreContainerFixture
+    : IAsyncLifetime
 {
     private readonly PostgreSqlContainer container = new PostgreSqlBuilder()
         .WithImage("postgres:16")
         .Build();
 
     public string ConnectionString => container.GetConnectionString();
+
     public async ValueTask DisposeAsync()
     {
         await container.StopAsync();

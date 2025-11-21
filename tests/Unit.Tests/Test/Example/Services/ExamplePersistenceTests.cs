@@ -1,3 +1,7 @@
+// <copyright file="ExamplePersistenceTests.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
 namespace Defra.Identity.Unit.Tests.Test.Example.Services;
 
 using System;
@@ -49,15 +53,13 @@ public class ExamplePersistenceTests
             .InsertOneAsync(Arg.Any<ExampleModel>(), cancellationToken: TestContext.Current.CancellationToken)
             .Returns(Task.CompletedTask);
 
-      var example = new ExampleModel
-      {
-         Id = new ObjectId(),
-         Value = "some value",
-         Name = "Test",
-         Counter = 0
-      };
-      var result = await persistence.CreateAsync(example);
-      result.ShouldBeTrue();
+        var example = new ExampleModel
+        {
+            Id = default, Value = "some value", Name = "Test", Counter = 0,
+        };
+
+        var result = await persistence.CreateAsync(example);
+        result.ShouldBeTrue();
    }
 
     [Fact]
@@ -68,22 +70,20 @@ public class ExamplePersistenceTests
         loggerFactoryMock.CreateLogger<ExamplePersistence>().Returns(logMock);
 
         collectionMock
-            .InsertOneAsync(
-                Arg.Any<ExampleModel>())
+            .InsertOneAsync(Arg.Any<ExampleModel>())
             .Returns(Task.FromException<ExampleModel>(new Exception()));
 
         var persistence = new ExamplePersistence(conFactoryMock, loggerFactoryMock);
 
-      var example = new ExampleModel()
-      {
-         Id = new ObjectId(),
-         Value = "some value",
-         Name = "Test",
-         Counter = 0
-      };
+        var example = new ExampleModel()
+        {
+            Id = default,
+            Value = "some value",
+            Name = "Test",
+            Counter = 0,
+        };
 
         var result = await persistence.CreateAsync(example);
-
         result.ShouldBeFalse();
     }
 }
