@@ -4,7 +4,6 @@
 
 namespace Livestock.Auth.Database.Configuration;
 
-using Livestock.Auth.Database.Configuration.Base;
 using Livestock.Auth.Database.Entities;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

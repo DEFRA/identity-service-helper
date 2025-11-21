@@ -11,6 +11,7 @@
   <ItemGroup>
     <Using Include="Microsoft.EntityFrameworkCore"/>
     <Using Include="Microsoft.EntityFrameworkCore.Metadata.Builders" />
+    <Using Include="Livestock.Auth.Database.Entities" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Database.Tests"/>

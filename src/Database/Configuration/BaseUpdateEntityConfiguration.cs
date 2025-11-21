@@ -2,13 +2,13 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Livestock.Auth.Database.Configuration.Base;
+namespace Livestock.Auth.Database.Configuration;
 
 using Livestock.Auth.Database.Entities.Base;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Npgsql.EntityFrameworkCore.PostgreSQL.ValueGeneration;
 
-public abstract class BaseUpdateEntityConfiguration<TEntity> : IEntityTypeConfiguration<TEntity>
+internal abstract class BaseUpdateEntityConfiguration<TEntity> : IEntityTypeConfiguration<TEntity>
     where TEntity : BaseUpdateEntity
 {
     public virtual void Configure(EntityTypeBuilder<TEntity> builder)
