@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Livestock.Auth.Services.Messaging.Config;
+namespace Defra.Identity.MessageProcessor.Config;
 
 public class QueueOptions
 {

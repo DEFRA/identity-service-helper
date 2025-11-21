@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Livestock.Auth.Database.Entities.Base;
+namespace Defra.Identity.Database.Entities.Base;
 
 public abstract class BaseUpdateEntity
 {

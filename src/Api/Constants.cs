@@ -2,7 +2,8 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Livestock.Auth.Api;
+// ReSharper disable once CheckNamespace
+namespace Defra.Identity.Api;
 
 internal static class Constants
 {

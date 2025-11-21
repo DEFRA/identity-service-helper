@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Livestock.Auth.Api.Config;
+namespace Defra.Identity.Api.Config;
 
 public class MongoConfig
 {

@@ -2,10 +2,10 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Livestock.Auth.Api.Endpoints.Users;
+namespace Defra.Identity.Api.Endpoints.Users;
 
-using Livestock.Auth.Database.Entities;
-using Livestock.Auth.Services;
+using Defra.Identity.Database.Entities;
+using Defra.Identity.Services;
 
 public static class UsersEndpoints
 {

@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Livestock.Auth.Services.Messaging.Messages;
+namespace Defra.Identity.MessageProcessor.Messages;
 
 public class KeeperDataImportedMessage
 {

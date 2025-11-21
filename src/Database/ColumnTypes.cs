@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Livestock.Auth.Database;
+namespace Defra.Identity.Database;
 
 public static class ColumnTypes
 {

@@ -2,10 +2,9 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Livestock.Auth.Services.Polling.Extensions;
+namespace Defra.Identity.Services.Polling.Extensions;
 
-using System.Diagnostics;
-using Livestock.Auth.Services.Polling.Config;
+using Defra.Identity.Services.Polling.Config;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
@@ -63,7 +62,7 @@ public static class QuartzServiceExtensions
     {
         var serviceType = AppDomain.CurrentDomain
             .GetAssemblies()
-            .Where(asm => asm.FullName?.StartsWith("Livestock.Auth", StringComparison.OrdinalIgnoreCase) == true)
+            .Where(asm => asm.FullName?.StartsWith("Defra.Identity", StringComparison.OrdinalIgnoreCase) == true)
             .SelectMany(asm => asm.GetTypes())
             .FirstOrDefault(t => string.Equals(t.FullName, typeName, StringComparison.OrdinalIgnoreCase));
 

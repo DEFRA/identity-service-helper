@@ -2,13 +2,13 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Livestock.Auth.Services.Polling.Services;
+namespace Defra.Identity.Services.Polling.Services;
 
-using Livestock.Auth.Services.Polling.Config;
+using Defra.Identity.Services.Polling.Config;
+using Defra.Identity.Utils;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Quartz;
-using Utils;
 
 public class AzureB2CSyncService(
     ILogger<AzureB2CSyncService> logger,

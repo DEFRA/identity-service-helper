@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Livestock.Auth.Services.Config;
+namespace Defra.Identity.Config;
 
 public class AwsConfiguration
 {

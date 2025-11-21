@@ -9,6 +9,7 @@ EXPOSE 443
 RUN apt update && \
     apt install curl -y && \
     apt-get clean && \
+    apt-get install -y supervisor && \
     rm -rf /var/lib/apt/lists/*
 
 # Build stage image
@@ -28,4 +29,4 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 EXPOSE 8085
-ENTRYPOINT ["dotnet", "Livestock.Auth.Api.dll"]
+ENTRYPOINT ["dotnet", "Defra.Identity.Api.dll"]
