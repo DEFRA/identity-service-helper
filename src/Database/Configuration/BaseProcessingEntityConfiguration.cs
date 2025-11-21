@@ -2,12 +2,12 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Livestock.Auth.Database.Configuration;
+namespace Defra.Identity.Database.Configuration.Base;
 
-using Livestock.Auth.Database.Entities.Base;
+using Defra.Identity.Database.Entities.Base;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-internal abstract class BaseProcessingEntityConfiguration<TEntity> : IEntityTypeConfiguration<TEntity>
+public abstract class BaseProcessingEntityConfiguration<TEntity> : IEntityTypeConfiguration<TEntity>
     where TEntity : BaseProcessingEntity
 {
     public virtual void Configure(EntityTypeBuilder<TEntity> builder)
@@ -20,11 +20,11 @@ internal abstract class BaseProcessingEntityConfiguration<TEntity> : IEntityType
         builder.Property(x => x.ReceivedAt)
             .HasColumnName(nameof(BaseProcessingEntity.ReceivedAt).ToSnakeCase())
             .HasColumnType(ColumnTypes.Timestamp)
-            .HasDefaultValueSql(PostgreExtensions.Now)
-            .ValueGeneratedOnAdd();
+            .HasDefaultValueSql("now()");
 
         builder.Property(x => x.ProcessedAt)
             .HasColumnName(nameof(BaseProcessingEntity.ProcessedAt).ToSnakeCase())
-            .HasColumnType(ColumnTypes.Timestamp);
+            .HasColumnType(ColumnTypes.Timestamp)
+            .HasDefaultValueSql("now()");
     }
 }
