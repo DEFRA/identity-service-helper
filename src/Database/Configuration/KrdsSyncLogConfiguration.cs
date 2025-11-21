@@ -2,10 +2,9 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Database.Configuration;
+namespace Livestock.Auth.Database.Configuration;
 
-using Defra.Identity.Database.Configuration.Base;
-using Defra.Identity.Database.Entities;
+using Livestock.Auth.Database.Entities;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 internal class KrdsSyncLogConfiguration : BaseProcessingEntityConfiguration<KrdsSyncLog>
