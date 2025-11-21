@@ -2,6 +2,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Database\Database.csproj" />
     <ProjectReference Include="..\MessageProcessor\MessageProcessor.csproj" />
+    <ProjectReference Include="..\PollingProcessor\PollingProcessor.csproj" />
     <ProjectReference Include="..\Services\Services.csproj" />
     <ProjectReference Include="..\Primitives\Primitives.csproj" />
   </ItemGroup>

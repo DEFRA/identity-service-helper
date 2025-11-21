@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Services.Polling.Config;
+namespace Defra.Identity.PollingProcessor.Config;
 
 public class BasePollingServiceConfiguration
 {

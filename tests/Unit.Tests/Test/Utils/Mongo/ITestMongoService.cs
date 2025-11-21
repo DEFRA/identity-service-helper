@@ -1,10 +1,14 @@
+// <copyright file="ITestMongoService.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
 namespace Defra.Identity.Unit.Tests.Test.Utils.Mongo;
 
 using MongoDB.Driver;
 
 public interface ITestMongoService
 {
-    public List<CreateIndexModel<MongoServiceTests.TestModel>> GetIndexes();
+    List<CreateIndexModel<MongoServiceTests.TestModel>> GetIndexes();
 
-    public void SetIndexes(List<CreateIndexModel<MongoServiceTests.TestModel>> indexes);
+    void SetIndexes(List<CreateIndexModel<MongoServiceTests.TestModel>> indexes);
 }

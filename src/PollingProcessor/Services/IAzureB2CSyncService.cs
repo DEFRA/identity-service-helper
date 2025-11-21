@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Services.Polling.Services;
+namespace Defra.Identity.PollingProcessor.Services;
 
 using Quartz;
 
