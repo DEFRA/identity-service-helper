@@ -39,8 +39,7 @@ public class ApplicationTests(PostgreContainerFixture fixture) : BaseTests(fixtu
             application => application.Status.ShouldBe(app.Status),
             application => application.TenantName.ShouldBe(app.TenantName),
             application => application.ClientId.ShouldBe(app.ClientId),
-            application => application.Id.ShouldNotBe(Guid.Empty)
-            );
+            application => application.Id.ShouldNotBe(Guid.Empty));
     }
 
     [Fact]
@@ -71,8 +70,7 @@ public class ApplicationTests(PostgreContainerFixture fixture) : BaseTests(fixtu
             application => application.Status.ShouldBe(app.Status),
             application => application.TenantName.ShouldBe(app.TenantName),
             application => application.ClientId.ShouldBe(app.ClientId),
-            application => application.Id.ShouldNotBe(Guid.Empty)
-        );
+            application => application.Id.ShouldNotBe(Guid.Empty));
 
         var updated = await Context.Applications.SingleAsync(x => x.ClientId.Equals(clientId), TestContext.Current.CancellationToken);
         updated.Name = "Updated Name";
@@ -83,7 +81,6 @@ public class ApplicationTests(PostgreContainerFixture fixture) : BaseTests(fixtu
         var checkUpdated = await Context.Applications.SingleAsync(x => x.ClientId.Equals(clientId), TestContext.Current.CancellationToken);
         checkUpdated.ShouldSatisfyAllConditions(
             application => application.UpdatedAt.ShouldNotBe(default),
-            application => application.Name.ShouldBe("Updated Name")
-            );
+            application => application.Name.ShouldBe("Updated Name"));
     }
 }
