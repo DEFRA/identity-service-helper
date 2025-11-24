@@ -4,6 +4,7 @@
 
 namespace Defra.Identity.Database.Configuration;
 
+using Defra.Identity.Database.Configuration.Base;
 using Defra.Identity.Database.Entities;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
