@@ -4,6 +4,9 @@
 
 namespace Defra.Identity.PollingProcessor.Config;
 
+using System.Diagnostics.CodeAnalysis;
+
+[ExcludeFromCodeCoverage]
 public class AzureB2CSyncServiceConfiguration
     : BasePollingServiceConfiguration
 {
