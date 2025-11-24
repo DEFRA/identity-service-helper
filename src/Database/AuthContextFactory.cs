@@ -5,6 +5,7 @@
 namespace Defra.Identity.Database;
 
 using System.Diagnostics.CodeAnalysis;
+using Livestock.Auth.Database;
 using Microsoft.EntityFrameworkCore.Design;
 
 /// <summary>

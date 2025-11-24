@@ -1,12 +1,17 @@
-namespace Livestock.Auth.Database.Tests.Applications;
+// <copyright file="ApplicationTests.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
+namespace Defra.Identity.Database.Tests.Applications;
 
 using System.ComponentModel;
-using Entities;
+using Defra.Identity.Database.Entities;
 using Microsoft.EntityFrameworkCore;
 
-public class ApplicationTests(PostgreContainerFixture fixture): BaseTests(fixture)
+public class ApplicationTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 {
-    [Fact, Description("Add a new application and check it's been added")]
+    [Fact]
+    [Description("Add a new application and check it's been added")]
     public async Task ShouldAddApplication()
     {
         var clientId = Guid.NewGuid();
@@ -16,7 +21,7 @@ public class ApplicationTests(PostgreContainerFixture fixture): BaseTests(fixtur
             TenantName = "Test Tenant",
             Name = "Test Application",
             Description = "Test Application Description",
-            Status = "Active"
+            Status = "Active",
         };
 
         await Context.Applications.AddAsync(app, TestContext.Current.CancellationToken);
@@ -38,7 +43,8 @@ public class ApplicationTests(PostgreContainerFixture fixture): BaseTests(fixtur
             );
     }
 
-    [Fact, Description("Same as the above test however this time we update the record to ensure the updated at timestamp is set")]
+    [Fact]
+    [Description("Same as the above test however this time we update the record to ensure the updated at timestamp is set")]
     public async Task ShouldUpdateApplication()
     {
         var clientId = Guid.NewGuid();
@@ -48,7 +54,7 @@ public class ApplicationTests(PostgreContainerFixture fixture): BaseTests(fixtur
             TenantName = "Test Tenant",
             Name = "Test Application",
             Description = "Test Application Description",
-            Status = "Active"
+            Status = "Active",
         };
         await Context.Applications.AddAsync(app, TestContext.Current.CancellationToken);
         await Context.SaveChangesAsync(TestContext.Current.CancellationToken);

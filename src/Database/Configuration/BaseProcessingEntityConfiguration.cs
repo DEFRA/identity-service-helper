@@ -2,9 +2,9 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Livestock.Auth.Database.Configuration;
+namespace Defra.Identity.Database.Configuration;
 
-using Livestock.Auth.Database.Entities.Base;
+using Defra.Identity.Database.Entities.Base;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 internal abstract class BaseProcessingEntityConfiguration<TEntity> : IEntityTypeConfiguration<TEntity>

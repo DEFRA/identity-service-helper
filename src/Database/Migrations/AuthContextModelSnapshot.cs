@@ -11,6 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Defra.Identity.Database.Migrations
 {
     using Defra.Identity.Database;
+    using Livestock.Auth.Database;
 
     [DbContext(typeof(AuthContext))]
     partial class AuthContextModelSnapshot : ModelSnapshot

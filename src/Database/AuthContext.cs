@@ -2,11 +2,11 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Livestock.Auth.Database;
+namespace Defra.Identity.Database;
 
 using System.Reflection;
-using Livestock.Auth.Database.Entities.Base;
-using Livestock.Auth.Database.Entities;
+using Defra.Identity.Database.Entities;
+using Defra.Identity.Database.Entities.Base;
 
 /// <summary>
 /// The Authorisation DbContext.

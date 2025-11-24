@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="20251120142647_Initial.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
