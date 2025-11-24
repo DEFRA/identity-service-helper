@@ -1,0 +1,25 @@
+<Project>
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))"/>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational"/>
+    <PackageReference Include="Npgsql"/>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL"/>
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="Microsoft.EntityFrameworkCore"/>
+    <Using Include="Microsoft.EntityFrameworkCore.Metadata.Builders" />
+    <Using Include="Defra.Identity.Postgre.Database.Entities" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Defra.Identity.Postgre.Database.Tests"/>
+  </ItemGroup>
+  <PropertyGroup>
+    <CollectCoverage>true</CollectCoverage>
+    <Exclude>Postgre.Database.Migrations.*</Exclude>
+    <ExcludeByFile>**/Migrations/*.cs</ExcludeByFile>
+  </PropertyGroup>
+</Project>

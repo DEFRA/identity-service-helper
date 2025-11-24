@@ -4,7 +4,7 @@
 
 namespace Defra.Identity.Api.Endpoints.Users;
 
-using Defra.Identity.Database.Entities;
+using Defra.Identity.Postgre.Database.Entities;
 using Defra.Identity.Services;
 
 public static class UsersEndpoints

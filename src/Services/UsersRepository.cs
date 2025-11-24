@@ -5,8 +5,8 @@
 namespace Defra.Identity.Services;
 
 using System.Linq.Expressions;
-using Defra.Identity.Database;
-using Defra.Identity.Database.Entities;
+using Defra.Identity.Postgre.Database;
+using Defra.Identity.Postgre.Database.Entities;
 
 public class UsersRepository(AuthContext context)
     : IRepository<UserAccount>
