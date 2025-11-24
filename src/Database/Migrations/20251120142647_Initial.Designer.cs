@@ -13,7 +13,7 @@ namespace Defra.Identity.Database.Migrations
     using Defra.Identity.Database;
 
     [DbContext(typeof(AuthContext))]
-    [Migration("20251119172110_Initial")]
+    [Migration("20251120142647_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -73,10 +73,8 @@ namespace Defra.Identity.Database.Migrations
                         .HasComment("Azure AD B2C tenant name e.g defra.onmicrosoft.com");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("TimestampTz")
-                        .HasColumnName("updated_at")
-                        .HasDefaultValueSql("now()");
+                        .HasColumnName("updated_at");
 
                     b.HasKey("Id");
 
@@ -133,10 +131,8 @@ namespace Defra.Identity.Database.Migrations
                         .HasColumnName("status");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("TimestampTz")
-                        .HasColumnName("updated_at")
-                        .HasDefaultValueSql("now()");
+                        .HasColumnName("updated_at");
 
                     b.Property<Guid>("UserAccountId")
                         .HasColumnType("uuid")
@@ -193,10 +189,8 @@ namespace Defra.Identity.Database.Migrations
                         .HasColumnName("trust_level");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("TimestampTz")
-                        .HasColumnName("updated_at")
-                        .HasDefaultValueSql("now()");
+                        .HasColumnName("updated_at");
 
                     b.Property<Guid>("UserAccountId")
                         .HasColumnType("uuid")
@@ -232,10 +226,8 @@ namespace Defra.Identity.Database.Migrations
                         .HasColumnName("message");
 
                     b.Property<DateTime>("ProcessedAt")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("TimestampTz")
-                        .HasColumnName("processed_at")
-                        .HasDefaultValueSql("now()");
+                        .HasColumnName("processed_at");
 
                     b.Property<bool>("ProcessedOk")
                         .HasColumnType("boolean")
@@ -285,10 +277,8 @@ namespace Defra.Identity.Database.Migrations
                         .HasColumnName("display_name");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("TimestampTz")
-                        .HasColumnName("updated_at")
-                        .HasDefaultValueSql("now()");
+                        .HasColumnName("updated_at");
 
                     b.Property<string>("Upn")
                         .IsRequired()

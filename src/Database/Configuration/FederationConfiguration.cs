@@ -4,9 +4,6 @@
 
 namespace Defra.Identity.Database.Configuration;
 
-using Defra.Identity.Database.Configuration.Base;
-using Defra.Identity.Database.Entities;
-
 internal class FederationConfiguration : BaseUpdateEntityConfiguration<Federation>
 {
     public override void Configure(EntityTypeBuilder<Federation> builder)

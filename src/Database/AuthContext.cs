@@ -6,6 +6,7 @@ namespace Defra.Identity.Database;
 
 using System.Reflection;
 using Defra.Identity.Database.Entities;
+using Defra.Identity.Database.Entities.Base;
 
 /// <summary>
 /// The Authorisation DbContext.
@@ -39,6 +40,19 @@ public class AuthContext(DbContextOptions<AuthContext> options)
     /// </summary>
     public virtual DbSet<UserAccount> Users { get; set; }
 
+    public override int SaveChanges()
+    {
+        SetProcessingDateTimes();
+        return base.SaveChanges();
+    }
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        SetProcessingDateTimes();
+
+        return base.SaveChangesAsync(cancellationToken);
+    }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         Requires.NotNull(modelBuilder);
@@ -47,5 +61,20 @@ public class AuthContext(DbContextOptions<AuthContext> options)
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         modelBuilder.HasPostgresExtension(PostgreExtensions.UuidGenerator);
         modelBuilder.HasPostgresExtension(PostgreExtensions.Citext);
+    }
+
+    private void SetProcessingDateTimes()
+    {
+        var processingEntities = ChangeTracker.Entries()
+            .Where(e => e is { Entity: BaseProcessingEntity, State: EntityState.Modified })
+            .Select(x => x.Entity).Cast<BaseProcessingEntity>().ToList();
+
+        processingEntities.ForEach(entity => { entity.ProcessedAt = DateTime.UtcNow; });
+
+        var updateEntities = ChangeTracker.Entries()
+            .Where(e => e is { Entity: BaseUpdateEntity, State: EntityState.Modified })
+            .Select(x => x.Entity).Cast<BaseUpdateEntity>().ToList();
+
+        updateEntities.ForEach(entity => { entity.UpdatedAt = DateTime.UtcNow; });
     }
 }

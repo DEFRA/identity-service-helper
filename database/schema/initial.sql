@@ -1,7 +1,9 @@
-﻿CREATE SCHEMA "defra-ci";
-CREATE EXTENSION IF NOT EXISTS citext;
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+﻿
+CREATE SCHEMA "defra-ci";
+   
 
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS citext;
 CREATE TABLE "defra-ci".application (
     id uuid NOT NULL,
     name text NOT NULL,
@@ -10,7 +12,7 @@ CREATE TABLE "defra-ci".application (
     description text NOT NULL,
     status text NOT NULL DEFAULT 'active',
     created_at TimestampTz NOT NULL DEFAULT (now()),
-    updated_at TimestampTz NOT NULL DEFAULT (now()),
+    updated_at TimestampTz NOT NULL,
     CONSTRAINT "PK_application" PRIMARY KEY (id)
 );
 COMMENT ON COLUMN "defra-ci".application.name IS 'Human readable name for the application e.g Keeper Portal';
@@ -26,7 +28,7 @@ CREATE TABLE "defra-ci".krds_sync_log (
     processed_ok boolean NOT NULL,
     message text NOT NULL,
     received_at TimestampTz NOT NULL DEFAULT (now()),
-    processed_at TimestampTz NOT NULL DEFAULT (now()),
+    processed_at TimestampTz NOT NULL,
     CONSTRAINT "PK_krds_sync_log" PRIMARY KEY (id)
 );
 
@@ -36,7 +38,7 @@ CREATE TABLE "defra-ci".user_account (
     display_name varchar NOT NULL,
     account_enabled boolean NOT NULL DEFAULT TRUE,
     created_at TimestampTz NOT NULL DEFAULT (now()),
-    updated_at TimestampTz NOT NULL DEFAULT (now()),
+    updated_at TimestampTz NOT NULL,
     CONSTRAINT "PK_user_account" PRIMARY KEY (id)
 );
 
@@ -51,7 +53,7 @@ CREATE TABLE "defra-ci".enrolment (
     enrolled_at TimestampTz NOT NULL DEFAULT (now()),
     expires_at TimestampTz NOT NULL,
     created_at TimestampTz NOT NULL DEFAULT (now()),
-    updated_at TimestampTz NOT NULL DEFAULT (now()),
+    updated_at TimestampTz NOT NULL,
     CONSTRAINT "PK_enrolment" PRIMARY KEY (id),
     CONSTRAINT "FK_enrolment_application_application_id" FOREIGN KEY (application_id) REFERENCES "defra-ci".application (id) ON DELETE CASCADE,
     CONSTRAINT "FK_enrolment_user_account_user_account_id" FOREIGN KEY (user_account_id) REFERENCES "defra-ci".user_account (id) ON DELETE CASCADE
@@ -66,7 +68,7 @@ CREATE TABLE "defra-ci".federation (
     sync_status text NOT NULL DEFAULT 'linked',
     last_synced_at TimestampTz NOT NULL,
     created_at TimestampTz NOT NULL DEFAULT (now()),
-    updated_at TimestampTz NOT NULL DEFAULT (now()),
+    updated_at TimestampTz NOT NULL,
     CONSTRAINT "PK_federation" PRIMARY KEY (id),
     CONSTRAINT "FK_federation_user_account_user_account_id" FOREIGN KEY (user_account_id) REFERENCES "defra-ci".user_account (id)
 );

@@ -12,8 +12,14 @@
   <ItemGroup>
     <Using Include="Microsoft.EntityFrameworkCore"/>
     <Using Include="Microsoft.EntityFrameworkCore.Metadata.Builders" />
+    <Using Include="Defra.Identity.Database.Entities" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Defra.Identity.Database.Tests"/>
   </ItemGroup>
+  <PropertyGroup>
+    <CollectCoverage>true</CollectCoverage>
+    <Exclude>.Database.Migrations.*</Exclude>
+    <ExcludeByFile>**/Migrations/*.cs</ExcludeByFile>
+  </PropertyGroup>
 </Project>

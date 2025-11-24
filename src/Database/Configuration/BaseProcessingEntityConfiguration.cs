@@ -2,12 +2,12 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Database.Configuration.Base;
+namespace Defra.Identity.Database.Configuration;
 
 using Defra.Identity.Database.Entities.Base;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-public abstract class BaseProcessingEntityConfiguration<TEntity> : IEntityTypeConfiguration<TEntity>
+internal abstract class BaseProcessingEntityConfiguration<TEntity> : IEntityTypeConfiguration<TEntity>
     where TEntity : BaseProcessingEntity
 {
     public virtual void Configure(EntityTypeBuilder<TEntity> builder)
@@ -20,11 +20,11 @@ public abstract class BaseProcessingEntityConfiguration<TEntity> : IEntityTypeCo
         builder.Property(x => x.ReceivedAt)
             .HasColumnName(nameof(BaseProcessingEntity.ReceivedAt).ToSnakeCase())
             .HasColumnType(ColumnTypes.Timestamp)
-            .HasDefaultValueSql("now()");
+            .HasDefaultValueSql(PostgreExtensions.Now)
+            .ValueGeneratedOnAdd();
 
         builder.Property(x => x.ProcessedAt)
             .HasColumnName(nameof(BaseProcessingEntity.ProcessedAt).ToSnakeCase())
-            .HasColumnType(ColumnTypes.Timestamp)
-            .HasDefaultValueSql("now()");
+            .HasColumnType(ColumnTypes.Timestamp);
     }
 }
