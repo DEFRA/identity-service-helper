@@ -12,7 +12,7 @@
   <ItemGroup>
     <Using Include="Microsoft.EntityFrameworkCore"/>
     <Using Include="Microsoft.EntityFrameworkCore.Metadata.Builders" />
-    <Using Include="Livestock.Auth.Database.Entities" />
+    <Using Include="Defra.Identity.Database.Entities" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Defra.Identity.Database.Tests"/>

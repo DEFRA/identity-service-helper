@@ -4,7 +4,6 @@
 
 namespace Defra.Identity.Database;
 
-using Livestock.Auth.Database;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
