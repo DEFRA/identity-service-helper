@@ -16,4 +16,9 @@
   <ItemGroup>
     <InternalsVisibleTo Include="Database.Tests"/>
   </ItemGroup>
+  <PropertyGroup>
+    <CollectCoverage>true</CollectCoverage>
+    <Exclude>.Database.Migrations.*</Exclude>
+    <ExcludeByFile>**/Migrations/*.cs</ExcludeByFile>
+  </PropertyGroup>
 </Project>
