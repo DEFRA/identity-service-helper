@@ -77,7 +77,7 @@ public class ApplicationTests(PostgreContainerFixture fixture) : BaseTests(fixtu
         var updated = await Context.Applications.SingleAsync(x => x.ClientId.Equals(clientId), TestContext.Current.CancellationToken);
         updated.Name = "Updated Name";
 
-         Context.Applications.Update(updated);
+        Context.Applications.Update(updated);
         await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var checkUpdated = await Context.Applications.SingleAsync(x => x.ClientId.Equals(clientId), TestContext.Current.CancellationToken);
