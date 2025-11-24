@@ -5,6 +5,7 @@
 // ReSharper disable once CheckNamespace
 namespace Defra.Identity.Extensions;
 
+using System.ComponentModel.DataAnnotations;
 using Defra.Identity.PollingProcessor.Config;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,7 +23,9 @@ public static class QuartzServiceExtensions
             foreach (var serviceConfig in polledServices.GetChildren())
             {
                 var baseConfig = serviceConfig.Get<BasePollingServiceConfiguration>();
-                if (baseConfig == null)
+                var context = new ValidationContext(baseConfig);
+                var results = new List<ValidationResult>();
+                if (!Validator.TryValidateObject(baseConfig, context, results, true))
                 {
                     throw new InvalidOperationException($"Invalid configuration for service '{serviceConfig.Key}'");
                 }

@@ -11,6 +11,7 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Endpoint.Tests/Endpoint.Tests.csproj" />
+    <Project Path="tests/PollingProcessor.Tests/PollingProcessor.Tests.csproj" />
     <Project Path="tests/Unit.Tests/Unit.Tests.csproj" />
   </Folder>
   <Folder Name="/tests/Database/">
