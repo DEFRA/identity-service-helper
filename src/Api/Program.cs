@@ -9,9 +9,9 @@ using Defra.Identity.Api.Config;
 using Defra.Identity.Api.Endpoints.Users;
 using Defra.Identity.Api.Utils.Http;
 using Defra.Identity.Api.Utils.Logging;
-using Defra.Identity.Api.Utils.Mongo;
 using Defra.Identity.Config;
 using Defra.Identity.Extensions;
+using Defra.Identity.Mongo.Database;
 using Defra.Identity.Postgre.Database;
 using Defra.Identity.Postgre.Database.Entities;
 using Defra.Identity.Services;
@@ -68,7 +68,7 @@ public class Program
             .AddHttpClient("proxy")
             .ConfigurePrimaryHttpMessageHandler<ProxyHttpMessageHandler>();
         builder.Services.AddAuthDatabase(builder.Configuration);
-
+        builder.Services.AddMongoDatabase(builder.Configuration);
         // Propagate trace header.
         builder.Services.AddHeaderPropagation(options =>
         {
@@ -78,10 +78,6 @@ public class Program
                 options.Headers.Add(traceHeader);
             }
         });
-
-        // Set up the MongoDB client. Config and credentials are injected automatically at runtime.
-        builder.Services.Configure<MongoConfig>(builder.Configuration.GetSection("Mongo"));
-        builder.Services.AddSingleton<IMongoDbClientFactory, MongoDbClientFactory>();
 
         // Add AWS defaults
         builder.Services

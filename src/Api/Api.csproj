@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <ItemGroup>
-    <ProjectReference Include="..\Postgre.Database\Postgre.Database.csproj" />
+    <ProjectReference Include="..\Database\Mongo.Database\Mongo.Database.csproj" />
+    <ProjectReference Include="..\Database\Postgre.Database\Postgre.Database.csproj" />
     <ProjectReference Include="..\MessageProcessor\MessageProcessor.csproj" />
     <ProjectReference Include="..\PollingProcessor\PollingProcessor.csproj" />
     <ProjectReference Include="..\Services\Services.csproj" />

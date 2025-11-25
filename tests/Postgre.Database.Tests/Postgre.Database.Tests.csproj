@@ -1,5 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Postgre.Database\Postgre.Database.csproj" />
+    <ProjectReference Include="..\..\src\Database\Postgre.Database\Postgre.Database.csproj" />
   </ItemGroup>
 </Project>
