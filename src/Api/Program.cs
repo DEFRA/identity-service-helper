@@ -67,8 +67,9 @@ public class Program
         builder.Services
             .AddHttpClient("proxy")
             .ConfigurePrimaryHttpMessageHandler<ProxyHttpMessageHandler>();
-        builder.Services.AddAuthDatabase(builder.Configuration);
+
         builder.Services.AddMongoDatabase(builder.Configuration);
+
         // Propagate trace header.
         builder.Services.AddHeaderPropagation(options =>
         {
@@ -93,8 +94,8 @@ public class Program
         builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
         // Set up the endpoints and their dependencies
-        builder.Services.AddTransient<IRepository<UserAccount>, UsersRepository>(service =>
-            new UsersRepository(service.GetRequiredService<AuthContext>()));
+        /*builder.Services.AddTransient<IRepository<UserAccount>, UsersRepository>(service =>
+            new UsersRepository(service.GetRequiredService<AuthContext>()));*/
     }
 
     [ExcludeFromCodeCoverage]
@@ -103,7 +104,6 @@ public class Program
         app.UseHeaderPropagation();
         app.UseRouting();
         app.MapHealthChecks("/health");
-        app.UseAuthDatabase();
         app.UseUsersEndpoints();
 
         return app;

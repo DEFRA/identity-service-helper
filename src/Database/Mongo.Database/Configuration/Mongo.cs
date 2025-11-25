@@ -4,9 +4,9 @@
 
 namespace Defra.Identity.Mongo.Database.Configuration;
 
-public class MongoDatabase
+public class Mongo
 {
-    public string Uri { get; init; } = null!;
+    public string DatabaseUri { get; init; } = null!;
 
-    public string Name { get; init; } = null!;
+    public string DatabaseName { get; init; } = null!;
 }

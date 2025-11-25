@@ -13,24 +13,24 @@ public class MongoClientFactory : IClientFactory
     private readonly IMongoDatabase mongoDatabase;
     private readonly MongoClient client;
 
-    public MongoClientFactory(MongoDatabase config)
+    public MongoClientFactory(Mongo config)
     {
         if (config is null)
         {
             throw new ArgumentNullException(nameof(config));
         }
 
-        if (string.IsNullOrWhiteSpace(config.Uri))
+        if (string.IsNullOrWhiteSpace(config.DatabaseUri))
         {
             throw new ArgumentException("MongoDB uri string cannot be empty");
         }
 
-        if (string.IsNullOrWhiteSpace(config.Name))
+        if (string.IsNullOrWhiteSpace(config.DatabaseName))
         {
             throw new ArgumentException("MongoDB database name cannot be empty");
         }
 
-        var settings = MongoClientSettings.FromConnectionString(config.Uri);
+        var settings = MongoClientSettings.FromConnectionString(config.DatabaseUri);
         client = new MongoClient(settings);
 
         var camelCaseConvention = new ConventionPack { new CamelCaseElementNameConvention() };
@@ -38,7 +38,7 @@ public class MongoClientFactory : IClientFactory
         // convention must be registered before initialising collection
         ConventionRegistry.Register("CamelCase", camelCaseConvention, _ => true);
 
-        mongoDatabase = client.GetDatabase(config.Name);
+        mongoDatabase = client.GetDatabase(config.DatabaseName);
     }
 
     public IMongoClient Get => client;
