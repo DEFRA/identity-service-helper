@@ -7,7 +7,8 @@
     <Project Path="src/Services/Services.csproj" />
   </Folder>
   <Folder Name="/src/Database/">
-    <Project Path="src\Postgre.Database\Postgre.Database.csproj" />
+    <Project Path="src/Database/Mongo.Database/Mongo.Database.csproj" />
+    <Project Path="src\Database\Postgre.Database\Postgre.Database.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Endpoint.Tests/Endpoint.Tests.csproj" />

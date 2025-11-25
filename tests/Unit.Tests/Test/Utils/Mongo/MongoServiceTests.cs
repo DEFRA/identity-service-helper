@@ -5,7 +5,7 @@
 namespace Defra.Identity.Unit.Tests.Test.Utils.Mongo;
 
 using System.Collections.Generic;
-using Defra.Identity.Api.Utils.Mongo;
+using Defra.Identity.Mongo.Database;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using MongoDB.Driver;
@@ -13,7 +13,7 @@ using NSubstitute;
 
 public class MongoServiceTests
 {
-    private readonly IMongoDbClientFactory connectionFactoryMock;
+    private readonly IClientFactory connectionFactoryMock;
     private readonly ILoggerFactory loggerFactoryMock;
     private readonly IMongoClient clientMock;
     private readonly IMongoCollection<TestModel> collectionMock;
@@ -22,17 +22,17 @@ public class MongoServiceTests
 
     public MongoServiceTests()
     {
-        connectionFactoryMock = Substitute.For<IMongoDbClientFactory>();
+        connectionFactoryMock = Substitute.For<IClientFactory>();
         loggerFactoryMock = Substitute.For<ILoggerFactory>();
         clientMock = Substitute.For<IMongoClient>();
         collectionMock = Substitute.For<IMongoCollection<TestModel>>();
 
         connectionFactoryMock
-            .GetClient()
+            .Get
             .Returns(Substitute.For<IMongoClient>());
 
         connectionFactoryMock
-            .GetCollection<TestModel>(Arg.Any<string>())
+            .Collection<TestModel>(Arg.Any<string>())
             .Returns(collectionMock);
 
         collectionMock.CollectionNamespace.Returns(
@@ -83,7 +83,7 @@ public class MongoServiceTests
         private List<CreateIndexModel<TestModel>> indexes = new();
 
         public TestMongoService(
-            IMongoDbClientFactory connectionFactory,
+            IClientFactory connectionFactory,
             string collectionName,
             ILoggerFactory loggerFactory)
             : base(connectionFactory, collectionName, loggerFactory)

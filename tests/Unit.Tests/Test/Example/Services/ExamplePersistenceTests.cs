@@ -8,7 +8,7 @@ using System;
 using System.Threading.Tasks;
 using Defra.Identity.Api.Example.Models;
 using Defra.Identity.Api.Example.Services;
-using Defra.Identity.Api.Utils.Mongo;
+using Defra.Identity.Mongo.Database;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using MongoDB.Bson;
@@ -18,7 +18,7 @@ using Shouldly;
 
 public class ExamplePersistenceTests
 {
-    private readonly IMongoDbClientFactory conFactoryMock = Substitute.For<IMongoDbClientFactory>();
+    private readonly IClientFactory conFactoryMock = Substitute.For<IClientFactory>();
     private readonly IMongoCollection<ExampleModel> collectionMock = Substitute.For<IMongoCollection<ExampleModel>>();
     private readonly IMongoDatabase databaseMock = Substitute.For<IMongoDatabase>();
     private readonly CollectionNamespace collectionNamespace = new("test", "example");
@@ -37,10 +37,10 @@ public class ExamplePersistenceTests
             .DatabaseNamespace
             .Returns(new DatabaseNamespace("test"));
         conFactoryMock
-            .GetClient()
+            .Get
             .Returns(Substitute.For<IMongoClient>());
         conFactoryMock
-            .GetCollection<ExampleModel>("example")
+            .Collection<ExampleModel>("example")
             .Returns(collectionMock);
 
         persistence = new ExamplePersistence(conFactoryMock, NullLoggerFactory.Instance);

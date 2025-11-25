@@ -6,7 +6,7 @@ namespace Defra.Identity.Api.Example.Services;
 
 using System.Diagnostics.CodeAnalysis;
 using Defra.Identity.Api.Example.Models;
-using Defra.Identity.Api.Utils.Mongo;
+using Defra.Identity.Mongo.Database;
 using MongoDB.Driver;
 
 /**
@@ -14,7 +14,7 @@ using MongoDB.Driver;
  * The base class `MongoService` provides access to the db collection as well as providing helpers to
  * ensure the indexes for this collection are created on startup.
  */
-public class ExamplePersistence(IMongoDbClientFactory connectionFactory, ILoggerFactory loggerFactory)
+public class ExamplePersistence(IClientFactory connectionFactory, ILoggerFactory loggerFactory)
     : MongoService<ExampleModel>(connectionFactory, "example", loggerFactory), IExamplePersistence
 {
     public async Task<bool> CreateAsync(ExampleModel example)
