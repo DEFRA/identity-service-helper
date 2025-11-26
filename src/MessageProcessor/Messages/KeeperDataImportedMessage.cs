@@ -4,6 +4,9 @@
 
 namespace Defra.Identity.MessageProcessor.Messages;
 
+using System.Diagnostics.CodeAnalysis;
+
+[ExcludeFromCodeCoverage]
 public class KeeperDataImportedMessage
 {
     public required string Type { get; set; }

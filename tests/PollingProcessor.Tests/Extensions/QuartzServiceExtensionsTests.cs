@@ -32,7 +32,7 @@ public class QuartzServiceExtensionsTests
             .Build();
 
         // Act
-        tmpCollection.AddQuartzServices(config);
+        tmpCollection.AddPollingProcessorService(config);
 
         // Assert
         tmpCollection.Count.ShouldBeGreaterThan(20);

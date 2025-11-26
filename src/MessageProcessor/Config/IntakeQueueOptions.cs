@@ -4,6 +4,9 @@
 
 namespace Defra.Identity.MessageProcessor.Config;
 
+using System.Diagnostics.CodeAnalysis;
+
+[ExcludeFromCodeCoverage]
 public class IntakeQueueOptions : QueueOptions
 {
 }

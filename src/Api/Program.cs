@@ -88,11 +88,12 @@ public class Program
             .Configure<AwsConfiguration>(builder.Configuration.GetSection("AWS"))
             .AddDefaultAWSOptions(configuration.GetAWSOptions("AWS"));
 
-        // Add services
+        // Add processor services
         builder.Services
-            .AddQuartzServices(configuration)
-            .AddMessagingDependencies(configuration);
+            .AddPollingProcessorService(configuration)
+            .AddMessageProcessorService(configuration);
 
+        // Add support services
         builder.Services.AddHealthChecks();
         builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 

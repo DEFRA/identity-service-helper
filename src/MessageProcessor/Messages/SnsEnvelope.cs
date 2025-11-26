@@ -4,8 +4,10 @@
 
 namespace Defra.Identity.MessageProcessor.Messages;
 
+using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
 
+[ExcludeFromCodeCoverage]
 public class SnsEnvelope
 {
     public required string Type { get; set; }
