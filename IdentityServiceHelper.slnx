@@ -14,6 +14,7 @@
     <Project Path="tests/Endpoint.Tests/Endpoint.Tests.csproj" />
     <Project Path="tests/PollingProcessor.Tests/PollingProcessor.Tests.csproj" />
     <Project Path="tests/Unit.Tests/Unit.Tests.csproj" />
+    <Project Path="tests\MessageProcessor.Tests\MessageProcessor.Tests.csproj" />
   </Folder>
   <Folder Name="/tests/Database/">
     <Project Path="tests\Postgre.Database.Tests\Postgre.Database.Tests.csproj" />

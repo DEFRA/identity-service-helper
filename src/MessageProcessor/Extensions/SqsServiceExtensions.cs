@@ -15,7 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 public static class SqsServiceExtensions
 {
-    public static void AddMessagingDependencies(
+    public static void AddMessageProcessorService(
         this IServiceCollection services,
         IConfiguration configuration)
     {
@@ -25,7 +25,6 @@ public static class SqsServiceExtensions
         var awsConfig = configuration.GetSection("AWS").Get<AwsConfiguration>();
         services
             .Configure<IntakeQueueOptions>(intakeEventQueueConfig)
-            .AddAWSService<IAmazonSQS>()
             .AddTransient<KeeperDataImportedHandler>()
             .AddHostedService<KeeperDataImportService>();
 

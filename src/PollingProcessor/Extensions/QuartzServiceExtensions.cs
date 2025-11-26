@@ -13,10 +13,9 @@ using Quartz;
 
 public static class QuartzServiceExtensions
 {
-    public static IServiceCollection AddQuartzServices(this IServiceCollection sc, IConfigurationRoot config)
+    public static IServiceCollection AddPollingProcessorService(this IServiceCollection sc, IConfigurationRoot config)
     {
-        var polledServices = config.GetSection("PolledServices");
-        Requires.NotNull(polledServices);
+        var polledServices = config.GetRequiredSection("PolledServices");
 
         sc.AddQuartz(q =>
         {
