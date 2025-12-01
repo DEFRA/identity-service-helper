@@ -1,4 +1,4 @@
-// <copyright file="MongoDatabase.cs" company="Defra">
+// <copyright file="Mongo.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 

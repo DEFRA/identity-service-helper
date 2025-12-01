@@ -10,7 +10,7 @@ public class Enrolment : BaseUpdateEntity
 {
     public required Guid UserAccountId { get; init; }
 
-    public UserAccount UserAccount { get; set; }
+    public Applications Applications { get; set; }
 
     public Guid ApplicationId { get; set; }
 

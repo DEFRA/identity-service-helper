@@ -37,7 +37,7 @@ public class AuthContext(DbContextOptions<AuthContext> options)
     /// <summary>
     /// The Users DbSet.
     /// </summary>
-    public virtual DbSet<UserAccount> Users { get; set; }
+    public virtual DbSet<Applications> Users { get; set; }
 
     public override int SaveChanges()
     {
@@ -56,7 +56,7 @@ public class AuthContext(DbContextOptions<AuthContext> options)
     {
         Requires.NotNull(modelBuilder);
 
-        modelBuilder.HasDefaultSchema(DatabaseConstants.SchemaName);
+        modelBuilder.HasDefaultSchema(PostgreConstants.SchemaName);
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         modelBuilder.HasPostgresExtension(PostgreExtensions.UuidGenerator);
         modelBuilder.HasPostgresExtension(PostgreExtensions.Citext);

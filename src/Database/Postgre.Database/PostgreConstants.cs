@@ -4,7 +4,7 @@
 
 namespace Defra.Identity.Postgre.Database;
 
-internal static class DatabaseConstants
+internal static class PostgreConstants
 {
     internal const string SchemaName = "defra-ci";
     internal const string ConnectionStringName = "Auth";

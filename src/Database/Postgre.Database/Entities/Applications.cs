@@ -6,7 +6,7 @@ namespace Defra.Identity.Postgre.Database.Entities;
 
 using Defra.Identity.Postgre.Database.Entities.Base;
 
-public class UserAccount : BaseUpdateEntity
+public class Applications : BaseUpdateEntity
 {
     public string Upn { get; set; }
 

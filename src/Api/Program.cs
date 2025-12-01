@@ -2,11 +2,12 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
+using Defra.Identity.Api.Endpoints.Applications;
+
 namespace Defra.Identity.Api;
 
 using System.Diagnostics.CodeAnalysis;
 using Defra.Identity.Api.Config;
-using Defra.Identity.Api.Endpoints.Users;
 using Defra.Identity.Api.Utils.Http;
 using Defra.Identity.Api.Utils.Logging;
 using Defra.Identity.Config;
@@ -94,7 +95,7 @@ public class Program
         builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
         // Set up the endpoints and their dependencies
-        /*builder.Services.AddTransient<IRepository<UserAccount>, UsersRepository>(service =>
+        /*builder.Repositories.AddTransient<IRepository<UserAccount>, UsersRepository>(service =>
             new UsersRepository(service.GetRequiredService<AuthContext>()));*/
     }
 
@@ -104,8 +105,8 @@ public class Program
         app.UseHeaderPropagation();
         app.UseRouting();
         app.MapHealthChecks("/health");
-        app.UseUsersEndpoints();
-
+        app.UseApplicationsEndpoints();
+        app.UseMongoDatabase();
         return app;
     }
 }

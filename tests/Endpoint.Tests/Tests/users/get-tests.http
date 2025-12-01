@@ -1,11 +1,6 @@
-### GET request to example server
-GET {{host}}/users
+### POST request to example server
+POST {{host}}/applications
+accept: application/json
+Content-Type: application/json
 
 ###
-
-< {% 
-    request.variables.set("id", "fbef48a4-78f2-4340-80eb-e8c1cf4549bf")
-
-%}
-
-GET {{host}}/users/{{id}}

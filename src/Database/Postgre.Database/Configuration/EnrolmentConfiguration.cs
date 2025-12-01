@@ -18,7 +18,7 @@ internal class EnrolmentConfiguration
             .HasColumnType(ColumnTypes.UniqueIdentifier)
             .IsRequired();
 
-        builder.HasOne(u => u.UserAccount)
+        builder.HasOne(u => u.Applications)
             .WithMany(o => o.Enrolments)
             .HasForeignKey(u => u.UserAccountId)
             .OnDelete(DeleteBehavior.Cascade);

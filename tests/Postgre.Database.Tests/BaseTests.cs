@@ -17,7 +17,7 @@ public abstract class BaseTests(PostgreContainerFixture fixture) : IAsyncLifetim
 
     private Dictionary<string, string> ConnectionStringConfiguration => new()
     {
-        { $"ConnectionStrings:{DatabaseConstants.ConnectionStringName}", $"{fixture.ConnectionString}" },
+        { $"ConnectionStrings:{PostgreConstants.ConnectionStringName}", $"{fixture.ConnectionString}" },
         { "Deployment:Environment", "Dev" },
     };
 

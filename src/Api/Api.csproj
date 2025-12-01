@@ -4,7 +4,7 @@
     <ProjectReference Include="..\Database\Postgre.Database\Postgre.Database.csproj" />
     <ProjectReference Include="..\MessageProcessor\MessageProcessor.csproj" />
     <ProjectReference Include="..\PollingProcessor\PollingProcessor.csproj" />
-    <ProjectReference Include="..\Services\Services.csproj" />
+    <ProjectReference Include="..\Repositories\Repositories.csproj" />
     <ProjectReference Include="..\Primitives\Primitives.csproj" />
   </ItemGroup>
   <ItemGroup>

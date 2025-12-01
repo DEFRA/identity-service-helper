@@ -34,7 +34,7 @@ public static class ServiceCollectionExtensions
 
     public static void AddAuthDatabase(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString(DatabaseConstants.ConnectionStringName);
+        var connectionString = configuration.GetConnectionString(PostgreConstants.ConnectionStringName);
         services
             .AddPooledDbContextFactory<AuthContext>((sp, options) =>
             {

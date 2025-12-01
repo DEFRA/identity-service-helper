@@ -38,7 +38,7 @@ internal class FederationConfiguration : BaseUpdateEntityConfiguration<Federatio
             .HasColumnName(nameof(Federation.LastSyncedAt).ToSnakeCase())
             .HasColumnType(ColumnTypes.Timestamp);
 
-        builder.HasOne(u => u.UserAccount)
+        builder.HasOne(u => u.Applications)
             .WithMany(o => o.Federations)
             .HasForeignKey(u => u.UserAccountId)
             .OnDelete(DeleteBehavior.NoAction);

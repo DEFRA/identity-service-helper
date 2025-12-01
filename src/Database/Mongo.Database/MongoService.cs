@@ -29,7 +29,7 @@ public abstract class MongoService<TEntity>
     {
         var builder = Builders<TEntity>.IndexKeys;
         var indexes = DefineIndexes(builder);
-        //Collection.Indexes.CreateMany(indexes);
+
         if (indexes.Count == 0)
         {
             return;

@@ -4,7 +4,7 @@
     <Project Path="src/MessageProcessor/MessageProcessor.csproj" />
     <Project Path="src/PollingProcessor/PollingProcessor.csproj" />
     <Project Path="src/Primitives/Primitives.csproj" />
-    <Project Path="src/Services/Services.csproj" />
+    <Project Path="src\Repositories\Repositories.csproj" />
   </Folder>
   <Folder Name="/src/Database/">
     <Project Path="src/Database/Mongo.Database/Mongo.Database.csproj" />
@@ -16,6 +16,7 @@
     <Project Path="tests/Unit.Tests/Unit.Tests.csproj" />
   </Folder>
   <Folder Name="/tests/Database/">
+    <Project Path="tests/Mongo.Database.Tests/Mongo.Database.Tests.csproj" />
     <Project Path="tests\Postgre.Database.Tests\Postgre.Database.Tests.csproj" />
   </Folder>
 </Solution>
