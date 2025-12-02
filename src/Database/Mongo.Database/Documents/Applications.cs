@@ -11,7 +11,7 @@ using Defra.Identity.Mongo.Database.Attributes;
 using MongoDB.Bson.Serialization.Attributes;
 
 [CollectionName(nameof(Applications))]
-public class Applications
+public class Applications : BaseAudit
 {
     [BsonId]
     public Guid Id { get; set; }
@@ -27,9 +27,6 @@ public class Applications
 
     [BsonElement("tenant_name")]
     public required string TenantName { get; set; } = string.Empty;
-
-    [BsonElement("timestamps")]
-    public required Timestamps Timestamps { get; set; }
 
     [BsonElement("status")]
     [MaxLength(30, ErrorMessage = "Status cannot exceed 30 characters")]

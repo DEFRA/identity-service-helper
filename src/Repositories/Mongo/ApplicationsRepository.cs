@@ -2,6 +2,8 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Defra.Identity.Repositories.Mongo;
 
 using System.Linq.Expressions;
@@ -20,7 +22,8 @@ public class ApplicationsRepository(AuthMongoContext context)
 
    public async Task<Applications> Create(Applications entity, CancellationToken cancellationToken = default)
     {
-        await context.Applications.AddAsync(entity, CancellationToken.None);
+        entity.CreatedAt = DateTime.UtcNow;
+        await context.Applications.AddAsync(entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
         return entity;
     }

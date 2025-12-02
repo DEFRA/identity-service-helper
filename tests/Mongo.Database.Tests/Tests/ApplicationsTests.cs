@@ -24,7 +24,6 @@ public class ApplicationsTests(MongoContainerFixture fixture) : BaseTests(fixtur
             Name = "Test Application",
             Description = "Test Application Description",
             Status = "Active",
-            Timestamps = new Timestamps { CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now },
         };
 
         await Context.Applications.AddAsync(app, TestContext.Current.CancellationToken);

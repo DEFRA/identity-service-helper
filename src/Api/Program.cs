@@ -68,7 +68,7 @@ public class Program
             .ConfigurePrimaryHttpMessageHandler<ProxyHttpMessageHandler>();
 
         builder.Services.AddMongoDatabase(builder.Configuration);
-        builder.Services.AddTransient<IRepository<Mongo.Database.Documents.Applications>, ApplicationsRepository>();
+        builder.Services.AddRepositories(builder.Configuration);
 
         // Propagate trace header.
         builder.Services.AddHeaderPropagation(options =>

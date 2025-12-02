@@ -2,6 +2,8 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
+using Microsoft.AspNetCore.Mvc;
+
 namespace Defra.Identity.Api.Endpoints.Applications;
 
 using Defra.Identity.Mongo.Database.Documents;
@@ -24,26 +26,24 @@ public static class ApplicationsEndpoints
     }
 
     private static async Task<IResult> Create(
-        IRepository<Mongo.Database.Documents.Applications> service,
-        Application app)
+        [FromServices] IRepository<Mongo.Database.Documents.Applications> service,
+        [FromBody] ApplicationRequest app)
     {
         var application = new Applications
         {
-            ClientId = Guid.NewGuid(),
+            ClientId = app.Client,
             Description = app.Description,
             Name = app.Name,
             TenantName = app.Tenant,
-            Timestamps = new Timestamps { CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now },
             Status = "Active",
         };
         await service.Create(application ?? throw new ArgumentNullException(nameof(application)));
         return Results.Ok(application);
     }
 
-    private sealed record Application(
+    private sealed record ApplicationRequest(
         string Name,
         string Description,
         string Tenant,
-        Guid Client
-    );
+        Guid Client);
 }
