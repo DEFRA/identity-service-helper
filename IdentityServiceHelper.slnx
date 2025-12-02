@@ -8,7 +8,6 @@
   </Folder>
   <Folder Name="/src/Database/">
     <Project Path="src/Database/Mongo.Database/Mongo.Database.csproj" />
-    <Project Path="src\Database\Postgre.Database\Postgre.Database.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Endpoint.Tests/Endpoint.Tests.csproj" />
@@ -17,6 +16,5 @@
   </Folder>
   <Folder Name="/tests/Database/">
     <Project Path="tests/Mongo.Database.Tests/Mongo.Database.Tests.csproj" />
-    <Project Path="tests\Postgre.Database.Tests\Postgre.Database.Tests.csproj" />
   </Folder>
 </Solution>
