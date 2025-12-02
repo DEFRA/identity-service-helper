@@ -1,8 +1,7 @@
 <Project>
   <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))"/>
   <ItemGroup>
-    <PackageReference Include="MongoDB.Driver" />
-    <PackageReference Include="MongoDB.EntityFrameworkCore" />
+      <PackageReference Include="MongoDB.EntityFrameworkCore" />
   </ItemGroup>
     <ItemGroup>
         <InternalsVisibleTo Include="Defra.Identity.Mongo.Database.Tests"/>

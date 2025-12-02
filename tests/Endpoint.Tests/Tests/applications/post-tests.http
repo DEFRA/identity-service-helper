@@ -1,0 +1,12 @@
+### POST request to example server
+POST {{host}}/applications
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Tenant" : "Gary",
+  "Client" : "F8B952C2-8982-42BE-A3A8-C61564940AC7",
+  "Description" : "Test App",
+  "Name" : "Test Application"
+}
+###

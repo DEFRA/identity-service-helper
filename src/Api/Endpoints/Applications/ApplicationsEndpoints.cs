@@ -5,7 +5,7 @@
 namespace Defra.Identity.Api.Endpoints.Applications;
 
 using Defra.Identity.Mongo.Database.Documents;
-using Defra.Identity.Services;
+using Defra.Identity.Repositories;
 
 public static class ApplicationsEndpoints
 {
@@ -24,17 +24,26 @@ public static class ApplicationsEndpoints
     }
 
     private static async Task<IResult> Create(
-        IRepository<Mongo.Database.Documents.Applications> service)
+        IRepository<Mongo.Database.Documents.Applications> service,
+        Application app)
     {
-        var application = new Mongo.Database.Documents.Applications
+        var application = new Applications
         {
-            ClientId = "dfgsdfgfdg",
-            Description = "Test Application",
-            Name = "Test Application",
-            TenantName = "Test Tenant",
+            ClientId = Guid.NewGuid(),
+            Description = app.Description,
+            Name = app.Name,
+            TenantName = app.Tenant,
             Timestamps = new Timestamps { CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now },
+            Status = "Active",
         };
         await service.Create(application ?? throw new ArgumentNullException(nameof(application)));
         return Results.Ok(application);
     }
+
+    private sealed record Application(
+        string Name,
+        string Description,
+        string Tenant,
+        Guid Client
+    );
 }

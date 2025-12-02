@@ -2,20 +2,18 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-using Defra.Identity.Api.Endpoints.Applications;
-
 namespace Defra.Identity.Api;
 
 using System.Diagnostics.CodeAnalysis;
 using Defra.Identity.Api.Config;
+using Defra.Identity.Api.Endpoints.Applications;
 using Defra.Identity.Api.Utils.Http;
 using Defra.Identity.Api.Utils.Logging;
 using Defra.Identity.Config;
 using Defra.Identity.Extensions;
 using Defra.Identity.Mongo.Database;
-using Defra.Identity.Postgre.Database;
-using Defra.Identity.Postgre.Database.Entities;
-using Defra.Identity.Services;
+using Defra.Identity.Repositories;
+using Defra.Identity.Repositories.Mongo;
 using FluentValidation;
 using Serilog;
 
@@ -70,6 +68,7 @@ public class Program
             .ConfigurePrimaryHttpMessageHandler<ProxyHttpMessageHandler>();
 
         builder.Services.AddMongoDatabase(builder.Configuration);
+        builder.Services.AddTransient<IRepository<Mongo.Database.Documents.Applications>, ApplicationsRepository>();
 
         // Propagate trace header.
         builder.Services.AddHeaderPropagation(options =>
@@ -93,10 +92,6 @@ public class Program
 
         builder.Services.AddHealthChecks();
         builder.Services.AddValidatorsFromAssemblyContaining<Program>();
-
-        // Set up the endpoints and their dependencies
-        /*builder.Repositories.AddTransient<IRepository<UserAccount>, UsersRepository>(service =>
-            new UsersRepository(service.GetRequiredService<AuthContext>()));*/
     }
 
     [ExcludeFromCodeCoverage]

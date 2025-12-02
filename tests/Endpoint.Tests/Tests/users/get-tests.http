@@ -1,6 +1,0 @@
-### POST request to example server
-POST {{host}}/applications
-accept: application/json
-Content-Type: application/json
-
-###

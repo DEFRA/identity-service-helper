@@ -2,6 +2,10 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+
 namespace Defra.Identity.Mongo.Database.Tests;
 
 using Defra.Identity.Mongo.Database.Tests.Collections;
@@ -19,13 +23,23 @@ public abstract class BaseTests(MongoContainerFixture fixture) : IAsyncLifetime
         { "Deployment:Environment", "Dev" },
     };
 
-    public ValueTask DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
-        throw new NotImplementedException();
+        await Context.DisposeAsync();
     }
 
-    public ValueTask InitializeAsync()
+    public async ValueTask InitializeAsync()
     {
-        throw new NotImplementedException();
+        await fixture.InitializeAsync();
+        var builder = WebApplication
+            .CreateBuilder();
+        builder.Configuration.AddInMemoryCollection(ConnectionStringConfiguration!).Build();
+        builder.Services.AddMongoDatabase(builder.Configuration);
+
+        var app = builder.Build();
+
+        app.UseMongoDatabase();
+        var serviceProvider = builder.Services.BuildServiceProvider();
+        Context = serviceProvider.GetRequiredService<AuthMongoContext>();
     }
 }
