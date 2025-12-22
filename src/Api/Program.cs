@@ -5,16 +5,12 @@
 namespace Defra.Identity.Api;
 
 using System.Diagnostics.CodeAnalysis;
-using Defra.Identity.Api.Config;
 using Defra.Identity.Api.Endpoints.Users;
 using Defra.Identity.Api.Utils.Http;
 using Defra.Identity.Api.Utils.Logging;
 using Defra.Identity.Config;
 using Defra.Identity.Extensions;
-using Defra.Identity.Mongo.Database;
-using Defra.Identity.Postgre.Database;
-using Defra.Identity.Postgre.Database.Entities;
-using Defra.Identity.Services;
+using Defra.Identity.Postgres.Database;
 using FluentValidation;
 using Serilog;
 
@@ -68,8 +64,6 @@ public class Program
             .AddHttpClient("proxy")
             .ConfigurePrimaryHttpMessageHandler<ProxyHttpMessageHandler>();
 
-        builder.Services.AddMongoDatabase(builder.Configuration);
-
         // Propagate trace header.
         builder.Services.AddHeaderPropagation(options =>
         {
@@ -85,8 +79,10 @@ public class Program
             .Configure<AwsConfiguration>(builder.Configuration.GetSection("AWS"))
             .AddDefaultAWSOptions(configuration.GetAWSOptions("AWS"));
 
-        // Add processor services
+        // Add custom services
         builder.Services
+            .AddAuthDatabase(configuration)
+            .AddKrdsApiService(configuration)
             .AddPollingProcessorService(configuration)
             .AddMessageProcessorService(configuration);
 
