@@ -4,7 +4,6 @@
 
 namespace Defra.Identity.PollingProcessor.Tests.Fakes;
 
-using System.Diagnostics.CodeAnalysis;
 using Quartz;
 
 public interface IFakePollingService

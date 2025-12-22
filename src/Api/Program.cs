@@ -82,7 +82,6 @@ public class Program
         // Add custom services
         builder.Services
             .AddAuthDatabase(configuration)
-            .AddKrdsApiService(configuration)
             .AddPollingProcessorService(configuration)
             .AddMessageProcessorService(configuration);
 
