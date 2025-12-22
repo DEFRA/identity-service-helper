@@ -5,13 +5,9 @@
 namespace Defra.Identity.PollingProcessor.Tests.Extensions;
 
 using Defra.Identity.Extensions;
-using Defra.Identity.PollingProcessor.Config;
 using Defra.Identity.PollingProcessor.Tests.Fakes;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using NSubstitute;
-using Quartz;
-using Quartz.Spi;
 
 public class QuartzServiceExtensionsTests
 {

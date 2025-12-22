@@ -7,16 +7,16 @@
     <Project Path="src/Services/Services.csproj" />
   </Folder>
   <Folder Name="/src/Database/">
-    <Project Path="src/Database/Mongo.Database/Mongo.Database.csproj" />
-    <Project Path="src\Database\Postgre.Database\Postgre.Database.csproj" />
+    <Project Path="src\Database\Postgres.Database\Postgres.Database.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Endpoint.Tests/Endpoint.Tests.csproj" />
     <Project Path="tests/PollingProcessor.Tests/PollingProcessor.Tests.csproj" />
+    <Project Path="tests/Services.Tests/Services.Tests.csproj" />
     <Project Path="tests/Unit.Tests/Unit.Tests.csproj" />
     <Project Path="tests\MessageProcessor.Tests\MessageProcessor.Tests.csproj" />
   </Folder>
   <Folder Name="/tests/Database/">
-    <Project Path="tests\Postgre.Database.Tests\Postgre.Database.Tests.csproj" />
+    <Project Path="tests\Postgres.Database.Tests\Postgres.Database.Tests.csproj" />
   </Folder>
 </Solution>
