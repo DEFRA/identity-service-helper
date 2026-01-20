@@ -2,9 +2,11 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
+using Defra.Identity.Postgres.Database.Entities.Base;
+
 namespace Defra.Identity.Postgres.Database.Entities;
 
-public class CountyParishHolding
+public class CountyParishHolding : BaseUpdateEntity
 {
     public string Id { get; set; }
 

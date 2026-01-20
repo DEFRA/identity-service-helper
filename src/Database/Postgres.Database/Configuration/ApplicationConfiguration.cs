@@ -2,6 +2,9 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
+using Defra.Identity.Postgres.Database.Entities.Base;
+using Npgsql.EntityFrameworkCore.PostgreSQL.ValueGeneration;
+
 namespace Defra.Identity.Postgres.Database.Configuration;
 
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -11,6 +14,13 @@ internal class ApplicationConfiguration
 {
     public override void Configure(EntityTypeBuilder<Application> builder)
     {
+        builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.Id)
+            .HasColumnName(nameof(Application.Id).ToSnakeCase())
+            .HasColumnType(ColumnTypes.UniqueIdentifier)
+            .HasValueGenerator<NpgsqlSequentialGuidValueGenerator>();
+
         builder.Property(x => x.Name)
             .HasColumnName(nameof(Application.Name).ToSnakeCase())
             .HasColumnType(ColumnTypes.Text)

@@ -10,9 +10,5 @@ public abstract class BaseUpdateEntity
 
     public DateTime CreatedAt { get; set; }
 
-    public Guid CreatedBy { get; set; }
-
     public DateTime UpdatedAt { get; set; }
-
-    public Guid UpdatedBy { get; set; }
 }

@@ -10,6 +10,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.ValueGeneration;
 internal abstract class BaseTypeEntityConfiguration<TEntity> : IEntityTypeConfiguration<TEntity>
     where TEntity : BaseTypeEntity
 {
+    protected virtual int NameMaxLength => 50;
+
+    protected virtual int DescriptionMaxLength => 255;
+
     public void Configure(EntityTypeBuilder<TEntity> builder)
     {
         builder.ToTable(typeof(TEntity).Name.ToSnakeCase());
@@ -21,11 +25,11 @@ internal abstract class BaseTypeEntityConfiguration<TEntity> : IEntityTypeConfig
         builder.Property(x => x.Name)
             .HasColumnName(nameof(BaseTypeEntity.Name).ToSnakeCase())
             .HasColumnType(ColumnTypes.Varchar)
-            .HasMaxLength(50);
+            .HasMaxLength(NameMaxLength);
 
         builder.Property(x => x.Description)
             .HasColumnName(nameof(BaseTypeEntity.Description).ToSnakeCase())
             .HasColumnType(ColumnTypes.Varchar)
-            .HasMaxLength(255);
+            .HasMaxLength(DescriptionMaxLength);
     }
 }

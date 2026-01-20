@@ -4,13 +4,14 @@
 
 namespace Defra.Identity.Postgres.Database.Configuration;
 
-public class CountyParishHoldingConfiguration : IEntityTypeConfiguration<CountyParishHolding>
+public class CountyParishHoldingConfiguration : BaseUpdateEntityConfiguration<CountyParishHolding>
 {
-    public void Configure(EntityTypeBuilder<CountyParishHolding> builder)
+    public override void Configure(EntityTypeBuilder<CountyParishHolding> builder)
     {
         builder.ToTable(nameof(CountyParishHolding).ToSnakeCase());
 
         builder.HasKey(x => x.Id);
+
         builder.Property(x => x.Id)
             .HasColumnName(nameof(CountyParishHolding.Id).ToSnakeCase())
             .HasColumnType(ColumnTypes.Varchar)
@@ -23,23 +24,15 @@ public class CountyParishHoldingConfiguration : IEntityTypeConfiguration<CountyP
             .HasDefaultValue(1)
             .IsRequired();
 
-        builder.Property(x => x.CreatedAt)
-            .HasColumnName(nameof(CountyParishHolding.CreatedAt).ToSnakeCase())
-            .HasColumnType(ColumnTypes.Timestamp)
-            .HasDefaultValueSql(PostgreExtensions.Now)
-            .ValueGeneratedOnAdd();
-
         builder.Property(x => x.CreatedBy)
             .HasColumnName(nameof(CountyParishHolding.CreatedBy).ToSnakeCase())
             .HasColumnType(ColumnTypes.UniqueIdentifier)
             .IsRequired();
 
-        builder.Property(x => x.UpdatedAt)
-            .HasColumnName(nameof(CountyParishHolding.UpdatedAt).ToSnakeCase())
-            .HasColumnType(ColumnTypes.Timestamp);
-
         builder.Property(x => x.UpdatedBy)
             .HasColumnName(nameof(CountyParishHolding.UpdatedBy).ToSnakeCase())
             .HasColumnType(ColumnTypes.UniqueIdentifier);
+
+        base.Configure(builder);
     }
 }

@@ -19,4 +19,6 @@ public class Application : BaseUpdateEntity
     public int StatusTypeId { get; set; }
 
     public ICollection<Enrolment> Enrolments { get; set; } = new List<Enrolment>();
+
+    public ICollection<ApplicationRole> ApplicationRoles { get; set; } = new List<ApplicationRole>();
 }
