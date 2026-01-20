@@ -22,7 +22,7 @@ public class ApplicationTests(PostgreContainerFixture fixture) : BaseTests(fixtu
             TenantName = "Test Tenant",
             Name = "Test Application",
             Description = "Test Application Description",
-            Status = "Active",
+            StatusTypeId = 1,
         };
 
         await Context.Applications.AddAsync(app, TestContext.Current.CancellationToken);
@@ -37,7 +37,7 @@ public class ApplicationTests(PostgreContainerFixture fixture) : BaseTests(fixtu
             application => application.UpdatedAt.ShouldBe(default),
             application => application.Name.ShouldBe(app.Name),
             application => application.Description.ShouldBe(app.Description),
-            application => application.Status.ShouldBe(app.Status),
+            application => application.StatusTypeId.ShouldBe(app.StatusTypeId),
             application => application.TenantName.ShouldBe(app.TenantName),
             application => application.ClientId.ShouldBe(app.ClientId),
             application => application.Id.ShouldNotBe(Guid.Empty));
@@ -54,7 +54,7 @@ public class ApplicationTests(PostgreContainerFixture fixture) : BaseTests(fixtu
             TenantName = "Test Tenant",
             Name = "Test Application",
             Description = "Test Application Description",
-            Status = "Active",
+            StatusTypeId = 1,
         };
         await Context.Applications.AddAsync(app, TestContext.Current.CancellationToken);
         await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
@@ -68,7 +68,7 @@ public class ApplicationTests(PostgreContainerFixture fixture) : BaseTests(fixtu
             application => application.UpdatedAt.ShouldBe(default),
             application => application.Name.ShouldBe(app.Name),
             application => application.Description.ShouldBe(app.Description),
-            application => application.Status.ShouldBe(app.Status),
+            application => application.StatusTypeId.ShouldBe(app.StatusTypeId),
             application => application.TenantName.ShouldBe(app.TenantName),
             application => application.ClientId.ShouldBe(app.ClientId),
             application => application.Id.ShouldNotBe(Guid.Empty));

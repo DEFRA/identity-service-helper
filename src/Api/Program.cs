@@ -101,6 +101,7 @@ public class Program
         app.UseRouting();
         app.MapHealthChecks("/health");
         app.UseUsersEndpoints();
+        app.UseAuthDatabase();
 
         return app;
     }

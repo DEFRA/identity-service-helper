@@ -23,10 +23,18 @@ internal abstract class BaseUpdateEntityConfiguration<TEntity> : IEntityTypeConf
             .HasColumnName(nameof(BaseUpdateEntity.UpdatedAt).ToSnakeCase())
             .HasColumnType(ColumnTypes.Timestamp);
 
+        builder.Property(x => x.UpdatedBy)
+            .HasColumnName(nameof(BaseUpdateEntity.UpdatedBy).ToSnakeCase())
+            .HasColumnType(ColumnTypes.UniqueIdentifier);
+
         builder.Property(x => x.CreatedAt)
             .HasColumnName(nameof(BaseUpdateEntity.CreatedAt).ToSnakeCase())
             .HasColumnType(ColumnTypes.Timestamp)
             .HasDefaultValueSql(PostgreExtensions.Now)
             .ValueGeneratedOnAdd();
+
+        builder.Property(x => x.CreatedBy)
+            .HasColumnName(nameof(BaseUpdateEntity.CreatedBy).ToSnakeCase())
+            .HasColumnType(ColumnTypes.UniqueIdentifier);
     }
 }

@@ -16,7 +16,7 @@ public class Application : BaseUpdateEntity
 
     public string Description { get; set; }
 
-    public string Status { get; set; }
+    public int StatusTypeId { get; set; }
 
     public ICollection<Enrolment> Enrolments { get; set; } = new List<Enrolment>();
 }

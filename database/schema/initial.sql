@@ -3,6 +3,17 @@
 CREATE SCHEMA "defra-ci";
 CREATE EXTENSION IF NOT EXISTS citext;
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE TABLE "defra-ci".status_type (
+    id  smallint ,
+    name varchar(10) NOT NULL,
+    description citext,
+    CONSTRAINT pk_status_type PRIMARY KEY
+);
+
+INSERT INTO "defra-ci".status_type (name, description) VALUES ( 'NEW', 'An item that is not currently usable.');
+INSERT INTO "defra-ci".status_type (name, description) VALUES ('ACTIVE', 'An item that can be used.');
+INSERT INTO "defra-ci".status_type (name, description) VALUES ( 'SUSPENDED', 'An item that is available but not currently active.');
+INSERT INTO "defra-ci".status_type (name, description) VALUES ('DELETED', 'An item that is soft deleted and should not be selectable.');
 
 CREATE TABLE "defra-ci".application (
     id uuid NOT NULL,
@@ -10,15 +21,17 @@ CREATE TABLE "defra-ci".application (
     client_id uuid NOT NULL,
     tenant_name text NOT NULL,
     description text NOT NULL,
-    status text NOT NULL DEFAULT 'active',
+    status_type_id smallint NOT NULL DEFAULT 1,
     created_at TimestampTz NOT NULL DEFAULT (now()),
     updated_at TimestampTz NOT NULL,
-    CONSTRAINT "PK_application" PRIMARY KEY (id)
+    CONSTRAINT "PK_application" PRIMARY KEY (id),
+    CONSTRAINT application_status_type_id_fk  FOREIGN KEY (status_type_id) REFERENCES "defra-ci".status_type (id) 
 );
 COMMENT ON COLUMN "defra-ci".application.name IS 'Human readable name for the application e.g Keeper Portal';
 COMMENT ON COLUMN "defra-ci".application.client_id IS 'Azure AD B2C application Client ID';
 COMMENT ON COLUMN "defra-ci".application.tenant_name IS 'Azure AD B2C tenant name e.g defra.onmicrosoft.com';
-COMMENT ON COLUMN "defra-ci".application.status IS 'active/inactive/deprecated';
+
+
 
 CREATE TABLE "defra-ci".krds_sync_log (
     id uuid NOT NULL,
