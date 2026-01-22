@@ -14,13 +14,6 @@ internal class ApplicationConfiguration
 {
     public override void Configure(EntityTypeBuilder<Application> builder)
     {
-        builder.HasKey(x => x.Id);
-
-        builder.Property(x => x.Id)
-            .HasColumnName(nameof(Application.Id).ToSnakeCase())
-            .HasColumnType(ColumnTypes.UniqueIdentifier)
-            .HasValueGenerator<NpgsqlSequentialGuidValueGenerator>();
-
         builder.Property(x => x.Name)
             .HasColumnName(nameof(Application.Name).ToSnakeCase())
             .HasColumnType(ColumnTypes.Text)
@@ -48,6 +41,10 @@ internal class ApplicationConfiguration
             .HasColumnType(ColumnTypes.SmallInt)
             .HasDefaultValue(1)
             .IsRequired();
+
+        builder.HasOne(x => x.StatusType)
+            .WithMany(a => a.Applications)
+            .HasForeignKey(x => x.StatusTypeId);
 
         base.Configure(builder);
     }

@@ -12,13 +12,15 @@ public class Application : BaseUpdateEntity
 
     public required Guid ClientId { get; set; }
 
-    public required string TenantName { get; set; }
+    public required string TenantName { get; set; } = string.Empty;
 
-    public string Description { get; set; }
+    public string Description { get; set; } = string.Empty;
 
     public int StatusTypeId { get; set; }
 
-    public ICollection<Enrolment> Enrolments { get; set; } = new List<Enrolment>();
+    public StatusType StatusType { get; set; }
+
+    public ICollection<Delegation> Enrolments { get; set; } = new List<Delegation>();
 
     public ICollection<ApplicationRole> ApplicationRoles { get; set; } = new List<ApplicationRole>();
 }

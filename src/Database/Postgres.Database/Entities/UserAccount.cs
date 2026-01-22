@@ -16,5 +16,5 @@ public class UserAccount : BaseUpdateEntity
 
     public ICollection<Federation> Federations { get; set; }
 
-    public ICollection<Enrolment> Enrolments { get; set; }
+    public ICollection<Delegation> Enrolments { get; set; }
 }

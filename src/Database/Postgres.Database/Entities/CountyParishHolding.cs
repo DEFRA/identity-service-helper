@@ -12,6 +12,8 @@ public class CountyParishHolding : BaseUpdateEntity
 
     public int StatusTypeId { get; set; }
 
+    public StatusType StatusType { get; set; }
+
     public DateTime CreatedAt { get; set; }
 
     public Guid CreatedBy { get; set; }

@@ -15,6 +15,14 @@ public abstract class BaseUpdateEntityConfiguration<TEntity> : IEntityTypeConfig
     {
         builder.ToTable(typeof(TEntity).Name.ToSnakeCase());
 
+        builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.Id)
+            .HasColumnName(nameof(Application.Id).ToSnakeCase())
+            .HasColumnType(ColumnTypes.UniqueIdentifier)
+            .HasValueGenerator<NpgsqlSequentialGuidValueGenerator>()
+            .IsRequired();
+
         builder.Property(x => x.UpdatedAt)
             .HasColumnName(nameof(BaseUpdateEntity.UpdatedAt).ToSnakeCase())
             .HasColumnType(ColumnTypes.Timestamp);

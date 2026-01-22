@@ -33,6 +33,10 @@ public class CountyParishHoldingConfiguration : BaseUpdateEntityConfiguration<Co
             .HasColumnName(nameof(CountyParishHolding.UpdatedBy).ToSnakeCase())
             .HasColumnType(ColumnTypes.UniqueIdentifier);
 
+        builder.HasOne(x => x.StatusType)
+            .WithMany(x => x.CountyParishHoldings)
+            .HasForeignKey(x => x.StatusTypeId);
+
         base.Configure(builder);
     }
 }

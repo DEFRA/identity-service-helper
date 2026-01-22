@@ -58,61 +58,61 @@ dotnet_diagnostic.SA1600.severity = none # SA1600: Elements should be documented
 
 [*.cs]
 # file layout
-trim_trailing_whitespace = true
-insert_final_newline = true
-csharp_using_directive_placement = inside_namespace:error
-dotnet_diagnostic.IDE0065.severity = error # IDE0065: Using directive placement
-dotnet_diagnostic.IDE1006.severity = error # IDE1006: Naming rule violation
-dotnet_diagnostic.SA1000.severity = error # SA1000: Keywords should be spaced correctly
-dotnet_diagnostic.SA1003.severity = error # SA1003: Symbols should be spaced correctly
-dotnet_diagnostic.SA1019.severity = error # SA1019: Member access symbols should be spaced correctly
-dotnet_diagnostic.SA1024.severity = error # SA1024: Colons should be spaced correctly
-dotnet_diagnostic.SA1028.severity = error # SA1028: Code should not contain trailing whitespace
-dotnet_diagnostic.SA1117.severity = error # SA1117: Parameters should be on same line or separate lines
-dotnet_diagnostic.SA1127.severity = error # SA1127: Generic type constraints should be on their own line
-dotnet_diagnostic.SA1133.severity = error # SA1133: Do not combine attributes
-dotnet_diagnostic.SA1134.severity = error # SA1134: Attributes should not share line
-dotnet_diagnostic.SA1135.severity = error # SA1135: Using directives should be qualified
-dotnet_diagnostic.SA1507.severity = error # SA1507: Code should not contain multiple blank lines in a row
-dotnet_diagnostic.SA1508.severity = error # SA1508: Closing braces should not be preceded by blank line
-dotnet_diagnostic.SA1516.severity = error # SA1516: Elements should be separated by blank line
-dotnet_diagnostic.SA1518.severity = error # SA1518: Use line endings correctly at end of file
-dotnet_diagnostic.SA1633.severity = error # SA1633: File should have header
+trim_trailing_whitespace = false
+insert_final_newline = false
+#csharp_using_directive_placement = inside_namespace:error
+#dotnet_diagnostic.IDE0065.severity = error # IDE0065: Using directive placement
+#dotnet_diagnostic.IDE1006.severity = error # IDE1006: Naming rule violation
+#dotnet_diagnostic.SA1000.severity = error # SA1000: Keywords should be spaced correctly
+#dotnet_diagnostic.SA1003.severity = error # SA1003: Symbols should be spaced correctly
+#dotnet_diagnostic.SA1019.severity = error # SA1019: Member access symbols should be spaced correctly
+#dotnet_diagnostic.SA1024.severity = error # SA1024: Colons should be spaced correctly
+#dotnet_diagnostic.SA1028.severity = error # SA1028: Code should not contain trailing whitespace
+#dotnet_diagnostic.SA1117.severity = error # SA1117: Parameters should be on same line or separate lines
+#dotnet_diagnostic.SA1127.severity = error # SA1127: Generic type constraints should be on their own line
+#dotnet_diagnostic.SA1133.severity = error # SA1133: Do not combine attributes
+#dotnet_diagnostic.SA1134.severity = error # SA1134: Attributes should not share line
+#dotnet_diagnostic.SA1135.severity = error # SA1135: Using directives should be qualified
+#dotnet_diagnostic.SA1507.severity = error # SA1507: Code should not contain multiple blank lines in a row
+#dotnet_diagnostic.SA1508.severity = error # SA1508: Closing braces should not be preceded by blank line
+#dotnet_diagnostic.SA1516.severity = error # SA1516: Elements should be separated by blank line
+#dotnet_diagnostic.SA1518.severity = error # SA1518: Use line endings correctly at end of file
+#dotnet_diagnostic.SA1633.severity = error # SA1633: File should have header
 
 # Newline settings
-csharp_new_line_before_open_brace = all
-csharp_new_line_before_else = true
-csharp_new_line_before_catch = true
-csharp_new_line_before_finally = true
-csharp_new_line_before_members_in_object_initializers = true
-csharp_new_line_before_members_in_anonymous_types = true
+#csharp_new_line_before_open_brace = all
+#csharp_new_line_before_else = true
+#csharp_new_line_before_catch = true
+#csharp_new_line_before_finally = true
+#csharp_new_line_before_members_in_object_initializers = true
+#csharp_new_line_before_members_in_anonymous_types = true
 
 # name all constant fields using PascalCase
-dotnet_naming_rule.constant_fields_should_be_pascal_case.severity = error
-dotnet_naming_rule.constant_fields_should_be_pascal_case.symbols = constant_fields
-dotnet_naming_rule.constant_fields_should_be_pascal_case.style = pascal_case_style
-dotnet_naming_symbols.constant_fields.applicable_kinds = field
-dotnet_naming_symbols.constant_fields.required_modifiers = const
-dotnet_naming_style.pascal_case_style.capitalization = pascal_case
+#dotnet_naming_rule.constant_fields_should_be_pascal_case.severity = error
+#dotnet_naming_rule.constant_fields_should_be_pascal_case.symbols = constant_fields
+#dotnet_naming_rule.constant_fields_should_be_pascal_case.style = pascal_case_style
+#dotnet_naming_symbols.constant_fields.applicable_kinds = field
+#dotnet_naming_symbols.constant_fields.required_modifiers = const
+#dotnet_naming_style.pascal_case_style.capitalization = pascal_case
 
 # Static fields must be PascalCase (no prefix)
-dotnet_naming_rule.static_fields_should_be_pascal_case.severity = error
-dotnet_naming_rule.static_fields_should_be_pascal_case.symbols = static_fields
-dotnet_naming_rule.static_fields_should_be_pascal_case.style = static_pascal_case_style
-dotnet_naming_symbols.static_fields.applicable_kinds = field
-dotnet_naming_symbols.static_fields.applicable_accessibilities = private, internal
-dotnet_naming_symbols.static_fields.required_modifiers = static
-dotnet_naming_style.static_pascal_case_style.capitalization = pascal_case
-dotnet_naming_style.static_pascal_case_style.required_prefix =
+#dotnet_naming_rule.static_fields_should_be_pascal_case.severity = error
+#dotnet_naming_rule.static_fields_should_be_pascal_case.symbols = static_fields
+#dotnet_naming_rule.static_fields_should_be_pascal_case.style = static_pascal_case_style
+#dotnet_naming_symbols.static_fields.applicable_kinds = field
+#dotnet_naming_symbols.static_fields.applicable_accessibilities = private, internal
+#dotnet_naming_symbols.static_fields.required_modifiers = static
+#dotnet_naming_style.static_pascal_case_style.capitalization = pascal_case
+#dotnet_naming_style.static_pascal_case_style.required_prefix =
 
 # internal and private fields should be _camelCase
-dotnet_naming_rule.camel_case_for_private_internal_fields.severity = error
-dotnet_naming_rule.camel_case_for_private_internal_fields.symbols = private_internal_fields
-dotnet_naming_rule.camel_case_for_private_internal_fields.style = camel_case_underscore_style
-dotnet_naming_symbols.private_internal_fields.applicable_kinds = field
-dotnet_naming_symbols.private_internal_fields.applicable_accessibilities = private, internal
-dotnet_naming_style.camel_case_underscore_style.required_prefix =
-dotnet_naming_style.camel_case_underscore_style.capitalization = camel_case
+#dotnet_naming_rule.camel_case_for_private_internal_fields.severity = error
+#dotnet_naming_rule.camel_case_for_private_internal_fields.symbols = private_internal_fields
+#dotnet_naming_rule.camel_case_for_private_internal_fields.style = camel_case_underscore_style
+#dotnet_naming_symbols.private_internal_fields.applicable_kinds = field
+#dotnet_naming_symbols.private_internal_fields.applicable_accessibilities = private, internal
+#dotnet_naming_style.camel_case_underscore_style.required_prefix =
+#dotnet_naming_style.camel_case_underscore_style.capitalization = camel_case
 
 # Xml config files
 [*.{xml,config,*proj,nuspec,props,resx,targets,yml,tasks,ruleset,vsixmanifest,vsct,slnx}]

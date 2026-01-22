@@ -27,7 +27,7 @@ public class AuthContext(DbContextOptions<AuthContext> options)
     /// <summary>
     /// The Enrolments DbSet.
     /// </summary>
-    public virtual DbSet<Enrolment> Enrolments { get; set; }
+    public virtual DbSet<Delegation> Enrolments { get; set; }
 
     /// <summary>
     /// The KrdsSyncLogs DbSet.

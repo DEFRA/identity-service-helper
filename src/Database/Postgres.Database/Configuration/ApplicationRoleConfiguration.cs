@@ -21,10 +21,12 @@ public class ApplicationRoleConfiguration : IEntityTypeConfiguration<Application
 
         builder.HasOne(x => x.Application)
             .WithMany(e => e.ApplicationRoles)
-            .HasForeignKey(x => x.ApplicationId);
+            .HasForeignKey(x => x.ApplicationId)
+            .HasConstraintName("application_role_mapping_application_id_fk");
 
         builder.HasOne(x => x.Role)
             .WithMany(e => e.ApplicationRoles)
-            .HasForeignKey(x => x.RoleId);
+            .HasForeignKey(x => x.RoleId)
+            .HasConstraintName("application_role_mapping_role_id_fk");
     }
 }
