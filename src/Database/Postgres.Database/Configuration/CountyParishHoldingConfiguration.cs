@@ -10,10 +10,10 @@ public class CountyParishHoldingConfiguration : BaseUpdateEntityConfiguration<Co
     {
         builder.ToTable(nameof(CountyParishHolding).ToSnakeCase());
 
-        builder.HasKey(x => x.Id);
+        builder.HasIndex(x => x.Identifier);
 
-        builder.Property(x => x.Id)
-            .HasColumnName(nameof(CountyParishHolding.Id).ToSnakeCase())
+        builder.Property(x => x.Identifier)
+            .HasColumnName(nameof(CountyParishHolding.Identifier).ToSnakeCase())
             .HasColumnType(ColumnTypes.Varchar)
             .HasMaxLength(11)
             .IsRequired();
@@ -28,6 +28,10 @@ public class CountyParishHoldingConfiguration : BaseUpdateEntityConfiguration<Co
             .HasColumnName(nameof(CountyParishHolding.CreatedBy).ToSnakeCase())
             .HasColumnType(ColumnTypes.UniqueIdentifier)
             .IsRequired();
+
+        builder.Property(x => x.ProcessedAt)
+            .HasColumnName(nameof(CountyParishHolding.ProcessedAt).ToSnakeCase())
+            .HasColumnType(ColumnTypes.Timestamp);
 
         builder.Property(x => x.UpdatedBy)
             .HasColumnName(nameof(CountyParishHolding.UpdatedBy).ToSnakeCase())

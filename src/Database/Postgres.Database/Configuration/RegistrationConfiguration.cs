@@ -8,6 +8,46 @@ internal class RegistrationConfiguration : BaseUpdateEntityConfiguration<Registr
 {
     public override void Configure(EntityTypeBuilder<Registration> builder)
     {
+        builder.Property(x => x.CountryParishHoldingId)
+            .HasColumnName(nameof(Registration.CountryParishHoldingId).ToSnakeCase())
+            .HasColumnType(ColumnTypes.UniqueIdentifier)
+            .IsRequired();
+
+        builder.HasOne(x => x.CountyParishHolding)
+            .WithMany(x => x.Registrations)
+            .HasForeignKey(x => x.CountryParishHoldingId)
+            .IsRequired();
+
+        builder.HasOne(x => x.Application)
+            .WithMany(x => x.Registrations)
+            .HasForeignKey(x => x.ApplicationId);
+
+        builder.Property(x => x.StatusTypeId)
+            .HasColumnName(nameof(Registration.StatusTypeId).ToSnakeCase())
+            .HasColumnType(ColumnTypes.SmallInt)
+            .IsRequired();
+        
+        builder.Property(x => x.EnrolledAt)
+            .HasColumnName(nameof(Registration.EnrolledAt).ToSnakeCase())
+            .HasColumnType(ColumnTypes.Timestamp)
+            .HasDefaultValueSql("now()")
+            .ValueGeneratedOnAdd();
+        
+        builder.Property(x => x.ExpiresAt)
+            .HasColumnName(nameof(Registration.ExpiresAt).ToSnakeCase())
+            .HasColumnType(ColumnTypes.Timestamp)
+            .HasDefaultValueSql("now()")
+            .ValueGeneratedOnAdd();
+        
+        
+        builder.HasOne(x => x.Status)
+            .WithMany(x => x.Registrations)
+            .HasForeignKey(x => x.StatusTypeId);
+        
+        builder.Property(x => x.ApplicationId)
+            .HasColumnName(nameof(Registration.ApplicationId).ToSnakeCase())
+            .HasColumnType(ColumnTypes.UniqueIdentifier);
+
         builder.Property(x => x.CreatedBy)
             .HasColumnName(nameof(Registration.CreatedBy).ToSnakeCase())
             .HasColumnType(ColumnTypes.UniqueIdentifier);

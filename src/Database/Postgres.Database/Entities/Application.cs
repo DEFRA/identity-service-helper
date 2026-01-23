@@ -20,7 +20,9 @@ public class Application : BaseUpdateEntity
 
     public StatusType StatusType { get; set; }
 
-    public ICollection<Delegation> Enrolments { get; set; } = new List<Delegation>();
+    public ICollection<Delegation> Delegations { get; set; } = new List<Delegation>();
 
     public ICollection<ApplicationRole> ApplicationRoles { get; set; } = new List<ApplicationRole>();
+    
+    public ICollection<Registration> Registrations { get; set; } = new List<Registration>();
 }

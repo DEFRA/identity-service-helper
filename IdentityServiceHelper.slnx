@@ -7,6 +7,7 @@
     <Project Path="src/Services/Services.csproj" />
   </Folder>
   <Folder Name="/src/Database/">
+    <Project Path="src/Database/Postgres.Database.Console/Postgres.Database.Console.csproj" />
     <Project Path="src\Database\Postgres.Database\Postgres.Database.csproj" />
   </Folder>
   <Folder Name="/tests/">

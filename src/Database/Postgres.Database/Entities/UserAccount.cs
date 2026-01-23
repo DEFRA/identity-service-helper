@@ -16,5 +16,7 @@ public class UserAccount : BaseUpdateEntity
 
     public ICollection<Federation> Federations { get; set; }
 
-    public ICollection<Delegation> Enrolments { get; set; }
+    public ICollection<Delegation> Delegations { get; set; }
+
+    public ICollection<Delegation> InvitedByUsers { get; set; }
 }

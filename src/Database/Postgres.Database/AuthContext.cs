@@ -27,7 +27,7 @@ public class AuthContext(DbContextOptions<AuthContext> options)
     /// <summary>
     /// The Enrolments DbSet.
     /// </summary>
-    public virtual DbSet<Delegation> Enrolments { get; set; }
+    public virtual DbSet<Delegation> Delegations{ get; set; }
 
     /// <summary>
     /// The KrdsSyncLogs DbSet.
@@ -38,6 +38,16 @@ public class AuthContext(DbContextOptions<AuthContext> options)
     /// The Users DbSet.
     /// </summary>
     public virtual DbSet<UserAccount> Users { get; set; }
+
+    public virtual DbSet<Role> Roles { get; set; }
+
+    public virtual DbSet<ApplicationRole> ApplicationRoles { get; set; }
+
+    public virtual DbSet<CountyParishHolding> CountyParishHoldings { get; set; }
+
+    public virtual DbSet<StatusType> StatusTypes { get; set; }
+
+
 
     public override int SaveChanges()
     {

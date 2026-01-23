@@ -9,6 +9,7 @@ public static class ColumnTypes
     public const string UniqueIdentifier = "uuid";
     public const string Boolean = "boolean";
     public const string Varchar = "varchar";
+    public const string Char = "char";
     public const string Text = "text";
     public const string Date = "date";
     public const string Timestamp = "TimestampTz";

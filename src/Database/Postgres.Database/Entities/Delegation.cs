@@ -12,7 +12,7 @@ public class Delegation : BaseUpdateEntity
 
     public StatusType Status { get; set; }
 
-    public string CountyParishHoldingId { get; set; }
+    public Guid CountyParishHoldingId { get; set; }
 
     public CountyParishHolding CountyParishHolding { get; set; }
 
@@ -46,7 +46,11 @@ public class Delegation : BaseUpdateEntity
 
     public DateTime InvitedAt { get; set; }
 
+    public DateTime AcceptedAt { get; set; }
+
     public DateTime RegisteredAt { get; set; }
+
+    public DateTime RevokedAt { get; set; }
 
     public DateTime ActivatedAt { get; set; }
 

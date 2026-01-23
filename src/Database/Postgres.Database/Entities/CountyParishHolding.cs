@@ -8,7 +8,7 @@ namespace Defra.Identity.Postgres.Database.Entities;
 
 public class CountyParishHolding : BaseUpdateEntity
 {
-    public string Id { get; set; }
+    public string Identifier { get; set; }
 
     public int StatusTypeId { get; set; }
 
@@ -23,4 +23,8 @@ public class CountyParishHolding : BaseUpdateEntity
     public Guid UpdatedBy { get; set; }
 
     public DateTime UpdatedAt { get; set; }
+
+    public ICollection<Delegation> Delegations { get; set; } = new List<Delegation>();
+
+    public ICollection<Registration> Registrations { get; set; } = new List<Registration>();
 }

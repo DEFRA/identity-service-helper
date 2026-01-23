@@ -66,6 +66,8 @@ public static class ServiceCollectionExtensions
         using var context = factory.CreateDbContext();
 
         #if DEBUG
+
+        var env = scope.ServiceProvider.GetRequiredService<IHostEnvironment>();
         // Migrate the database on startup in development mode
         if (scope.ServiceProvider.GetRequiredService<IHostEnvironment>().IsDevelopment())
         {
