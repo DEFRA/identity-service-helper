@@ -1,11 +1,11 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-
-#nullable disable
+﻿#nullable disable
 
 namespace Defra.Identity.Postgres.Database.Migrations
 {
+    using System;
+    using Microsoft.EntityFrameworkCore.Migrations;
+    using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+
     /// <inheritdoc />
     public partial class initial : Migration
     {
@@ -443,6 +443,13 @@ namespace Defra.Identity.Postgres.Database.Migrations
                 schema: "defra-ci",
                 table: "user_account",
                 column: "created_by");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_account_email_address",
+                schema: "defra-ci",
+                table: "user_account",
+                column: "email_address",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_user_account_status_type_id",

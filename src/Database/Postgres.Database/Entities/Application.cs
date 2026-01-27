@@ -23,6 +23,6 @@ public class Application : BaseUpdateEntity
     public ICollection<Delegation> Delegations { get; set; } = new List<Delegation>();
 
     public ICollection<ApplicationRole> ApplicationRoles { get; set; } = new List<ApplicationRole>();
-    
+
     public ICollection<Registration> Registrations { get; set; } = new List<Registration>();
 }

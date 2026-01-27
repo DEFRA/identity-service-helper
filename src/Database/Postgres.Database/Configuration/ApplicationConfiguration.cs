@@ -2,9 +2,6 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-using Defra.Identity.Postgres.Database.Entities.Base;
-using Npgsql.EntityFrameworkCore.PostgreSQL.ValueGeneration;
-
 namespace Defra.Identity.Postgres.Database.Configuration;
 
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

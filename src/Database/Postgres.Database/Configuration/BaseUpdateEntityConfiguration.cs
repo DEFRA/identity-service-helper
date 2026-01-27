@@ -6,7 +6,6 @@ namespace Defra.Identity.Postgres.Database.Configuration;
 
 using Defra.Identity.Postgres.Database.Entities.Base;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Npgsql.EntityFrameworkCore.PostgreSQL.ValueGeneration;
 
 public abstract class BaseUpdateEntityConfiguration<TEntity> : IEntityTypeConfiguration<TEntity>
     where TEntity : BaseUpdateEntity

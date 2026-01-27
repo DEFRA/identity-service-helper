@@ -123,7 +123,6 @@ internal class DelegationConfiguration
             .WithMany(x => x.InvitedByUsers)
             .HasForeignKey(x => x.InvitedByUserId);
 
-
         builder.HasOne(x => x.Status)
             .WithMany(x => x.Delegations)
             .HasForeignKey(x => x.StatusTypeId);
@@ -131,7 +130,6 @@ internal class DelegationConfiguration
         builder.HasOne(x => x.CountyParishHolding)
             .WithMany(x => x.Delegations)
             .HasForeignKey(x => x.CountyParishHoldingId);
-
 
         base.Configure(builder);
     }

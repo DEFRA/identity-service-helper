@@ -11,7 +11,7 @@ public interface IRepository<TEntity>
 {
     Task<List<TEntity>> GetAll();
 
-    Task<TEntity?> Get(Expression<Func<TEntity, bool>> predicate);
+    Task<TEntity?> Get(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default);
 
     Task<TEntity> Create(TEntity entity);
 

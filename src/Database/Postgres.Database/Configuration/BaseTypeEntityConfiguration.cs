@@ -5,7 +5,6 @@
 namespace Defra.Identity.Postgres.Database.Configuration;
 
 using Defra.Identity.Postgres.Database.Entities.Base;
-using Npgsql.EntityFrameworkCore.PostgreSQL.ValueGeneration;
 
 internal abstract class BaseTypeEntityConfiguration<TEntity> : IEntityTypeConfiguration<TEntity>
     where TEntity : BaseTypeEntity

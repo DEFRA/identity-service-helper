@@ -47,8 +47,6 @@ public class AuthContext(DbContextOptions<AuthContext> options)
 
     public virtual DbSet<StatusType> StatusTypes { get; set; }
 
-
-
     public override int SaveChanges()
     {
         SetProcessingDateTimes();

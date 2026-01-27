@@ -27,24 +27,23 @@ internal class RegistrationConfiguration : BaseUpdateEntityConfiguration<Registr
             .HasColumnType(ColumnTypes.SmallInt)
             .HasDefaultValue(1)
             .IsRequired();
-        
+
         builder.Property(x => x.EnrolledAt)
             .HasColumnName(nameof(Registration.EnrolledAt).ToSnakeCase())
             .HasColumnType(ColumnTypes.Timestamp)
             .HasDefaultValueSql("now()")
             .ValueGeneratedOnAdd();
-        
+
         builder.Property(x => x.ExpiresAt)
             .HasColumnName(nameof(Registration.ExpiresAt).ToSnakeCase())
             .HasColumnType(ColumnTypes.Timestamp)
             .HasDefaultValueSql("now()")
             .ValueGeneratedOnAdd();
-        
-        
+
         builder.HasOne(x => x.Status)
             .WithMany(x => x.Registrations)
             .HasForeignKey(x => x.StatusTypeId);
-        
+
         builder.Property(x => x.ApplicationId)
             .HasColumnName(nameof(Registration.ApplicationId).ToSnakeCase())
             .HasColumnType(ColumnTypes.UniqueIdentifier);

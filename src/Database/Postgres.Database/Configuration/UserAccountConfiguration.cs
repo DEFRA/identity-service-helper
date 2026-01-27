@@ -10,14 +10,15 @@ internal class UserAccountConfiguration : BaseUpdateEntityConfiguration<UserAcco
 {
     public override void Configure(EntityTypeBuilder<UserAccount> builder)
     {
-        
 
         builder.Property(x => x.EmailAddress)
             .HasColumnName(nameof(UserAccount.EmailAddress).ToSnakeCase())
             .HasColumnType(ColumnTypes.Varchar)
             .HasMaxLength(256)
             .IsRequired();
-        
+
+        builder.HasIndex(x => x.EmailAddress).IsUnique();
+
         builder.Property(x => x.StatusTypeId)
             .HasColumnName(nameof(UserAccount.StatusTypeId).ToSnakeCase())
             .HasColumnType(ColumnTypes.SmallInt)
@@ -28,31 +29,28 @@ internal class UserAccountConfiguration : BaseUpdateEntityConfiguration<UserAcco
             .WithMany(e => e.UserAccounts)
             .HasForeignKey(x => x.StatusTypeId);
 
-
         builder.Property(x => x.DisplayName)
             .HasColumnName(nameof(UserAccount.DisplayName).ToSnakeCase())
             .HasColumnType(ColumnTypes.CiText);
-        
+
         builder.Property(x => x.FirstName)
             .HasColumnName(nameof(UserAccount.FirstName).ToSnakeCase())
             .HasColumnType(ColumnTypes.Varchar)
             .HasMaxLength(256);
-        
+
         builder.Property(x => x.LastName)
             .HasColumnName(nameof(UserAccount.LastName).ToSnakeCase())
             .HasColumnType(ColumnTypes.Varchar)
             .HasMaxLength(256);
-           
 
         builder.Property(x => x.CreatedBy)
             .HasColumnName(nameof(UserAccount.CreatedBy).ToSnakeCase())
             .HasColumnType(ColumnTypes.UniqueIdentifier);
-        
+
         builder.Property(x => x.UpdatedBy)
             .HasColumnName(nameof(UserAccount.UpdatedBy).ToSnakeCase())
             .HasColumnType(ColumnTypes.UniqueIdentifier)
-            .IsRequired(false)
-            ;
+            .IsRequired(false);
 
         // FK: user_account.created_by -> user_account.id
         builder.HasOne(x => x.CreatedByUser)

@@ -2,11 +2,12 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Services;
+namespace Defra.Identity.Repositories;
 
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database;
 using Defra.Identity.Postgres.Database.Entities;
+using Defra.Identity.Services;
 
 public class UsersRepository(AuthContext context)
     : IRepository<UserAccount>
@@ -17,9 +18,9 @@ public class UsersRepository(AuthContext context)
         return await query.ToListAsync();
     }
 
-    public async Task<UserAccount?> Get(Expression<Func<UserAccount, bool>> predicate)
+    public async Task<UserAccount?> Get(Expression<Func<UserAccount, bool>> predicate, CancellationToken cancellationToken = default)
     {
-        var query = await context.Users.SingleOrDefaultAsync(predicate);
+        var query = await context.Users.SingleOrDefaultAsync(predicate, cancellationToken);
         return query ?? null;
     }
 

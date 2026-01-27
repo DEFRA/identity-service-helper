@@ -540,6 +540,9 @@ namespace Defra.Identity.Postgres.Database.Migrations
 
                     b.HasIndex("CreatedBy");
 
+                    b.HasIndex("EmailAddress")
+                        .IsUnique();
+
                     b.HasIndex("StatusTypeId");
 
                     b.HasIndex("UpdatedBy");

@@ -1,0 +1,33 @@
+### PUT request to create a new user
+PUT {{host}}/users
+Content-Type: application/json
+
+{
+  "id": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+  "upn": "new.user@example.com",
+  "displayName": "New User",
+  "accountEnabled": true
+}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 201, "Response status is not 201");
+    });
+%}
+
+### PUT request to update an existing user
+PUT {{host}}/users/a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
+Content-Type: application/json
+
+{
+  "upn": "new.user@example.com",
+  "displayName": "Updated User",
+  "accountEnabled": true
+}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+        client.assert(response.body.displayName === "Updated User", "Display name was not updated");
+    });
+%}

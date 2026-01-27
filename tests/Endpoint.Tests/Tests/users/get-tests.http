@@ -4,7 +4,7 @@ GET {{host}}/users
 ###
 
 < {% 
-    request.variables.set("id", "fbef48a4-78f2-4340-80eb-e8c1cf4549bf")
+    request.variables.set("id", "3d0f4101-a84c-4089-a1a3-66e6e655e5fc")
 
 %}
 

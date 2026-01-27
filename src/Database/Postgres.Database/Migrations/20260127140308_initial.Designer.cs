@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Defra.Identity.Postgres.Database.Migrations
 {
     [DbContext(typeof(AuthContext))]
-    [Migration("20260127112255_initial")]
+    [Migration("20260127140308_initial")]
     partial class initial
     {
         /// <inheritdoc />
@@ -542,6 +542,9 @@ namespace Defra.Identity.Postgres.Database.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedBy");
+
+                    b.HasIndex("EmailAddress")
+                        .IsUnique();
 
                     b.HasIndex("StatusTypeId");
 

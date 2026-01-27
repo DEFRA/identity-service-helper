@@ -5,6 +5,7 @@
 namespace Defra.Identity.Postgres.Database.Tests;
 
 using Defra.Identity.Postgres.Database;
+using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Collections;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
 using Microsoft.AspNetCore.Builder;
@@ -38,7 +39,13 @@ public abstract class BaseTests(PostgreContainerFixture fixture) : IAsyncLifetim
         var app = builder.Build();
 
         app.UseAuthDatabase();
+        app.UseDatabaseMigrations();
         var serviceProvider = builder.Services.BuildServiceProvider();
         Context = serviceProvider.GetRequiredService<AuthContext>();
+        await Context.StatusTypes.AddAsync(new StatusType() { Name = "Active" });
+        var id = Guid.NewGuid();
+        await Context.Users.AddAsync(new UserAccount()
+            { Id = id, DisplayName = "Test User", EmailAddress = "test@test.com", FirstName = "test", LastName = "user", CreatedBy = id });
+        await Context.SaveChangesAsync();
     }
 }
