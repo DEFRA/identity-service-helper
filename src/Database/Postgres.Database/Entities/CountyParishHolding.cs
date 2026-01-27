@@ -20,7 +20,7 @@ public class CountyParishHolding : BaseUpdateEntity
 
     public DateTime ProcessedAt { get; set; }
 
-    public Guid UpdatedBy { get; set; }
+    public Guid? UpdatedBy { get; set; }
 
     public DateTime UpdatedAt { get; set; }
 

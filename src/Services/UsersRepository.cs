@@ -23,14 +23,18 @@ public class UsersRepository(AuthContext context)
         return query ?? null;
     }
 
-    public Task<UserAccount> Create(UserAccount entity)
+    public async Task<UserAccount> Create(UserAccount entity)
     {
-        throw new NotImplementedException();
+        await context.Users.AddAsync(entity);
+        await context.SaveChangesAsync();
+        return entity;
     }
 
-    public Task<UserAccount> Update(UserAccount entity)
+    public async Task<UserAccount> Update(UserAccount entity)
     {
-        throw new NotImplementedException();
+        context.Users.Update(entity);
+        await context.SaveChangesAsync();
+        return entity;
     }
 
     public Task<bool> Delete(Func<UserAccount, bool> predicate)

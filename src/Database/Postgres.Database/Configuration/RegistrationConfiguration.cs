@@ -25,6 +25,7 @@ internal class RegistrationConfiguration : BaseUpdateEntityConfiguration<Registr
         builder.Property(x => x.StatusTypeId)
             .HasColumnName(nameof(Registration.StatusTypeId).ToSnakeCase())
             .HasColumnType(ColumnTypes.SmallInt)
+            .HasDefaultValue(1)
             .IsRequired();
         
         builder.Property(x => x.EnrolledAt)
@@ -54,7 +55,8 @@ internal class RegistrationConfiguration : BaseUpdateEntityConfiguration<Registr
 
         builder.Property(x => x.UpdatedBy)
             .HasColumnName(nameof(Registration.UpdatedBy).ToSnakeCase())
-            .HasColumnType(ColumnTypes.UniqueIdentifier);
+            .HasColumnType(ColumnTypes.UniqueIdentifier)
+            .IsRequired(false);
 
         base.Configure(builder);
     }

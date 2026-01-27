@@ -65,7 +65,18 @@ public static class ServiceCollectionExtensions
         var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<AuthContext>>();
         using var context = factory.CreateDbContext();
 
-        #if DEBUG
+        if (context.Database.CanConnect())
+        {
+            context.Database.OpenConnection();
+        }
+    }
+
+    public static void UseDatabaseMigrations(this WebApplication app)
+    {
+        using var scope = app.Services.CreateScope();
+        var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<AuthContext>>();
+        using var context = factory.CreateDbContext();
+#if DEBUG
 
         var env = scope.ServiceProvider.GetRequiredService<IHostEnvironment>();
         // Migrate the database on startup in development mode
@@ -73,11 +84,6 @@ public static class ServiceCollectionExtensions
         {
             context.Database.Migrate();
         }
-        #endif
-
-        if (context.Database.CanConnect())
-        {
-            context.Database.OpenConnection();
-        }
+#endif
     }
 }

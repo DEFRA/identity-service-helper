@@ -11,6 +11,8 @@ using Defra.Identity.Api.Utils.Logging;
 using Defra.Identity.Config;
 using Defra.Identity.Extensions;
 using Defra.Identity.Postgres.Database;
+using Defra.Identity.Postgres.Database.Entities;
+using Defra.Identity.Services;
 using FluentValidation;
 using Serilog;
 
@@ -90,8 +92,7 @@ public class Program
         builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
         // Set up the endpoints and their dependencies
-        /*builder.Services.AddTransient<IRepository<UserAccount>, UsersRepository>(service =>
-            new UsersRepository(service.GetRequiredService<AuthContext>()));*/
+        builder.Services.AddTransient<IRepository<UserAccount>, UsersRepository>();
     }
 
     [ExcludeFromCodeCoverage]
@@ -101,7 +102,7 @@ public class Program
         app.UseRouting();
         app.MapHealthChecks("/health");
         app.UseUsersEndpoints();
-        app.UseAuthDatabase();
+        //app.UseAuthDatabase();
 
         return app;
     }

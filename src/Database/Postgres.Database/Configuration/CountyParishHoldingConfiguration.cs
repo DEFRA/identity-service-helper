@@ -35,7 +35,8 @@ public class CountyParishHoldingConfiguration : BaseUpdateEntityConfiguration<Co
 
         builder.Property(x => x.UpdatedBy)
             .HasColumnName(nameof(CountyParishHolding.UpdatedBy).ToSnakeCase())
-            .HasColumnType(ColumnTypes.UniqueIdentifier);
+            .HasColumnType(ColumnTypes.UniqueIdentifier)
+            .IsRequired(false);
 
         builder.HasOne(x => x.StatusType)
             .WithMany(x => x.CountyParishHoldings)

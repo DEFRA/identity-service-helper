@@ -13,6 +13,35 @@ public static class UsersEndpoints
     {
         app.MapGet(RouteNames.Users, GetAll);
         app.MapGet(RouteNames.Users + "/{id:guid}", Get);
+        app.MapPut(RouteNames.Users, Put);
+        app.MapPut(RouteNames.Users + "/{id:guid}", Put);
+    }
+
+    private static async Task<IResult> Put(
+        UserAccount user,
+        IRepository<UserAccount> service,
+        Guid? id = null)
+    {
+        if (id.HasValue)
+        {
+            user.Id = id.Value;
+        }
+
+        if (user.Id == Guid.Empty)
+        {
+            return Results.BadRequest("User Id is required");
+        }
+
+        var existingUser = await service.Get(x => x.Id.Equals(user.Id));
+
+        if (existingUser == null)
+        {
+            await service.Create(user);
+            return Results.Created($"{RouteNames.Users}/{user.Id}", user);
+        }
+
+        await service.Update(user);
+        return Results.Ok(user);
     }
 
     private static async Task<IResult> GetAll(

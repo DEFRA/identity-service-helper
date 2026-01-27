@@ -15,4 +15,6 @@ public class StatusType : BaseTypeEntity
     public ICollection<Delegation> Delegations { get; set; } = new List<Delegation>();
     
     public ICollection<Registration> Registrations { get; set; } = new List<Registration>();
+    
+    public ICollection<UserAccount> UserAccounts { get; set; } = new List<UserAccount>();
 }
