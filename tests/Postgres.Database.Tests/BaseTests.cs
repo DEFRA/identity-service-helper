@@ -42,10 +42,21 @@ public abstract class BaseTests(PostgreContainerFixture fixture) : IAsyncLifetim
         app.UseDatabaseMigrations();
         var serviceProvider = builder.Services.BuildServiceProvider();
         Context = serviceProvider.GetRequiredService<AuthContext>();
-        await Context.StatusTypes.AddAsync(new StatusType() { Name = "Active" });
-        var id = Guid.NewGuid();
-        await Context.Users.AddAsync(new UserAccount()
-            { Id = id, DisplayName = "Test User", EmailAddress = "test@test.com", FirstName = "test", LastName = "user", CreatedBy = id });
-        await Context.SaveChangesAsync();
+
+        if (!Context.Users.Any())
+        {
+            await Context.StatusTypes.AddAsync(new StatusType() { Name = "Active" });
+            var id = Guid.NewGuid();
+            await Context.Users.AddAsync(new UserAccount()
+            {
+                Id = id,
+                DisplayName = "Test User",
+                EmailAddress = "test@test.com",
+                FirstName = "test",
+                LastName = "user",
+                CreatedBy = id,
+            });
+            await Context.SaveChangesAsync();
+        }
     }
 }

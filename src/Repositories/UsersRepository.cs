@@ -7,7 +7,6 @@ namespace Defra.Identity.Repositories;
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database;
 using Defra.Identity.Postgres.Database.Entities;
-using Defra.Identity.Services;
 
 public class UsersRepository(AuthContext context)
     : IRepository<UserAccount>
@@ -24,17 +23,18 @@ public class UsersRepository(AuthContext context)
         return query ?? null;
     }
 
-    public async Task<UserAccount> Create(UserAccount entity)
+    public async Task<UserAccount> Create(UserAccount entity, CancellationToken cancellationToken = default)
     {
-        await context.Users.AddAsync(entity);
-        await context.SaveChangesAsync();
+        await context.Users.AddAsync(entity, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
         return entity;
     }
 
-    public async Task<UserAccount> Update(UserAccount entity)
+    public async Task<UserAccount> Update(UserAccount entity, CancellationToken cancellationToken = default)
     {
         context.Users.Update(entity);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(cancellationToken);
+
         return entity;
     }
 

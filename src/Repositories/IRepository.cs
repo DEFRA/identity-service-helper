@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Services;
+namespace Defra.Identity.Repositories;
 
 using System.Linq.Expressions;
 
@@ -13,9 +13,9 @@ public interface IRepository<TEntity>
 
     Task<TEntity?> Get(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default);
 
-    Task<TEntity> Create(TEntity entity);
+    Task<TEntity> Create(TEntity entity, CancellationToken cancellationToken = default);
 
-    Task<TEntity> Update(TEntity entity);
+    Task<TEntity> Update(TEntity entity, CancellationToken cancellationToken = default);
 
     Task<bool> Delete(Func<TEntity, bool> predicate);
 }

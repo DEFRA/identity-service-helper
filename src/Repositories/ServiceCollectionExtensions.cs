@@ -1,7 +1,6 @@
 namespace Defra.Identity.Repositories;
 
 using Defra.Identity.Postgres.Database.Entities;
-using Defra.Identity.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
