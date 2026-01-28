@@ -1,11 +1,14 @@
-### GET request to example server
+### GET request to users
 GET {{host}}/users
-
+ 
 ###
 
 < {% 
-    request.variables.set("id", "3d0f4101-a84c-4089-a1a3-66e6e655e5fc")
+    request.variables.set("id", "af146cf4-6aa3-4e16-a632-a126fbbc852b")
 
 %}
 
 GET {{host}}/users/{{id}}
+X-Correlation-ID: test
+x-api-key: test
+X-Operator-Id: gary

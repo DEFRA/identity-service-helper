@@ -11,12 +11,12 @@
     <ProjectReference Include="..\Services\Services.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Endpoints\" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Remove="MongoDB.Driver" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Remove="MongoDB.Driver" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Middleware\" />
   </ItemGroup>
 </Project>

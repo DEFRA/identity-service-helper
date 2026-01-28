@@ -26,6 +26,7 @@ public abstract class BaseUpdateEntityConfiguration<TEntity> : IEntityTypeConfig
         builder.Property(x => x.UpdatedAt)
             .HasColumnName(nameof(BaseUpdateEntity.UpdatedAt).ToSnakeCase())
             .HasColumnType(ColumnTypes.Timestamp)
+            .ValueGeneratedOnUpdate()
             .IsRequired(false);
 
         builder.Property(x => x.CreatedAt)

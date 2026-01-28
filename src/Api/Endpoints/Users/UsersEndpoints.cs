@@ -5,16 +5,20 @@
 namespace Defra.Identity.Api.Endpoints.Users;
 
 using Defra.Identity.Postgres.Database.Entities;
+using Defra.Identity.Requests;
+using Defra.Identity.Requests.Middleware;
 using Defra.Identity.Responses.Users;
 using Defra.Identity.Services;
 using Defra.Identity.Services.Users;
+using Microsoft.AspNetCore.Mvc;
 
 public static class UsersEndpoints
 {
     public static void UseUsersEndpoints(this IEndpointRouteBuilder app)
     {
        // app.MapGet(RouteNames.Users, GetAll);
-        app.MapGet(RouteNames.Users + "/{id:guid}", Get).Produces<Responses.Users.User>(StatusCodes.Status200OK, "application/json");
+        app.MapGet(RouteNames.Users + "/{id:guid}", Get)
+            .Produces<Responses.Users.User>(StatusCodes.Status200OK, "application/json");
 
         app.MapPut(RouteNames.Users, Put);
     }
@@ -28,6 +32,7 @@ public static class UsersEndpoints
     }
 
     private static async Task<IResult> Get(
+        IdentityRequestHeaders headers,
         Guid id,
         IUserService service)
     {

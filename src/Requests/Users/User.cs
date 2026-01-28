@@ -1,6 +1,6 @@
 namespace Defra.Identity.Requests.Users;
 
-public class User
+public abstract class User
 {
     public string DisplayName { get; set; } = string.Empty;
 

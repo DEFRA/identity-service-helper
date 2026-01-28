@@ -2,6 +2,9 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
+using Defra.Identity.Api.Endpoints;
+using Defra.Identity.Requests;
+
 namespace Defra.Identity.Api;
 
 using System.Diagnostics.CodeAnalysis;
@@ -91,7 +94,7 @@ public class Program
         // Add support services
         builder.Services.AddHealthChecks();
         builder.Services.AddValidatorsFromAssemblyContaining<Program>();
-
+        builder.Services.AddRequests(configuration);
         // Set up the endpoints and their dependencies
         builder.Services.AddRepositories(configuration);
         builder.Services.AddDataServices(configuration);
@@ -102,9 +105,12 @@ public class Program
     {
         app.UseHeaderPropagation();
         app.UseRouting();
-        app.MapHealthChecks("/health");
+        app.UseRequests();
+        app.MapHealthChecks("/healthz");
+
         app.UseUsersEndpoints();
-        //app.UseAuthDatabase();
+        app.UsePingEndpoints();
+
         return app;
     }
 }
