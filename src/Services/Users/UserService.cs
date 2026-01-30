@@ -29,7 +29,7 @@ public class UserService : IUserService
        var user = new User()
        {
            Id = userAccount.Id,
-           EmailAddress = userAccount.EmailAddress,
+           Email = userAccount.EmailAddress,
            FirstName = userAccount.FirstName,
            LastName = userAccount.LastName,
        };
@@ -50,7 +50,7 @@ public class UserService : IUserService
             return new User()
            {
                Id = updated.Id,
-               EmailAddress = updated.EmailAddress,
+               Email = updated.EmailAddress,
                FirstName = updated.FirstName,
                LastName = updated.LastName,
            };
@@ -61,7 +61,7 @@ public class UserService : IUserService
         return new User()
         {
             Id = result.Id,
-            EmailAddress = result.EmailAddress,
+            Email = result.EmailAddress,
             FirstName = result.FirstName,
             LastName = result.LastName,
         };
