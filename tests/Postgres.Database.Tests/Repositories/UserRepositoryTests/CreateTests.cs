@@ -18,7 +18,7 @@ public class CreateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 
         var adminEmail = AdminEmailAddress;
 
-        var adminUser = await repository.Get(
+        var adminUser = await repository.GetSingle(
             x =>
                 x.EmailAddress == adminEmail,
             TestContext.Current.CancellationToken);

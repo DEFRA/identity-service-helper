@@ -1,3 +1,5 @@
+using Defra.Identity.Services.Extensions;
+
 namespace Defra.Identity.Services.Users;
 
 using System.Linq.Expressions;
@@ -17,28 +19,65 @@ public class UserService : IUserService
         _repository = repository;
     }
 
-    public async Task<User> Get(GetUser request, CancellationToken cancellationToken = default)
+    public async Task<List<User>> GetAll(GetUsers request, CancellationToken cancellationToken = default)
     {
-       var userAccount = await _repository.Get(x => x.Id.Equals(request.Id), cancellationToken);
+        Expression<Func<UserAccount, bool>> filter;
+        if (!string.IsNullOrWhiteSpace(request.Status) &&
+            !string.Equals(request.Status, "Active", StringComparison.OrdinalIgnoreCase))
+        {
+            filter = x => x.Status.Name.ToLower() == request.Status.Trim().ToLower();
+        }
+        else
+        {
+            filter = x => x.Status.Name.ToLower() == "active";
+        }
+        
+        var userAccounts = await _repository.GetList(filter, cancellationToken);
 
-       if (userAccount == null)
-       {
-           return null;
-       }
+        var users = userAccounts.Select(userAccount => new User()
+        {
+            Id = userAccount.Id,
+            Email = userAccount.EmailAddress,
+            FirstName = userAccount.FirstName,
+            LastName = userAccount.LastName,
+        }).ToList();
 
-       var user = new User()
-       {
-           Id = userAccount.Id,
-           Email = userAccount.EmailAddress,
-           FirstName = userAccount.FirstName,
-           LastName = userAccount.LastName,
-       };
-       return user;
+        return users;
+    }
+
+    public async Task<User> Get(GetUserById request, CancellationToken cancellationToken = default)
+    {
+        Expression<Func<UserAccount, bool>> filter = x => x.Id == request.Id;
+
+        if (!string.IsNullOrWhiteSpace(request.Status) &&
+            !string.Equals(request.Status, "Active", StringComparison.OrdinalIgnoreCase))
+        {
+            var requestedStatus = request.Status.Trim();
+
+            filter = filter.AndAlso(x => x.Status.Name.ToLower() == requestedStatus.ToLower());
+        }
+
+        var userAccount = await _repository.GetSingle(filter, cancellationToken);
+
+        if (userAccount == null)
+        {
+            return null;
+        }
+
+        var user = new User()
+        {
+            Id = userAccount.Id,
+            Email = userAccount.EmailAddress,
+            FirstName = userAccount.FirstName,
+            LastName = userAccount.LastName,
+        };
+
+        return user;
     }
 
     public async Task<User> Upsert(Requests.Users.Commands.Update.UpdateUser user, CancellationToken cancellationToken = default)
     {
-        var existingUser = await _repository.Get(x => x.EmailAddress.Equals(user.EmailAddress), cancellationToken);
+        var existingUser = await _repository.GetSingle(x => x.EmailAddress.Equals(user.EmailAddress), cancellationToken);
 
         if (existingUser != null)
         {

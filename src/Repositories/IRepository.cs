@@ -9,9 +9,9 @@ using System.Linq.Expressions;
 public interface IRepository<TEntity>
     where TEntity : class
 {
-    Task<List<TEntity>> GetAll();
+    Task<TEntity?> GetSingle(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default);
 
-    Task<TEntity?> Get(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default);
+    Task<List<TEntity>> GetList(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default);
 
     Task<TEntity> Create(TEntity entity, CancellationToken cancellationToken = default);
 

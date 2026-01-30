@@ -1,17 +1,39 @@
 ### GET request to users
 GET {{host}}/users
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
  
+> ../../Asserts/Should_be_200_OK_and_get_top_id.js
 ###
 
-< {% 
-    request.variables.set("id", "3af6a188-391c-4e71-967d-2d5994510dca")
-
-%}
-
+### This test uses the top of the list retrieved in the first test
+### Get user By Id
 GET {{host}}/users/{{id}}
-X-Correlation-ID: test
-x-api-key: test
-X-Operator-Id: gary
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+> ../../Asserts/Should_be_200_OK.js
+###
+
+// Should return 404 result because user is active
+
+GET {{host}}/users/{{id}}?status=suspended
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+> ../../Asserts/Should_be_404.js
 
 ###
 
+### Should return empty list
+### GET all users that have been suspended
+GET {{host}}/users?status=suspended
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+> ../../Asserts/Should_be_200_OK_empty_list.js.js
+###

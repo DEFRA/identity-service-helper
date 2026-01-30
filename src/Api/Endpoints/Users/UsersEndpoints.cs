@@ -20,7 +20,8 @@ public static class UsersEndpoints
 {
     public static void UseUsersEndpoints(this IEndpointRouteBuilder app)
     {
-       // app.MapGet(RouteNames.Users, GetAll);
+        app.MapGet(RouteNames.Users, GetAll);
+
         app.MapGet(RouteNames.Users + "/{id:guid}", Get)
             .Produces<Responses.Users.User>(StatusCodes.Status200OK, "application/json")
             .Produces(StatusCodes.Status404NotFound);
@@ -50,10 +51,25 @@ public static class UsersEndpoints
 
     private static async Task<IResult> Get(
         IdentityRequestHeaders headers,
-        [AsParameters] GetUser request,
+        [AsParameters] GetUserById request,
         IUserService service)
     {
         var user = await service.Get(request);
+
+        if (user == null)
+        {
+            return Results.NotFound();
+        }
+
+        return Results.Ok(user);
+    }
+    
+    private static async Task<IResult> GetAll(
+        IdentityRequestHeaders headers,
+        [AsParameters] GetUsers request,
+        IUserService service)
+    {
+        var user = await service.GetAll(request);
 
         if (user == null)
         {

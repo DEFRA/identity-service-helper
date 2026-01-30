@@ -7,8 +7,9 @@ using Defra.Identity.Responses.Users;
 
 public interface IUserService
 {
+    Task<List<User>> GetAll(GetUsers request, CancellationToken cancellationToken = default);
 
-    Task<User> Get(GetUser request, CancellationToken cancellationToken = default);
+    Task<User> Get(GetUserById request, CancellationToken cancellationToken = default);
 
     Task<User> Upsert(Requests.Users.Commands.Update.UpdateUser user, CancellationToken cancellationToken = default);
 }

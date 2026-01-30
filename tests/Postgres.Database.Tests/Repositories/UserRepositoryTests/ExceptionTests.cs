@@ -18,7 +18,7 @@ public class ExceptionTests(PostgreContainerFixture fixture) : BaseTests(fixture
         // Arrange
         var repository = new UsersRepository(Context);
 
-        var adminUser = await repository.Get(x => x.EmailAddress == AdminEmailAddress, TestContext.Current.CancellationToken);
+        var adminUser = await repository.GetSingle(x => x.EmailAddress == AdminEmailAddress, TestContext.Current.CancellationToken);
         adminUser.ShouldNotBeNull();
 
         var duplicateUser = new UserAccount

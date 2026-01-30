@@ -32,7 +32,7 @@ public class UserServiceTests
     {
         // Arrange
         var userId = Guid.NewGuid();
-        var request = new GetUser { Id = userId };
+        var request = new GetUserById { Id = userId };
         var userAccount = new UserAccount
         {
             Id = userId,
@@ -41,7 +41,7 @@ public class UserServiceTests
             LastName = "Doe",
         };
 
-        _repository.Get(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
+        _repository.GetSingle(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(userAccount);
 
         // Act
@@ -59,8 +59,8 @@ public class UserServiceTests
     public async Task Get_UserDoesNotExist_ReturnsNull()
     {
         // Arrange
-        var request = new GetUser { Id = Guid.NewGuid() };
-        _repository.Get(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
+        var request = new GetUserById { Id = Guid.NewGuid() };
+        _repository.GetSingle(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
             .Returns((UserAccount)null);
 
         // Act
@@ -89,7 +89,7 @@ public class UserServiceTests
             LastName = "OldLastName",
         };
 
-        _repository.Get(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
+        _repository.GetSingle(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(existingUser);
 
         _repository.Update(Arg.Any<UserAccount>(), Arg.Any<CancellationToken>())
@@ -123,7 +123,7 @@ public class UserServiceTests
             LastName = "NewLastName",
         };
 
-        _repository.Get(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
+        _repository.GetSingle(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
             .Returns((UserAccount)null);
 
         _repository.Create(Arg.Any<UserAccount>(), Arg.Any<CancellationToken>())

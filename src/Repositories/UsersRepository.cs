@@ -17,10 +17,22 @@ public class UsersRepository(AuthContext context)
         return await query.ToListAsync();
     }
 
-    public async Task<UserAccount?> Get(Expression<Func<UserAccount, bool>> predicate, CancellationToken cancellationToken = default)
+    public async Task<UserAccount?> GetSingle(Expression<Func<UserAccount, bool>> predicate, CancellationToken cancellationToken = default)
     {
-        var query = await context.Users.SingleOrDefaultAsync(predicate, cancellationToken);
-        return query ?? null;
+        var query = await context.Users
+            .Include(x => x.Status)
+            .SingleOrDefaultAsync(predicate, cancellationToken);
+
+        return query;
+    }
+
+    public async Task<List<UserAccount>> GetList(Expression<Func<UserAccount, bool>> predicate, CancellationToken cancellationToken = default)
+    {
+        var query = await context.Users
+            .Include(x => x.Status)
+            .Where(predicate).ToListAsync<UserAccount>(cancellationToken);
+
+        return query;
     }
 
     public async Task<UserAccount> Create(UserAccount entity, CancellationToken cancellationToken = default)

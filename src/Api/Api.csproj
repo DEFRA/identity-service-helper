@@ -16,7 +16,4 @@
   <ItemGroup>
     <PackageReference Remove="MongoDB.Driver" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Middleware\" />
-  </ItemGroup>
 </Project>

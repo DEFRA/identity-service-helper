@@ -87,5 +87,3 @@ public sealed class IdentityRequestHeadersMiddleware : IMiddleware
         await context.Response.WriteAsync(JsonSerializer.Serialize(payload));
     }
 }
-
-
