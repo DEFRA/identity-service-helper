@@ -4,7 +4,7 @@ GET {{host}}/users
 ###
 
 < {% 
-    request.variables.set("id", "af146cf4-6aa3-4e16-a632-a126fbbc852b")
+    request.variables.set("id", "3af6a188-391c-4e71-967d-2d5994510dca")
 
 %}
 
@@ -12,3 +12,6 @@ GET {{host}}/users/{{id}}
 X-Correlation-ID: test
 x-api-key: test
 X-Operator-Id: gary
+
+###
+

@@ -3,6 +3,7 @@ namespace Defra.Identity.Services.Users;
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories;
+using Defra.Identity.Requests.Users.Queries;
 using Defra.Identity.Responses.Users;
 using Defra.Identity.Services;
 
@@ -16,9 +17,14 @@ public class UserService : IUserService
         _repository = repository;
     }
 
-    public async Task<User> Get(Expression<Func<UserAccount, bool>> predicate, CancellationToken cancellationToken = default)
+    public async Task<User> Get(GetUser request, CancellationToken cancellationToken = default)
     {
-       var userAccount = await _repository.Get(predicate, cancellationToken);
+       var userAccount = await _repository.Get(x => x.Id.Equals(request.Id), cancellationToken);
+
+       if (userAccount == null)
+       {
+           return null;
+       }
 
        var user = new User()
        {
@@ -30,7 +36,7 @@ public class UserService : IUserService
        return user;
     }
 
-    public async Task<User> Upsert(Requests.Users.User user, CancellationToken cancellationToken = default)
+    public async Task<User> Upsert(Requests.Users.Commands.Update.UpdateUser user, CancellationToken cancellationToken = default)
     {
         var existingUser = await _repository.Get(x => x.EmailAddress.Equals(user.EmailAddress), cancellationToken);
 

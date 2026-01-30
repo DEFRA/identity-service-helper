@@ -2,12 +2,12 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-using Defra.Identity.Api.Endpoints;
-using Defra.Identity.Requests;
-
 namespace Defra.Identity.Api;
 
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Defra.Identity.Api.Endpoints;
 using Defra.Identity.Api.Endpoints.Users;
 using Defra.Identity.Api.Utils.Http;
 using Defra.Identity.Api.Utils.Logging;
@@ -16,6 +16,7 @@ using Defra.Identity.Extensions;
 using Defra.Identity.Postgres.Database;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories;
+using Defra.Identity.Requests;
 using Defra.Identity.Services;
 using FluentValidation;
 using Serilog;
@@ -59,6 +60,12 @@ public class Program
         builder.Services.AddHttpContextAccessor();
         builder.Host.UseSerilog(CdpLogging.Configuration);
 
+        builder.Services.ConfigureHttpJsonOptions(options =>
+        {
+            options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
+            options.SerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.SnakeCaseLower;
+        });
+
         // Default HTTP Client
         builder.Services
             .AddHttpClient("DefaultClient")
@@ -95,6 +102,7 @@ public class Program
         builder.Services.AddHealthChecks();
         builder.Services.AddValidatorsFromAssemblyContaining<Program>();
         builder.Services.AddRequests(configuration);
+
         // Set up the endpoints and their dependencies
         builder.Services.AddRepositories(configuration);
         builder.Services.AddDataServices(configuration);

@@ -11,4 +11,6 @@ public abstract class BaseProcessingEntity
     public DateTime ReceivedAt { get; set; }
 
     public DateTime ProcessedAt { get; set; }
+    
+    public bool IsDeleted { get; set; }
 }

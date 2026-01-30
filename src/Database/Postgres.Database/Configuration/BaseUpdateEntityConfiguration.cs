@@ -34,5 +34,10 @@ public abstract class BaseUpdateEntityConfiguration<TEntity> : IEntityTypeConfig
             .HasColumnType(ColumnTypes.Timestamp)
             .HasDefaultValueSql(PostgreExtensions.Now)
             .ValueGeneratedOnAdd();
+
+        builder.Property(x => x.IsDeleted)
+            .HasColumnName(nameof(BaseProcessingEntity.IsDeleted).ToSnakeCase())
+            .HasColumnType(ColumnTypes.Boolean)
+            .HasDefaultValue(false);
     }
 }
