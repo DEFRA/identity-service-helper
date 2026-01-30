@@ -10,9 +10,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 public static class ServiceCollectionExtensions
 {
+    public static string? ApiKey { get; private set; }
+
     public static IServiceCollection AddRequests(this IServiceCollection services, IConfigurationRoot config)
     {
-        services.AddTransient<IdentityRequestHeadersMiddleware>();
+        ApiKey = config.GetValue<string>("DefraIndentityApiKey");
+        services.AddTransient<IdentityRequestHeadersMiddleware>(sp => new IdentityRequestHeadersMiddleware(ApiKey!));
         services.AddValidatorsFromAssemblyContaining<CreateUser>();
 
         return services;

@@ -72,16 +72,16 @@ public class AuthContext(DbContextOptions<AuthContext> options)
 
     private void SetProcessingDateTimes()
     {
-        var processingEntities = ChangeTracker.Entries()
-            .Where(e => e is { Entity: BaseProcessingEntity, State: EntityState.Modified })
-            .Select(x => x.Entity).Cast<BaseProcessingEntity>().ToList();
+        foreach (var entry in ChangeTracker.Entries<BaseProcessingEntity>()
+                     .Where(e => e.State == EntityState.Modified))
+        {
+            entry.Entity.ProcessedAt = DateTime.UtcNow;
+        }
 
-        processingEntities.ForEach(entity => { entity.ProcessedAt = DateTime.UtcNow; });
-
-        var updateEntities = ChangeTracker.Entries()
-            .Where(e => e is { Entity: BaseUpdateEntity, State: EntityState.Modified })
-            .Select(x => x.Entity).Cast<BaseUpdateEntity>().ToList();
-
-        updateEntities.ForEach(entity => { entity.UpdatedAt = DateTime.UtcNow; });
+        foreach (var entry in ChangeTracker.Entries<BaseUpdateEntity>()
+                     .Where(e => e.State == EntityState.Modified))
+        {
+            entry.Entity.UpdatedAt = DateTime.UtcNow;
+        }
     }
 }

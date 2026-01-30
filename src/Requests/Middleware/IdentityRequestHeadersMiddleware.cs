@@ -5,25 +5,27 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Http;
 
-public sealed class IdentityRequestHeadersMiddleware : IMiddleware
+public sealed class IdentityRequestHeadersMiddleware(string apiKey) : IMiddleware
 {
+    private readonly string _apiKey = apiKey ?? throw new ArgumentNullException(nameof(apiKey));
+
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
         var headers = context.Request.Headers;
 
         // 1. Check API Key
         var apiKey = headers.TryGetValue(IdentityHeaderNames.ApiKey, out var key) ? key.ToString() : null;
-        if (string.IsNullOrWhiteSpace(apiKey))
+        if (string.IsNullOrWhiteSpace(apiKey) || !string.Equals(apiKey, _apiKey, StringComparison.Ordinal))
         {
             await WriteJsonErrorAsync(
                 context,
                 statusCode: StatusCodes.Status400BadRequest,
-                code: "missing_header",
+                code: "Invalid header",
                 message: $"Header {IdentityHeaderNames.ApiKey} is required.",
                 details: new { header = $"{IdentityHeaderNames.ApiKey}" });
             return;
         }
-        
+
         // 2) Get the Correllation Id
         var correlationId = headers.TryGetValue(IdentityHeaderNames.CorrelationId, out var tid) ? tid.ToString() : null;
         if (string.IsNullOrWhiteSpace(correlationId))
