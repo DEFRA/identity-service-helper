@@ -1,4 +1,6 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿// <copyright file="Program.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
 
 using Defra.Identity.Postgres.Database;
 using Microsoft.AspNetCore.Builder;

@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="20260130100124_initial.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 

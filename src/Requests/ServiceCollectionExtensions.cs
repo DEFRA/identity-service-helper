@@ -1,3 +1,7 @@
+// <copyright file="ServiceCollectionExtensions.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
 using Defra.Identity.Requests.Middleware;
 using Defra.Identity.Requests.Users.Commands.Create;
 

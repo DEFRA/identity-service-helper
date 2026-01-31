@@ -1,3 +1,7 @@
+// <copyright file="UpdateUserValidator.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
 namespace Defra.Identity.Requests.Users.Commands.Update;
 
 using FluentValidation;

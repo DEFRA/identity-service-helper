@@ -1,3 +1,7 @@
+// <copyright file="UserService.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
 using Defra.Identity.Requests.Users.Commands.Update;
 using Defra.Identity.Services.Extensions;
 
@@ -32,7 +36,7 @@ public class UserService : IUserService
         {
             filter = x => x.Status.Name.ToLower() == "active";
         }
-        
+
         var userAccounts = await _repository.GetList(filter, cancellationToken);
 
         var users = userAccounts.Select(userAccount => new User()

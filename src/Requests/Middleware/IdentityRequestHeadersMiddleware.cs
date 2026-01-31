@@ -1,3 +1,7 @@
+// <copyright file="IdentityRequestHeadersMiddleware.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
 namespace Defra.Identity.Requests.Middleware;
 
 using System.Reflection;
@@ -39,7 +43,7 @@ public sealed class IdentityRequestHeadersMiddleware(string apiKey) : IMiddlewar
             return;
         }
 
-        // 3 Operator id 
+        // 3 Operator id
         var operatorId = headers.TryGetValue(IdentityHeaderNames.OperatorId, out var cid) ? cid.ToString() : null;
         if (string.IsNullOrWhiteSpace(operatorId))
         {

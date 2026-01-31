@@ -1,3 +1,7 @@
+// <copyright file="CreateUserValidator.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
 using FluentValidation;
 
 namespace Defra.Identity.Requests.Users.Commands.Create;

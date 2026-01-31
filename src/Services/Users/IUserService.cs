@@ -1,3 +1,7 @@
+// <copyright file="IUserService.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
 namespace Defra.Identity.Services.Users;
 
 using System.Linq.Expressions;
@@ -12,6 +16,6 @@ public interface IUserService
     Task<User> Get(GetUserById request, CancellationToken cancellationToken = default);
 
     Task<User> Upsert(Requests.Users.Commands.Update.UpdateUser user, CancellationToken cancellationToken = default);
-    
+
     Task<User> Update(Requests.Users.Commands.Update.UpdateUser user, CancellationToken cancellationToken = default);
 }

@@ -1,3 +1,7 @@
+﻿// <copyright file="PingEndpoints.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
 namespace Defra.Identity.Api.Endpoints;
 
 using Defra.Identity.Requests;
@@ -23,6 +27,7 @@ public static class PingEndpoints
             {
                 CorrelationId = requestHeaders.CorrelationId,
                 OperatorId = requestHeaders.OperatorId,
+                ApiKey = requestHeaders.ApiKey,
             });
             /*END_USER_CODE*/
         });

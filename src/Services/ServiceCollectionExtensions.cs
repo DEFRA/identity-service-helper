@@ -1,3 +1,7 @@
+// <copyright file="ServiceCollectionExtensions.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
 namespace Defra.Identity.Services;
 
 using Defra.Identity.Responses.Users;
@@ -13,8 +17,6 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddDataServices(this IServiceCollection services, IConfigurationRoot config)
     {
         services.AddTransient<IUserService, UserService>();
-
-
 
         return services;
     }

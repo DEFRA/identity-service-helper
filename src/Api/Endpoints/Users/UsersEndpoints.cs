@@ -46,7 +46,7 @@ public static class UsersEndpoints
             Email = user.EmailAddress,
             FirstName = user.FirstName,
             LastName = user.LastName,
-            DisplayName = user.DisplayName
+            DisplayName = user.DisplayName,
         });
         return Results.Ok(result);
     }

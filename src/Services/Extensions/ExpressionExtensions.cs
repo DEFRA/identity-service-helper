@@ -1,3 +1,7 @@
+// <copyright file="ExpressionExtensions.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
 using System.Linq.Expressions;
 
 namespace Defra.Identity.Services.Extensions;

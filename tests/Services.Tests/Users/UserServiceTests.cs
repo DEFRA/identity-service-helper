@@ -151,6 +151,7 @@ public class UserServiceTests
             ua.LastName == updateUser.LastName),
             Arg.Any<CancellationToken>());
     }
+
     [Fact]
     public async Task Update_UserExists_UpdatesAndReturnsUser()
     {
