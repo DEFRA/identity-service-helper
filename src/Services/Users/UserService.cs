@@ -1,3 +1,4 @@
+using Defra.Identity.Requests.Users.Commands.Update;
 using Defra.Identity.Services.Extensions;
 
 namespace Defra.Identity.Services.Users;
@@ -77,13 +78,13 @@ public class UserService : IUserService
 
     public async Task<User> Upsert(Requests.Users.Commands.Update.UpdateUser user, CancellationToken cancellationToken = default)
     {
-        var existingUser = await _repository.GetSingle(x => x.EmailAddress.Equals(user.EmailAddress), cancellationToken);
+        var existingUser = await _repository.GetSingle(x => x.EmailAddress.Equals(user.Email), cancellationToken);
 
         if (existingUser != null)
         {
             existingUser.FirstName = user.FirstName;
             existingUser.LastName = user.LastName;
-            existingUser.EmailAddress = user.EmailAddress;
+            existingUser.EmailAddress = user.Email;
             var updated = await _repository.Update(existingUser, cancellationToken);
 
             return new User()
@@ -95,7 +96,7 @@ public class UserService : IUserService
            };
         }
 
-        var userAccount = new UserAccount() { EmailAddress = user.EmailAddress, FirstName = user.FirstName, LastName = user.LastName };
+        var userAccount = new UserAccount() { EmailAddress = user.Email, FirstName = user.FirstName, LastName = user.LastName };
         var result = await _repository.Create(userAccount, cancellationToken);
         return new User()
         {
@@ -103,6 +104,31 @@ public class UserService : IUserService
             Email = result.EmailAddress,
             FirstName = result.FirstName,
             LastName = result.LastName,
+        };
+    }
+
+    public async Task<User> Update(UpdateUser user, CancellationToken cancellationToken = default)
+    {
+        var existingUser = await _repository.GetSingle(x => x.Id.Equals(user.Id), cancellationToken);
+
+        if (existingUser == null)
+        {
+            return null;
+        }
+
+        existingUser.FirstName = user.FirstName;
+        existingUser.LastName = user.LastName;
+        existingUser.EmailAddress = user.Email;
+        existingUser.DisplayName = user.DisplayName;
+
+        var updated = await _repository.Update(existingUser, cancellationToken);
+
+        return new User()
+        {
+            Id = updated.Id,
+            Email = updated.EmailAddress,
+            FirstName = updated.FirstName,
+            LastName = updated.LastName,
         };
     }
 }

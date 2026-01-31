@@ -1,33 +1,28 @@
+### GET request to users
+GET {{host}}/users
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+> ../../Asserts/Should_be_200_OK_and_get_top_id.js
+##
+
+
+
 ### PUT request to create a new user
-PUT {{host}}/users
+PUT {{host}}/users/{{id}}
 Content-Type: application/json
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
 
 {
-  "id": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
-  "upn": "new.user@example.com",
-  "displayName": "New User",
-  "accountEnabled": true
+  "first_name": "{{$random.address.firstName}}",
+  "last_name":  "{{$random.address.lastName}}",
+  "email": "{{$random.internet.safeEmailAddress}}",
+  "display_name": "{{$random.address.firstName}}"
 }
 
-> {%
-    client.test("Request executed successfully", function() {
-        client.assert(response.status === 201, "Response status is not 201");
-    });
-%}
+> ../../Asserts/Should_be_200_OK.js
 
-### PUT request to update an existing user
-PUT {{host}}/users/a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
-Content-Type: application/json
-
-{
-  "upn": "new.user@example.com",
-  "displayName": "Updated User",
-  "accountEnabled": true
-}
-
-> {%
-    client.test("Request executed successfully", function() {
-        client.assert(response.status === 200, "Response status is not 200");
-        client.assert(response.body.displayName === "Updated User", "Display name was not updated");
-    });
-%}
+###

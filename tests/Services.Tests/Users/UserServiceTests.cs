@@ -76,7 +76,7 @@ public class UserServiceTests
         // Arrange
         var updateUser = new UpdateUser
         {
-            EmailAddress = "test@example.com",
+            Email = "test@example.com",
             FirstName = "UpdatedFirstName",
             LastName = "UpdatedLastName",
         };
@@ -100,13 +100,13 @@ public class UserServiceTests
 
         // Assert
         result.ShouldNotBeNull();
-        result.Email.ShouldBe(updateUser.EmailAddress);
+        result.Email.ShouldBe(updateUser.Email);
         result.FirstName.ShouldBe(updateUser.FirstName);
         result.LastName.ShouldBe(updateUser.LastName);
 
         await _repository.Received(1).Update(
             Arg.Is<UserAccount>(ua =>
-            ua.EmailAddress == updateUser.EmailAddress &&
+            ua.EmailAddress == updateUser.Email &&
             ua.FirstName == updateUser.FirstName &&
             ua.LastName == updateUser.LastName),
             Arg.Any<CancellationToken>());
@@ -118,7 +118,7 @@ public class UserServiceTests
         // Arrange
         var updateUser = new UpdateUser
         {
-            EmailAddress = "new@example.com",
+            Email = "new@example.com",
             FirstName = "NewFirstName",
             LastName = "NewLastName",
         };
@@ -130,7 +130,7 @@ public class UserServiceTests
             .Returns(new UserAccount
             {
                 Id = Guid.NewGuid(),
-                EmailAddress = updateUser.EmailAddress,
+                EmailAddress = updateUser.Email,
                 FirstName = updateUser.FirstName,
                 LastName = updateUser.LastName,
             });
@@ -140,15 +140,82 @@ public class UserServiceTests
 
         // Assert
         result.ShouldNotBeNull();
-        result.Email.ShouldBe(updateUser.EmailAddress);
+        result.Email.ShouldBe(updateUser.Email);
         result.FirstName.ShouldBe(updateUser.FirstName);
         result.LastName.ShouldBe(updateUser.LastName);
 
         await _repository.Received(1).Create(
             Arg.Is<UserAccount>(ua =>
-            ua.EmailAddress == updateUser.EmailAddress &&
+            ua.EmailAddress == updateUser.Email &&
             ua.FirstName == updateUser.FirstName &&
             ua.LastName == updateUser.LastName),
             Arg.Any<CancellationToken>());
+    }
+    [Fact]
+    public async Task Update_UserExists_UpdatesAndReturnsUser()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var updateUser = new UpdateUser
+        {
+            Id = userId,
+            Email = "test@example.com",
+            FirstName = "UpdatedFirstName",
+            LastName = "UpdatedLastName",
+        };
+
+        var existingUser = new UserAccount
+        {
+            Id = userId,
+            EmailAddress = "test@example.com",
+            FirstName = "OldFirstName",
+            LastName = "OldLastName",
+        };
+
+        _repository.GetSingle(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns(existingUser);
+
+        _repository.Update(Arg.Any<UserAccount>(), Arg.Any<CancellationToken>())
+            .Returns(x => (UserAccount)x[0]);
+
+        // Act
+        var result = await _userService.Update(updateUser, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ShouldNotBeNull();
+        result.Email.ShouldBe(updateUser.Email);
+        result.FirstName.ShouldBe(updateUser.FirstName);
+        result.LastName.ShouldBe(updateUser.LastName);
+
+        await _repository.Received(1).Update(
+            Arg.Is<UserAccount>(ua =>
+            ua.Id == userId &&
+            ua.EmailAddress == updateUser.Email &&
+            ua.FirstName == updateUser.FirstName &&
+            ua.LastName == updateUser.LastName),
+            Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Update_UserDoesNotExist_ReturnsNull()
+    {
+        // Arrange
+        var updateUser = new UpdateUser
+        {
+            Id = Guid.NewGuid(),
+            Email = "new@example.com",
+            FirstName = "NewFirstName",
+            LastName = "NewLastName",
+        };
+
+        _repository.GetSingle(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns((UserAccount)null);
+
+        // Act
+        var result = await _userService.Update(updateUser, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ShouldBeNull();
+        await _repository.DidNotReceiveWithAnyArgs().Update(null!, default);
     }
 }

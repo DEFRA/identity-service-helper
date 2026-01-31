@@ -9,7 +9,6 @@ public class UpdateUserValidator : AbstractValidator<UpdateUser>
         RuleFor(x => x.DisplayName).NotEmpty().MaximumLength(100);
         RuleFor(x => x.FirstName).NotEmpty().MaximumLength(50);
         RuleFor(x => x.LastName).NotEmpty().MaximumLength(50);
-        RuleFor(x => x.EmailAddress).NotEmpty().EmailAddress();
-        RuleFor(x => x.OperatorId).NotEmpty();
+        RuleFor(x => x.Email).NotEmpty().EmailAddress();
     }
 }

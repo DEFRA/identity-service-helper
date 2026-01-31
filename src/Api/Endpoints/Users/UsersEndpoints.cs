@@ -26,26 +26,45 @@ public static class UsersEndpoints
             .Produces<Responses.Users.User>(StatusCodes.Status200OK, "application/json")
             .Produces(StatusCodes.Status404NotFound);
 
-        app.MapPut(RouteNames.Users, Put)
-            .AddEndpointFilter<ValidationFilter<UpdateUser>>();
+        app.MapPut(RouteNames.Users + "/{id:guid}", Put)
+            .AddEndpointFilter<ValidationFilter<UpdateUser>>()
+            .Produces(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status422UnprocessableEntity);
 
         app.MapPost(RouteNames.Users, Post)
             .AddEndpointFilter<ValidationFilter<CreateUser>>();
     }
 
     private static async Task<IResult> Post(
-        UpdateUser user,
+        IdentityRequestHeaders headers,
+        [FromBody] CreateUser user,
         IUserService service)
     {
-        var result = await service.Upsert(user);
+        user.OperatorId = Guid.Parse(headers.OperatorId);
+        var result = await service.Upsert(new UpdateUser
+        {
+            Email = user.EmailAddress,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            DisplayName = user.DisplayName
+        });
         return Results.Ok(result);
     }
 
     private static async Task<IResult> Put(
-        Requests.Users.Commands.Update.UpdateUser user,
+        IdentityRequestHeaders headers,
+        [FromRoute] Guid id,
+        [FromBody] UpdateUser user,
         IUserService service)
     {
-        var result = await service.Upsert(user);
+        user.Id = id;
+        var result = await service.Update(user);
+
+        if (result == null)
+        {
+            return Results.NotFound();
+        }
+
         return Results.Ok(result);
     }
 
@@ -63,7 +82,7 @@ public static class UsersEndpoints
 
         return Results.Ok(user);
     }
-    
+
     private static async Task<IResult> GetAll(
         IdentityRequestHeaders headers,
         [AsParameters] GetUsers request,
