@@ -7,7 +7,6 @@ namespace Defra.Identity.Api;
 internal static class RouteNames
 {
     internal const string Users = "users";
-    internal const string GetUser = "getUser";
     internal const string Roles = "roles";
     internal const string Permissions = "permissions";
     internal const string Groups = "groups";
