@@ -41,6 +41,8 @@ public class PostgreContainerFixture
         if (!context.StatusTypes.Any())
         {
             await context.StatusTypes.AddAsync(new StatusType() { Name = "Active" }, TestContext.Current.CancellationToken);
+            await context.StatusTypes.AddAsync(new StatusType() { Name = "InActive" }, TestContext.Current.CancellationToken);
+            await context.SaveChangesAsync(TestContext.Current.CancellationToken);
         }
 
         if (!context.Users.Any())

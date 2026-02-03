@@ -191,8 +191,7 @@ public class UserServiceTests
             FirstName = "UpdatedFirstName",
             LastName = "UpdatedLastName",
             DisplayName = "Updated Display Name",
-            OperatorId = operatorId.ToString(),
-            Status = "Active"
+            OperatorId = operatorId.ToString()
         };
 
         var existingUser = new UserAccount
@@ -219,7 +218,6 @@ public class UserServiceTests
         result.Email.ShouldBe(updateUser.Email);
         result.FirstName.ShouldBe(updateUser.FirstName);
         result.LastName.ShouldBe(updateUser.LastName);
-        result.Status.ShouldBe(updateUser.Status);
 
         await _repository.Received(1).Update(
             Arg.Is<UserAccount>(ua =>
@@ -228,8 +226,7 @@ public class UserServiceTests
             ua.FirstName == updateUser.FirstName &&
             ua.LastName == updateUser.LastName &&
             ua.DisplayName == updateUser.DisplayName &&
-            ua.UpdatedBy == operatorId &&
-            ua.Status.Name == updateUser.Status),
+            ua.UpdatedBy == operatorId),
             Arg.Any<CancellationToken>());
     }
 

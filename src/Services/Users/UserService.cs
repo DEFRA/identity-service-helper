@@ -130,13 +130,6 @@ public class UserService : IUserService
         existingUser.EmailAddress = user.Email;
         existingUser.DisplayName = user.DisplayName;
 
-        if (existingUser.Status == null)
-        {
-            existingUser.Status = new StatusType();
-        }
-
-        existingUser.Status.Name = user.Status;
-
         if (Guid.TryParse(user.OperatorId, out var operatorId))
         {
             existingUser.UpdatedBy = operatorId;
