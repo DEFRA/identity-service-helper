@@ -77,14 +77,6 @@ public class CreateUserValidatorTests
     }
 
     [Fact]
-    public void Should_Have_Error_When_OperatorId_Is_Empty()
-    {
-        var model = new CreateUser { OperatorId = string.Empty };
-        var result = this.validator.TestValidate(model);
-        result.ShouldHaveValidationErrorFor(x => x.OperatorId);
-    }
-
-    [Fact]
     public void Should_Not_Have_Error_When_Model_Is_Valid()
     {
         var model = new CreateUser

@@ -23,6 +23,7 @@ public static class UsersEndpoints
         app.MapGet(RouteNames.Users, GetAll);
 
         app.MapGet(RouteNames.Users + "/{id:guid}", Get)
+            .WithName(RouteNames.GetUser)
             .Produces<Responses.Users.User>(StatusCodes.Status200OK, "application/json")
             .Produces(StatusCodes.Status404NotFound);
 
@@ -47,7 +48,7 @@ public static class UsersEndpoints
         var result = await service.Create(user);
 
         return Results.CreatedAtRoute(
-            routeName: RouteNames.Users,
+            routeName: RouteNames.GetUser,
             routeValues: new { id = result.Id },
             value: result);
     }

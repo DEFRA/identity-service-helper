@@ -13,7 +13,7 @@ public class UsersRepository(AuthContext context)
 {
     public async Task<List<UserAccount>> GetAll()
     {
-        var query = context.Users.AsQueryable();
+        var query = context.Users.Include(x => x.Status).AsQueryable();
         return await query.ToListAsync();
     }
 
@@ -37,9 +37,16 @@ public class UsersRepository(AuthContext context)
 
     public async Task<UserAccount> Create(UserAccount entity, CancellationToken cancellationToken = default)
     {
-        await context.Users.AddAsync(entity, cancellationToken);
+        ArgumentNullException.ThrowIfNull(entity);
+
+        var addedEntry = await context.Users.AddAsync(entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
-        return entity;
+
+        await context.Entry(addedEntry.Entity)
+            .Reference(x => x.Status)
+            .LoadAsync(cancellationToken);
+
+        return addedEntry.Entity;
     }
 
     public async Task<UserAccount> Update(UserAccount entity, CancellationToken cancellationToken = default)

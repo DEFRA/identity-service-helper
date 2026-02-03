@@ -47,6 +47,8 @@ public class UserService : IUserService
             Email = userAccount.EmailAddress,
             FirstName = userAccount.FirstName,
             LastName = userAccount.LastName,
+            Status = userAccount.Status?.Name ?? string.Empty,
+            DisplayName = userAccount.DisplayName,
         }).ToList();
 
         return users;
@@ -77,7 +79,7 @@ public class UserService : IUserService
             Email = userAccount.EmailAddress,
             FirstName = userAccount.FirstName,
             LastName = userAccount.LastName,
-            Status = userAccount.Status.Name,
+            Status = userAccount.Status?.Name ?? string.Empty,
         };
 
         return user;
@@ -164,6 +166,7 @@ public class UserService : IUserService
             FirstName = createdUser.FirstName,
             LastName = createdUser.LastName,
             DisplayName = createdUser.DisplayName,
+            Status = createdUser.Status?.Name ?? string.Empty,
         };
     }
 }

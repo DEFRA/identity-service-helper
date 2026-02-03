@@ -64,6 +64,7 @@ public class UserServiceTests
             EmailAddress = "test@example.com",
             FirstName = "John",
             LastName = "Doe",
+            Status = new StatusType() { Id = 1, Name = "Active" },
         };
 
         _repository.GetSingle(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
