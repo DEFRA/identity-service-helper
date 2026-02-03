@@ -1,15 +1,15 @@
-﻿// <copyright file="20260130100124_initial.cs" company="Defra">
+﻿// <copyright file="20260203120534_initial.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
-
-using System;
-using Microsoft.EntityFrameworkCore.Migrations;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace Defra.Identity.Postgres.Database.Migrations
 {
+    using System;
+    using Microsoft.EntityFrameworkCore.Migrations;
+    using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+
     /// <inheritdoc />
     public partial class initial : Migration
     {
@@ -35,8 +35,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
                     processed_ok = table.Column<bool>(type: "boolean", nullable: false),
                     message = table.Column<string>(type: "text", nullable: false),
                     received_at = table.Column<DateTime>(type: "TimestampTz", nullable: false, defaultValueSql: "now()"),
-                    processed_at = table.Column<DateTime>(type: "TimestampTz", nullable: false),
-                    is_deleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false)
+                    processed_at = table.Column<DateTime>(type: "TimestampTz", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -85,8 +84,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
                     description = table.Column<string>(type: "text", nullable: false),
                     status_type_id = table.Column<short>(type: "smallint", nullable: false, defaultValue: (short)1),
                     created_at = table.Column<DateTime>(type: "TimestampTz", nullable: false, defaultValueSql: "now()"),
-                    updated_at = table.Column<DateTime>(type: "TimestampTz", nullable: true),
-                    is_deleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false)
+                    updated_at = table.Column<DateTime>(type: "TimestampTz", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -112,8 +110,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
                     created_by = table.Column<Guid>(type: "uuid", nullable: false),
                     processed_at = table.Column<DateTime>(type: "TimestampTz", nullable: false),
                     updated_by = table.Column<Guid>(type: "uuid", nullable: true),
-                    updated_at = table.Column<DateTime>(type: "TimestampTz", nullable: true),
-                    is_deleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false)
+                    updated_at = table.Column<DateTime>(type: "TimestampTz", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -141,8 +138,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
                     created_by = table.Column<Guid>(type: "uuid", nullable: false),
                     updated_by = table.Column<Guid>(type: "uuid", nullable: true),
                     created_at = table.Column<DateTime>(type: "TimestampTz", nullable: false, defaultValueSql: "now()"),
-                    updated_at = table.Column<DateTime>(type: "TimestampTz", nullable: true),
-                    is_deleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false)
+                    updated_at = table.Column<DateTime>(type: "TimestampTz", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -209,8 +205,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
                     created_by = table.Column<Guid>(type: "uuid", nullable: false),
                     updated_by = table.Column<Guid>(type: "uuid", nullable: true),
                     created_at = table.Column<DateTime>(type: "TimestampTz", nullable: false, defaultValueSql: "now()"),
-                    updated_at = table.Column<DateTime>(type: "TimestampTz", nullable: true),
-                    is_deleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false)
+                    updated_at = table.Column<DateTime>(type: "TimestampTz", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -263,8 +258,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
                     expired_at = table.Column<DateTime>(type: "TimestampTz", nullable: false),
                     created_at = table.Column<DateTime>(type: "TimestampTz", nullable: false, defaultValueSql: "now()"),
                     created_by = table.Column<Guid>(type: "uuid", nullable: false),
-                    updated_at = table.Column<DateTime>(type: "TimestampTz", nullable: true),
-                    is_deleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false)
+                    updated_at = table.Column<DateTime>(type: "TimestampTz", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -333,8 +327,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
                     sync_status = table.Column<string>(type: "text", nullable: false, defaultValue: "linked"),
                     last_synced_at = table.Column<DateTime>(type: "TimestampTz", nullable: false),
                     created_at = table.Column<DateTime>(type: "TimestampTz", nullable: false, defaultValueSql: "now()"),
-                    updated_at = table.Column<DateTime>(type: "TimestampTz", nullable: true),
-                    is_deleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false)
+                    updated_at = table.Column<DateTime>(type: "TimestampTz", nullable: true)
                 },
                 constraints: table =>
                 {

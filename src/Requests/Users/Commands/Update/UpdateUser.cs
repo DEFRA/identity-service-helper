@@ -9,4 +9,6 @@ public class UpdateUser : User
     public Guid Id { get; set; }
 
     public string Email { get; set; } = string.Empty;
+
+    public string OperatorId { get; set; } = string.Empty;
 }

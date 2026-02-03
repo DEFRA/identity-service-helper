@@ -18,4 +18,6 @@ public interface IUserService
     Task<User> Upsert(Requests.Users.Commands.Update.UpdateUser user, CancellationToken cancellationToken = default);
 
     Task<User> Update(Requests.Users.Commands.Update.UpdateUser user, CancellationToken cancellationToken = default);
+
+    Task<User> Create(Requests.Users.Commands.Create.CreateUser user, CancellationToken cancellationToken = default);
 }

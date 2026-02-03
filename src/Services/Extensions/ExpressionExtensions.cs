@@ -2,9 +2,9 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-using System.Linq.Expressions;
-
 namespace Defra.Identity.Services.Extensions;
+
+using System.Linq.Expressions;
 
 public static class ExpressionExtensions
 {

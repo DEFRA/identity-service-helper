@@ -2,17 +2,19 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-using Defra.Identity.Requests.Users.Commands.Update;
-using Defra.Identity.Services.Extensions;
+using System.ComponentModel.DataAnnotations;
+using Defra.Identity.Requests.Users.Commands.Create;
 
 namespace Defra.Identity.Services.Users;
 
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories;
+using Defra.Identity.Requests.Users.Commands.Update;
 using Defra.Identity.Requests.Users.Queries;
 using Defra.Identity.Responses.Users;
 using Defra.Identity.Services;
+using Defra.Identity.Services.Extensions;
 
 public class UserService : IUserService
 {
@@ -82,7 +84,7 @@ public class UserService : IUserService
 
     public async Task<User> Upsert(Requests.Users.Commands.Update.UpdateUser user, CancellationToken cancellationToken = default)
     {
-        var existingUser = await _repository.GetSingle(x => x.EmailAddress.Equals(user.Email), cancellationToken);
+        var existingUser = await _repository.GetSingle(x => x.Id.Equals(user.Id), cancellationToken);
 
         if (existingUser != null)
         {
@@ -100,7 +102,7 @@ public class UserService : IUserService
            };
         }
 
-        var userAccount = new UserAccount() { EmailAddress = user.Email, FirstName = user.FirstName, LastName = user.LastName };
+        var userAccount = new UserAccount() { Id = user.Id, EmailAddress = user.Email, FirstName = user.FirstName, LastName = user.LastName };
         var result = await _repository.Create(userAccount, cancellationToken);
         return new User()
         {
@@ -117,13 +119,19 @@ public class UserService : IUserService
 
         if (existingUser == null)
         {
-            return null;
+            throw new NullReferenceException($"User with id {user.Id} not found.");
         }
 
         existingUser.FirstName = user.FirstName;
         existingUser.LastName = user.LastName;
         existingUser.EmailAddress = user.Email;
         existingUser.DisplayName = user.DisplayName;
+        existingUser.UpdatedBy = Guid.Parse(user.OperatorId);
+
+        if (Guid.TryParse(user.OperatorId, out var operatorId))
+        {
+            existingUser.UpdatedBy = operatorId;
+        }
 
         var updated = await _repository.Update(existingUser, cancellationToken);
 
@@ -133,6 +141,28 @@ public class UserService : IUserService
             Email = updated.EmailAddress,
             FirstName = updated.FirstName,
             LastName = updated.LastName,
+        };
+    }
+
+    public async Task<User> Create(CreateUser user, CancellationToken cancellationToken = default)
+    {
+        var newUser = new UserAccount
+        {
+            EmailAddress = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            DisplayName = user.DisplayName,
+            CreatedBy = user.OperatorId,
+        };
+
+        var createdUser = await _repository.Create(newUser, cancellationToken);
+        return new User()
+        {
+            Id = createdUser.Id,
+            Email = createdUser.EmailAddress,
+            FirstName = createdUser.FirstName,
+            LastName = createdUser.LastName,
+            DisplayName = createdUser.DisplayName,
         };
     }
 }

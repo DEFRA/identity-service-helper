@@ -8,5 +8,5 @@ public class CreateUser : User
 {
     public Guid OperatorId { get; set; }
 
-    public string EmailAddress { get; set; }
+    public string Email { get; set; } = string.Empty;
 }

@@ -26,10 +26,5 @@ internal abstract class BaseProcessingEntityConfiguration<TEntity> : IEntityType
         builder.Property(x => x.ProcessedAt)
             .HasColumnName(nameof(BaseProcessingEntity.ProcessedAt).ToSnakeCase())
             .HasColumnType(ColumnTypes.Timestamp);
-
-        builder.Property(x => x.IsDeleted)
-            .HasColumnName(nameof(BaseProcessingEntity.IsDeleted).ToSnakeCase())
-            .HasColumnType(ColumnTypes.Boolean)
-            .HasDefaultValue(false);
     }
 }

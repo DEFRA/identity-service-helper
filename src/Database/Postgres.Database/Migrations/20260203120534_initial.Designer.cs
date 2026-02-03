@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Defra.Identity.Postgres.Database.Migrations
 {
     [DbContext(typeof(AuthContext))]
-    [Migration("20260130100124_initial")]
+    [Migration("20260203120534_initial")]
     partial class initial
     {
         /// <inheritdoc />
@@ -52,12 +52,6 @@ namespace Defra.Identity.Postgres.Database.Migrations
                         .HasColumnType("text")
                         .HasColumnName("description");
 
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("is_deleted");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text")
@@ -77,7 +71,6 @@ namespace Defra.Identity.Postgres.Database.Migrations
                         .HasComment("Azure AD B2C tenant name e.g defra.onmicrosoft.com");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .ValueGeneratedOnUpdate()
                         .HasColumnType("TimestampTz")
                         .HasColumnName("updated_at");
 
@@ -129,12 +122,6 @@ namespace Defra.Identity.Postgres.Database.Migrations
                         .HasColumnType("varchar")
                         .HasColumnName("identifier");
 
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("is_deleted");
-
                     b.Property<DateTime>("ProcessedAt")
                         .HasColumnType("TimestampTz")
                         .HasColumnName("processed_at");
@@ -146,7 +133,6 @@ namespace Defra.Identity.Postgres.Database.Migrations
                         .HasColumnName("status_type_id");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .ValueGeneratedOnUpdate()
                         .HasColumnType("TimestampTz")
                         .HasColumnName("updated_at");
 
@@ -237,12 +223,6 @@ namespace Defra.Identity.Postgres.Database.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("invited_user_id");
 
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("is_deleted");
-
                     b.Property<DateTime>("RegisteredAt")
                         .HasColumnType("TimestampTz")
                         .HasColumnName("registered_at");
@@ -263,7 +243,6 @@ namespace Defra.Identity.Postgres.Database.Migrations
                         .HasColumnName("token_expires_at");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .ValueGeneratedOnUpdate()
                         .HasColumnType("TimestampTz")
                         .HasColumnName("updated_at");
 
@@ -300,12 +279,6 @@ namespace Defra.Identity.Postgres.Database.Migrations
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("now()");
 
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("is_deleted");
-
                     b.Property<DateTime>("LastSyncedAt")
                         .HasColumnType("TimestampTz")
                         .HasColumnName("last_synced_at");
@@ -334,7 +307,6 @@ namespace Defra.Identity.Postgres.Database.Migrations
                         .HasColumnName("trust_level");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .ValueGeneratedOnUpdate()
                         .HasColumnType("TimestampTz")
                         .HasColumnName("updated_at");
 
@@ -365,12 +337,6 @@ namespace Defra.Identity.Postgres.Database.Migrations
                     b.Property<int>("HttpStatus")
                         .HasColumnType("integer")
                         .HasColumnName("http_status");
-
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("is_deleted");
 
                     b.Property<string>("Message")
                         .IsRequired()
@@ -441,12 +407,6 @@ namespace Defra.Identity.Postgres.Database.Migrations
                         .HasColumnName("expires_at")
                         .HasDefaultValueSql("now()");
 
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("is_deleted");
-
                     b.Property<short>("StatusTypeId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("smallint")
@@ -454,7 +414,6 @@ namespace Defra.Identity.Postgres.Database.Migrations
                         .HasColumnName("status_type_id");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .ValueGeneratedOnUpdate()
                         .HasColumnType("TimestampTz")
                         .HasColumnName("updated_at");
 
@@ -560,12 +519,6 @@ namespace Defra.Identity.Postgres.Database.Migrations
                         .HasColumnType("varchar")
                         .HasColumnName("first_name");
 
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("is_deleted");
-
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(256)
@@ -579,7 +532,6 @@ namespace Defra.Identity.Postgres.Database.Migrations
                         .HasColumnName("status_type_id");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .ValueGeneratedOnUpdate()
                         .HasColumnType("TimestampTz")
                         .HasColumnName("updated_at");
 

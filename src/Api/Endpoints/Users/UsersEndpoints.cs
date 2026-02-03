@@ -29,7 +29,8 @@ public static class UsersEndpoints
         app.MapPut(RouteNames.Users + "/{id:guid}", Put)
             .AddEndpointFilter<ValidationFilter<UpdateUser>>()
             .Produces(StatusCodes.Status200OK)
-            .ProducesProblem(StatusCodes.Status422UnprocessableEntity);
+            .ProducesProblem(StatusCodes.Status422UnprocessableEntity)
+            .ProducesProblem(StatusCodes.Status404NotFound);
 
         app.MapPost(RouteNames.Users, Post)
             .AddEndpointFilter<ValidationFilter<CreateUser>>();
@@ -41,13 +42,7 @@ public static class UsersEndpoints
         IUserService service)
     {
         user.OperatorId = Guid.Parse(headers.OperatorId);
-        var result = await service.Upsert(new UpdateUser
-        {
-            Email = user.EmailAddress,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            DisplayName = user.DisplayName,
-        });
+        var result = await service.Create(user);
         return Results.Ok(result);
     }
 
@@ -57,15 +52,22 @@ public static class UsersEndpoints
         [FromBody] UpdateUser user,
         IUserService service)
     {
-        user.Id = id;
-        var result = await service.Update(user);
-
-        if (result == null)
+        try
         {
-            return Results.NotFound();
-        }
+            user.Id = id;
+            user.OperatorId = headers.OperatorId;
 
-        return Results.Ok(result);
+            var result = await service.Update(user);
+            return Results.Ok(result);
+        }
+        catch (NullReferenceException nex)
+        {
+            return Results.NotFound(nex.Message);
+        }
+        catch (Exception ex)
+        {
+            return Results.BadRequest(ex.Message);
+        }
     }
 
     private static async Task<IResult> Get(

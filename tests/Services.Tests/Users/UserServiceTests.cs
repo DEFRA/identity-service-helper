@@ -5,6 +5,7 @@
 namespace Defra.Identity.Services.Tests.Users;
 
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,6 +26,30 @@ public class UserServiceTests
     public UserServiceTests()
     {
         _userService = new UserService(_repository);
+    }
+
+    [Fact]
+    public async Task GetAll_ReturnsUsers()
+    {
+        // Arrange
+        var request = new GetUsers();
+        var userAccounts = new List<UserAccount>
+        {
+            new UserAccount { Id = Guid.NewGuid(), EmailAddress = "user1@example.com", FirstName = "User", LastName = "One" },
+            new UserAccount { Id = Guid.NewGuid(), EmailAddress = "user2@example.com", FirstName = "User", LastName = "Two" }
+        };
+
+        _repository.GetList(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns(userAccounts);
+
+        // Act
+        var result = await _userService.GetAll(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ShouldNotBeNull();
+        result.Count.ShouldBe(2);
+        result[0].Email.ShouldBe("user1@example.com");
+        result[1].Email.ShouldBe("user2@example.com");
     }
 
     [Fact]
@@ -157,12 +182,15 @@ public class UserServiceTests
     {
         // Arrange
         var userId = Guid.NewGuid();
+        var operatorId = Guid.NewGuid();
         var updateUser = new UpdateUser
         {
             Id = userId,
             Email = "test@example.com",
             FirstName = "UpdatedFirstName",
             LastName = "UpdatedLastName",
+            DisplayName = "Updated Display Name",
+            OperatorId = operatorId.ToString(),
         };
 
         var existingUser = new UserAccount
@@ -171,6 +199,7 @@ public class UserServiceTests
             EmailAddress = "test@example.com",
             FirstName = "OldFirstName",
             LastName = "OldLastName",
+            DisplayName = "Old Display Name",
         };
 
         _repository.GetSingle(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
@@ -193,12 +222,14 @@ public class UserServiceTests
             ua.Id == userId &&
             ua.EmailAddress == updateUser.Email &&
             ua.FirstName == updateUser.FirstName &&
-            ua.LastName == updateUser.LastName),
+            ua.LastName == updateUser.LastName &&
+            ua.DisplayName == updateUser.DisplayName &&
+            ua.UpdatedBy == operatorId),
             Arg.Any<CancellationToken>());
     }
 
     [Fact]
-    public async Task Update_UserDoesNotExist_ReturnsNull()
+    public async Task Update_UserDoesNotExist_ThrowsNullReferenceException()
     {
         // Arrange
         var updateUser = new UpdateUser
@@ -212,11 +243,10 @@ public class UserServiceTests
         _repository.GetSingle(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
             .Returns((UserAccount)null);
 
-        // Act
-        var result = await _userService.Update(updateUser, TestContext.Current.CancellationToken);
+        // Act & Assert
+        await Should.ThrowAsync<NullReferenceException>(async () =>
+            await _userService.Update(updateUser, TestContext.Current.CancellationToken));
 
-        // Assert
-        result.ShouldBeNull();
         await _repository.DidNotReceiveWithAnyArgs().Update(null!, default);
     }
 }

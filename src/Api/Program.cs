@@ -12,7 +12,6 @@ using Defra.Identity.Api.Endpoints.Users;
 using Defra.Identity.Api.Utils.Http;
 using Defra.Identity.Api.Utils.Logging;
 using Defra.Identity.Config;
-using Defra.Identity.Extensions;
 using Defra.Identity.Postgres.Database;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories;
@@ -58,6 +57,7 @@ public class Program
     {
         // Configure logging to use the CDP Platform standards.
         builder.Services.AddHttpContextAccessor();
+        builder.Services.AddHealthChecks();
         builder.Host.UseSerilog(CdpLogging.Configuration);
 
         builder.Services.ConfigureHttpJsonOptions(options =>
@@ -87,19 +87,11 @@ public class Program
             }
         });
 
-        // Add AWS defaults
-        builder.Services
-            .Configure<AwsConfiguration>(builder.Configuration.GetSection("AWS"))
-            .AddDefaultAWSOptions(configuration.GetAWSOptions("AWS"));
-
         // Add custom services
         builder.Services
-            .AddAuthDatabase(configuration)
-            .AddPollingProcessorService(configuration)
-            .AddMessageProcessorService(configuration);
+            .AddAuthDatabase(configuration);
 
         // Add support services
-        builder.Services.AddHealthChecks();
         builder.Services.AddValidatorsFromAssemblyContaining<Program>();
         builder.Services.AddRequests(configuration);
 
@@ -115,9 +107,7 @@ public class Program
         app.UseRouting();
         app.UseRequests();
         app.MapHealthChecks("/healthz");
-
         app.UseUsersEndpoints();
-        app.UsePingEndpoints();
 
         return app;
     }
