@@ -24,7 +24,7 @@ public class OperatorIdMiddleware : JsonErrorMiddleware
             return;
         }
 
-        if (!Guid.TryParse(operatorId, out _))
+        /*if (!Guid.TryParse(operatorId, out _))
         {
             await WriteJsonErrorAsync(
                 context,
@@ -33,7 +33,7 @@ public class OperatorIdMiddleware : JsonErrorMiddleware
                 message: $"Header {IdentityHeaderNames.OperatorId} must be a valid GUID.",
                 details: new { header = $"{IdentityHeaderNames.OperatorId}" });
             return;
-        }
+        }*/
 
         await next(context);
     }

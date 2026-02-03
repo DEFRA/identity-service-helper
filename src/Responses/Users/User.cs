@@ -15,4 +15,6 @@ public class User
     public string LastName { get; set; } = string.Empty;
 
     public string DisplayName { get; set; } = string.Empty;
+
+    public string Status { get; set; } = string.Empty;
 }

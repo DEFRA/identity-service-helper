@@ -33,7 +33,9 @@ public static class UsersEndpoints
             .ProducesProblem(StatusCodes.Status404NotFound);
 
         app.MapPost(RouteNames.Users, Post)
-            .AddEndpointFilter<ValidationFilter<CreateUser>>();
+            .AddEndpointFilter<ValidationFilter<CreateUser>>()
+            .Produces<Responses.Users.User>(StatusCodes.Status201Created, "application/json")
+            .ProducesProblem(StatusCodes.Status422UnprocessableEntity);
     }
 
     private static async Task<IResult> Post(
@@ -41,9 +43,13 @@ public static class UsersEndpoints
         [FromBody] CreateUser user,
         IUserService service)
     {
-        user.OperatorId = Guid.Parse(headers.OperatorId);
+        user.OperatorId = headers.OperatorId;
         var result = await service.Create(user);
-        return Results.Ok(result);
+
+        return Results.CreatedAtRoute(
+            routeName: RouteNames.Users,
+            routeValues: new { id = result.Id },
+            value: result);
     }
 
     private static async Task<IResult> Put(

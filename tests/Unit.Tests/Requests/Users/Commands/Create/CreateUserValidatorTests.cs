@@ -79,7 +79,7 @@ public class CreateUserValidatorTests
     [Fact]
     public void Should_Have_Error_When_OperatorId_Is_Empty()
     {
-        var model = new CreateUser { OperatorId = Guid.Empty };
+        var model = new CreateUser { OperatorId = string.Empty };
         var result = this.validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.OperatorId);
     }
@@ -93,7 +93,7 @@ public class CreateUserValidatorTests
             FirstName = "John",
             LastName = "Doe",
             Email = "john.doe@example.com",
-            OperatorId = Guid.NewGuid(),
+            OperatorId = Guid.NewGuid().ToString(),
         };
         var result = this.validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();

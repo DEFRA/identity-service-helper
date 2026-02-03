@@ -77,6 +77,7 @@ public class UserService : IUserService
             Email = userAccount.EmailAddress,
             FirstName = userAccount.FirstName,
             LastName = userAccount.LastName,
+            Status = userAccount.Status.Name,
         };
 
         return user;
@@ -152,7 +153,7 @@ public class UserService : IUserService
             FirstName = user.FirstName,
             LastName = user.LastName,
             DisplayName = user.DisplayName,
-            CreatedBy = user.OperatorId,
+            CreatedBy = Guid.Parse(user.OperatorId),
         };
 
         var createdUser = await _repository.Create(newUser, cancellationToken);

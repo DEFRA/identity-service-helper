@@ -29,7 +29,7 @@ public class ValidationFilter<T> : IEndpointFilter
 
         if (!validationResult.IsValid)
         {
-            return Results.ValidationProblem(validationResult.ToDictionary());
+            return Results.UnprocessableEntity(validationResult.ToDictionary());
         }
 
         return await next(context);

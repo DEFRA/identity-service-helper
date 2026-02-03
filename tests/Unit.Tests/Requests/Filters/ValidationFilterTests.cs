@@ -38,7 +38,7 @@ public class ValidationFilterTests
     }
 
     [Fact]
-    public async Task InvokeAsync_Returns_ValidationProblem_When_Validation_Fails()
+    public async Task InvokeAsync_Returns_UnprocessableEntity_When_Validation_Fails()
     {
         // Arrange
         var filter = new ValidationFilter<TestModel>(this._validator);
@@ -57,7 +57,7 @@ public class ValidationFilterTests
         var result = await filter.InvokeAsync(context, _ => ValueTask.FromResult<object?>(null));
 
         // Assert
-        result.ShouldBeOfType<ProblemHttpResult>();
+        result.ShouldBeOfType<UnprocessableEntity<IDictionary<string, string[]>>>();
     }
 
     [Fact]
