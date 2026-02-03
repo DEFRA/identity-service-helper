@@ -51,10 +51,45 @@ public class UsersRepository(AuthContext context)
 
     public async Task<UserAccount> Update(UserAccount entity, CancellationToken cancellationToken = default)
     {
-        context.Users.Update(entity);
-        await context.SaveChangesAsync(cancellationToken);
+        ArgumentNullException.ThrowIfNull(entity);
 
-        return entity;
+        var existing = await context.Users
+            .Include(x => x.Status)
+            .SingleOrDefaultAsync(x => x.Id == entity.Id, cancellationToken);
+
+        if (existing is null)
+        {
+            throw new InvalidOperationException($"User with id '{entity.Id}' was not found.");
+        }
+
+        // Update scalar fields (examples — adjust to your real model)
+        existing.EmailAddress = entity.EmailAddress;
+        existing.FirstName = entity.FirstName;
+        existing.LastName = entity.LastName;
+        existing.DisplayName = entity.DisplayName;
+
+        // If your incoming "entity" carries a status *string* somewhere,
+        // resolve it to the Status entity and set the relationship.
+        //
+        // Example assumes you temporarily store the incoming status name in entity.Status.Name
+        // or another field. Replace `incomingStatusName` with where your string actually is.
+        var incomingStatusName = entity.Status?.Name;
+
+        if (!string.IsNullOrWhiteSpace(incomingStatusName))
+        {
+            var status = await context.StatusTypes
+                .SingleOrDefaultAsync(s => s.Name.Equals(incomingStatusName), cancellationToken);
+
+            if (status is null)
+            {
+                throw new InvalidOperationException($"Unknown status '{incomingStatusName}'.");
+            }
+
+            existing.Status.Id = status.Id; // alternatively: existing.StatusId = status.Id;
+        }
+
+        await context.SaveChangesAsync(cancellationToken);
+        return existing;
     }
 
     public Task<bool> Delete(Func<UserAccount, bool> predicate)

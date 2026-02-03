@@ -129,7 +129,13 @@ public class UserService : IUserService
         existingUser.LastName = user.LastName;
         existingUser.EmailAddress = user.Email;
         existingUser.DisplayName = user.DisplayName;
-        existingUser.UpdatedBy = Guid.Parse(user.OperatorId);
+
+        if (existingUser.Status == null)
+        {
+            existingUser.Status = new StatusType();
+        }
+
+        existingUser.Status.Name = user.Status;
 
         if (Guid.TryParse(user.OperatorId, out var operatorId))
         {
@@ -138,12 +144,14 @@ public class UserService : IUserService
 
         var updated = await _repository.Update(existingUser, cancellationToken);
 
-        return new User()
+        return new User
         {
             Id = updated.Id,
             Email = updated.EmailAddress,
             FirstName = updated.FirstName,
             LastName = updated.LastName,
+            DisplayName = updated.DisplayName,
+            Status = updated.Status?.Name ?? string.Empty,
         };
     }
 

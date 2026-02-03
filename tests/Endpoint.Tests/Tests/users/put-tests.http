@@ -1,5 +1,5 @@
 ### GET request to users
-GET {{host}}/users
+GET {{host}}/users?status=new
 X-Correlation-ID: {{Correlation-ID}}
 x-api-key: {{api-key}}
 X-Operator-Id: {{Operator-Id}}
@@ -17,7 +17,8 @@ X-Operator-Id: {{Operator-Id}}
   "first_name": "{{$random.address.firstName}}",
   "last_name":  "{{$random.address.lastName}}",
   "email": "{{$random.internet.safeEmailAddress}}",
-  "display_name": "{{$random.address.firstName}}"
+  "display_name": "{{$random.address.firstName}}",
+  "status": "ACTIVE"
 }
 
 > ../../Asserts/Should_be_200_OK.js
