@@ -33,12 +33,15 @@ internal class ApplicationConfiguration
             .HasColumnName(nameof(Application.Description).ToSnakeCase())
             .HasColumnType(ColumnTypes.Text);
 
-        builder.Property(x => x.Status)
-            .HasColumnName(nameof(Application.Status).ToSnakeCase())
-            .HasColumnType(ColumnTypes.Text)
-            .HasDefaultValue("active")
-            .HasComment("active/inactive/deprecated")
+        builder.Property(x => x.StatusTypeId)
+            .HasColumnName(nameof(Application.StatusTypeId).ToSnakeCase())
+            .HasColumnType(ColumnTypes.SmallInt)
+            .HasDefaultValue(1)
             .IsRequired();
+
+        builder.HasOne(x => x.StatusType)
+            .WithMany(a => a.Applications)
+            .HasForeignKey(x => x.StatusTypeId);
 
         base.Configure(builder);
     }

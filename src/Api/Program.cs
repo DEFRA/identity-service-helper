@@ -5,12 +5,18 @@
 namespace Defra.Identity.Api;
 
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Defra.Identity.Api.Endpoints;
 using Defra.Identity.Api.Endpoints.Users;
 using Defra.Identity.Api.Utils.Http;
 using Defra.Identity.Api.Utils.Logging;
 using Defra.Identity.Config;
-using Defra.Identity.Extensions;
 using Defra.Identity.Postgres.Database;
+using Defra.Identity.Postgres.Database.Entities;
+using Defra.Identity.Repositories;
+using Defra.Identity.Requests;
+using Defra.Identity.Services;
 using FluentValidation;
 using Serilog;
 
@@ -51,7 +57,14 @@ public class Program
     {
         // Configure logging to use the CDP Platform standards.
         builder.Services.AddHttpContextAccessor();
+        builder.Services.AddHealthChecks();
         builder.Host.UseSerilog(CdpLogging.Configuration);
+
+        builder.Services.ConfigureHttpJsonOptions(options =>
+        {
+            options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
+            options.SerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.SnakeCaseLower;
+        });
 
         // Default HTTP Client
         builder.Services
@@ -74,24 +87,17 @@ public class Program
             }
         });
 
-        // Add AWS defaults
-        builder.Services
-            .Configure<AwsConfiguration>(builder.Configuration.GetSection("AWS"))
-            .AddDefaultAWSOptions(configuration.GetAWSOptions("AWS"));
-
         // Add custom services
         builder.Services
-            .AddAuthDatabase(configuration)
-            .AddPollingProcessorService(configuration)
-            .AddMessageProcessorService(configuration);
+            .AddAuthDatabase(configuration);
 
         // Add support services
-        builder.Services.AddHealthChecks();
         builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+        builder.Services.AddRequests(configuration);
 
         // Set up the endpoints and their dependencies
-        /*builder.Services.AddTransient<IRepository<UserAccount>, UsersRepository>(service =>
-            new UsersRepository(service.GetRequiredService<AuthContext>()));*/
+        builder.Services.AddRepositories(configuration);
+        builder.Services.AddDataServices(configuration);
     }
 
     [ExcludeFromCodeCoverage]
@@ -99,7 +105,8 @@ public class Program
     {
         app.UseHeaderPropagation();
         app.UseRouting();
-        app.MapHealthChecks("/health");
+        app.UseRequests();
+        app.MapHealthChecks("/healthz");
         app.UseUsersEndpoints();
 
         return app;

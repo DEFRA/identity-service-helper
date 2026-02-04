@@ -58,8 +58,8 @@ dotnet_diagnostic.SA1600.severity = none # SA1600: Elements should be documented
 
 [*.cs]
 # file layout
-trim_trailing_whitespace = true
-insert_final_newline = true
+trim_trailing_whitespace = false
+insert_final_newline = false
 csharp_using_directive_placement = inside_namespace:error
 dotnet_diagnostic.IDE0065.severity = error # IDE0065: Using directive placement
 dotnet_diagnostic.IDE1006.severity = error # IDE1006: Naming rule violation

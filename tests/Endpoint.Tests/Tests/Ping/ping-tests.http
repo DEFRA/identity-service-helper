@@ -1,0 +1,6 @@
+### GET request to example server
+GET {{host}}/ping
+x-correlation-id: cllifor
+X-Operator-Id: frank
+
+###

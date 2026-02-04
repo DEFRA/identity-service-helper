@@ -1,0 +1,46 @@
+### GET request to users
+GET {{host}}/users
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+ 
+> ../../Asserts/Should_be_200_OK_and_get_top_id.js
+
+
+
+### Get user By Id
+GET {{host}}/users/{{id}}
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+> ../../Asserts/Should_be_200_OK.js
+
+
+
+### Should return 404 result because user is active
+GET {{host}}/users/{{id}}?status=suspended
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+> ../../Asserts/Should_be_404.js
+
+
+### GET all users that have been suspended (potential empty list)
+GET {{host}}/users?status=suspended
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+> ../../Asserts/Should_be_200_OK_empty_list.js.js
+
+### GET Invalid API Key Provided
+GET {{host}}/users
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{invalid_api_key}}
+X-Operator-Id: {{Operator-Id}}
+
+
+> ../../Asserts/should_be_400_error_invalid_api_key.js
+###

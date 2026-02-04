@@ -10,5 +10,5 @@ public abstract class BaseUpdateEntity
 
     public DateTime CreatedAt { get; set; }
 
-    public DateTime UpdatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 }
