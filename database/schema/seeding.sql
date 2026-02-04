@@ -1,4 +1,8 @@
+-- liquibase formatted sql
+
 --- Insert Initial Status Types  
+-- changeset gary:seeding splitStatements:false
+SET search_path TO "defra-ci", public;
 INSERT INTO "defra-ci".status_type (name, description) VALUES ('NEW', 'An item that is not currently usable.');
 INSERT INTO "defra-ci".status_type (name, description) VALUES ( 'ACTIVE', 'An item that can be used.');
 INSERT INTO "defra-ci".status_type (name, description) VALUES ('SUSPENDED', 'An item that is available but not currently active.');
