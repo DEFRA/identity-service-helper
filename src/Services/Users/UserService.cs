@@ -4,21 +4,17 @@
 
 namespace Defra.Identity.Services.Users;
 
-using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database.Entities;
-using Defra.Identity.Repositories;
 using Defra.Identity.Repositories.Users;
 using Defra.Identity.Requests.Users.Commands.Create;
 using Defra.Identity.Requests.Users.Commands.Update;
 using Defra.Identity.Requests.Users.Queries;
 using Defra.Identity.Responses.Users;
-using Defra.Identity.Services;
 using Defra.Identity.Services.Extensions;
 
 public class UserService : IUserService
 {
-
     private readonly IUsersRepository _repository;
 
     public UserService(IUsersRepository repository)

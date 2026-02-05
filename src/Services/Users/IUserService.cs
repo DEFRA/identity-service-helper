@@ -4,8 +4,6 @@
 
 namespace Defra.Identity.Services.Users;
 
-using System.Linq.Expressions;
-using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Requests.Users.Queries;
 using Defra.Identity.Responses.Users;
 

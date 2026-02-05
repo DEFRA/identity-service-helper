@@ -10,7 +10,6 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Defra.Identity.Postgres.Database.Entities;
-using Defra.Identity.Repositories;
 using Defra.Identity.Repositories.Users;
 using Defra.Identity.Requests.Users.Commands.Update;
 using Defra.Identity.Requests.Users.Queries;

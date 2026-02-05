@@ -4,11 +4,9 @@
 
 namespace Defra.Identity.Services;
 
-using Defra.Identity.Responses.Users;
 using Defra.Identity.Services.Users;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 public static class ServiceCollectionExtensions
 {
