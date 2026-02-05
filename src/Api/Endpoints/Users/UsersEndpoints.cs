@@ -37,6 +37,18 @@ public static class UsersEndpoints
             .AddEndpointFilter<ValidationFilter<CreateUser>>()
             .Produces<Responses.Users.User>(StatusCodes.Status201Created, "application/json")
             .ProducesProblem(StatusCodes.Status422UnprocessableEntity);
+
+        app.MapDelete(RouteNames.Users + "/{id:guid}", Delete)
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces(StatusCodes.Status404NotFound);
+
+        app.MapPost(RouteNames.Users + "/{id:guid}/suspend", Suspend)
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces(StatusCodes.Status404NotFound);
+
+        app.MapPost(RouteNames.Users + "/{id:guid}/activate", Activate)
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces(StatusCodes.Status404NotFound);
     }
 
     private static async Task<IResult> Post(
@@ -105,5 +117,48 @@ public static class UsersEndpoints
         }
 
         return Results.Ok(user);
+    }
+
+    private static async Task<IResult> Delete(
+        IdentityRequestHeaders headers,
+        [FromRoute] Guid id,
+        IUserService service)
+    {
+        var deleted = await service.Delete(id);
+
+        if (!deleted)
+        {
+            return Results.NotFound();
+        }
+
+        return Results.NoContent();
+    }
+
+    private static async Task<IResult> Activate(
+        IdentityRequestHeaders headers,
+        [FromRoute] Guid id,
+        IUserService service)
+    {
+        var user = await service.Activate(id);
+        if (user == null)
+        {
+            return Results.NotFound();
+        }
+
+        return Results.NoContent();
+    }
+
+    private static async Task<IResult> Suspend(
+        IdentityRequestHeaders headers,
+        [FromRoute] Guid id,
+        IUserService service)
+    {
+        var user = await service.Suspend(id);
+        if (user == null)
+        {
+            return Results.NotFound();
+        }
+
+        return Results.NoContent();
     }
 }

@@ -20,4 +20,10 @@ public interface IUserService
     Task<User> Update(Requests.Users.Commands.Update.UpdateUser user, CancellationToken cancellationToken = default);
 
     Task<User> Create(Requests.Users.Commands.Create.CreateUser user,  CancellationToken cancellationToken = default);
+
+    Task<bool> Delete(Guid id, CancellationToken cancellationToken = default);
+
+    Task<bool> Activate(Guid id, CancellationToken cancellationToken = default);
+
+    Task<bool> Suspend(Guid id, CancellationToken cancellationToken = default);
 }

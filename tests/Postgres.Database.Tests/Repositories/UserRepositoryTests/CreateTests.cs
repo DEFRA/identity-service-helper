@@ -8,6 +8,7 @@ using System.ComponentModel;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
 using Defra.Identity.Repositories;
+using Defra.Identity.Repositories.Users;
 
 public class CreateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 {

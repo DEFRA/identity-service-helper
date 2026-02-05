@@ -2,6 +2,5 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Database\Postgres.Database\Postgres.Database.csproj" />
     <ProjectReference Include="..\..\src\Repositories\Repositories.csproj" />
-    <ProjectReference Include="..\..\src\Services\Repositories.csproj" />
   </ItemGroup>
 </Project>
