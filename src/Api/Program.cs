@@ -6,14 +6,10 @@ namespace Defra.Identity.Api;
 
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using Defra.Identity.Api.Endpoints;
 using Defra.Identity.Api.Endpoints.Users;
 using Defra.Identity.Api.Utils.Http;
 using Defra.Identity.Api.Utils.Logging;
-using Defra.Identity.Config;
 using Defra.Identity.Postgres.Database;
-using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories;
 using Defra.Identity.Requests;
 using Defra.Identity.Services;

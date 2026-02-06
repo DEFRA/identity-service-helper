@@ -10,7 +10,7 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Defra.Identity.Postgres.Database.Entities;
-using Defra.Identity.Repositories;
+using Defra.Identity.Repositories.Users;
 using Defra.Identity.Requests.Users.Commands.Update;
 using Defra.Identity.Requests.Users.Queries;
 using Defra.Identity.Services.Users;
@@ -20,7 +20,7 @@ using Xunit;
 
 public class UserServiceTests
 {
-    private readonly IRepository<UserAccount> _repository = Substitute.For<IRepository<UserAccount>>();
+    private readonly IUsersRepository _repository = Substitute.For<IUsersRepository>();
     private readonly UserService _userService;
 
     public UserServiceTests()
@@ -79,6 +79,54 @@ public class UserServiceTests
         result.Email.ShouldBe("test@example.com");
         result.FirstName.ShouldBe("John");
         result.LastName.ShouldBe("Doe");
+    }
+
+    [Fact]
+    public async Task Delete_CallsRepository()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        _repository.Delete(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns(true);
+
+        // Act
+        var result = await _userService.Delete(userId, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ShouldBeTrue();
+        await _repository.Received(1).Delete(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Activate_CallsRepository()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        _repository.Activate(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns(true);
+
+        // Act
+        var result = await _userService.Activate(userId, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ShouldBeTrue();
+        await _repository.Received(1).Activate(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Suspend_CallsRepository()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        _repository.Suspend(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns(true);
+
+        // Act
+        var result = await _userService.Suspend(userId, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ShouldBeTrue();
+        await _repository.Received(1).Suspend(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]

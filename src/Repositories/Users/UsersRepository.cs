@@ -2,14 +2,14 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Repositories;
+namespace Defra.Identity.Repositories.Users;
 
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database;
 using Defra.Identity.Postgres.Database.Entities;
 
 public class UsersRepository(AuthContext context)
-    : IRepository<UserAccount>
+    : IUsersRepository
 {
     public async Task<List<UserAccount>> GetAll()
     {
@@ -58,8 +58,50 @@ public class UsersRepository(AuthContext context)
         return entity;
     }
 
-    public Task<bool> Delete(Func<UserAccount, bool> predicate)
+    public async Task<bool> Delete(Expression<Func<UserAccount, bool>> predicate, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var userAccount = await context.Users
+            .SingleOrDefaultAsync(predicate, cancellationToken);
+        if (userAccount == null)
+        {
+            return false;
+        }
+
+        userAccount.StatusTypeId = 4;
+        context.Users.Update(userAccount);
+        await context.SaveChangesAsync(cancellationToken);
+        return true;
+    }
+
+    public async Task<bool> Suspend(Expression<Func<UserAccount, bool>> predicate, CancellationToken cancellationToken = default)
+    {
+        var userAccount = await context.Users
+            .SingleOrDefaultAsync(predicate, cancellationToken);
+        if (userAccount == null)
+        {
+            throw new ArgumentException("User account not found");
+        }
+
+        userAccount.StatusTypeId = 3;
+        userAccount.UpdatedBy = userAccount.Id;
+
+        context.Users.Update(userAccount);
+        await context.SaveChangesAsync(cancellationToken);
+        return true;
+    }
+
+    public async Task<bool> Activate(Expression<Func<UserAccount, bool>> predicate, CancellationToken cancellationToken = default)
+    {
+        var userAccount = await context.Users
+            .SingleOrDefaultAsync(predicate, cancellationToken);
+        if (userAccount == null)
+        {
+            throw new ArgumentException("User account not found");
+        }
+
+        userAccount.StatusTypeId = 2;
+        context.Users.Update(userAccount);
+        await context.SaveChangesAsync(cancellationToken);
+        return true;
     }
 }

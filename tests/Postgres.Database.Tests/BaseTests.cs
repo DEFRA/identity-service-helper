@@ -9,6 +9,7 @@ using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Collections;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -45,7 +46,15 @@ public abstract class BaseTests(PostgreContainerFixture fixture) : IAsyncLifetim
 
         if (!Context.Users.Any())
         {
-            await Context.StatusTypes.AddAsync(new StatusType() { Name = "Active" });
+            await Context.StatusTypes.AddRangeAsync(
+                new StatusType { Name = "New", Description = "New User" },
+                new StatusType { Name = "Active", Description = "Active User" },
+                new StatusType { Name = "Suspended", Description = "Suspended User" },
+                new StatusType { Name = "Deleted", Description = "Deleted User" });
+            await Context.SaveChangesAsync();
+
+            var activeStatus = await Context.StatusTypes.FirstAsync(s => s.Name == "Active");
+
             var id = Guid.NewGuid();
             await Context.Users.AddAsync(new UserAccount()
             {
@@ -55,6 +64,7 @@ public abstract class BaseTests(PostgreContainerFixture fixture) : IAsyncLifetim
                 FirstName = "test",
                 LastName = "user",
                 CreatedBy = id,
+                StatusTypeId = activeStatus.Id,
             });
             await Context.SaveChangesAsync();
         }

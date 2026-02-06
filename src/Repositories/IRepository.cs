@@ -17,5 +17,5 @@ public interface IRepository<TEntity>
 
     Task<TEntity> Update(TEntity entity, CancellationToken cancellationToken = default);
 
-    Task<bool> Delete(Func<TEntity, bool> predicate);
+    Task<bool> Delete(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default);
 }

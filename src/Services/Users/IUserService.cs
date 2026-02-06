@@ -4,8 +4,6 @@
 
 namespace Defra.Identity.Services.Users;
 
-using System.Linq.Expressions;
-using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Requests.Users.Queries;
 using Defra.Identity.Responses.Users;
 
@@ -20,4 +18,10 @@ public interface IUserService
     Task<User> Update(Requests.Users.Commands.Update.UpdateUser user, CancellationToken cancellationToken = default);
 
     Task<User> Create(Requests.Users.Commands.Create.CreateUser user,  CancellationToken cancellationToken = default);
+
+    Task<bool> Delete(Guid id, CancellationToken cancellationToken = default);
+
+    Task<bool> Activate(Guid id, CancellationToken cancellationToken = default);
+
+    Task<bool> Suspend(Guid id, CancellationToken cancellationToken = default);
 }

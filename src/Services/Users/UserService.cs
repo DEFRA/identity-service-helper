@@ -2,26 +2,22 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-using System.ComponentModel.DataAnnotations;
-using Defra.Identity.Requests.Users.Commands.Create;
-
 namespace Defra.Identity.Services.Users;
 
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database.Entities;
-using Defra.Identity.Repositories;
+using Defra.Identity.Repositories.Users;
+using Defra.Identity.Requests.Users.Commands.Create;
 using Defra.Identity.Requests.Users.Commands.Update;
 using Defra.Identity.Requests.Users.Queries;
 using Defra.Identity.Responses.Users;
-using Defra.Identity.Services;
 using Defra.Identity.Services.Extensions;
 
 public class UserService : IUserService
 {
+    private readonly IUsersRepository _repository;
 
-    private readonly IRepository<UserAccount> _repository;
-
-    public UserService(IRepository<UserAccount> repository)
+    public UserService(IUsersRepository repository)
     {
         _repository = repository;
     }
@@ -169,5 +165,20 @@ public class UserService : IUserService
             DisplayName = createdUser.DisplayName,
             Status = createdUser.Status?.Name ?? string.Empty,
         };
+    }
+
+    public async Task<bool> Delete(Guid id, CancellationToken cancellationToken = default)
+    {
+        return await _repository.Delete(x => x.Id == id, cancellationToken);
+    }
+
+    public async Task<bool> Activate(Guid id, CancellationToken cancellationToken = default)
+    {
+      return await _repository.Activate(x => x.Id == id, cancellationToken);
+    }
+
+    public async Task<bool> Suspend(Guid id, CancellationToken cancellationToken = default)
+    {
+       return await _repository.Suspend(x => x.Id == id, cancellationToken);
     }
 }
