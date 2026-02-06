@@ -23,30 +23,28 @@ public class SuspendTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         var adminUser = await repository.GetSingle(x => x.EmailAddress == AdminEmailAddress, TestContext.Current.CancellationToken);
         adminUser.ShouldNotBeNull();
 
-        var userId = Guid.NewGuid();
-        var operatorId = Guid.NewGuid();
         var user = new UserAccount
         {
-            Id = userId,
             DisplayName = "To Suspend",
             FirstName = "To",
             LastName = "Suspend",
             EmailAddress = "suspend@test.com",
             CreatedBy = adminUser.Id,
-            StatusTypeId = 1, // Active
         };
         await Context.Users.AddAsync(user, TestContext.Current.CancellationToken);
         await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
-        var result = await repository.Suspend(x => x.Id == userId, operatorId,  TestContext.Current.CancellationToken);
+        var result = await repository.Suspend(x => x.Id == user.Id, adminUser.Id,  TestContext.Current.CancellationToken);
 
         // Assert
         result.ShouldBeTrue();
-        var suspendedUser = await repository.GetSingle(x => x.Id == userId, TestContext.Current.CancellationToken);
-        suspendedUser.ShouldNotBeNull();
-        suspendedUser.StatusTypeId.ShouldBe(3);
-        suspendedUser.UpdatedBy.ShouldBe(userId);
+        var suspendedUser = await repository.GetSingle(x => x.Id == user.Id, TestContext.Current.CancellationToken);
+
+        suspendedUser.ShouldSatisfyAllConditions(
+            v => v.ShouldNotBeNull(),
+            v => v?.StatusTypeId.ShouldBe(3),
+            v => v?.UpdatedBy.ShouldBe(adminUser.Id));
     }
 
     [Fact]

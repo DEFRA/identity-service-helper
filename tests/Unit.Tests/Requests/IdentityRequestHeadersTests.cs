@@ -83,8 +83,11 @@ public class IdentityRequestHeadersTests
         context.Request.Headers[IdentityHeaderNames.ApiKey] = "api-key";
 
         var exception = await Should.ThrowAsync<BadHttpRequestException>(async () => await IdentityRequestHeaders.BindAsync(context, null!));
-        exception.StatusCode.ShouldBe(StatusCodes.Status400BadRequest);
-        exception.Message.ShouldBe($"Header {IdentityHeaderNames.CorrelationId} is required.");
+
+        exception.ShouldSatisfyAllConditions(
+            x => x.ShouldBeOfType<BadHttpRequestException>(),
+            x => x.StatusCode.ShouldBe(StatusCodes.Status400BadRequest),
+            x => x.Message.ShouldBe($"Header {IdentityHeaderNames.CorrelationId} is required."));
     }
 
     [Fact]
@@ -96,8 +99,10 @@ public class IdentityRequestHeadersTests
         context.Request.Headers[IdentityHeaderNames.ApiKey] = "api-key";
 
         var exception = await Should.ThrowAsync<BadHttpRequestException>(async () => await IdentityRequestHeaders.BindAsync(context, null!));
-        exception.StatusCode.ShouldBe(StatusCodes.Status400BadRequest);
-        exception.Message.ShouldBe($"Header {IdentityHeaderNames.CorrelationId} is required.");
+        exception.ShouldSatisfyAllConditions(
+            x => x.ShouldBeOfType<BadHttpRequestException>(),
+            x => x.StatusCode.ShouldBe(StatusCodes.Status400BadRequest),
+            x => x.Message.ShouldBe($"Header {IdentityHeaderNames.CorrelationId} is required."));
     }
 
     [Fact]
@@ -108,8 +113,10 @@ public class IdentityRequestHeadersTests
         context.Request.Headers[IdentityHeaderNames.ApiKey] = "api-key";
 
         var exception = await Should.ThrowAsync<BadHttpRequestException>(async () => await IdentityRequestHeaders.BindAsync(context, null!));
-        exception.StatusCode.ShouldBe(StatusCodes.Status400BadRequest);
-        exception.Message.ShouldBe($"Header {IdentityHeaderNames.OperatorId} is required.");
+        exception.ShouldSatisfyAllConditions(
+            x => x.ShouldBeOfType<BadHttpRequestException>(),
+            x => x.StatusCode.ShouldBe(StatusCodes.Status400BadRequest),
+            x => x.Message.ShouldBe($"Header {IdentityHeaderNames.OperatorId} is required."));
     }
 
     [Fact]
@@ -121,8 +128,10 @@ public class IdentityRequestHeadersTests
         context.Request.Headers[IdentityHeaderNames.ApiKey] = "api-key";
 
         var exception = await Should.ThrowAsync<BadHttpRequestException>(async () => await IdentityRequestHeaders.BindAsync(context, null!));
-        exception.StatusCode.ShouldBe(StatusCodes.Status400BadRequest);
-        exception.Message.ShouldBe($"Header {IdentityHeaderNames.OperatorId} is required.");
+        exception.ShouldSatisfyAllConditions(
+            x => x.ShouldBeOfType<BadHttpRequestException>(),
+            x => x.StatusCode.ShouldBe(StatusCodes.Status400BadRequest),
+            x => x.Message.ShouldBe($"Header {IdentityHeaderNames.OperatorId} is required."));
     }
 
     [Fact]
@@ -133,8 +142,10 @@ public class IdentityRequestHeadersTests
         context.Request.Headers[IdentityHeaderNames.OperatorId] = Guid.NewGuid().ToString();
 
         var exception = await Should.ThrowAsync<BadHttpRequestException>(async () => await IdentityRequestHeaders.BindAsync(context, null!));
-        exception.StatusCode.ShouldBe(StatusCodes.Status400BadRequest);
-        exception.Message.ShouldBe($"Header {IdentityHeaderNames.ApiKey} is required.");
+        exception.ShouldSatisfyAllConditions(
+            x => x.ShouldBeOfType<BadHttpRequestException>(),
+            x => x.StatusCode.ShouldBe(StatusCodes.Status400BadRequest),
+            x => x.Message.ShouldBe($"Header {IdentityHeaderNames.ApiKey} is required."));
     }
 
     [Fact]
@@ -146,7 +157,9 @@ public class IdentityRequestHeadersTests
         context.Request.Headers[IdentityHeaderNames.ApiKey] = "   ";
 
         var exception = await Should.ThrowAsync<BadHttpRequestException>(async () => await IdentityRequestHeaders.BindAsync(context, null!));
-        exception.StatusCode.ShouldBe(StatusCodes.Status400BadRequest);
-        exception.Message.ShouldBe($"Header {IdentityHeaderNames.ApiKey} is required.");
+        exception.ShouldSatisfyAllConditions(
+            x => x.ShouldBeOfType<BadHttpRequestException>(),
+            x => x.StatusCode.ShouldBe(StatusCodes.Status400BadRequest),
+            x => x.Message.ShouldBe($"Header {IdentityHeaderNames.ApiKey} is required."));
     }
 }

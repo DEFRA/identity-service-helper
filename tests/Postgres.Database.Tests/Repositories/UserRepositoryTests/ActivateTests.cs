@@ -27,23 +27,21 @@ public class ActivateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         var operatorId = Guid.NewGuid();
         var user = new UserAccount
         {
-            Id = userId,
             DisplayName = "To Activate",
             FirstName = "To",
             LastName = "Activate",
             EmailAddress = "activate@test.com",
             CreatedBy = adminUser.Id,
-            StatusTypeId = 3, // Suspended
         };
         await Context.Users.AddAsync(user, TestContext.Current.CancellationToken);
         await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
-        var result = await repository.Activate(x => x.Id == userId, operatorId, TestContext.Current.CancellationToken);
+        var result = await repository.Activate(x => x.Id == user.Id, adminUser.Id, TestContext.Current.CancellationToken);
 
         // Assert
         result.ShouldBeTrue();
-        var activatedUser = await repository.GetSingle(x => x.Id == userId, TestContext.Current.CancellationToken);
+        var activatedUser = await repository.GetSingle(x => x.Id == user.Id, TestContext.Current.CancellationToken);
         activatedUser.ShouldNotBeNull();
         activatedUser.StatusTypeId.ShouldBe(2);
     }
