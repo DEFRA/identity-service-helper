@@ -24,7 +24,7 @@ public class IdentityRequestHeadersTests
     public void TryGet_Returns_True_When_Item_Is_Present()
     {
         var context = new DefaultHttpContext();
-        var expectedHeaders = new IdentityRequestHeaders("corr-id", "op-id", "api-key");
+        var expectedHeaders = new IdentityRequestHeaders(Guid.NewGuid(), Guid.NewGuid(), "api-key");
         context.Items[IdentityRequestHeaders.ItemKey] = expectedHeaders;
 
         var result = IdentityRequestHeaders.TryGet(context, out var headers);
@@ -47,7 +47,7 @@ public class IdentityRequestHeadersTests
     public async Task BindAsync_Returns_Existing_From_Context_Items()
     {
         var context = new DefaultHttpContext();
-        var expectedHeaders = new IdentityRequestHeaders("corr-id", "op-id", "api-key");
+        var expectedHeaders = new IdentityRequestHeaders(Guid.NewGuid(), Guid.NewGuid(), "api-key");
         context.Items[IdentityRequestHeaders.ItemKey] = expectedHeaders;
 
         var result = await IdentityRequestHeaders.BindAsync(context, null!);
@@ -58,26 +58,36 @@ public class IdentityRequestHeadersTests
     public async Task BindAsync_Binds_From_Headers_When_Not_In_Context_Items()
     {
         var context = new DefaultHttpContext();
-        context.Request.Headers[IdentityHeaderNames.CorrelationId] = "corr-id";
-        context.Request.Headers[IdentityHeaderNames.OperatorId] = "op-id";
+        var correlationId = Guid.NewGuid();
+        var operatorId = Guid.NewGuid();
+        context.Request.Headers[IdentityHeaderNames.CorrelationId] = correlationId.ToString();
+        context.Request.Headers[IdentityHeaderNames.OperatorId] = operatorId.ToString();
         context.Request.Headers[IdentityHeaderNames.ApiKey] = "api-key";
 
         var result = await IdentityRequestHeaders.BindAsync(context, null!);
-        result.CorrelationId.ShouldBe("corr-id");
-        result.OperatorId.ShouldBe("op-id");
-        result.ApiKey.ShouldBe("api-key");
+
+        result.ShouldSatisfyAllConditions(
+            x => x.OperatorId.ShouldBeOfType<Guid>(),
+            x => x.OperatorId.ShouldBe(operatorId),
+            x => x.ApiKey.ShouldBeOfType<string>(),
+            x => x.ApiKey.ShouldBe("api-key"),
+            x => x.CorrelationId.ShouldBeOfType<Guid>(),
+            x => x.CorrelationId.ShouldBe(correlationId));
     }
 
     [Fact]
     public async Task BindAsync_Throws_When_CorrelationId_Missing()
     {
         var context = new DefaultHttpContext();
-        context.Request.Headers[IdentityHeaderNames.OperatorId] = "op-id";
+        context.Request.Headers[IdentityHeaderNames.OperatorId] = Guid.NewGuid().ToString();
         context.Request.Headers[IdentityHeaderNames.ApiKey] = "api-key";
 
         var exception = await Should.ThrowAsync<BadHttpRequestException>(async () => await IdentityRequestHeaders.BindAsync(context, null!));
-        exception.StatusCode.ShouldBe(StatusCodes.Status400BadRequest);
-        exception.Message.ShouldBe($"Header {IdentityHeaderNames.CorrelationId} is required.");
+
+        exception.ShouldSatisfyAllConditions(
+            x => x.ShouldBeOfType<BadHttpRequestException>(),
+            x => x.StatusCode.ShouldBe(StatusCodes.Status400BadRequest),
+            x => x.Message.ShouldBe($"Header {IdentityHeaderNames.CorrelationId} is required."));
     }
 
     [Fact]
@@ -85,61 +95,71 @@ public class IdentityRequestHeadersTests
     {
         var context = new DefaultHttpContext();
         context.Request.Headers[IdentityHeaderNames.CorrelationId] = "   ";
-        context.Request.Headers[IdentityHeaderNames.OperatorId] = "op-id";
+        context.Request.Headers[IdentityHeaderNames.OperatorId] = Guid.NewGuid().ToString();
         context.Request.Headers[IdentityHeaderNames.ApiKey] = "api-key";
 
         var exception = await Should.ThrowAsync<BadHttpRequestException>(async () => await IdentityRequestHeaders.BindAsync(context, null!));
-        exception.StatusCode.ShouldBe(StatusCodes.Status400BadRequest);
-        exception.Message.ShouldBe($"Header {IdentityHeaderNames.CorrelationId} is required.");
+        exception.ShouldSatisfyAllConditions(
+            x => x.ShouldBeOfType<BadHttpRequestException>(),
+            x => x.StatusCode.ShouldBe(StatusCodes.Status400BadRequest),
+            x => x.Message.ShouldBe($"Header {IdentityHeaderNames.CorrelationId} is required."));
     }
 
     [Fact]
     public async Task BindAsync_Throws_When_OperatorId_Missing()
     {
         var context = new DefaultHttpContext();
-        context.Request.Headers[IdentityHeaderNames.CorrelationId] = "corr-id";
+        context.Request.Headers[IdentityHeaderNames.CorrelationId] = Guid.NewGuid().ToString();
         context.Request.Headers[IdentityHeaderNames.ApiKey] = "api-key";
 
         var exception = await Should.ThrowAsync<BadHttpRequestException>(async () => await IdentityRequestHeaders.BindAsync(context, null!));
-        exception.StatusCode.ShouldBe(StatusCodes.Status400BadRequest);
-        exception.Message.ShouldBe($"Header {IdentityHeaderNames.OperatorId} is required.");
+        exception.ShouldSatisfyAllConditions(
+            x => x.ShouldBeOfType<BadHttpRequestException>(),
+            x => x.StatusCode.ShouldBe(StatusCodes.Status400BadRequest),
+            x => x.Message.ShouldBe($"Header {IdentityHeaderNames.OperatorId} is required."));
     }
 
     [Fact]
     public async Task BindAsync_Throws_When_OperatorId_Whitespace()
     {
         var context = new DefaultHttpContext();
-        context.Request.Headers[IdentityHeaderNames.CorrelationId] = "corr-id";
+        context.Request.Headers[IdentityHeaderNames.CorrelationId] = Guid.NewGuid().ToString();
         context.Request.Headers[IdentityHeaderNames.OperatorId] = "   ";
         context.Request.Headers[IdentityHeaderNames.ApiKey] = "api-key";
 
         var exception = await Should.ThrowAsync<BadHttpRequestException>(async () => await IdentityRequestHeaders.BindAsync(context, null!));
-        exception.StatusCode.ShouldBe(StatusCodes.Status400BadRequest);
-        exception.Message.ShouldBe($"Header {IdentityHeaderNames.OperatorId} is required.");
+        exception.ShouldSatisfyAllConditions(
+            x => x.ShouldBeOfType<BadHttpRequestException>(),
+            x => x.StatusCode.ShouldBe(StatusCodes.Status400BadRequest),
+            x => x.Message.ShouldBe($"Header {IdentityHeaderNames.OperatorId} is required."));
     }
 
     [Fact]
     public async Task BindAsync_Throws_When_ApiKey_Missing()
     {
         var context = new DefaultHttpContext();
-        context.Request.Headers[IdentityHeaderNames.CorrelationId] = "corr-id";
-        context.Request.Headers[IdentityHeaderNames.OperatorId] = "op-id";
+        context.Request.Headers[IdentityHeaderNames.CorrelationId] = Guid.NewGuid().ToString();
+        context.Request.Headers[IdentityHeaderNames.OperatorId] = Guid.NewGuid().ToString();
 
         var exception = await Should.ThrowAsync<BadHttpRequestException>(async () => await IdentityRequestHeaders.BindAsync(context, null!));
-        exception.StatusCode.ShouldBe(StatusCodes.Status400BadRequest);
-        exception.Message.ShouldBe($"Header {IdentityHeaderNames.ApiKey} is required.");
+        exception.ShouldSatisfyAllConditions(
+            x => x.ShouldBeOfType<BadHttpRequestException>(),
+            x => x.StatusCode.ShouldBe(StatusCodes.Status400BadRequest),
+            x => x.Message.ShouldBe($"Header {IdentityHeaderNames.ApiKey} is required."));
     }
 
     [Fact]
     public async Task BindAsync_Throws_When_ApiKey_Whitespace()
     {
         var context = new DefaultHttpContext();
-        context.Request.Headers[IdentityHeaderNames.CorrelationId] = "corr-id";
-        context.Request.Headers[IdentityHeaderNames.OperatorId] = "op-id";
+        context.Request.Headers[IdentityHeaderNames.CorrelationId] = Guid.NewGuid().ToString();
+        context.Request.Headers[IdentityHeaderNames.OperatorId] = Guid.NewGuid().ToString();
         context.Request.Headers[IdentityHeaderNames.ApiKey] = "   ";
 
         var exception = await Should.ThrowAsync<BadHttpRequestException>(async () => await IdentityRequestHeaders.BindAsync(context, null!));
-        exception.StatusCode.ShouldBe(StatusCodes.Status400BadRequest);
-        exception.Message.ShouldBe($"Header {IdentityHeaderNames.ApiKey} is required.");
+        exception.ShouldSatisfyAllConditions(
+            x => x.ShouldBeOfType<BadHttpRequestException>(),
+            x => x.StatusCode.ShouldBe(StatusCodes.Status400BadRequest),
+            x => x.Message.ShouldBe($"Header {IdentityHeaderNames.ApiKey} is required."));
     }
 }

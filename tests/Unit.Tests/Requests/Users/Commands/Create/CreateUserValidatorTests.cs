@@ -85,7 +85,7 @@ public class CreateUserValidatorTests
             FirstName = "John",
             LastName = "Doe",
             Email = "john.doe@example.com",
-            OperatorId = Guid.NewGuid().ToString(),
+            OperatorId = Guid.NewGuid(),
         };
         var result = this.validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();

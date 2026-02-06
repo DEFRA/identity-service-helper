@@ -86,15 +86,16 @@ public class UserServiceTests
     {
         // Arrange
         var userId = Guid.NewGuid();
-        _repository.Delete(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
+        var operatorId = Guid.NewGuid();
+        _repository.Delete(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(true);
 
         // Act
-        var result = await _userService.Delete(userId, TestContext.Current.CancellationToken);
+        var result = await _userService.Delete(userId, operatorId, TestContext.Current.CancellationToken);
 
         // Assert
         result.ShouldBeTrue();
-        await _repository.Received(1).Delete(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>());
+        await _repository.Received(1).Delete(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<Guid>(),Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -102,15 +103,16 @@ public class UserServiceTests
     {
         // Arrange
         var userId = Guid.NewGuid();
-        _repository.Activate(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
+        var operatorId = Guid.NewGuid();
+        _repository.Activate(Arg.Any<Expression<Func<UserAccount, bool>>>(),Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(true);
 
         // Act
-        var result = await _userService.Activate(userId, TestContext.Current.CancellationToken);
+        var result = await _userService.Activate(userId, operatorId, TestContext.Current.CancellationToken);
 
         // Assert
         result.ShouldBeTrue();
-        await _repository.Received(1).Activate(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>());
+        await _repository.Received(1).Activate(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -118,15 +120,16 @@ public class UserServiceTests
     {
         // Arrange
         var userId = Guid.NewGuid();
-        _repository.Suspend(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
+        var operatorId = Guid.NewGuid();
+        _repository.Suspend(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(true);
 
         // Act
-        var result = await _userService.Suspend(userId, TestContext.Current.CancellationToken);
+        var result = await _userService.Suspend(userId, operatorId, TestContext.Current.CancellationToken);
 
         // Assert
         result.ShouldBeTrue();
-        await _repository.Received(1).Suspend(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>());
+        await _repository.Received(1).Suspend(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -239,7 +242,7 @@ public class UserServiceTests
             FirstName = "UpdatedFirstName",
             LastName = "UpdatedLastName",
             DisplayName = "Updated Display Name",
-            OperatorId = operatorId.ToString()
+            OperatorId = operatorId,
         };
 
         var existingUser = new UserAccount
@@ -249,7 +252,7 @@ public class UserServiceTests
             FirstName = "OldFirstName",
             LastName = "OldLastName",
             DisplayName = "Old Display Name",
-            Status = new StatusType { Name = "Inactive" }
+            Status = new StatusType { Name = "Inactive" },
         };
 
         _repository.GetSingle(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())

@@ -9,7 +9,7 @@ using Defra.Identity.Postgres.Database.Entities;
 
 public interface IUsersRepository : IRepository<UserAccount>
 {
-    Task<bool> Suspend(Expression<Func<UserAccount, bool>> predicate, CancellationToken cancellationToken = default);
+    Task<bool> Suspend(Expression<Func<UserAccount, bool>> predicate,  Guid operatorId, CancellationToken cancellationToken = default);
 
-    Task<bool> Activate(Expression<Func<UserAccount, bool>> predicate, CancellationToken cancellationToken = default);
+    Task<bool> Activate(Expression<Func<UserAccount, bool>> predicate, Guid operatorId, CancellationToken cancellationToken = default);
 }
