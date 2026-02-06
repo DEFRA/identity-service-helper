@@ -19,9 +19,9 @@ public interface IUserService
 
     Task<User> Create(Requests.Users.Commands.Create.CreateUser user,  CancellationToken cancellationToken = default);
 
-    Task<bool> Delete(Guid id, CancellationToken cancellationToken = default);
+    Task<bool> Delete(Guid id, Guid operatorId, CancellationToken cancellationToken = default);
 
-    Task<bool> Activate(Guid id, CancellationToken cancellationToken = default);
+    Task<bool> Activate(Guid id, Guid operatorId, CancellationToken cancellationToken = default);
 
-    Task<bool> Suspend(Guid id, CancellationToken cancellationToken = default);
+    Task<bool> Suspend(Guid id,  Guid operatorId, CancellationToken cancellationToken = default);
 }

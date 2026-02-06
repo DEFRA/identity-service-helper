@@ -24,7 +24,7 @@ public class IdentityRequestHeadersTests
     public void TryGet_Returns_True_When_Item_Is_Present()
     {
         var context = new DefaultHttpContext();
-        var expectedHeaders = new IdentityRequestHeaders("corr-id", "op-id", "api-key");
+        var expectedHeaders = new IdentityRequestHeaders(Guid.NewGuid(), Guid.NewGuid(), "api-key");
         context.Items[IdentityRequestHeaders.ItemKey] = expectedHeaders;
 
         var result = IdentityRequestHeaders.TryGet(context, out var headers);
@@ -47,7 +47,7 @@ public class IdentityRequestHeadersTests
     public async Task BindAsync_Returns_Existing_From_Context_Items()
     {
         var context = new DefaultHttpContext();
-        var expectedHeaders = new IdentityRequestHeaders("corr-id", "op-id", "api-key");
+        var expectedHeaders = new IdentityRequestHeaders(Guid.NewGuid(), Guid.NewGuid(), "api-key");
         context.Items[IdentityRequestHeaders.ItemKey] = expectedHeaders;
 
         var result = await IdentityRequestHeaders.BindAsync(context, null!);
@@ -58,14 +58,21 @@ public class IdentityRequestHeadersTests
     public async Task BindAsync_Binds_From_Headers_When_Not_In_Context_Items()
     {
         var context = new DefaultHttpContext();
-        context.Request.Headers[IdentityHeaderNames.CorrelationId] = "corr-id";
-        context.Request.Headers[IdentityHeaderNames.OperatorId] = "op-id";
+        var correlationId = Guid.NewGuid();
+        var operatorId = Guid.NewGuid();
+        context.Request.Headers[IdentityHeaderNames.CorrelationId] = correlationId.ToString();
+        context.Request.Headers[IdentityHeaderNames.OperatorId] = operatorId.ToString();
         context.Request.Headers[IdentityHeaderNames.ApiKey] = "api-key";
 
         var result = await IdentityRequestHeaders.BindAsync(context, null!);
-        result.CorrelationId.ShouldBe("corr-id");
-        result.OperatorId.ShouldBe("op-id");
-        result.ApiKey.ShouldBe("api-key");
+
+        result.ShouldSatisfyAllConditions(
+            x => x.OperatorId.ShouldBeOfType<Guid>(),
+            x => x.OperatorId.ShouldBe(operatorId),
+            x => x.ApiKey.ShouldBeOfType<string>(),
+            x => x.ApiKey.ShouldBe("api-key"),
+            x => x.CorrelationId.ShouldBeOfType<Guid>(),
+            x => x.CorrelationId.ShouldBe(correlationId));
     }
 
     [Fact]

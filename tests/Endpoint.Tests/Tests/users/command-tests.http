@@ -49,7 +49,7 @@ X-Operator-Id: {{Operator-Id}}
 > ../../Asserts/Should_be_200_OK.js
 
 ### Activate user  
-POST {{host}}/users/{{id}}/activate
+POST {{host}}/users/{{id}}:activate
 Content-Type: application/json
 X-Correlation-ID: {{Correlation-ID}}
 x-api-key: {{api-key}}
@@ -59,7 +59,7 @@ X-Operator-Id: {{Operator-Id}}
 > ../../Asserts/Should_be_204_no_content.js
 
 ### suspend user  
-POST {{host}}/users/{{id}}/suspend
+POST {{host}}/users/{{id}}:suspend
 Content-Type: application/json
 X-Correlation-ID: {{Correlation-ID}}
 x-api-key: {{api-key}}

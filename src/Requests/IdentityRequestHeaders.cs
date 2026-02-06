@@ -7,7 +7,7 @@ namespace Defra.Identity.Requests;
 using System.Reflection;
 using Microsoft.AspNetCore.Http;
 
-public sealed record IdentityRequestHeaders(string CorrelationId, string OperatorId, string ApiKey)
+public sealed record IdentityRequestHeaders(Guid CorrelationId, Guid OperatorId, string ApiKey)
 {
     public static readonly object ItemKey = new();
 
@@ -36,7 +36,7 @@ public sealed record IdentityRequestHeaders(string CorrelationId, string Operato
         var correlationId =
             headers.TryGetValue(IdentityHeaderNames.CorrelationId, out var tid) ? tid.ToString() : null;
 
-        if (string.IsNullOrWhiteSpace(correlationId))
+        if (correlationId == null || !Guid.TryParse(correlationId, out _))
         {
             throw new BadHttpRequestException(
                 $"Header {IdentityHeaderNames.CorrelationId} is required.",
@@ -46,7 +46,7 @@ public sealed record IdentityRequestHeaders(string CorrelationId, string Operato
         var operatorId =
             headers.TryGetValue(IdentityHeaderNames.OperatorId, out var oid) ? oid.ToString() : null;
 
-        if (string.IsNullOrWhiteSpace(operatorId))
+        if (operatorId == null || !Guid.TryParse(operatorId, out _))
         {
             throw new BadHttpRequestException(
                 $"Header {IdentityHeaderNames.OperatorId} is required.",
@@ -64,8 +64,8 @@ public sealed record IdentityRequestHeaders(string CorrelationId, string Operato
         }
 
         return ValueTask.FromResult(new IdentityRequestHeaders(
-            CorrelationId: correlationId,
-            OperatorId: operatorId,
+            CorrelationId: Guid.Parse(correlationId),
+            OperatorId: Guid.Parse(operatorId),
             ApiKey: apiKey));
     }
 }

@@ -38,11 +38,11 @@ public static class UsersEndpoints
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status404NotFound);
 
-        app.MapPost(RouteNames.Users + "/{id:guid}/suspend", Suspend)
+        app.MapPost(RouteNames.Users + "/{id:guid}:suspend", Suspend)
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status404NotFound);
 
-        app.MapPost(RouteNames.Users + "/{id:guid}/activate", Activate)
+        app.MapPost(RouteNames.Users + "/{id:guid}:activate", Activate)
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status404NotFound);
     }
@@ -120,7 +120,7 @@ public static class UsersEndpoints
         [FromRoute] Guid id,
         IUserService service)
     {
-        var deleted = await service.Delete(id);
+        var deleted = await service.Delete(id, headers.OperatorId);
 
         if (!deleted)
         {
@@ -135,7 +135,7 @@ public static class UsersEndpoints
         [FromRoute] Guid id,
         IUserService service)
     {
-        var user = await service.Activate(id);
+        var user = await service.Activate(id, headers.OperatorId);
         if (user == null)
         {
             return Results.NotFound();
@@ -149,7 +149,7 @@ public static class UsersEndpoints
         [FromRoute] Guid id,
         IUserService service)
     {
-        var user = await service.Suspend(id);
+        var user = await service.Suspend(id, headers.OperatorId);
         if (user == null)
         {
             return Results.NotFound();

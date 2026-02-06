@@ -58,7 +58,7 @@ public class UsersRepository(AuthContext context)
         return entity;
     }
 
-    public async Task<bool> Delete(Expression<Func<UserAccount, bool>> predicate, CancellationToken cancellationToken = default)
+    public async Task<bool> Delete(Expression<Func<UserAccount, bool>> predicate,  Guid operatorId, CancellationToken cancellationToken = default)
     {
         var userAccount = await context.Users
             .SingleOrDefaultAsync(predicate, cancellationToken);
@@ -68,12 +68,13 @@ public class UsersRepository(AuthContext context)
         }
 
         userAccount.StatusTypeId = 4;
+        userAccount.UpdatedBy = userAccount.Id;
         context.Users.Update(userAccount);
         await context.SaveChangesAsync(cancellationToken);
         return true;
     }
 
-    public async Task<bool> Suspend(Expression<Func<UserAccount, bool>> predicate, CancellationToken cancellationToken = default)
+    public async Task<bool> Suspend(Expression<Func<UserAccount, bool>> predicate, Guid operatorId, CancellationToken cancellationToken = default)
     {
         var userAccount = await context.Users
             .SingleOrDefaultAsync(predicate, cancellationToken);
@@ -83,14 +84,14 @@ public class UsersRepository(AuthContext context)
         }
 
         userAccount.StatusTypeId = 3;
-        userAccount.UpdatedBy = userAccount.Id;
+        userAccount.UpdatedBy = operatorId;
 
         context.Users.Update(userAccount);
         await context.SaveChangesAsync(cancellationToken);
         return true;
     }
 
-    public async Task<bool> Activate(Expression<Func<UserAccount, bool>> predicate, CancellationToken cancellationToken = default)
+    public async Task<bool> Activate(Expression<Func<UserAccount, bool>> predicate,  Guid operatorId, CancellationToken cancellationToken = default)
     {
         var userAccount = await context.Users
             .SingleOrDefaultAsync(predicate, cancellationToken);
@@ -100,6 +101,7 @@ public class UsersRepository(AuthContext context)
         }
 
         userAccount.StatusTypeId = 2;
+        userAccount.UpdatedBy = operatorId;
         context.Users.Update(userAccount);
         await context.SaveChangesAsync(cancellationToken);
         return true;

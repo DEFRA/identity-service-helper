@@ -125,11 +125,7 @@ public class UserService : IUserService
         existingUser.LastName = user.LastName;
         existingUser.EmailAddress = user.Email;
         existingUser.DisplayName = user.DisplayName;
-
-        if (Guid.TryParse(user.OperatorId, out var operatorId))
-        {
-            existingUser.UpdatedBy = operatorId;
-        }
+        existingUser.UpdatedBy = user.OperatorId;
 
         var updated = await _repository.Update(existingUser, cancellationToken);
 
@@ -152,7 +148,7 @@ public class UserService : IUserService
             FirstName = user.FirstName,
             LastName = user.LastName,
             DisplayName = user.DisplayName,
-            CreatedBy = Guid.Parse(user.OperatorId),
+            CreatedBy = user.OperatorId,
         };
 
         var createdUser = await _repository.Create(newUser, cancellationToken);
@@ -167,18 +163,18 @@ public class UserService : IUserService
         };
     }
 
-    public async Task<bool> Delete(Guid id, CancellationToken cancellationToken = default)
+    public async Task<bool> Delete(Guid id, Guid operatorId, CancellationToken cancellationToken = default)
     {
-        return await _repository.Delete(x => x.Id == id, cancellationToken);
+        return await _repository.Delete(x => x.Id == id, operatorId, cancellationToken);
     }
 
-    public async Task<bool> Activate(Guid id, CancellationToken cancellationToken = default)
+    public async Task<bool> Activate(Guid id, Guid operatorId, CancellationToken cancellationToken = default)
     {
-      return await _repository.Activate(x => x.Id == id, cancellationToken);
+      return await _repository.Activate(x => x.Id == id, operatorId, cancellationToken);
     }
 
-    public async Task<bool> Suspend(Guid id, CancellationToken cancellationToken = default)
+    public async Task<bool> Suspend(Guid id, Guid operatorId, CancellationToken cancellationToken = default)
     {
-       return await _repository.Suspend(x => x.Id == id, cancellationToken);
+       return await _repository.Suspend(x => x.Id == id, operatorId, cancellationToken);
     }
 }

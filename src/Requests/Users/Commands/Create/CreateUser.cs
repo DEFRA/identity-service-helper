@@ -6,7 +6,7 @@ namespace Defra.Identity.Requests.Users.Commands.Create;
 
 public class CreateUser : User
 {
-    public string OperatorId { get; set; } = string.Empty;
+    public Guid OperatorId { get; set; } = Guid.Empty;
 
     public string Email { get; set; } = string.Empty;
 }
