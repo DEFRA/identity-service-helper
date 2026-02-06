@@ -5,8 +5,8 @@
 namespace Defra.Identity.Unit.Tests.Requests.Middleware;
 
 using System.Collections.Generic;
-using Defra.Identity.Requests;
 using Defra.Identity.Requests.Middleware;
+using Defra.Identity.Requests.Registration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,7 +23,7 @@ public class ApiKeyValidationMiddlewareTests
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
-                { "DefraIndentityApiKey", "test-api-key" }
+                { "DefraIdentityApiKey", "test-api-key" }
             })
             .Build();
 

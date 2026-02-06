@@ -1,30 +1,63 @@
 <Solution>
+  <Folder Name="/compose/">
+    <File Path="compose/aws.env" />
+    <File Path="compose/start-localstack.sh" />
+  </Folder>
+  <Folder Name="/database/">
+    <File Path="database/db.changelog-master.xml" />
+    <File Path="database/liquibase.advanced.flowfile.yaml" />
+    <File Path="database/liquibase.checks-package.yaml" />
+    <File Path="database/liquibase.endstage.flow" />
+    <File Path="database/liquibase.flowfile.yaml" />
+    <File Path="database/liquibase.flowvariables.yaml" />
+    <File Path="database/liquibase.properties" />
+    <File Path="database/Readme.md" />
+  </Folder>
+  <Folder Name="/database/schema/">
+    <File Path="database/schema/defra.sql" />
+    <File Path="database/schema/seeding.sql" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".dockerignore" />
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="AGENTS.md" />
+    <File Path="compose.yml" />
+    <File Path="CustomDictionary.xml" />
+    <File Path="Directory.Build.props" />
+    <File Path="Dockerfile" />
+    <File Path="global.json" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+    <File Path="stylecop.json" />
+  </Folder>
+  <Folder Name="/.github/">
+    <File Path=".github/CODEOWNERS" />
+    <File Path=".github/example.dependabot.yml" />
+    <File Path=".github/publish-hotfix.yml" />
+    <File Path=".github/pull_request_template.md" /> 
+  </Folder>
+  <Folder Name="/.github/workflows/">
+    <File Path=".github/workflows/check-pull-request.yml" />
+    <File Path=".github/workflows/publish.yml" />
+    <File Path=".github/workflows/publish-hotfix.yml" />
+    <File Path=".github/workflows/sonarcloud.yml" /> 
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/Api/Api.csproj" />
-    <Project Path="src/Primitives/Primitives.csproj" />
-  </Folder>
-  <Folder Name="/src/Database/">
-    <Project Path="src/Database/Postgres.Database.Console/Postgres.Database.Console.csproj" />
+    <Project Path="src/Infrastructure/Infrastructure.csproj" Id="e4127568-84d9-4983-8441-9c94c0655d47" />
+    <Project Path="src/Messaging/Messaging.csproj" Id="d4d6f953-e24e-4bac-af5c-83a25e3d6499" />
+    <Project Path="src/Models/Models.csproj" Id="fd40f1b6-c366-43b0-9add-4769704a2970" />
+    <Project Path="src/Requests/Requests.csproj" />
+    <Project Path="src/Services/Services.csproj" />
     <Project Path="src\Database\Postgres.Database\Postgres.Database.csproj" />
   </Folder>
-  <Folder Name="/src/Repositories/">
-    <Project Path="src/Repositories/Repositories.csproj" />
-  </Folder>
-  <Folder Name="/src/Requests/">
-    <Project Path="src/Requests/Requests.csproj" />
-  </Folder>
-  <Folder Name="/src/Responses/">
-    <Project Path="src/Responses/Responses.csproj" />
-  </Folder>
-  <Folder Name="/src/Services/">
-    <Project Path="src/Services/Services.csproj" />
+  <Folder Name="/src/Utilities/">
+    <Project Path="src/Database/Postgres.Database.Console/Postgres.Database.Console.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Endpoint.Tests/Endpoint.Tests.csproj" />
-    <Project Path="tests/Services.Tests/Services.Tests.csproj" />
     <Project Path="tests/Unit.Tests/Unit.Tests.csproj" />
-  </Folder>
-  <Folder Name="/tests/Database/">
     <Project Path="tests\Postgres.Database.Tests\Postgres.Database.Tests.csproj" />
   </Folder>
 </Solution>

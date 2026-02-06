@@ -5,9 +5,9 @@
 namespace Defra.Identity.Postgres.Database.Tests.Repositories;
 
 using System.ComponentModel;
+using Defra.Identity.Infrastructure.Database.Repositories;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
-using Defra.Identity.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Shouldly;
 

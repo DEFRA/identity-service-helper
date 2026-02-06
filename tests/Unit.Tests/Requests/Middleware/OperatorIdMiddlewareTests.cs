@@ -9,6 +9,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Defra.Identity.Requests;
 using Defra.Identity.Requests.Middleware;
+using Defra.Identity.Requests.Registration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -26,7 +27,7 @@ public class OperatorIdMiddlewareTests
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
-                { "DefraIndentityApiKey", "test-api-key" }
+                { "DefraIdentityApiKey", "test-api-key" }
             })
             .Build();
 

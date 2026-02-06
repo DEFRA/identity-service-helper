@@ -2,18 +2,15 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-using System.ComponentModel.DataAnnotations;
-using Defra.Identity.Requests.Users.Commands.Create;
-
 namespace Defra.Identity.Services.Users;
 
 using System.Linq.Expressions;
+using Defra.Identity.Infrastructure.Database.Repositories;
+using Defra.Identity.Models.Requests.Users.Commands.Create;
+using Defra.Identity.Models.Requests.Users.Commands.Update;
+using Defra.Identity.Models.Requests.Users.Queries;
+using Defra.Identity.Models.Responses.Users;
 using Defra.Identity.Postgres.Database.Entities;
-using Defra.Identity.Repositories;
-using Defra.Identity.Requests.Users.Commands.Update;
-using Defra.Identity.Requests.Users.Queries;
-using Defra.Identity.Responses.Users;
-using Defra.Identity.Services;
 using Defra.Identity.Services.Extensions;
 
 public class UserService : IUserService
@@ -85,7 +82,7 @@ public class UserService : IUserService
         return user;
     }
 
-    public async Task<User> Upsert(Requests.Users.Commands.Update.UpdateUser user, CancellationToken cancellationToken = default)
+    public async Task<User> Upsert(UpdateUser user, CancellationToken cancellationToken = default)
     {
         var existingUser = await _repository.GetSingle(x => x.Id.Equals(user.Id), cancellationToken);
 

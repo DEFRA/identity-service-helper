@@ -4,15 +4,12 @@
 
 namespace Defra.Identity.Api.Endpoints.Users;
 
-using Defra.Identity.Postgres.Database.Entities;
+using Defra.Identity.Models.Requests.Users.Commands.Create;
+using Defra.Identity.Models.Requests.Users.Commands.Update;
+using Defra.Identity.Models.Requests.Users.Queries;
+using Defra.Identity.Models.Responses.Users;
 using Defra.Identity.Requests;
 using Defra.Identity.Requests.Filters;
-using Defra.Identity.Requests.Middleware;
-using Defra.Identity.Requests.Users.Commands.Create;
-using Defra.Identity.Requests.Users.Commands.Update;
-using Defra.Identity.Requests.Users.Queries;
-using Defra.Identity.Responses.Users;
-using Defra.Identity.Services;
 using Defra.Identity.Services.Users;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,7 +21,7 @@ public static class UsersEndpoints
 
         app.MapGet(RouteNames.Users + "/{id:guid}", Get)
             .WithName(RouteNames.Users)
-            .Produces<Responses.Users.User>(StatusCodes.Status200OK, "application/json")
+            .Produces<User>(StatusCodes.Status200OK, "application/json")
             .Produces(StatusCodes.Status404NotFound);
 
         app.MapPut(RouteNames.Users + "/{id:guid}", Put)
@@ -35,7 +32,7 @@ public static class UsersEndpoints
 
         app.MapPost(RouteNames.Users, Post)
             .AddEndpointFilter<ValidationFilter<CreateUser>>()
-            .Produces<Responses.Users.User>(StatusCodes.Status201Created, "application/json")
+            .Produces<User>(StatusCodes.Status201Created, "application/json")
             .ProducesProblem(StatusCodes.Status422UnprocessableEntity);
     }
 

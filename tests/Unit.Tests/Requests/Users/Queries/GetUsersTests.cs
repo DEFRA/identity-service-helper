@@ -4,7 +4,7 @@
 
 namespace Defra.Identity.Unit.Tests.Requests.Users.Queries;
 
-using Defra.Identity.Requests.Users.Queries;
+using Defra.Identity.Models.Requests.Users.Queries;
 using Shouldly;
 using Xunit;
 

@@ -4,7 +4,8 @@
 
 namespace Defra.Identity.Unit.Tests.Requests.Users.Commands.Create;
 
-using Defra.Identity.Requests.Users.Commands.Create;
+using Defra.Identity.Models.Requests.Users.Commands.Create;
+using Defra.Identity.Requests.Users.Commands.Validators;
 using FluentValidation.TestHelper;
 using Xunit;
 

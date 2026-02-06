@@ -1,8 +1,0 @@
-<Project>
-  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))"/>
-  <ItemGroup>
-    <Using Include="Xunit"/>
-    <Using Include="Xunit.v3"/>
-    <Using Include="Shouldly" />
-  </ItemGroup>
-</Project>
