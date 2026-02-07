@@ -1,18 +1,20 @@
-// <copyright file="IdentityRequestHeadersTests.cs" company="Defra">
+// <copyright file="QueryRequestHeadersTests.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
 namespace Defra.Identity.Requests.Tests;
 
 using Microsoft.AspNetCore.Http;
+using Shouldly;
+using Xunit;
 
-public class IdentityRequestHeadersTests
+public class QueryRequestHeadersTests
 {
     [Fact]
     public void TryGet_Returns_False_When_Item_Not_Present()
     {
         var context = new DefaultHttpContext();
-        var result = IdentityRequestHeaders.TryGet(context, out var headers);
+        var result = QueryRequestHeaders.TryGet(context, out var headers);
         result.ShouldBeFalse();
         headers.ShouldBeNull();
     }
@@ -21,10 +23,10 @@ public class IdentityRequestHeadersTests
     public void TryGet_Returns_True_When_Item_Is_Present()
     {
         var context = new DefaultHttpContext();
-        var expectedHeaders = new IdentityRequestHeaders(Guid.NewGuid(), Guid.NewGuid(), "api-key");
-        context.Items[IdentityRequestHeaders.ItemKey] = expectedHeaders;
+        var expectedHeaders = new QueryRequestHeaders(Guid.NewGuid(), "api-key");
+        context.Items[QueryRequestHeaders.ItemKey] = expectedHeaders;
 
-        var result = IdentityRequestHeaders.TryGet(context, out var headers);
+        var result = QueryRequestHeaders.TryGet(context, out var headers);
         result.ShouldBeTrue();
         headers.ShouldBe(expectedHeaders);
     }
@@ -33,9 +35,9 @@ public class IdentityRequestHeadersTests
     public void TryGet_Returns_False_When_Item_Is_Wrong_Type()
     {
         var context = new DefaultHttpContext();
-        context.Items[IdentityRequestHeaders.ItemKey] = "not-the-right-type";
+        context.Items[QueryRequestHeaders.ItemKey] = "not-the-right-type";
 
-        var result = IdentityRequestHeaders.TryGet(context, out var headers);
+        var result = QueryRequestHeaders.TryGet(context, out var headers);
         result.ShouldBeFalse();
         headers.ShouldBeNull();
     }
@@ -44,10 +46,10 @@ public class IdentityRequestHeadersTests
     public async Task BindAsync_Returns_Existing_From_Context_Items()
     {
         var context = new DefaultHttpContext();
-        var expectedHeaders = new IdentityRequestHeaders(Guid.NewGuid(), Guid.NewGuid(), "api-key");
-        context.Items[IdentityRequestHeaders.ItemKey] = expectedHeaders;
+        var expectedHeaders = new QueryRequestHeaders(Guid.NewGuid(), "api-key");
+        context.Items[QueryRequestHeaders.ItemKey] = expectedHeaders;
 
-        var result = await IdentityRequestHeaders.BindAsync(context, null!);
+        var result = await QueryRequestHeaders.BindAsync(context, null!);
         result.ShouldBe(expectedHeaders);
     }
 
@@ -56,16 +58,12 @@ public class IdentityRequestHeadersTests
     {
         var context = new DefaultHttpContext();
         var correlationId = Guid.NewGuid();
-        var operatorId = Guid.NewGuid();
         context.Request.Headers[IdentityHeaderNames.CorrelationId] = correlationId.ToString();
-        context.Request.Headers[IdentityHeaderNames.OperatorId] = operatorId.ToString();
         context.Request.Headers[IdentityHeaderNames.ApiKey] = "api-key";
 
-        var result = await IdentityRequestHeaders.BindAsync(context, null!);
+        var result = await QueryRequestHeaders.BindAsync(context, null!);
 
         result.ShouldSatisfyAllConditions(
-            x => x.OperatorId.ShouldBeOfType<Guid>(),
-            x => x.OperatorId.ShouldBe(operatorId),
             x => x.ApiKey.ShouldBeOfType<string>(),
             x => x.ApiKey.ShouldBe("api-key"),
             x => x.CorrelationId.ShouldBeOfType<Guid>(),
@@ -76,10 +74,9 @@ public class IdentityRequestHeadersTests
     public async Task BindAsync_Throws_When_CorrelationId_Missing()
     {
         var context = new DefaultHttpContext();
-        context.Request.Headers[IdentityHeaderNames.OperatorId] = Guid.NewGuid().ToString();
         context.Request.Headers[IdentityHeaderNames.ApiKey] = "api-key";
 
-        var exception = await Should.ThrowAsync<BadHttpRequestException>(async () => await IdentityRequestHeaders.BindAsync(context, null!));
+        var exception = await Should.ThrowAsync<BadHttpRequestException>(async () => await QueryRequestHeaders.BindAsync(context, null!));
 
         exception.ShouldSatisfyAllConditions(
             x => x.ShouldBeOfType<BadHttpRequestException>(),
@@ -92,10 +89,9 @@ public class IdentityRequestHeadersTests
     {
         var context = new DefaultHttpContext();
         context.Request.Headers[IdentityHeaderNames.CorrelationId] = "   ";
-        context.Request.Headers[IdentityHeaderNames.OperatorId] = Guid.NewGuid().ToString();
         context.Request.Headers[IdentityHeaderNames.ApiKey] = "api-key";
 
-        var exception = await Should.ThrowAsync<BadHttpRequestException>(async () => await IdentityRequestHeaders.BindAsync(context, null!));
+        var exception = await Should.ThrowAsync<BadHttpRequestException>(async () => await QueryRequestHeaders.BindAsync(context, null!));
         exception.ShouldSatisfyAllConditions(
             x => x.ShouldBeOfType<BadHttpRequestException>(),
             x => x.StatusCode.ShouldBe(StatusCodes.Status400BadRequest),
@@ -103,42 +99,12 @@ public class IdentityRequestHeadersTests
     }
 
     [Fact]
-    public async Task BindAsync_Throws_When_OperatorId_Missing()
-    {
-        var context = new DefaultHttpContext();
-        context.Request.Headers[IdentityHeaderNames.CorrelationId] = Guid.NewGuid().ToString();
-        context.Request.Headers[IdentityHeaderNames.ApiKey] = "api-key";
-
-        var exception = await Should.ThrowAsync<BadHttpRequestException>(async () => await IdentityRequestHeaders.BindAsync(context, null!));
-        exception.ShouldSatisfyAllConditions(
-            x => x.ShouldBeOfType<BadHttpRequestException>(),
-            x => x.StatusCode.ShouldBe(StatusCodes.Status400BadRequest),
-            x => x.Message.ShouldBe($"Header {IdentityHeaderNames.OperatorId} is required."));
-    }
-
-    [Fact]
-    public async Task BindAsync_Throws_When_OperatorId_Whitespace()
-    {
-        var context = new DefaultHttpContext();
-        context.Request.Headers[IdentityHeaderNames.CorrelationId] = Guid.NewGuid().ToString();
-        context.Request.Headers[IdentityHeaderNames.OperatorId] = "   ";
-        context.Request.Headers[IdentityHeaderNames.ApiKey] = "api-key";
-
-        var exception = await Should.ThrowAsync<BadHttpRequestException>(async () => await IdentityRequestHeaders.BindAsync(context, null!));
-        exception.ShouldSatisfyAllConditions(
-            x => x.ShouldBeOfType<BadHttpRequestException>(),
-            x => x.StatusCode.ShouldBe(StatusCodes.Status400BadRequest),
-            x => x.Message.ShouldBe($"Header {IdentityHeaderNames.OperatorId} is required."));
-    }
-
-    [Fact]
     public async Task BindAsync_Throws_When_ApiKey_Missing()
     {
         var context = new DefaultHttpContext();
         context.Request.Headers[IdentityHeaderNames.CorrelationId] = Guid.NewGuid().ToString();
-        context.Request.Headers[IdentityHeaderNames.OperatorId] = Guid.NewGuid().ToString();
 
-        var exception = await Should.ThrowAsync<BadHttpRequestException>(async () => await IdentityRequestHeaders.BindAsync(context, null!));
+        var exception = await Should.ThrowAsync<BadHttpRequestException>(async () => await QueryRequestHeaders.BindAsync(context, null!));
         exception.ShouldSatisfyAllConditions(
             x => x.ShouldBeOfType<BadHttpRequestException>(),
             x => x.StatusCode.ShouldBe(StatusCodes.Status400BadRequest),
@@ -150,10 +116,9 @@ public class IdentityRequestHeadersTests
     {
         var context = new DefaultHttpContext();
         context.Request.Headers[IdentityHeaderNames.CorrelationId] = Guid.NewGuid().ToString();
-        context.Request.Headers[IdentityHeaderNames.OperatorId] = Guid.NewGuid().ToString();
         context.Request.Headers[IdentityHeaderNames.ApiKey] = "   ";
 
-        var exception = await Should.ThrowAsync<BadHttpRequestException>(async () => await IdentityRequestHeaders.BindAsync(context, null!));
+        var exception = await Should.ThrowAsync<BadHttpRequestException>(async () => await QueryRequestHeaders.BindAsync(context, null!));
         exception.ShouldSatisfyAllConditions(
             x => x.ShouldBeOfType<BadHttpRequestException>(),
             x => x.StatusCode.ShouldBe(StatusCodes.Status400BadRequest),

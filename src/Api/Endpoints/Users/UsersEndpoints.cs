@@ -48,7 +48,7 @@ public static class UsersEndpoints
     }
 
     private static async Task<IResult> Post(
-        IdentityRequestHeaders headers,
+        CommandRequestHeaders headers,
         [FromBody] CreateUser user,
         IUserService service)
     {
@@ -62,7 +62,7 @@ public static class UsersEndpoints
     }
 
     private static async Task<IResult> Put(
-        IdentityRequestHeaders headers,
+        CommandRequestHeaders headers,
         [FromRoute] Guid id,
         [FromBody] UpdateUser user,
         IUserService service)
@@ -86,7 +86,7 @@ public static class UsersEndpoints
     }
 
     private static async Task<IResult> Get(
-        IdentityRequestHeaders headers,
+        QueryRequestHeaders headers,
         [AsParameters] GetUserById request,
         IUserService service)
     {
@@ -101,7 +101,7 @@ public static class UsersEndpoints
     }
 
     private static async Task<IResult> GetAll(
-        IdentityRequestHeaders headers,
+        QueryRequestHeaders headers,
         [AsParameters] GetUsers request,
         IUserService service)
     {
@@ -116,7 +116,7 @@ public static class UsersEndpoints
     }
 
     private static async Task<IResult> Delete(
-        IdentityRequestHeaders headers,
+        CommandRequestHeaders headers,
         [FromRoute] Guid id,
         IUserService service)
     {
@@ -131,7 +131,7 @@ public static class UsersEndpoints
     }
 
     private static async Task<IResult> Activate(
-        IdentityRequestHeaders headers,
+        CommandRequestHeaders headers,
         [FromRoute] Guid id,
         IUserService service)
     {
@@ -145,7 +145,7 @@ public static class UsersEndpoints
     }
 
     private static async Task<IResult> Suspend(
-        IdentityRequestHeaders headers,
+        CommandRequestHeaders headers,
         [FromRoute] Guid id,
         IUserService service)
     {

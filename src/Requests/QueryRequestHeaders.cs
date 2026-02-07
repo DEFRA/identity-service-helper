@@ -1,4 +1,4 @@
-// <copyright file="IdentityRequestHeaders.cs" company="Defra">
+// <copyright file="QueryRequestHeaders.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
@@ -7,23 +7,23 @@ namespace Defra.Identity.Requests;
 using System.Reflection;
 using Microsoft.AspNetCore.Http;
 
-public sealed record IdentityRequestHeaders(Guid CorrelationId, Guid OperatorId, string ApiKey)
+public sealed record QueryRequestHeaders(Guid CorrelationId, string ApiKey)
 {
     public static readonly object ItemKey = new();
 
-    public static bool TryGet(HttpContext context, out IdentityRequestHeaders headers)
+    public static bool TryGet(HttpContext context, out QueryRequestHeaders headers)
     {
-        if (context.Items.TryGetValue(ItemKey, out var value) && value is IdentityRequestHeaders h)
+        if (context.Items.TryGetValue(ItemKey, out var value) && value is QueryRequestHeaders h)
         {
             headers = h;
             return true;
         }
 
-        headers = default!;
+        headers = null!;
         return false;
     }
 
-    public static ValueTask<IdentityRequestHeaders> BindAsync(HttpContext context, ParameterInfo parameter)
+    public static ValueTask<QueryRequestHeaders> BindAsync(HttpContext context, ParameterInfo parameter)
     {
         // Prefer whatever the middleware already validated/created.
         if (TryGet(context, out var existing))
@@ -43,16 +43,6 @@ public sealed record IdentityRequestHeaders(Guid CorrelationId, Guid OperatorId,
                 StatusCodes.Status400BadRequest);
         }
 
-        var operatorId =
-            headers.TryGetValue(IdentityHeaderNames.OperatorId, out var oid) ? oid.ToString() : null;
-
-        if (operatorId == null || !Guid.TryParse(operatorId, out _))
-        {
-            throw new BadHttpRequestException(
-                $"Header {IdentityHeaderNames.OperatorId} is required.",
-                StatusCodes.Status400BadRequest);
-        }
-
         var apiKey =
             headers.TryGetValue(IdentityHeaderNames.ApiKey, out var key) ? key.ToString() : null;
 
@@ -63,9 +53,8 @@ public sealed record IdentityRequestHeaders(Guid CorrelationId, Guid OperatorId,
                 StatusCodes.Status400BadRequest);
         }
 
-        return ValueTask.FromResult(new IdentityRequestHeaders(
+        return ValueTask.FromResult(new QueryRequestHeaders(
             CorrelationId: Guid.Parse(correlationId),
-            OperatorId: Guid.Parse(operatorId),
             ApiKey: apiKey));
     }
 }

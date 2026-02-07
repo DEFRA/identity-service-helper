@@ -5,11 +5,25 @@
 namespace Defra.Identity.Requests.Middleware;
 
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Controllers;
 
 public class OperatorIdMiddleware : JsonErrorMiddleware
 {
     public override async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
+        var endpoint = context.GetEndpoint();
+
+        // Only enforce OperatorId when the matched MVC action has a CommandRequestHeaders parameter.
+        var actionDescriptor = endpoint?.Metadata.GetMetadata<ControllerActionDescriptor>();
+        var usesCommandRequestHeaders =
+            actionDescriptor?.Parameters.Any(p => p.ParameterType == typeof(CommandRequestHeaders)) == true;
+
+        if (!usesCommandRequestHeaders)
+        {
+            await next(context);
+            return;
+        }
+
         var headers = context.Request.Headers;
         var operatorId = headers.TryGetValue(IdentityHeaderNames.OperatorId, out var oid) ? oid.ToString() : null;
 
@@ -24,7 +38,7 @@ public class OperatorIdMiddleware : JsonErrorMiddleware
             return;
         }
 
-        /*if (!Guid.TryParse(operatorId, out _))
+        if (!Guid.TryParse(operatorId, out _))
         {
             await WriteJsonErrorAsync(
                 context,
@@ -33,7 +47,7 @@ public class OperatorIdMiddleware : JsonErrorMiddleware
                 message: $"Header {IdentityHeaderNames.OperatorId} must be a valid GUID.",
                 details: new { header = $"{IdentityHeaderNames.OperatorId}" });
             return;
-        }*/
+        }
 
         await next(context);
     }

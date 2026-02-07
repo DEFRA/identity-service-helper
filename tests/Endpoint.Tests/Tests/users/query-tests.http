@@ -2,7 +2,7 @@
 GET {{host}}/users
 X-Correlation-ID: {{Correlation-ID}}
 x-api-key: {{api-key}}
-X-Operator-Id: {{Operator-Id}}
+
  
 > ../../Asserts/Should_be_200_OK_and_get_top_id.js
 
@@ -12,7 +12,7 @@ X-Operator-Id: {{Operator-Id}}
 GET {{host}}/users/{{id}}
 X-Correlation-ID: {{Correlation-ID}}
 x-api-key: {{api-key}}
-X-Operator-Id: {{Operator-Id}}
+
 
 > ../../Asserts/Should_be_200_OK.js
 
@@ -22,7 +22,7 @@ X-Operator-Id: {{Operator-Id}}
 GET {{host}}/users/{{id}}?status=suspended
 X-Correlation-ID: {{Correlation-ID}}
 x-api-key: {{api-key}}
-X-Operator-Id: {{Operator-Id}}
+
 
 > ../../Asserts/Should_be_404.js
 
@@ -31,7 +31,7 @@ X-Operator-Id: {{Operator-Id}}
 GET {{host}}/users?status=suspended
 X-Correlation-ID: {{Correlation-ID}}
 x-api-key: {{api-key}}
-X-Operator-Id: {{Operator-Id}}
+
 
 > ../../Asserts/Should_be_200_OK_empty_list.js.js
 
@@ -39,7 +39,6 @@ X-Operator-Id: {{Operator-Id}}
 GET {{host}}/users
 X-Correlation-ID: {{Correlation-ID}}
 x-api-key: {{invalid_api_key}}
-X-Operator-Id: {{Operator-Id}}
 
 
 > ../../Asserts/should_be_400_error_invalid_api_key.js
