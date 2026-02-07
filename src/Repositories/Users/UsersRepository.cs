@@ -2,6 +2,8 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
+using Defra.Identity.Repositories.Exceptions;
+
 namespace Defra.Identity.Repositories.Users;
 
 using System.Linq.Expressions;
@@ -62,9 +64,10 @@ public class UsersRepository(AuthContext context)
     {
         var userAccount = await context.Users
             .SingleOrDefaultAsync(predicate, cancellationToken);
+
         if (userAccount == null)
         {
-            return false;
+            throw new NotFoundException("User account not found");
         }
 
         userAccount.StatusTypeId = 4;
@@ -80,7 +83,7 @@ public class UsersRepository(AuthContext context)
             .SingleOrDefaultAsync(predicate, cancellationToken);
         if (userAccount == null)
         {
-            throw new ArgumentException("User account not found");
+            throw new NotFoundException("User account not found");
         }
 
         userAccount.StatusTypeId = 3;
@@ -97,7 +100,7 @@ public class UsersRepository(AuthContext context)
             .SingleOrDefaultAsync(predicate, cancellationToken);
         if (userAccount == null)
         {
-            throw new ArgumentException("User account not found");
+            throw new NotFoundException("User account not found");
         }
 
         userAccount.StatusTypeId = 2;

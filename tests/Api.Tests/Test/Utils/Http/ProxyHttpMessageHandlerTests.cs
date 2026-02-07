@@ -5,7 +5,7 @@
 namespace Defra.Identity.Unit.Tests.Test.Utils.Http;
 
 using System;
-using Defra.Identity.Api.Utils.Http;
+using Defra.Identity.Api.Utility.Utils.Http;
 
 public class ProxyHttpMessageHandlerTests
 {
