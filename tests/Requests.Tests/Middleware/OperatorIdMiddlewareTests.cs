@@ -2,19 +2,13 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Unit.Tests.Requests.Middleware;
+namespace Defra.Identity.Requests.Tests.Middleware;
 
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-using Defra.Identity.Requests;
 using Defra.Identity.Requests.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Shouldly;
-using Xunit;
 
 public class OperatorIdMiddlewareTests
 {

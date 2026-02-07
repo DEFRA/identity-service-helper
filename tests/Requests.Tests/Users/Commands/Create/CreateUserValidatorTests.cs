@@ -2,11 +2,10 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Unit.Tests.Requests.Users.Commands.Create;
+namespace Defra.Identity.Requests.Tests.Users.Commands.Create;
 
 using Defra.Identity.Requests.Users.Commands.Create;
 using FluentValidation.TestHelper;
-using Xunit;
 
 public class CreateUserValidatorTests
 {

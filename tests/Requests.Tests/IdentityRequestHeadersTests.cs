@@ -2,12 +2,9 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Unit.Tests.Requests;
+namespace Defra.Identity.Requests.Tests;
 
-using Defra.Identity.Requests;
 using Microsoft.AspNetCore.Http;
-using Shouldly;
-using Xunit;
 
 public class IdentityRequestHeadersTests
 {

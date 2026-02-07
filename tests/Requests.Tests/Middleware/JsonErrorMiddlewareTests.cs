@@ -2,15 +2,11 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Unit.Tests.Requests.Middleware;
+namespace Defra.Identity.Requests.Tests.Middleware;
 
-using System.IO;
 using System.Text.Json;
-using System.Threading.Tasks;
 using Defra.Identity.Requests.Middleware;
 using Microsoft.AspNetCore.Http;
-using Shouldly;
-using Xunit;
 
 public class JsonErrorMiddlewareTests
 {

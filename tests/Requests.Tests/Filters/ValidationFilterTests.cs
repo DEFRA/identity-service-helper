@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Unit.Tests.Requests.Filters;
+namespace Defra.Identity.Requests.Tests.Filters;
 
 using Defra.Identity.Requests.Filters;
 using FluentValidation;
@@ -10,8 +10,6 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using NSubstitute;
-using Shouldly;
-using Xunit;
 
 public class ValidationFilterTests
 {

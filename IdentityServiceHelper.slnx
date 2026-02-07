@@ -21,8 +21,9 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Endpoint.Tests/Endpoint.Tests.csproj" />
+    <Project Path="tests/Requests.Tests/Requests.Tests.csproj" />
     <Project Path="tests/Services.Tests/Services.Tests.csproj" />
-    <Project Path="tests/Unit.Tests/Unit.Tests.csproj" />
+    <Project Path="tests\Api.Tests\Api.Tests.csproj" />
   </Folder>
   <Folder Name="/tests/Database/">
     <Project Path="tests\Postgres.Database.Tests\Postgres.Database.Tests.csproj" />

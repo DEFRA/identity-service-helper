@@ -2,11 +2,10 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Unit.Tests.Requests.Users.Commands.Update;
+namespace Defra.Identity.Requests.Tests.Users.Commands.Update;
 
 using Defra.Identity.Requests.Users.Commands.Update;
 using FluentValidation.TestHelper;
-using Xunit;
 
 public class UpdateUserValidatorTests
 {

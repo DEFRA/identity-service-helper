@@ -1,24 +1,18 @@
-// <copyright file="ServiceCollectionExtensionsTests.cs" company="Defra">
+// <copyright file="IdentityRequestHeadersMiddlewareTests.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Unit.Tests.Requests;
+namespace Defra.Identity.Requests.Tests.Middleware;
 
-using System.Collections.Generic;
-using Defra.Identity.Requests;
 using Defra.Identity.Requests.Middleware;
-using Defra.Identity.Requests.Users.Commands.Create;
-using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Shouldly;
-using Xunit;
 
-public class ServiceCollectionExtensionsTests
+public class ApiKeyValidationMiddlewareTests
 {
     [Fact]
-    public void AddRequests_Registers_Services_And_Validators()
+    public void AddRequests_RegistersMiddleware_CanBeResolved()
     {
         // Arrange
         var services = new ServiceCollection();
@@ -34,17 +28,12 @@ public class ServiceCollectionExtensionsTests
         var serviceProvider = services.BuildServiceProvider();
 
         // Assert
-        Defra.Identity.Requests.ServiceCollectionExtensions.ApiKey.ShouldBe("test-api-key");
-        serviceProvider.GetService<ApiKeyValidationMiddleware>().ShouldNotBeNull();
-        serviceProvider.GetService<CorrellationIdMiddleware>().ShouldNotBeNull();
-        serviceProvider.GetService<OperatorIdMiddleware>().ShouldNotBeNull();
-
-        // Check if validators are registered
-        serviceProvider.GetService<IValidator<CreateUser>>().ShouldNotBeNull();
+        var middleware = serviceProvider.GetService<ApiKeyValidationMiddleware>();
+        middleware.ShouldNotBeNull();
     }
 
     [Fact]
-    public void UseRequests_Adds_Middlewares_To_Pipeline()
+    public void UseRequests_WithIMiddleware_DoesNotThrow()
     {
         // Arrange
         var builder = WebApplication.CreateBuilder();

@@ -2,11 +2,9 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Unit.Tests.Requests.Users.Queries;
+namespace Defra.Identity.Requests.Tests.Users.Queries;
 
 using Defra.Identity.Requests.Users.Queries;
-using Shouldly;
-using Xunit;
 
 public class GetUserByIdTests
 {

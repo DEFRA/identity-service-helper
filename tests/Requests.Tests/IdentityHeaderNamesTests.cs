@@ -2,11 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Unit.Tests.Requests;
-
-using Defra.Identity.Requests;
-using Shouldly;
-using Xunit;
+namespace Defra.Identity.Requests.Tests;
 
 public class IdentityHeaderNamesTests
 {
