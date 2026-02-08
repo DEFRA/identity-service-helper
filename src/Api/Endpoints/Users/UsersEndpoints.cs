@@ -92,11 +92,6 @@ public static class UsersEndpoints
     {
         var user = await service.Get(request);
 
-        if (user == null)
-        {
-            return Results.NotFound();
-        }
-
         return Results.Ok(user);
     }
 
@@ -106,11 +101,6 @@ public static class UsersEndpoints
         IUserService service)
     {
         var user = await service.GetAll(request);
-
-        if (user == null)
-        {
-            return Results.NotFound();
-        }
 
         return Results.Ok(user);
     }
@@ -122,11 +112,6 @@ public static class UsersEndpoints
     {
         var deleted = await service.Delete(id, headers.OperatorId);
 
-        if (!deleted)
-        {
-            return Results.NotFound();
-        }
-
         return Results.NoContent();
     }
 
@@ -136,10 +121,6 @@ public static class UsersEndpoints
         IUserService service)
     {
         var user = await service.Activate(id, headers.OperatorId);
-        if (user == null)
-        {
-            return Results.NotFound();
-        }
 
         return Results.NoContent();
     }
@@ -150,10 +131,6 @@ public static class UsersEndpoints
         IUserService service)
     {
         var user = await service.Suspend(id, headers.OperatorId);
-        if (user == null)
-        {
-            return Results.NotFound();
-        }
 
         return Results.NoContent();
     }
