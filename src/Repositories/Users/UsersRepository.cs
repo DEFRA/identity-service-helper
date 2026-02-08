@@ -2,13 +2,12 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-using Defra.Identity.Repositories.Exceptions;
-
 namespace Defra.Identity.Repositories.Users;
 
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database;
 using Defra.Identity.Postgres.Database.Entities;
+using Defra.Identity.Repositories.Exceptions;
 
 public class UsersRepository(AuthContext context)
     : IUsersRepository

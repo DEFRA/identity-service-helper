@@ -7,6 +7,7 @@ namespace Defra.Identity.Api;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using Defra.Identity.Api.Endpoints.Users;
+using Defra.Identity.Api.Exceptions;
 using Defra.Identity.Api.Utility.Utils.Http;
 using Defra.Identity.Api.Utility.Utils.Logging;
 using Defra.Identity.Postgres.Database;
@@ -55,7 +56,8 @@ public class Program
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddHealthChecks();
         builder.Host.UseSerilog(CdpLogging.Configuration);
-
+        builder.Services.AddProblemDetails();
+        builder.Services.AddExceptionHandler<ApiExceptionHandler>();
         builder.Services.ConfigureHttpJsonOptions(options =>
         {
             options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
@@ -100,6 +102,7 @@ public class Program
     private static WebApplication SetupApplication(WebApplication app)
     {
         app.UseHeaderPropagation();
+        app.UseExceptionHandler();
         app.UseRouting();
         app.UseRequests();
         app.MapHealthChecks("/healthz");
