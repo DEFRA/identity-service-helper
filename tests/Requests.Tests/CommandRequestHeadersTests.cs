@@ -1,4 +1,4 @@
-// <copyright file="IdentityRequestHeadersTests.cs" company="Defra">
+// <copyright file="CommandRequestHeadersTests.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 

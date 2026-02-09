@@ -8,8 +8,6 @@ using Defra.Identity.Requests.MetaData;
 using Defra.Identity.Requests.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Abstractions;
-using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -52,23 +50,15 @@ public class OperatorIdMiddlewareTests
     public async Task InvokeAsync_WithOperatorIdHeader_CallsNext()
     {
         // Arrange
-        var middleware = new OperatorIdMiddleware();
-        var context = new DefaultHttpContext();
+        var (middleware, context, next, nextCalled) = CreateContext();
         context.Request.Headers[IdentityHeaderNames.OperatorId] = Guid.NewGuid().ToString();
-        SetupEndpoint(context, useCommandRequestHeaders: true);
-
-        var nextCalled = false;
-        RequestDelegate next = (ctx) =>
-        {
-            nextCalled = true;
-            return Task.CompletedTask;
-        };
+        SetupEndpoint(context);
 
         // Act
         await middleware.InvokeAsync(context, next);
 
         // Assert
-        nextCalled.ShouldBeTrue();
+        nextCalled().ShouldBeTrue();
         context.Response.StatusCode.ShouldBe(StatusCodes.Status200OK);
     }
 
@@ -76,106 +66,94 @@ public class OperatorIdMiddlewareTests
     public async Task InvokeAsync_MissingOperatorIdHeader_ReturnsBadRequest()
     {
         // Arrange
-        var middleware = new OperatorIdMiddleware();
-        var context = new DefaultHttpContext();
+        var (middleware, context, next, nextCalled) = CreateContext();
         context.Response.Body = new MemoryStream();
-        SetupEndpoint(context, useCommandRequestHeaders: true);
-
-        var nextCalled = false;
-        RequestDelegate next = (ctx) =>
-        {
-            nextCalled = true;
-            return Task.CompletedTask;
-        };
+        SetupEndpoint(context);
 
         // Act
         await middleware.InvokeAsync(context, next);
 
         // Assert
-        nextCalled.ShouldBeFalse();
+        nextCalled().ShouldBeFalse();
         context.Response.StatusCode.ShouldBe(StatusCodes.Status400BadRequest);
         context.Response.ContentType.ShouldBe("application/json");
 
         context.Response.Body.Seek(0, SeekOrigin.Begin);
         using var reader = new StreamReader(context.Response.Body);
-        var responseBody = await reader.ReadToEndAsync();
-        responseBody.ShouldContain("missing_header");
-        responseBody.ShouldContain($"Header {IdentityHeaderNames.OperatorId} is required.");
+        var responseBody = await reader.ReadToEndAsync(TestContext.Current.CancellationToken);
+        responseBody.ShouldSatisfyAllConditions(
+            x => x.ShouldContain("missing_header"),
+            x => x.ShouldContain($"Header {IdentityHeaderNames.OperatorId} is required."));
     }
 
     [Fact]
     public async Task InvokeAsync_WhitespaceOperatorIdHeader_ReturnsBadRequest()
     {
         // Arrange
-        var middleware = new OperatorIdMiddleware();
-        var context = new DefaultHttpContext();
+        var (middleware, context, next, nextCalled) = CreateContext();
         context.Request.Headers[IdentityHeaderNames.OperatorId] = "   ";
         context.Response.Body = new MemoryStream();
-        SetupEndpoint(context, useCommandRequestHeaders: true);
-
-        var nextCalled = false;
-        RequestDelegate next = (ctx) =>
-        {
-            nextCalled = true;
-            return Task.CompletedTask;
-        };
+        SetupEndpoint(context);
 
         // Act
         await middleware.InvokeAsync(context, next);
 
         // Assert
-        nextCalled.ShouldBeFalse();
+        nextCalled().ShouldBeFalse();
         context.Response.StatusCode.ShouldBe(StatusCodes.Status400BadRequest);
         context.Response.ContentType.ShouldBe("application/json");
 
         context.Response.Body.Seek(0, SeekOrigin.Begin);
         using var reader = new StreamReader(context.Response.Body);
-        var responseBody = await reader.ReadToEndAsync();
-        responseBody.ShouldContain("missing_header");
-        responseBody.ShouldContain($"Header {IdentityHeaderNames.OperatorId} is required.");
+        var responseBody = await reader.ReadToEndAsync(TestContext.Current.CancellationToken);
+        responseBody.ShouldSatisfyAllConditions(
+            x => x.ShouldContain("missing_header"),
+            x => x.ShouldContain($"Header {IdentityHeaderNames.OperatorId} is required."));
     }
 
     [Fact]
     public async Task InvokeAsync_InvalidGuidOperatorIdHeader_ReturnsBadRequest()
     {
         // Arrange
-        var middleware = new OperatorIdMiddleware();
-        var context = new DefaultHttpContext();
+        var (middleware, context, next, nextCalled) = CreateContext();
         context.Request.Headers[IdentityHeaderNames.OperatorId] = "invalid-guid";
         context.Response.Body = new MemoryStream();
-        SetupEndpoint(context, useCommandRequestHeaders: true);
-
-        var nextCalled = false;
-        RequestDelegate next = (ctx) =>
-        {
-            nextCalled = true;
-            return Task.CompletedTask;
-        };
+        SetupEndpoint(context);
 
         // Act
         await middleware.InvokeAsync(context, next);
 
         // Assert
-        nextCalled.ShouldBeFalse();
+        nextCalled().ShouldBeFalse();
         context.Response.StatusCode.ShouldBe(StatusCodes.Status400BadRequest);
         context.Response.ContentType.ShouldBe("application/json");
 
         context.Response.Body.Seek(0, SeekOrigin.Begin);
         using var reader = new StreamReader(context.Response.Body);
-        var responseBody = await reader.ReadToEndAsync();
-        responseBody.ShouldContain("invalid_header");
-        responseBody.ShouldContain($"Header {IdentityHeaderNames.OperatorId} must be a valid GUID.");
+        var responseBody = await reader.ReadToEndAsync(TestContext.Current.CancellationToken);
+        responseBody.ShouldSatisfyAllConditions(
+            x => x.ShouldContain("invalid_header"),
+            x => x.ShouldContain($"Header {IdentityHeaderNames.OperatorId} must be a valid GUID."));
     }
 
     [Fact]
-    public async Task InvokeAsync_WithRequiresOperatorIdMetadata_CallsNext()
+    public async Task InvokeAsync_NoMetadata_CallsNext()
     {
         // Arrange
+        var (middleware, context, next, nextCalled) = CreateContext();
+        // No endpoint setup
+
+        // Act
+        await middleware.InvokeAsync(context, next);
+
+        // Assert
+        nextCalled().ShouldBeTrue();
+    }
+
+    private static (OperatorIdMiddleware Middleware, HttpContext Context, RequestDelegate Next, Func<bool> NextCalled) CreateContext()
+    {
         var middleware = new OperatorIdMiddleware();
         var context = new DefaultHttpContext();
-        context.Request.Headers[IdentityHeaderNames.OperatorId] = Guid.NewGuid().ToString();
-        SetupEndpoint(context, useRequiresOperatorId: true);
-
         var nextCalled = false;
         RequestDelegate next = (ctx) =>
         {
@@ -183,63 +161,12 @@ public class OperatorIdMiddlewareTests
             return Task.CompletedTask;
         };
 
-        // Act
-        await middleware.InvokeAsync(context, next);
-
-        // Assert
-        nextCalled.ShouldBeTrue();
-        context.Response.StatusCode.ShouldBe(StatusCodes.Status200OK);
+        return (middleware, context, next, () => nextCalled);
     }
 
-    [Fact]
-    public async Task InvokeAsync_WithRequiresOperatorIdMetadata_MissingHeader_ReturnsBadRequest()
+    private static void SetupEndpoint(HttpContext context)
     {
-        // Arrange
-        var middleware = new OperatorIdMiddleware();
-        var context = new DefaultHttpContext();
-        context.Response.Body = new MemoryStream();
-        SetupEndpoint(context, useRequiresOperatorId: true);
-
-        var nextCalled = false;
-        RequestDelegate next = (ctx) =>
-        {
-            nextCalled = true;
-            return Task.CompletedTask;
-        };
-
-        // Act
-        await middleware.InvokeAsync(context, next);
-
-        // Assert
-        nextCalled.ShouldBeFalse();
-        context.Response.StatusCode.ShouldBe(StatusCodes.Status400BadRequest);
-        context.Response.ContentType.ShouldBe("application/json");
-    }
-
-    private static void SetupEndpoint(HttpContext context, bool useCommandRequestHeaders = false, bool useRequiresOperatorId = false)
-    {
-        var metadataItems = new List<object>();
-
-        if (useCommandRequestHeaders)
-        {
-            var actionDescriptor = new ControllerActionDescriptor
-            {
-                Parameters = new List<ParameterDescriptor>
-                {
-                    new ParameterDescriptor
-                    {
-                        ParameterType = typeof(CommandRequestHeaders),
-                    },
-                },
-            };
-            metadataItems.Add(actionDescriptor);
-        }
-
-        if (useRequiresOperatorId)
-        {
-            metadataItems.Add(new RequiresOperatorId());
-        }
-
+        var metadataItems = new List<object> { new RequiresOperatorId() };
         var metadata = new EndpointMetadataCollection(metadataItems);
         var endpoint = new Endpoint(null, metadata, "Test endpoint");
 

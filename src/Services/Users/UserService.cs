@@ -16,11 +16,11 @@ using Defra.Identity.Services.Extensions;
 
 public class UserService : IUserService
 {
-    private readonly IUsersRepository _repository;
+    private readonly IUsersRepository repository;
 
     public UserService(IUsersRepository repository)
     {
-        _repository = repository;
+        this.repository = repository;
     }
 
     public async Task<List<User>> GetAll(GetUsers request, CancellationToken cancellationToken = default)
@@ -36,7 +36,7 @@ public class UserService : IUserService
             filter = x => x.Status.Name.ToLower() == "active";
         }
 
-        var userAccounts = await _repository.GetList(filter, cancellationToken);
+        var userAccounts = await repository.GetList(filter, cancellationToken);
 
         var users = userAccounts.Select(userAccount => new User()
         {
@@ -63,7 +63,7 @@ public class UserService : IUserService
             filter = filter.AndAlso(x => x.Status.Name.ToLower() == requestedStatus.ToLower());
         }
 
-        var userAccount = await _repository.GetSingle(filter, cancellationToken);
+        var userAccount = await repository.GetSingle(filter, cancellationToken);
 
         if (userAccount == null)
         {
@@ -84,14 +84,14 @@ public class UserService : IUserService
 
     public async Task<User> Upsert(Requests.Users.Commands.Update.UpdateUser user, CancellationToken cancellationToken = default)
     {
-        var existingUser = await _repository.GetSingle(x => x.Id.Equals(user.Id), cancellationToken);
+        var existingUser = await repository.GetSingle(x => x.Id.Equals(user.Id), cancellationToken);
 
         if (existingUser != null)
         {
             existingUser.FirstName = user.FirstName;
             existingUser.LastName = user.LastName;
             existingUser.EmailAddress = user.Email;
-            var updated = await _repository.Update(existingUser, cancellationToken);
+            var updated = await repository.Update(existingUser, cancellationToken);
 
             return new User()
            {
@@ -103,7 +103,7 @@ public class UserService : IUserService
         }
 
         var userAccount = new UserAccount() { Id = user.Id, EmailAddress = user.Email, FirstName = user.FirstName, LastName = user.LastName };
-        var result = await _repository.Create(userAccount, cancellationToken);
+        var result = await repository.Create(userAccount, cancellationToken);
         return new User()
         {
             Id = result.Id,
@@ -115,7 +115,7 @@ public class UserService : IUserService
 
     public async Task<User> Update(UpdateUser user, CancellationToken cancellationToken = default)
     {
-        var existingUser = await _repository.GetSingle(x => x.Id.Equals(user.Id), cancellationToken);
+        var existingUser = await repository.GetSingle(x => x.Id.Equals(user.Id), cancellationToken);
 
         if (existingUser == null)
         {
@@ -128,7 +128,7 @@ public class UserService : IUserService
         existingUser.DisplayName = user.DisplayName;
         existingUser.UpdatedBy = user.OperatorId;
 
-        var updated = await _repository.Update(existingUser, cancellationToken);
+        var updated = await repository.Update(existingUser, cancellationToken);
 
         return new User
         {
@@ -152,7 +152,7 @@ public class UserService : IUserService
             CreatedBy = user.OperatorId,
         };
 
-        var createdUser = await _repository.Create(newUser, cancellationToken);
+        var createdUser = await repository.Create(newUser, cancellationToken);
         return new User()
         {
             Id = createdUser.Id,
@@ -166,16 +166,16 @@ public class UserService : IUserService
 
     public async Task<bool> Delete(Guid id, Guid operatorId, CancellationToken cancellationToken = default)
     {
-        return await _repository.Delete(x => x.Id == id, operatorId, cancellationToken);
+        return await repository.Delete(x => x.Id == id, operatorId, cancellationToken);
     }
 
     public async Task<bool> Activate(Guid id, Guid operatorId, CancellationToken cancellationToken = default)
     {
-      return await _repository.Activate(x => x.Id == id, operatorId, cancellationToken);
+      return await repository.Activate(x => x.Id == id, operatorId, cancellationToken);
     }
 
     public async Task<bool> Suspend(Guid id, Guid operatorId, CancellationToken cancellationToken = default)
     {
-       return await _repository.Suspend(x => x.Id == id, operatorId, cancellationToken);
+       return await repository.Suspend(x => x.Id == id, operatorId, cancellationToken);
     }
 }

@@ -69,7 +69,10 @@ dotnet ef migrations add <migration-name>    ### <Migration-name> to be replaced
 
 ````
 The above command will create a new migration in the `Migrations` directory, within the Database project.
-The application will then automatically apply this migration to the database. In the Local Development environment, if
+In the Database folder there is a Console Application project named `Postgres.Database.Console` that can be run that will
+exexcute the migration to your local database.
+
+The Console application will then automatically apply this migration to the database. In the Local Development environment, if
 the project is run.   There is code within the `ServiceCollectionExtensions` class that will automatically apply the
 migrations to the database on Debug builds.
 
@@ -181,7 +184,7 @@ dotnet test
 
 Run CDP-Deployments application:
 ```bash
-dotnet run --project AuthLivestockPoc --launch-profile Development
+dotnet run --project IdentityServiceHelper --launch-profile Development
 ```
 
 ### SonarCloud
@@ -201,3 +204,6 @@ information providers in the public sector to license the use and re-use of thei
 licence.
 
 It is designed to encourage use and re-use of information freely and flexibly, with only a few conditions.
+```shell
+ijhttp --env-file ./tests/Endpoint.Tests/Tests/http-client.env.json --env local ./tests/Endpoint.Tests/**/**/**.http
+```

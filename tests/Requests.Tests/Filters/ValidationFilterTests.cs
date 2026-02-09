@@ -13,23 +13,23 @@ using NSubstitute;
 
 public class ValidationFilterTests
 {
-    private readonly IValidator<TestModel> _validator = Substitute.For<IValidator<TestModel>>();
+    private readonly IValidator<TestModel> validator = Substitute.For<IValidator<TestModel>>();
+    private readonly ValidationFilter<TestModel> filter;
 
-    public class TestModel
+    public ValidationFilterTests()
     {
-        public string Name { get; set; } = string.Empty;
+        this.filter = new ValidationFilter<TestModel>(this.validator);
     }
 
     [Fact]
     public async Task InvokeAsync_Returns_BadRequest_When_Argument_Missing()
     {
         // Arrange
-        var filter = new ValidationFilter<TestModel>(this._validator);
         var context = Substitute.For<EndpointFilterInvocationContext>();
-        context.Arguments.Returns(new List<object?>());
+        context.Arguments.Returns([]);
 
         // Act
-        var result = await filter.InvokeAsync(context, _ => ValueTask.FromResult<object?>(null));
+        var result = await this.filter.InvokeAsync(context, _ => ValueTask.FromResult<object?>(null));
 
         // Assert
         result.ShouldBeOfType<BadRequest<string>>();
@@ -39,20 +39,19 @@ public class ValidationFilterTests
     public async Task InvokeAsync_Returns_UnprocessableEntity_When_Validation_Fails()
     {
         // Arrange
-        var filter = new ValidationFilter<TestModel>(this._validator);
         var model = new TestModel();
         var context = Substitute.For<EndpointFilterInvocationContext>();
-        context.Arguments.Returns(new List<object?> { model });
+        context.Arguments.Returns([model]);
 
         var validationFailures = new List<ValidationFailure>
         {
             new ValidationFailure("Name", "Name is required"),
         };
-        this._validator.ValidateAsync(model, default)
-            .Returns(new ValidationResult(validationFailures));
+
+        this.validator.ValidateAsync(model, Arg.Any<CancellationToken>()).Returns(new ValidationResult(validationFailures));
 
         // Act
-        var result = await filter.InvokeAsync(context, _ => ValueTask.FromResult<object?>(null));
+        var result = await this.filter.InvokeAsync(context, _ => ValueTask.FromResult<object?>(null));
 
         // Assert
         result.ShouldBeOfType<UnprocessableEntity<IDictionary<string, string[]>>>();
@@ -62,13 +61,11 @@ public class ValidationFilterTests
     public async Task InvokeAsync_Calls_Next_When_Validation_Succeeds()
     {
         // Arrange
-        var filter = new ValidationFilter<TestModel>(this._validator);
         var model = new TestModel { Name = "Valid" };
         var context = Substitute.For<EndpointFilterInvocationContext>();
-        context.Arguments.Returns(new List<object?> { model });
+        context.Arguments.Returns([model]);
 
-        this._validator.ValidateAsync(model, default)
-            .Returns(new ValidationResult());
+        this.validator.ValidateAsync(model, Arg.Any<CancellationToken>()).Returns(new ValidationResult());
 
         var nextCalled = false;
         EndpointFilterDelegate next = _ =>
@@ -78,10 +75,15 @@ public class ValidationFilterTests
         };
 
         // Act
-        var result = await filter.InvokeAsync(context, next);
+        var result = await this.filter.InvokeAsync(context, next);
 
         // Assert
         nextCalled.ShouldBeTrue();
         result.ShouldBeOfType<Ok>();
+    }
+
+    public class TestModel
+    {
+        public string Name { get; set; } = string.Empty;
     }
 }

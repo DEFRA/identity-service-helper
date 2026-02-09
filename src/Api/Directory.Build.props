@@ -2,11 +2,10 @@
     <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))"/>
     <ItemGroup>
         <PackageReference Include="Elastic.CommonSchema.Serilog"/>
-        <PackageReference Include="FluentValidation.DependencyInjectionExtensions"/>
         <PackageReference Include="Newtonsoft.Json"/>
         <PackageReference Include="Microsoft.AspNetCore.HeaderPropagation"/>
         <PackageReference Include="FluentValidation" />
-        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions"/>
         <PackageReference Include="MongoDB.Driver"/>
         <PackageReference Include="Serilog.AspNetCore"/>
         <PackageReference Include="Serilog.Enrichers.ClientInfo"/>

@@ -34,16 +34,16 @@ public static class ExpressionExtensions
 
         private sealed class ReplaceParameterVisitor : ExpressionVisitor
         {
-            private readonly ParameterExpression _from;
-            private readonly ParameterExpression _to;
+            private readonly ParameterExpression from;
+            private readonly ParameterExpression to;
 
             public ReplaceParameterVisitor(ParameterExpression from, ParameterExpression to)
             {
-                _from = from;
-                _to = to;
+                this.from = from;
+                this.to = to;
             }
 
             protected override Expression VisitParameter(ParameterExpression node)
-                => node == _from ? _to : base.VisitParameter(node);
+                => node == from ? to : base.VisitParameter(node);
         }
     }

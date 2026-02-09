@@ -15,13 +15,13 @@ x-api-key: {{api-key}}
 X-Operator-Id: {{Operator-Id}}
 
 {
-  "first_name": "{{$random.address.firstName}}",
-  "last_name":  "{{$random.address.lastName}}",
+  "first_name": "{{$random.name.firstName}}",
+  "last_name":  "{{$random.name.lastName}}",
   "email": "",
   "display_name": "{{$random.address.firstName}}"
 }
 
-> ../../Asserts/Should_be_422_error_response.js.js
+> ../../Asserts/Should_be_422_error_response.js
 
 ### Create new User should fail validation firstname is too long
 POST {{host}}/users
@@ -32,12 +32,12 @@ X-Operator-Id: {{Operator-Id}}
 
 {
   "first_name": "{{$random.alphanumeric(100)}}",
-  "last_name":  "{{$random.address.lastName}}",
+  "last_name":  "{{$random.name.lastName}}",
   "email":  "{{$random.internet.safeEmailAddress}}",
-  "display_name": "{{$random.address.firstName}}"
+  "display_name": "{{$random.name.firstName}}"
 }
 
-> ../../Asserts/Should_be_422_error_response.js.js
+> ../../Asserts/Should_be_422_error_response.js
 
 ### Create new User should fail validation error first name and lastname is too long
 POST {{host}}/users
@@ -50,10 +50,10 @@ X-Operator-Id: {{Operator-Id}}
   "first_name": "{{$random.alphanumeric(100)}}",
   "last_name": "{{$random.alphanumeric(100)}}",
   "email":  "{{$random.internet.safeEmailAddress}}",
-  "display_name": "{{$random.address.firstName}}"
+  "display_name": "{{$random.name.firstName}}"
 }
 
-> ../../Asserts/Should_be_422_error_response.js.js
+> ../../Asserts/Should_be_422_error_response.js
 
 
 
@@ -65,10 +65,10 @@ x-api-key: {{api-key}}
 X-Operator-Id: {{Operator-Id}}
 
 {
-  "first_name": "{{$random.address.firstName}}",
-  "last_name":  "{{$random.address.lastName}}",
+  "first_name": "{{$random.name.firstName}}",
+  "last_name":  "{{$random.name.lastName}}",
   "email": "{{$random.internet.safeEmailAddress}}",
-  "display_name": "{{$random.address.firstName}}"
+  "display_name": "{{$random.name.firstName}}"
 }
 
 > ../../Asserts/Should_be_201_created.js
@@ -89,10 +89,10 @@ x-api-key: {{api-key}}
 X-Operator-Id: {{Operator-Id}}
 
 {
-  "first_name": "{{$random.address.firstName}}",
-  "last_name":  "{{$random.address.lastName}}",
+  "first_name": "{{$random.name.firstName}}",
+  "last_name":  "{{$random.name.lastName}}",
   "email": "{{$random.internet.safeEmailAddress}}",
-  "display_name": "{{$random.address.firstName}}"
+  "display_name": "{{$random.name.firstName}}"
 }
 
 > ../../Asserts/Should_be_200_OK.js

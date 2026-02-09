@@ -93,7 +93,7 @@ public class CorrellationIdMiddlewareTests
 
         context.Response.Body.Seek(0, SeekOrigin.Begin);
         using var reader = new StreamReader(context.Response.Body);
-        var responseBody = await reader.ReadToEndAsync();
+        var responseBody = await reader.ReadToEndAsync(TestContext.Current.CancellationToken);
         responseBody.ShouldContain("missing_header");
         responseBody.ShouldContain($"Header {IdentityHeaderNames.CorrelationId} is required.");
     }
@@ -124,7 +124,7 @@ public class CorrellationIdMiddlewareTests
 
         context.Response.Body.Seek(0, SeekOrigin.Begin);
         using var reader = new StreamReader(context.Response.Body);
-        var responseBody = await reader.ReadToEndAsync();
+        var responseBody = await reader.ReadToEndAsync(TestContext.Current.CancellationToken);
         responseBody.ShouldContain("missing_header");
         responseBody.ShouldContain($"Header {IdentityHeaderNames.CorrelationId} is required.");
     }

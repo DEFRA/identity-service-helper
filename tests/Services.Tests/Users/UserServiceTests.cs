@@ -21,12 +21,12 @@ using Xunit;
 
 public class UserServiceTests
 {
-    private readonly IUsersRepository _repository = Substitute.For<IUsersRepository>();
-    private readonly UserService _userService;
+    private readonly IUsersRepository repository = Substitute.For<IUsersRepository>();
+    private readonly UserService userService;
 
     public UserServiceTests()
     {
-        _userService = new UserService(_repository);
+        userService = new UserService(repository);
     }
 
     [Fact]
@@ -40,11 +40,11 @@ public class UserServiceTests
             new UserAccount { Id = Guid.NewGuid(), EmailAddress = "user2@example.com", FirstName = "User", LastName = "Two" },
         };
 
-        _repository.GetList(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
+        repository.GetList(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(userAccounts);
 
         // Act
-        var result = await _userService.GetAll(request, TestContext.Current.CancellationToken);
+        var result = await userService.GetAll(request, TestContext.Current.CancellationToken);
 
         // Assert
         result.ShouldNotBeNull();
@@ -68,11 +68,11 @@ public class UserServiceTests
             Status = new StatusType() { Id = 1, Name = "Active" },
         };
 
-        _repository.GetSingle(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
+        repository.GetSingle(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(userAccount);
 
         // Act
-        var result = await _userService.Get(request, TestContext.Current.CancellationToken);
+        var result = await userService.Get(request, TestContext.Current.CancellationToken);
 
         // Assert
         result.ShouldNotBeNull();
@@ -88,15 +88,15 @@ public class UserServiceTests
         // Arrange
         var userId = Guid.NewGuid();
         var operatorId = Guid.NewGuid();
-        _repository.Delete(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+        repository.Delete(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(true);
 
         // Act
-        var result = await _userService.Delete(userId, operatorId, TestContext.Current.CancellationToken);
+        var result = await userService.Delete(userId, operatorId, TestContext.Current.CancellationToken);
 
         // Assert
         result.ShouldBeTrue();
-        await _repository.Received(1).Delete(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<Guid>(),Arg.Any<CancellationToken>());
+        await repository.Received(1).Delete(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -105,15 +105,15 @@ public class UserServiceTests
         // Arrange
         var userId = Guid.NewGuid();
         var operatorId = Guid.NewGuid();
-        _repository.Activate(Arg.Any<Expression<Func<UserAccount, bool>>>(),Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+        repository.Activate(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(true);
 
         // Act
-        var result = await _userService.Activate(userId, operatorId, TestContext.Current.CancellationToken);
+        var result = await userService.Activate(userId, operatorId, TestContext.Current.CancellationToken);
 
         // Assert
         result.ShouldBeTrue();
-        await _repository.Received(1).Activate(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>());
+        await repository.Received(1).Activate(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -122,15 +122,15 @@ public class UserServiceTests
         // Arrange
         var userId = Guid.NewGuid();
         var operatorId = Guid.NewGuid();
-        _repository.Suspend(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+        repository.Suspend(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(true);
 
         // Act
-        var result = await _userService.Suspend(userId, operatorId, TestContext.Current.CancellationToken);
+        var result = await userService.Suspend(userId, operatorId, TestContext.Current.CancellationToken);
 
         // Assert
         result.ShouldBeTrue();
-        await _repository.Received(1).Suspend(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>());
+        await repository.Received(1).Suspend(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -138,11 +138,11 @@ public class UserServiceTests
     {
         // Arrange
         var request = new GetUserById { Id = Guid.NewGuid() };
-        _repository.GetSingle(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns((UserAccount)null);
+        repository.GetSingle(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns((UserAccount)null!);
 
         // Act
-        Func<Task> act = async () => await _userService.Get(request, TestContext.Current.CancellationToken);
+        Func<Task> act = async () => await userService.Get(request, TestContext.Current.CancellationToken);
 
         // Assert
         await act.ShouldThrowAsync<NotFoundException>();
@@ -167,14 +167,14 @@ public class UserServiceTests
             LastName = "OldLastName",
         };
 
-        _repository.GetSingle(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
+        repository.GetSingle(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(existingUser);
 
-        _repository.Update(Arg.Any<UserAccount>(), Arg.Any<CancellationToken>())
+        repository.Update(Arg.Any<UserAccount>(), Arg.Any<CancellationToken>())
             .Returns(x => (UserAccount)x[0]);
 
         // Act
-        var result = await _userService.Upsert(updateUser, TestContext.Current.CancellationToken);
+        var result = await userService.Upsert(updateUser, TestContext.Current.CancellationToken);
 
         // Assert
         result.ShouldNotBeNull();
@@ -182,7 +182,7 @@ public class UserServiceTests
         result.FirstName.ShouldBe(updateUser.FirstName);
         result.LastName.ShouldBe(updateUser.LastName);
 
-        await _repository.Received(1).Update(
+        await repository.Received(1).Update(
             Arg.Is<UserAccount>(ua =>
             ua.EmailAddress == updateUser.Email &&
             ua.FirstName == updateUser.FirstName &&
@@ -201,10 +201,10 @@ public class UserServiceTests
             LastName = "NewLastName",
         };
 
-        _repository.GetSingle(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns((UserAccount)null);
+        repository.GetSingle(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns((UserAccount)null!);
 
-        _repository.Create(Arg.Any<UserAccount>(), Arg.Any<CancellationToken>())
+        repository.Create(Arg.Any<UserAccount>(), Arg.Any<CancellationToken>())
             .Returns(new UserAccount
             {
                 Id = Guid.NewGuid(),
@@ -214,7 +214,7 @@ public class UserServiceTests
             });
 
         // Act
-        var result = await _userService.Upsert(updateUser, TestContext.Current.CancellationToken);
+        var result = await userService.Upsert(updateUser, TestContext.Current.CancellationToken);
 
         // Assert
         result.ShouldNotBeNull();
@@ -222,7 +222,7 @@ public class UserServiceTests
         result.FirstName.ShouldBe(updateUser.FirstName);
         result.LastName.ShouldBe(updateUser.LastName);
 
-        await _repository.Received(1).Create(
+        await repository.Received(1).Create(
             Arg.Is<UserAccount>(ua =>
             ua.EmailAddress == updateUser.Email &&
             ua.FirstName == updateUser.FirstName &&
@@ -256,14 +256,14 @@ public class UserServiceTests
             Status = new StatusType { Name = "Inactive" },
         };
 
-        _repository.GetSingle(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
+        repository.GetSingle(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(existingUser);
 
-        _repository.Update(Arg.Any<UserAccount>(), Arg.Any<CancellationToken>())
+        repository.Update(Arg.Any<UserAccount>(), Arg.Any<CancellationToken>())
             .Returns(x => (UserAccount)x[0]);
 
         // Act
-        var result = await _userService.Update(updateUser, TestContext.Current.CancellationToken);
+        var result = await userService.Update(updateUser, TestContext.Current.CancellationToken);
 
         // Assert
         result.ShouldNotBeNull();
@@ -271,7 +271,7 @@ public class UserServiceTests
         result.FirstName.ShouldBe(updateUser.FirstName);
         result.LastName.ShouldBe(updateUser.LastName);
 
-        await _repository.Received(1).Update(
+        await repository.Received(1).Update(
             Arg.Is<UserAccount>(ua =>
             ua.Id == userId &&
             ua.EmailAddress == updateUser.Email &&
@@ -294,13 +294,13 @@ public class UserServiceTests
             LastName = "NewLastName",
         };
 
-        _repository.GetSingle(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns((UserAccount)null);
+        repository.GetSingle(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns((UserAccount)null!);
 
         // Act & Assert
         await Should.ThrowAsync<NullReferenceException>(async () =>
-            await _userService.Update(updateUser, TestContext.Current.CancellationToken));
+            await userService.Update(updateUser, TestContext.Current.CancellationToken));
 
-        await _repository.DidNotReceiveWithAnyArgs().Update(null!, default);
+        await repository.DidNotReceiveWithAnyArgs().Update(null!, CancellationToken.None);
     }
 }

@@ -7,15 +7,8 @@ namespace Defra.Identity.Requests.Filters;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
 
-public class ValidationFilter<T> : IEndpointFilter
+public class ValidationFilter<T>(IValidator<T> validator) : IEndpointFilter
 {
-    private readonly IValidator<T> _validator;
-
-    public ValidationFilter(IValidator<T> validator)
-    {
-        _validator = validator;
-    }
-
     public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {
         var arg = context.Arguments.OfType<T>().FirstOrDefault();
@@ -25,7 +18,7 @@ public class ValidationFilter<T> : IEndpointFilter
             return Results.BadRequest("Invalid request.");
         }
 
-        var validationResult = await _validator.ValidateAsync(arg);
+        var validationResult = await validator.ValidateAsync(arg, context.HttpContext.RequestAborted);
 
         if (!validationResult.IsValid)
         {

@@ -5,7 +5,7 @@ X-Correlation-ID: {{Correlation-ID}}
 x-api-key: ""
 X-Operator-Id: {{Operator-Id}}
 
-> ../../Asserts/should_be_400_error_invalid_api_key.js
+> ../../Asserts/headers/should_be_400_error_invalid_api_key.js
 
 
 ### Should Get Missing Correllation Id ""
@@ -13,7 +13,7 @@ GET {{host}}/users
 x-api-key: {{api-key}}
 X-Operator-Id: {{Operator-Id}}
 
-> ../../Asserts/headers/should_be_400_error_missing_correllation_id.js.js
+> ../../Asserts/headers/should_be_400_error_missing_correllation_id.js
 
 ### Should Get empty Correllation Id '' Error
 GET {{host}}/users
@@ -21,7 +21,7 @@ X-Correlation-ID: ''
 x-api-key: {{api-key}}
 X-Operator-Id: {{Operator-Id}}
 
-> ../../Asserts/headers/should_be_400_error_missing_correllation_id.js.js
+> ../../Asserts/headers/should_be_400_error_missing_correllation_id.js
 
 ### Should Get empty Correllation Id Error
 GET {{host}}/users
@@ -29,7 +29,7 @@ X-Correlation-ID: ""
 x-api-key: {{api-key}}
 X-Operator-Id: {{Operator-Id}}
 
-> ../../Asserts/headers/should_be_400_error_missing_correllation_id.js.js
+> ../../Asserts/headers/should_be_400_error_missing_correllation_id.js
 
 
 ### Should Get empty Operator Id Error

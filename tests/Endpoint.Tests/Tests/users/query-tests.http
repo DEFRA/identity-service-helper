@@ -52,7 +52,7 @@ X-Correlation-ID: {{Correlation-ID}}
 x-api-key: {{api-key}}
 
 
-> ../../Asserts/Should_be_200_OK_empty_list.js.js
+> ../../Asserts/Should_be_200_OK_empty_list.js
 
 ### GET Invalid API Key Provided
 GET {{host}}/users
@@ -60,5 +60,5 @@ X-Correlation-ID: {{Correlation-ID}}
 x-api-key: {{invalid_api_key}}
 
 
-> ../../Asserts/should_be_400_error_invalid_api_key.js
+> ../../Asserts/headers/should_be_400_error_invalid_api_key.js
 ###

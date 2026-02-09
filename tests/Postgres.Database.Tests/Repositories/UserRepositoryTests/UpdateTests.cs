@@ -1,4 +1,4 @@
-// <copyright file="UsersRepositoryTests.cs" company="Defra">
+// <copyright file="UpdateTests.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 

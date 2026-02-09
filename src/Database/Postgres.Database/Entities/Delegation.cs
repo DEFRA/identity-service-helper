@@ -1,4 +1,4 @@
-// <copyright file="Enrolment.cs" company="Defra">
+// <copyright file="Delegation.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 

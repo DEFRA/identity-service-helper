@@ -14,15 +14,11 @@ public class CountyParishHolding : BaseUpdateEntity
 
     public StatusType StatusType { get; set; }
 
-    public DateTime CreatedAt { get; set; }
-
     public Guid CreatedBy { get; set; }
 
     public DateTime ProcessedAt { get; set; }
 
     public Guid? UpdatedBy { get; set; }
-
-    public DateTime UpdatedAt { get; set; }
 
     public ICollection<Delegation> Delegations { get; set; } = new List<Delegation>();
 

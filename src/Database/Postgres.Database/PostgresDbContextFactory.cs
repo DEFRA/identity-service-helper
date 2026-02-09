@@ -1,4 +1,4 @@
-// <copyright file="AuthContextFactory.cs" company="Defra">
+// <copyright file="PostgresDbContextFactory.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 

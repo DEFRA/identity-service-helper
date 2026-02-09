@@ -1,4 +1,4 @@
-// <copyright file="IdentityRequestHeadersMiddlewareTests.cs" company="Defra">
+// <copyright file="ApiKeyValidationMiddlewareTests.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
