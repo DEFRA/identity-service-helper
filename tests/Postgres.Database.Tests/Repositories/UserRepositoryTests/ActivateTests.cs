@@ -7,6 +7,7 @@ namespace Defra.Identity.Postgres.Database.Tests.Repositories;
 using System.ComponentModel;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
+using Defra.Identity.Repositories.Exceptions;
 using Defra.Identity.Repositories.Users;
 using Shouldly;
 
@@ -65,6 +66,6 @@ public class ActivateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         Func<Task> act = async () => await repository.Activate(x => x.Id == nonExistentId, operatorId, TestContext.Current.CancellationToken);
 
         // Assert
-        await act.ShouldThrowAsync<ArgumentException>();
+        await act.ShouldThrowAsync<NotFoundException>();
     }
 }

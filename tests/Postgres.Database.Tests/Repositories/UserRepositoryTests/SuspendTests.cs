@@ -7,6 +7,7 @@ namespace Defra.Identity.Postgres.Database.Tests.Repositories;
 using System.ComponentModel;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
+using Defra.Identity.Repositories.Exceptions;
 using Defra.Identity.Repositories.Users;
 using Shouldly;
 
@@ -48,8 +49,8 @@ public class SuspendTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     }
 
     [Fact]
-    [Description("Should throw ArgumentException when suspending non-existent user account")]
-    public async Task ShouldThrowWhenSuspendingNonExistentUser()
+    [Description("Should throw ArgumentException when activating non-existent user account")]
+    public async Task ShouldThrowWhenActivatingNonExistentUser()
     {
         // Arrange
         var repository = new UsersRepository(Context);
@@ -60,6 +61,6 @@ public class SuspendTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         Func<Task> act = async () => await repository.Suspend(x => x.Id == nonExistentId, operatorId, TestContext.Current.CancellationToken);
 
         // Assert
-        await act.ShouldThrowAsync<ArgumentException>();
+        await act.ShouldThrowAsync<NotFoundException>();
     }
 }

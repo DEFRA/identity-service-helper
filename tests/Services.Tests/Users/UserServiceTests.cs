@@ -10,6 +10,7 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Defra.Identity.Postgres.Database.Entities;
+using Defra.Identity.Repositories.Exceptions;
 using Defra.Identity.Repositories.Users;
 using Defra.Identity.Requests.Users.Commands.Update;
 using Defra.Identity.Requests.Users.Queries;
@@ -36,7 +37,7 @@ public class UserServiceTests
         var userAccounts = new List<UserAccount>
         {
             new UserAccount { Id = Guid.NewGuid(), EmailAddress = "user1@example.com", FirstName = "User", LastName = "One" },
-            new UserAccount { Id = Guid.NewGuid(), EmailAddress = "user2@example.com", FirstName = "User", LastName = "Two" }
+            new UserAccount { Id = Guid.NewGuid(), EmailAddress = "user2@example.com", FirstName = "User", LastName = "Two" },
         };
 
         _repository.GetList(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
@@ -141,10 +142,10 @@ public class UserServiceTests
             .Returns((UserAccount)null);
 
         // Act
-        var result = await _userService.Get(request, TestContext.Current.CancellationToken);
+        Func<Task> act = async () => await _userService.Get(request, TestContext.Current.CancellationToken);
 
         // Assert
-        result.ShouldBeNull();
+        await act.ShouldThrowAsync<NotFoundException>();
     }
 
     [Fact]

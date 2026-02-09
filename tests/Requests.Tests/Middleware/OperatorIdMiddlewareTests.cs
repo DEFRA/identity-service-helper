@@ -7,12 +7,10 @@ namespace Defra.Identity.Requests.Tests.Middleware;
 using Defra.Identity.Requests.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using NSubstitute;
 
 public class OperatorIdMiddlewareTests
 {

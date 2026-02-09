@@ -7,6 +7,7 @@ namespace Defra.Identity.Postgres.Database.Tests.Repositories;
 using System.ComponentModel;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
+using Defra.Identity.Repositories.Exceptions;
 using Defra.Identity.Repositories.Users;
 using Shouldly;
 
@@ -49,8 +50,8 @@ public class DeleteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     }
 
     [Fact]
-    [Description("Should return false when deleting non-existent user account")]
-    public async Task ShouldReturnFalseWhenDeletingNonExistentUser()
+    [Description("Should throw ArgumentException when activating non-existent user account")]
+    public async Task ShouldThrowWhenActivatingNonExistentUser()
     {
         // Arrange
         var repository = new UsersRepository(Context);
@@ -58,9 +59,9 @@ public class DeleteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         var operatorId = Guid.NewGuid();
 
         // Act
-        var result = await repository.Delete(x => x.Id == nonExistentId, operatorId, TestContext.Current.CancellationToken);
+        Func<Task> act = async () => await repository.Delete(x => x.Id == nonExistentId, operatorId, TestContext.Current.CancellationToken);
 
         // Assert
-        result.ShouldBeFalse();
+        await act.ShouldThrowAsync<NotFoundException>();
     }
 }
