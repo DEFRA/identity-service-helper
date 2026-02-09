@@ -2,6 +2,8 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
+using Defra.Identity.Requests.MetaData;
+
 namespace Defra.Identity.Api.Endpoints.Users;
 
 using Defra.Identity.Requests;
@@ -25,24 +27,29 @@ public static class UsersEndpoints
 
         app.MapPut(RouteNames.Users + "/{id:guid}", Put)
             .AddEndpointFilter<ValidationFilter<UpdateUser>>()
+            .WithMetadata(new RequiresOperatorId())
             .Produces(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status422UnprocessableEntity)
             .ProducesProblem(StatusCodes.Status404NotFound);
 
         app.MapPost(RouteNames.Users, Post)
             .AddEndpointFilter<ValidationFilter<CreateUser>>()
+            .WithMetadata(new RequiresOperatorId())
             .Produces<Responses.Users.User>(StatusCodes.Status201Created, "application/json")
             .ProducesProblem(StatusCodes.Status422UnprocessableEntity);
 
         app.MapDelete(RouteNames.Users + "/{id:guid}", Delete)
+            .WithMetadata(new RequiresOperatorId())
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status404NotFound);
 
         app.MapPost(RouteNames.Users + "/{id:guid}:suspend", Suspend)
+            .WithMetadata(new RequiresOperatorId())
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status404NotFound);
 
         app.MapPost(RouteNames.Users + "/{id:guid}:activate", Activate)
+            .WithMetadata(new RequiresOperatorId())
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status404NotFound);
     }

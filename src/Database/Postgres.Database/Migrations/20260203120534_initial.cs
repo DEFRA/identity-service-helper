@@ -35,7 +35,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
                     processed_ok = table.Column<bool>(type: "boolean", nullable: false),
                     message = table.Column<string>(type: "text", nullable: false),
                     received_at = table.Column<DateTime>(type: "TimestampTz", nullable: false, defaultValueSql: "now()"),
-                    processed_at = table.Column<DateTime>(type: "TimestampTz", nullable: false)
+                    processed_at = table.Column<DateTime>(type: "TimestampTz", nullable: false),
                 },
                 constraints: table =>
                 {
@@ -50,7 +50,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
                     id = table.Column<short>(type: "smallint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
                     name = table.Column<string>(type: "varchar", maxLength: 128, nullable: false),
-                    description = table.Column<string>(type: "varchar", maxLength: 2048, nullable: false)
+                    description = table.Column<string>(type: "varchar", maxLength: 2048, nullable: false),
                 },
                 constraints: table =>
                 {
@@ -65,7 +65,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
                     id = table.Column<short>(type: "smallint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
                     name = table.Column<string>(type: "varchar", maxLength: 10, nullable: false),
-                    description = table.Column<string>(type: "varchar", maxLength: 250, nullable: false)
+                    description = table.Column<string>(type: "varchar", maxLength: 250, nullable: false),
                 },
                 constraints: table =>
                 {
@@ -84,7 +84,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
                     description = table.Column<string>(type: "text", nullable: false),
                     status_type_id = table.Column<short>(type: "smallint", nullable: false, defaultValue: (short)1),
                     created_at = table.Column<DateTime>(type: "TimestampTz", nullable: false, defaultValueSql: "now()"),
-                    updated_at = table.Column<DateTime>(type: "TimestampTz", nullable: true)
+                    updated_at = table.Column<DateTime>(type: "TimestampTz", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -110,7 +110,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
                     created_by = table.Column<Guid>(type: "uuid", nullable: false),
                     processed_at = table.Column<DateTime>(type: "TimestampTz", nullable: false),
                     updated_by = table.Column<Guid>(type: "uuid", nullable: true),
-                    updated_at = table.Column<DateTime>(type: "TimestampTz", nullable: true)
+                    updated_at = table.Column<DateTime>(type: "TimestampTz", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -138,7 +138,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
                     created_by = table.Column<Guid>(type: "uuid", nullable: false),
                     updated_by = table.Column<Guid>(type: "uuid", nullable: true),
                     created_at = table.Column<DateTime>(type: "TimestampTz", nullable: false, defaultValueSql: "now()"),
-                    updated_at = table.Column<DateTime>(type: "TimestampTz", nullable: true)
+                    updated_at = table.Column<DateTime>(type: "TimestampTz", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -170,7 +170,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
                 columns: table => new
                 {
                     application_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    role_id = table.Column<short>(type: "smallint", nullable: false)
+                    role_id = table.Column<short>(type: "smallint", nullable: false),
                 },
                 constraints: table =>
                 {
@@ -205,7 +205,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
                     created_by = table.Column<Guid>(type: "uuid", nullable: false),
                     updated_by = table.Column<Guid>(type: "uuid", nullable: true),
                     created_at = table.Column<DateTime>(type: "TimestampTz", nullable: false, defaultValueSql: "now()"),
-                    updated_at = table.Column<DateTime>(type: "TimestampTz", nullable: true)
+                    updated_at = table.Column<DateTime>(type: "TimestampTz", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -258,7 +258,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
                     expired_at = table.Column<DateTime>(type: "TimestampTz", nullable: false),
                     created_at = table.Column<DateTime>(type: "TimestampTz", nullable: false, defaultValueSql: "now()"),
                     created_by = table.Column<Guid>(type: "uuid", nullable: false),
-                    updated_at = table.Column<DateTime>(type: "TimestampTz", nullable: true)
+                    updated_at = table.Column<DateTime>(type: "TimestampTz", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -327,7 +327,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
                     sync_status = table.Column<string>(type: "text", nullable: false, defaultValue: "linked"),
                     last_synced_at = table.Column<DateTime>(type: "TimestampTz", nullable: false),
                     created_at = table.Column<DateTime>(type: "TimestampTz", nullable: false, defaultValueSql: "now()"),
-                    updated_at = table.Column<DateTime>(type: "TimestampTz", nullable: true)
+                    updated_at = table.Column<DateTime>(type: "TimestampTz", nullable: true),
                 },
                 constraints: table =>
                 {

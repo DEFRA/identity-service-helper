@@ -4,6 +4,7 @@
 
 namespace Defra.Identity.Requests.Middleware;
 
+using Defra.Identity.Requests.MetaData;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Controllers;
 
@@ -13,17 +14,9 @@ public class OperatorIdMiddleware : JsonErrorMiddleware
     {
         var endpoint = context.GetEndpoint();
 
-        // Only enforce OperatorId when the matched MVC action has a CommandRequestHeaders parameter.
-        var actionDescriptor = endpoint?.Metadata.GetMetadata<ControllerActionDescriptor>();
-        var usesCommandRequestHeaders =
-            actionDescriptor?.Parameters.Any(p => p.ParameterType == typeof(CommandRequestHeaders)) == true;
-
-        if (!usesCommandRequestHeaders)
-        {
-            await next(context);
-            return;
-        }
-
+        // Minimal APIs won't have ControllerActionDescriptor metadata we use an explicit endpoint marker instead.
+        var requiresOperatorId =
+            endpoint?.Metadata.GetMetadata<RequiresOperatorId>() is not null;
         var headers = context.Request.Headers;
         var operatorId = headers.TryGetValue(IdentityHeaderNames.OperatorId, out var oid) ? oid.ToString() : null;
 

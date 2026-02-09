@@ -4,6 +4,7 @@
 
 namespace Defra.Identity.Requests.Tests.Middleware;
 
+using Defra.Identity.Requests.MetaData;
 using Defra.Identity.Requests.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -22,7 +23,7 @@ public class OperatorIdMiddlewareTests
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
-                { "DefraIndentityApiKey", "test-api-key" }
+                { "DefraIndentityApiKey", "test-api-key" },
             })
             .Build();
 
@@ -167,12 +168,13 @@ public class OperatorIdMiddlewareTests
     }
 
     [Fact]
-    public async Task InvokeAsync_DoesNotUseCommandRequestHeaders_CallsNext()
+    public async Task InvokeAsync_WithRequiresOperatorIdMetadata_CallsNext()
     {
         // Arrange
         var middleware = new OperatorIdMiddleware();
         var context = new DefaultHttpContext();
-        SetupEndpoint(context, useCommandRequestHeaders: false);
+        context.Request.Headers[IdentityHeaderNames.OperatorId] = Guid.NewGuid().ToString();
+        SetupEndpoint(context, useRequiresOperatorId: true);
 
         var nextCalled = false;
         RequestDelegate next = (ctx) =>
@@ -189,22 +191,56 @@ public class OperatorIdMiddlewareTests
         context.Response.StatusCode.ShouldBe(StatusCodes.Status200OK);
     }
 
-    private static void SetupEndpoint(HttpContext context, bool useCommandRequestHeaders)
+    [Fact]
+    public async Task InvokeAsync_WithRequiresOperatorIdMetadata_MissingHeader_ReturnsBadRequest()
     {
-        var actionDescriptor = new ControllerActionDescriptor
+        // Arrange
+        var middleware = new OperatorIdMiddleware();
+        var context = new DefaultHttpContext();
+        context.Response.Body = new MemoryStream();
+        SetupEndpoint(context, useRequiresOperatorId: true);
+
+        var nextCalled = false;
+        RequestDelegate next = (ctx) =>
         {
-            Parameters = new List<ParameterDescriptor>()
+            nextCalled = true;
+            return Task.CompletedTask;
         };
+
+        // Act
+        await middleware.InvokeAsync(context, next);
+
+        // Assert
+        nextCalled.ShouldBeFalse();
+        context.Response.StatusCode.ShouldBe(StatusCodes.Status400BadRequest);
+        context.Response.ContentType.ShouldBe("application/json");
+    }
+
+    private static void SetupEndpoint(HttpContext context, bool useCommandRequestHeaders = false, bool useRequiresOperatorId = false)
+    {
+        var metadataItems = new List<object>();
 
         if (useCommandRequestHeaders)
         {
-            actionDescriptor.Parameters.Add(new ParameterDescriptor
+            var actionDescriptor = new ControllerActionDescriptor
             {
-                ParameterType = typeof(CommandRequestHeaders)
-            });
+                Parameters = new List<ParameterDescriptor>
+                {
+                    new ParameterDescriptor
+                    {
+                        ParameterType = typeof(CommandRequestHeaders),
+                    },
+                },
+            };
+            metadataItems.Add(actionDescriptor);
         }
 
-        var metadata = new EndpointMetadataCollection(actionDescriptor);
+        if (useRequiresOperatorId)
+        {
+            metadataItems.Add(new RequiresOperatorId());
+        }
+
+        var metadata = new EndpointMetadataCollection(metadataItems);
         var endpoint = new Endpoint(null, metadata, "Test endpoint");
 
         context.SetEndpoint(endpoint);

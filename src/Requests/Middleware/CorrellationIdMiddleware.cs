@@ -12,6 +12,7 @@ public class CorrellationIdMiddleware : JsonErrorMiddleware
     {
         var headers = context.Request.Headers;
         var correlationId = headers.TryGetValue(IdentityHeaderNames.CorrelationId, out var tid) ? tid.ToString() : null;
+        correlationId = NormalizeHeaderValue(correlationId);
         if (string.IsNullOrWhiteSpace(correlationId))
         {
             await WriteJsonErrorAsync(
@@ -24,5 +25,22 @@ public class CorrellationIdMiddleware : JsonErrorMiddleware
         }
 
         await next(context);
+    }
+
+    private static string? NormalizeHeaderValue(string? value)
+    {
+        if (value is null)
+        {
+            return null;
+        }
+
+        var trimmed = value.Trim();
+
+        // Treat empty quotes as "missing": "", '' (and also values with spaces like "  ").
+        trimmed = trimmed.Trim('\"', '\'');
+
+        trimmed = trimmed.Trim();
+
+        return trimmed.Length == 0 ? null : trimmed;
     }
 }

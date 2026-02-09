@@ -21,7 +21,7 @@ public class ServiceCollectionExtensionsTests
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
-                { "DefraIndentityApiKey", "test-api-key" }
+                { "DefraIndentityApiKey", "test-api-key" },
             })
             .Build();
 
