@@ -16,7 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 [Collection(nameof(PostgreCollection))]
 public abstract class BaseTests(PostgreContainerFixture fixture) : IAsyncLifetime
 {
-    protected AuthContext Context { get; private set; } = null!;
+    protected PostgresDbContext Context { get; private set; } = null!;
 
     private Dictionary<string, string> ConnectionStringConfiguration => new()
     {
@@ -35,14 +35,14 @@ public abstract class BaseTests(PostgreContainerFixture fixture) : IAsyncLifetim
         var builder = WebApplication
             .CreateBuilder();
         builder.Configuration.AddInMemoryCollection(ConnectionStringConfiguration!).Build();
-        builder.Services.AddAuthDatabase(builder.Configuration);
+        builder.Services.AddPostgresDatabase(builder.Configuration);
 
         var app = builder.Build();
 
-        app.UseAuthDatabase();
+        app.UsePostgresDatabase();
         app.UseDatabaseMigrations();
         var serviceProvider = builder.Services.BuildServiceProvider();
-        Context = serviceProvider.GetRequiredService<AuthContext>();
+        Context = serviceProvider.GetRequiredService<PostgresDbContext>();
 
         if (!Context.Users.Any())
         {

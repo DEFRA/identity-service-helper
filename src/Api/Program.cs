@@ -87,7 +87,7 @@ public class Program
 
         // Add custom services
         builder.Services
-            .AddAuthDatabase(configuration);
+            .AddPostgresDatabase(configuration);
 
         // Add support services
         builder.Services.AddValidatorsFromAssemblyContaining<Program>();

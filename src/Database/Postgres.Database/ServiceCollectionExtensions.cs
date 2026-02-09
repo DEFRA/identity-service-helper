@@ -32,11 +32,11 @@ public static class ServiceCollectionExtensions
     /// </summary>
     private static readonly string[] ErrorCodes = ["40001", "40P01", "55P03", "57P03"];
 
-    public static IServiceCollection AddAuthDatabase(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddPostgresDatabase(this IServiceCollection services, IConfiguration configuration)
     {
         var connectionString = configuration.GetConnectionString(DatabaseConstants.ConnectionStringName);
         services
-            .AddPooledDbContextFactory<AuthContext>((sp, options) =>
+            .AddPooledDbContextFactory<PostgresDbContext>((sp, options) =>
             {
                 var env = sp.GetRequiredService<IHostEnvironment>();
                 var isProd = env.IsProduction();
@@ -54,15 +54,15 @@ public static class ServiceCollectionExtensions
                         })
                     .EnableSensitiveDataLogging(isProd);
             });
-        services.AddDbContext<AuthContext>();
+        services.AddDbContext<PostgresDbContext>();
 
         return services;
     }
 
-    public static void UseAuthDatabase(this WebApplication app)
+    public static void UsePostgresDatabase(this WebApplication app)
     {
         using var scope = app.Services.CreateScope();
-        var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<AuthContext>>();
+        var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<PostgresDbContext>>();
         using var context = factory.CreateDbContext();
 
         if (context.Database.CanConnect())
@@ -74,7 +74,7 @@ public static class ServiceCollectionExtensions
     public static void UseDatabaseMigrations(this WebApplication app)
     {
         using var scope = app.Services.CreateScope();
-        var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<AuthContext>>();
+        var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<PostgresDbContext>>();
         using var context = factory.CreateDbContext();
 #if DEBUG
 

@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Defra.Identity.Postgres.Database.Migrations
 {
-    [DbContext(typeof(AuthContext))]
+    [DbContext(typeof(PostgresDbContext))]
     partial class AuthContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

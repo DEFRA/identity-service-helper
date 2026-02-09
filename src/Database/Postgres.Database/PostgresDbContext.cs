@@ -11,7 +11,7 @@ using Defra.Identity.Postgres.Database.Entities.Base;
 /// The Authorisation DbContext.
 /// </summary>
 /// <param name="options">options to apply to the context.</param>
-public class AuthContext(DbContextOptions<AuthContext> options)
+public class PostgresDbContext(DbContextOptions<PostgresDbContext> options)
     : DbContext(options)
 {
     /// <summary>

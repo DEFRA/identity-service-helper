@@ -2,6 +2,8 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
+using Defra.Identity.Repositories.Exceptions;
+
 namespace Defra.Identity.Services.Users;
 
 using System.Linq.Expressions;
@@ -66,7 +68,7 @@ public class UserService : IUserService
 
         if (userAccount == null)
         {
-            return null;
+            throw new NotFoundException("suspended user not found.");
         }
 
         var user = new User()

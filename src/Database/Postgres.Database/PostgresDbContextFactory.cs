@@ -17,16 +17,16 @@ using Microsoft.EntityFrameworkCore.Design;
 ///     Intentionally excluded from Code Coverage because this is just for development use
 /// </summary>
 [ExcludeFromCodeCoverage]
-internal class AuthContextFactory : IDesignTimeDbContextFactory<AuthContext>
+internal class PostgresDbContextFactory : IDesignTimeDbContextFactory<PostgresDbContext>
 {
     private const string LocalBuild = "LocalBuild";
 
-    public AuthContext CreateDbContext(string[] args)
+    public PostgresDbContext CreateDbContext(string[] args)
     {
-        DbContextOptionsBuilder<AuthContext> dbContextOptionsBuilder =
+        DbContextOptionsBuilder<PostgresDbContext> dbContextOptionsBuilder =
             new();
 
         dbContextOptionsBuilder.UseNpgsql(LocalBuild);
-        return new AuthContext(dbContextOptionsBuilder.Options);
+        return new PostgresDbContext(dbContextOptionsBuilder.Options);
     }
 }

@@ -9,7 +9,7 @@ using Defra.Identity.Postgres.Database;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Exceptions;
 
-public class UsersRepository(AuthContext context)
+public class UsersRepository(PostgresDbContext context)
     : IUsersRepository
 {
     public async Task<List<UserAccount>> GetAll()

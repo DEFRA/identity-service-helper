@@ -6,6 +6,6 @@ using Defra.Identity.Postgres.Database;
 using Microsoft.AspNetCore.Builder;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddAuthDatabase(builder.Configuration);
+builder.Services.AddPostgresDatabase(builder.Configuration);
 var app = builder.Build();
 app.UseDatabaseMigrations();
