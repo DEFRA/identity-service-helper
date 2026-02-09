@@ -26,16 +26,16 @@ public class PostgreContainerFixture
     public async ValueTask InitializeAsync()
     {
         await container.StartAsync();
-        var options = new DbContextOptionsBuilder<AuthContext>()
+        var options = new DbContextOptionsBuilder<PostgresDbContext>()
             .UseNpgsql(container.GetConnectionString())
             .Options;
 
-        var context = new AuthContext(options);
+        var context = new PostgresDbContext(options);
         await context.Database.MigrateAsync();
         await SeedData(context);
     }
 
-    private async Task SeedData(AuthContext context)
+    private async Task SeedData(PostgresDbContext context)
     {
         const string adminEmailAddress = "test@test.com";
         if (!context.StatusTypes.Any())

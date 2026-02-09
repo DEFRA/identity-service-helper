@@ -6,6 +6,7 @@ namespace Defra.Identity.Services.Users;
 
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database.Entities;
+using Defra.Identity.Repositories.Exceptions;
 using Defra.Identity.Repositories.Users;
 using Defra.Identity.Requests.Users.Commands.Create;
 using Defra.Identity.Requests.Users.Commands.Update;
@@ -66,7 +67,7 @@ public class UserService : IUserService
 
         if (userAccount == null)
         {
-            return null;
+            throw new NotFoundException("suspended user not found.");
         }
 
         var user = new User()

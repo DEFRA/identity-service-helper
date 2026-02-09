@@ -1,0 +1,30 @@
+// <copyright file="CdpLogging.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
+namespace Defra.Identity.Api.Utility.Utils.Logging;
+
+using System.Diagnostics.CodeAnalysis;
+using Serilog;
+
+public static class CdpLogging
+{
+    [ExcludeFromCodeCoverage]
+    public static void Configuration(HostBuilderContext ctx, LoggerConfiguration config)
+    {
+        var httpAccessor = ctx.Configuration.Get<HttpContextAccessor>();
+        var traceIdHeader = ctx.Configuration.GetValue<string>("TraceHeader");
+        var serviceVersion = Environment.GetEnvironmentVariable("SERVICE_VERSION") ?? string.Empty;
+
+        config
+            .ReadFrom.Configuration(ctx.Configuration)
+            /*.Enrich.WithEcsHttpContext(httpAccessor!)*/
+            .Enrich.FromLogContext()
+            .Enrich.WithProperty("service.version", serviceVersion);
+
+        if (traceIdHeader != null)
+        {
+            config.Enrich.WithCorrelationId(traceIdHeader);
+        }
+    }
+}

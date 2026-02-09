@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Defra.Identity.Postgres.Database.Migrations
 {
-    [DbContext(typeof(AuthContext))]
+    [DbContext(typeof(PostgresDbContext))]
     [Migration("20260203120534_initial")]
     partial class initial
     {

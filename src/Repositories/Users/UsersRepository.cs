@@ -7,8 +7,9 @@ namespace Defra.Identity.Repositories.Users;
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database;
 using Defra.Identity.Postgres.Database.Entities;
+using Defra.Identity.Repositories.Exceptions;
 
-public class UsersRepository(AuthContext context)
+public class UsersRepository(PostgresDbContext context)
     : IUsersRepository
 {
     public async Task<List<UserAccount>> GetAll()
@@ -62,9 +63,10 @@ public class UsersRepository(AuthContext context)
     {
         var userAccount = await context.Users
             .SingleOrDefaultAsync(predicate, cancellationToken);
+
         if (userAccount == null)
         {
-            return false;
+            throw new NotFoundException("User account not found");
         }
 
         userAccount.StatusTypeId = 4;
@@ -80,7 +82,7 @@ public class UsersRepository(AuthContext context)
             .SingleOrDefaultAsync(predicate, cancellationToken);
         if (userAccount == null)
         {
-            throw new ArgumentException("User account not found");
+            throw new NotFoundException("User account not found");
         }
 
         userAccount.StatusTypeId = 3;
@@ -97,7 +99,7 @@ public class UsersRepository(AuthContext context)
             .SingleOrDefaultAsync(predicate, cancellationToken);
         if (userAccount == null)
         {
-            throw new ArgumentException("User account not found");
+            throw new NotFoundException("User account not found");
         }
 
         userAccount.StatusTypeId = 2;

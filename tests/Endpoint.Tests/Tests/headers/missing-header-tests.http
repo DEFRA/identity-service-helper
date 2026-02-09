@@ -1,0 +1,8 @@
+### Should Get Missing API Key
+
+GET {{host}}/users
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: ""
+X-Operator-Id: {{Operator-Id}}
+
+> ../../Asserts/should_be_400_error_invalid_api_key.js

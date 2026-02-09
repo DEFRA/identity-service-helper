@@ -7,6 +7,55 @@ X-Operator-Id: {{Operator-Id}}
 
 > ../../Asserts/Should_be_200_OK_and_get_top_id.js
 
+### Create new User should fail validation error missing email address
+POST {{host}}/users
+Content-Type: application/json
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+{
+  "first_name": "{{$random.address.firstName}}",
+  "last_name":  "{{$random.address.lastName}}",
+  "email": "",
+  "display_name": "{{$random.address.firstName}}"
+}
+
+> ../../Asserts/Should_be_422_error_response.js.js
+
+### Create new User should fail validation firstname is too long
+POST {{host}}/users
+Content-Type: application/json
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+{
+  "first_name": "{{$random.alphanumeric(100)}}",
+  "last_name":  "{{$random.address.lastName}}",
+  "email":  "{{$random.internet.safeEmailAddress}}",
+  "display_name": "{{$random.address.firstName}}"
+}
+
+> ../../Asserts/Should_be_422_error_response.js.js
+
+### Create new User should fail validation error first name and lastname is too long
+POST {{host}}/users
+Content-Type: application/json
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+{
+  "first_name": "{{$random.alphanumeric(100)}}",
+  "last_name": "{{$random.alphanumeric(100)}}",
+  "email":  "{{$random.internet.safeEmailAddress}}",
+  "display_name": "{{$random.address.firstName}}"
+}
+
+> ../../Asserts/Should_be_422_error_response.js.js
+
+
 
 ### Create new User
 POST {{host}}/users

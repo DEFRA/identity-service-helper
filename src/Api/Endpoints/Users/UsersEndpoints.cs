@@ -48,7 +48,7 @@ public static class UsersEndpoints
     }
 
     private static async Task<IResult> Post(
-        IdentityRequestHeaders headers,
+        CommandRequestHeaders headers,
         [FromBody] CreateUser user,
         IUserService service)
     {
@@ -62,7 +62,7 @@ public static class UsersEndpoints
     }
 
     private static async Task<IResult> Put(
-        IdentityRequestHeaders headers,
+        CommandRequestHeaders headers,
         [FromRoute] Guid id,
         [FromBody] UpdateUser user,
         IUserService service)
@@ -86,74 +86,51 @@ public static class UsersEndpoints
     }
 
     private static async Task<IResult> Get(
-        IdentityRequestHeaders headers,
+        QueryRequestHeaders headers,
         [AsParameters] GetUserById request,
         IUserService service)
     {
         var user = await service.Get(request);
 
-        if (user == null)
-        {
-            return Results.NotFound();
-        }
-
         return Results.Ok(user);
     }
 
     private static async Task<IResult> GetAll(
-        IdentityRequestHeaders headers,
+        QueryRequestHeaders headers,
         [AsParameters] GetUsers request,
         IUserService service)
     {
         var user = await service.GetAll(request);
 
-        if (user == null)
-        {
-            return Results.NotFound();
-        }
-
         return Results.Ok(user);
     }
 
     private static async Task<IResult> Delete(
-        IdentityRequestHeaders headers,
+        CommandRequestHeaders headers,
         [FromRoute] Guid id,
         IUserService service)
     {
         var deleted = await service.Delete(id, headers.OperatorId);
 
-        if (!deleted)
-        {
-            return Results.NotFound();
-        }
-
         return Results.NoContent();
     }
 
     private static async Task<IResult> Activate(
-        IdentityRequestHeaders headers,
+        CommandRequestHeaders headers,
         [FromRoute] Guid id,
         IUserService service)
     {
         var user = await service.Activate(id, headers.OperatorId);
-        if (user == null)
-        {
-            return Results.NotFound();
-        }
 
         return Results.NoContent();
     }
 
     private static async Task<IResult> Suspend(
-        IdentityRequestHeaders headers,
+        CommandRequestHeaders headers,
         [FromRoute] Guid id,
         IUserService service)
     {
         var user = await service.Suspend(id, headers.OperatorId);
-        if (user == null)
-        {
-            return Results.NotFound();
-        }
 
         return Results.NoContent();
     }
