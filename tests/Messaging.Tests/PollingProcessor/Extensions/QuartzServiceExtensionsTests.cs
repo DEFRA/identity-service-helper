@@ -2,10 +2,10 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.PollingProcessor.Tests.Extensions;
+namespace Defra.Identity.Messaging.Tests.PollingProcessor.Extensions;
 
 using Defra.Identity.Extensions;
-using Defra.Identity.PollingProcessor.Tests.Fakes;
+using Defra.Identity.Messaging.Tests.PollingProcessor.Fakes;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -19,9 +19,9 @@ public class QuartzServiceExtensionsTests
         var config = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
-                ["PolledServices:AzureB2CSyncFake:ServiceType"] = "Defra.Identity.PollingProcessor.Tests.Fakes.FakePollingService",
-                ["PolledServices:AzureB2CSyncFake:InterfaceType"] = "Defra.Identity.PollingProcessor.Tests.Fakes.IFakePollingService",
-                ["PolledServices:AzureB2CSyncFake:ConfigurationType"] = "Defra.Identity.PollingProcessor.Tests.Fakes.FakePollingConfiguration",
+                ["PolledServices:AzureB2CSyncFake:ServiceType"] = "Defra.Identity.Messaging.Tests.PollingProcessor.Fakes.FakePollingService",
+                ["PolledServices:AzureB2CSyncFake:InterfaceType"] = "Defra.Identity.Messaging.Tests.PollingProcessor.Fakes.IFakePollingService",
+                ["PolledServices:AzureB2CSyncFake:ConfigurationType"] = "Defra.Identity.Messaging.Tests.PollingProcessor.Fakes.FakePollingConfiguration",
                 ["PolledServices:AzureB2CSyncFake:Description"] = "Fake Service",
                 ["PolledServices:AzureB2CSyncFake:CronSchedule"] = "0 0/1 * * * ?",
             })

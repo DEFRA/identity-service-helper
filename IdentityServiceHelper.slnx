@@ -58,6 +58,7 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Endpoint.Tests/Endpoint.Tests.csproj" />
+    <Project Path="tests/Messaging.Tests/Messaging.Tests.csproj" Id="ce0ec592-11e8-41b5-bf60-4bdc9c61fe58" />
     <Project Path="tests/Requests.Tests/Requests.Tests.csproj" />
     <Project Path="tests/Services.Tests/Services.Tests.csproj" />
     <Project Path="tests\Api.Tests\Api.Tests.csproj" />

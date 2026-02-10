@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.PollingProcessor.Tests.Fakes;
+namespace Defra.Identity.Messaging.Tests.PollingProcessor.Fakes;
 
 using Quartz;
 

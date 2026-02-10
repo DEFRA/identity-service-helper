@@ -2,10 +2,10 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.PollingProcessor.Tests;
+namespace Defra.Identity.Messaging.Tests.PollingProcessor;
 
-using Defra.Identity.PollingProcessor.Config;
-using Defra.Identity.PollingProcessor.Services;
+using Defra.Identity.Messaging.PollingProcessor.Config;
+using Defra.Identity.Messaging.PollingProcessor.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NSubstitute;

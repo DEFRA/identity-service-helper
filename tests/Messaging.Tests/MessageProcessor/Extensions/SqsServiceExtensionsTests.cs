@@ -2,11 +2,11 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.MessageProcessor.Tests.Extensions;
+namespace Defra.Identity.Messaging.Tests.MessageProcessor.Extensions;
 
 using Amazon.SQS;
 using Defra.Identity.Extensions;
-using Defra.Identity.MessageProcessor.Handlers;
+using Defra.Identity.Messaging.MessageProcessor.Handlers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

@@ -1,8 +1,8 @@
-﻿// <copyright file="FakePollingService.cs" company="Defra">
+// <copyright file="FakePollingService.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.PollingProcessor.Tests.Fakes;
+namespace Defra.Identity.Messaging.Tests.PollingProcessor.Fakes;
 
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
@@ -12,7 +12,7 @@ using Quartz;
 [ExcludeFromCodeCoverage]
 public class FakePollingService(
     ILogger<FakePollingService> logger,
-    IOptions<Fakes.FakePollingConfiguration> options)
+    IOptions<FakePollingConfiguration> options)
     : IFakePollingService
 {
     public Task Execute(IJobExecutionContext context)
