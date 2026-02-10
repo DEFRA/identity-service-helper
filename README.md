@@ -204,6 +204,11 @@ information providers in the public sector to license the use and re-use of thei
 licence.
 
 It is designed to encourage use and re-use of information freely and flexibly, with only a few conditions.
+
+### HTTP Client Tests
+To run HTTP Client tests locally,  you can use the [ijhttp](https://github.com/asimmon/ijhttp) tool.
+on Mac/Linux install using `brew install ijhttp`   on Windows use chocolatey `choco install ijhttp`
+Then run the following command from the root of the project.
 ```shell
 ijhttp --env-file ./tests/Endpoint.Tests/Tests/http-client.env.json --env local ./tests/Endpoint.Tests/**/**/**.http
 ```
