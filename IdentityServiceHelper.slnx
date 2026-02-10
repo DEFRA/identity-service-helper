@@ -1,4 +1,48 @@
 <Solution>
+  <Folder Name="/compose/">
+    <File Path="compose/aws.env" />
+    <File Path="compose/start-localstack.sh" />
+  </Folder>
+  <Folder Name="/database/">
+    <File Path="database/db.changelog-master.xml" />
+    <File Path="database/liquibase.advanced.flowfile.yaml" />
+    <File Path="database/liquibase.checks-package.yaml" />
+    <File Path="database/liquibase.endstage.flow" />
+    <File Path="database/liquibase.flowfile.yaml" />
+    <File Path="database/liquibase.flowvariables.yaml" />
+    <File Path="database/liquibase.properties" />
+    <File Path="database/Readme.md" />
+  </Folder>
+  <Folder Name="/database/schema/">
+    <File Path="database/schema/defra.sql" />
+    <File Path="database/schema/seeding.sql" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".dockerignore" />
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="AGENTS.md" />
+    <File Path="compose.yml" />
+    <File Path="CustomDictionary.xml" />
+    <File Path="Directory.Build.props" />
+    <File Path="Dockerfile" />
+    <File Path="global.json" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+    <File Path="stylecop.json" />
+  </Folder>
+  <Folder Name="/.github/">
+    <File Path=".github/CODEOWNERS" />
+    <File Path=".github/example.dependabot.yml" />
+    <File Path=".github/publish-hotfix.yml" />
+    <File Path=".github/pull_request_template.md" /> 
+  </Folder>
+  <Folder Name="/.github/workflows/">
+    <File Path=".github/workflows/check-pull-request.yml" />
+    <File Path=".github/workflows/publish.yml" />
+    <File Path=".github/workflows/publish-hotfix.yml" />
+    <File Path=".github/workflows/sonarcloud.yml" /> 
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/Api/Api.csproj" />
     <Project Path="src/Primitives/Primitives.csproj" />
