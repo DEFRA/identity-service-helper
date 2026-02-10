@@ -46,22 +46,14 @@
   <Folder Name="/src/">
     <Project Path="src/Api/Api.csproj" />
     <Project Path="src/Primitives/Primitives.csproj" />
+    <Project Path="src/Repositories/Repositories.csproj" />
+    <Project Path="src/Requests/Requests.csproj" />
+    <Project Path="src/Responses/Responses.csproj" />
+    <Project Path="src/Services/Services.csproj" />
   </Folder>
   <Folder Name="/src/Database/">
     <Project Path="src/Database/Postgres.Database.Console/Postgres.Database.Console.csproj" />
     <Project Path="src\Database\Postgres.Database\Postgres.Database.csproj" />
-  </Folder>
-  <Folder Name="/src/Repositories/">
-    <Project Path="src/Repositories/Repositories.csproj" />
-  </Folder>
-  <Folder Name="/src/Requests/">
-    <Project Path="src/Requests/Requests.csproj" />
-  </Folder>
-  <Folder Name="/src/Responses/">
-    <Project Path="src/Responses/Responses.csproj" />
-  </Folder>
-  <Folder Name="/src/Services/">
-    <Project Path="src/Services/Services.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Endpoint.Tests/Endpoint.Tests.csproj" />
