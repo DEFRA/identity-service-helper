@@ -2,9 +2,8 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Unit.Tests.Test.Utils.Http;
+namespace Defra.Identity.Api.Tests.Utility;
 
-using System;
 using Defra.Identity.Api.Utility.Utils.Http;
 
 public class ProxyHttpMessageHandlerTests
