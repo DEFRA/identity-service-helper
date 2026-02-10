@@ -7,9 +7,9 @@ namespace Defra.Identity.Extensions;
 
 using Amazon.Runtime;
 using Amazon.SQS;
-using Defra.Identity.Config;
-using Defra.Identity.MessageProcessor.Config;
-using Defra.Identity.MessageProcessor.Handlers;
+using Defra.Identity.Infrastructure.Configuration;
+using Defra.Identity.Messaging.MessageProcessor.Config;
+using Defra.Identity.Messaging.MessageProcessor.Handlers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Monitoring;
+namespace Defra.Identity.Infrastructure.Monitoring;
 
 using System.Diagnostics;
 using System.Runtime.CompilerServices;

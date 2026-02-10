@@ -2,12 +2,12 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.MessageProcessor.Handlers;
+namespace Defra.Identity.Messaging.MessageProcessor.Handlers;
 
 using Amazon.SQS;
 using Amazon.SQS.Model;
-using Defra.Identity.MessageProcessor.Config;
-using Defra.Identity.MessageProcessor.Messages;
+using Defra.Identity.Messaging.MessageProcessor.Config;
+using Defra.Identity.Messaging.MessageProcessor.Messages;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

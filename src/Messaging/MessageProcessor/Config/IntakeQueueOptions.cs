@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.MessageProcessor.Config;
+namespace Defra.Identity.Messaging.MessageProcessor.Config;
 
 using System.Diagnostics.CodeAnalysis;
 

@@ -1,4 +1,4 @@
-﻿// <copyright file="QuartzServiceExtensions.cs" company="Defra">
+// <copyright file="QuartzServiceExtensions.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
@@ -6,7 +6,7 @@
 namespace Defra.Identity.Extensions;
 
 using System.ComponentModel.DataAnnotations;
-using Defra.Identity.PollingProcessor.Config;
+using Defra.Identity.Messaging.PollingProcessor.Config;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;

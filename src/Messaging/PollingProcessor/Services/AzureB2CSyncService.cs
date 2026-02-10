@@ -1,11 +1,11 @@
-﻿// <copyright file="AzureB2CSyncService.cs" company="Defra">
+// <copyright file="AzureB2CSyncService.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.PollingProcessor.Services;
+namespace Defra.Identity.Messaging.PollingProcessor.Services;
 
-using Defra.Identity.PollingProcessor.Config;
-using Defra.Identity.Utils;
+using Defra.Identity.Infrastructure.Monitoring;
+using Defra.Identity.Messaging.PollingProcessor.Config;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Quartz;

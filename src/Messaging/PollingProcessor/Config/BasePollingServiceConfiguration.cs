@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.PollingProcessor.Config;
+namespace Defra.Identity.Messaging.PollingProcessor.Config;
 
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
