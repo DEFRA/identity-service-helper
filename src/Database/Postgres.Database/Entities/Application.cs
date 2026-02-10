@@ -18,7 +18,7 @@ public class Application : BaseUpdateEntity
 
     public int StatusTypeId { get; set; }
 
-    public StatusType StatusType { get; set; }
+    public StatusType StatusType { get; set; } = null!;
 
     public ICollection<Delegation> Delegations { get; set; } = new List<Delegation>();
 

@@ -12,5 +12,7 @@
     <Using Include="Xunit.v3"/>
     <Using Include="Shouldly" />
   </ItemGroup>
-  
+    <PropertyGroup>
+        <CoverletExcludeByFile>**/Migrations/**/*.cs</CoverletExcludeByFile>
+    </PropertyGroup>
 </Project>

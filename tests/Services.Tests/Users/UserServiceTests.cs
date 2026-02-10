@@ -177,10 +177,12 @@ public class UserServiceTests
         var result = await userService.Upsert(updateUser, TestContext.Current.CancellationToken);
 
         // Assert
-        result.ShouldNotBeNull();
-        result.Email.ShouldBe(updateUser.Email);
-        result.FirstName.ShouldBe(updateUser.FirstName);
-        result.LastName.ShouldBe(updateUser.LastName);
+        result.ShouldSatisfyAllConditions(
+            x => x.ShouldNotBeNull(),
+            x => x.Id.ShouldBe(existingUser.Id),
+            x => x.Email.ShouldBe(updateUser.Email),
+            x => x.FirstName.ShouldBe(updateUser.FirstName),
+            x => x.LastName.ShouldBe(updateUser.LastName));
 
         await repository.Received(1).Update(
             Arg.Is<UserAccount>(ua =>
@@ -217,10 +219,12 @@ public class UserServiceTests
         var result = await userService.Upsert(updateUser, TestContext.Current.CancellationToken);
 
         // Assert
-        result.ShouldNotBeNull();
-        result.Email.ShouldBe(updateUser.Email);
-        result.FirstName.ShouldBe(updateUser.FirstName);
-        result.LastName.ShouldBe(updateUser.LastName);
+        result.ShouldSatisfyAllConditions(
+            x => x.ShouldNotBeNull(),
+            x => x.Email.ShouldBe(updateUser.Email),
+            x => x.FirstName.ShouldBe(updateUser.FirstName),
+            x => x.LastName.ShouldBe(updateUser.LastName),
+            x => x.DisplayName.ShouldBe(updateUser.DisplayName));
 
         await repository.Received(1).Create(
             Arg.Is<UserAccount>(ua =>
@@ -266,10 +270,13 @@ public class UserServiceTests
         var result = await userService.Update(updateUser, TestContext.Current.CancellationToken);
 
         // Assert
-        result.ShouldNotBeNull();
-        result.Email.ShouldBe(updateUser.Email);
-        result.FirstName.ShouldBe(updateUser.FirstName);
-        result.LastName.ShouldBe(updateUser.LastName);
+        result.ShouldSatisfyAllConditions(
+            x => x.ShouldNotBeNull(),
+            x => x.Id.ShouldBe(existingUser.Id),
+            x => x.Email.ShouldBe(updateUser.Email),
+            x => x.FirstName.ShouldBe(updateUser.FirstName),
+            x => x.LastName.ShouldBe(updateUser.LastName),
+            x => x.DisplayName.ShouldBe(updateUser.DisplayName));
 
         await repository.Received(1).Update(
             Arg.Is<UserAccount>(ua =>

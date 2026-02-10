@@ -10,7 +10,7 @@ public class Federation : BaseUpdateEntity
 {
     public required Guid UserAccountId { get; set; }
 
-    public required UserAccount UserAccount { get; set; }
+    public required UserAccount UserAccount { get; set; } = null!;
 
     public required string TenantName { get; set; }
 

@@ -10,15 +10,15 @@ public class Registration : BaseUpdateEntity
 {
     public Guid CountryParishHoldingId { get; set; }
 
-    public CountyParishHolding CountyParishHolding { get; set; }
+    public CountyParishHolding CountyParishHolding { get; set; } = null!;
 
     public Guid ApplicationId { get; set; }
 
-    public Application Application { get; set; }
+    public Application Application { get; set; } = null!;
 
     public int StatusTypeId { get; set; }
 
-    public StatusType Status { get; set; }
+    public StatusType Status { get; set; } = null!;
 
     public DateTime EnrolledAt { get; set; }
 

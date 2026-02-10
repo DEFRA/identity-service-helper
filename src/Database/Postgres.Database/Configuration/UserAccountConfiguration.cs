@@ -10,7 +10,6 @@ internal class UserAccountConfiguration : BaseUpdateEntityConfiguration<UserAcco
 {
     public override void Configure(EntityTypeBuilder<UserAccount> builder)
     {
-
         builder.Property(x => x.EmailAddress)
             .HasColumnName(nameof(UserAccount.EmailAddress).ToSnakeCase())
             .HasColumnType(ColumnTypes.Varchar)

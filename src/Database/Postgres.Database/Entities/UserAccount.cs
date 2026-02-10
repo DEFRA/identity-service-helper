@@ -8,12 +8,11 @@ using Defra.Identity.Postgres.Database.Entities.Base;
 
 public class UserAccount : BaseUpdateEntity
 {
-
-    public string EmailAddress { get; set; }
+    public string EmailAddress { get; set; } = string.Empty;
 
     public int StatusTypeId { get; set; }
 
-    public StatusType Status { get; set; }
+    public StatusType Status { get; set; } = null!;
 
     public string DisplayName { get; set; } = string.Empty;
 
@@ -34,9 +33,9 @@ public class UserAccount : BaseUpdateEntity
 
     public ICollection<UserAccount> UpdatedUsers { get; set; } = new List<UserAccount>();
 
-    public ICollection<Federation> Federations { get; set; }
+    public ICollection<Federation> Federations { get; set; } = new List<Federation>();
 
-    public ICollection<Delegation> Delegations { get; set; }
+    public ICollection<Delegation> Delegations { get; set; } = new List<Delegation>();
 
-    public ICollection<Delegation> InvitedByUsers { get; set; }
+    public ICollection<Delegation> InvitedByUsers { get; set; } = new List<Delegation>();
 }

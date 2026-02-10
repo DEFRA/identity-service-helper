@@ -14,29 +14,14 @@ using Defra.Identity.Postgres.Database.Entities.Base;
 public class PostgresDbContext(DbContextOptions<PostgresDbContext> options)
     : DbContext(options)
 {
-    /// <summary>
-    /// The Applications DbSet.
-    /// </summary>
     public virtual DbSet<Application> Applications { get; set; }
 
-    /// <summary>
-    /// The Federations DbSet.
-    /// </summary>
     public virtual DbSet<Federation> Federations { get; set; }
 
-    /// <summary>
-    /// The Enrolments DbSet.
-    /// </summary>
-    public virtual DbSet<Delegation> Delegations{ get; set; }
+    public virtual DbSet<Delegation> Delegations { get; set; }
 
-    /// <summary>
-    /// The KrdsSyncLogs DbSet.
-    /// </summary>
     public virtual DbSet<KrdsSyncLog> KrdsSyncLogs { get; set; }
 
-    /// <summary>
-    /// The Users DbSet.
-    /// </summary>
     public virtual DbSet<UserAccount> Users { get; set; }
 
     public virtual DbSet<Role> Roles { get; set; }

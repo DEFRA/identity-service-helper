@@ -8,9 +8,9 @@ public class ApplicationRole
 {
     public Guid ApplicationId { get; set; }
 
-    public Application Application { get; set; }
+    public required Application Application { get; set; }
 
     public int RoleId { get; set; }
 
-    public Role Role { get; set; }
+    public required Role Role { get; set; }
 }

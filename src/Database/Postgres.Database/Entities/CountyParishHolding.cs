@@ -8,11 +8,11 @@ using Defra.Identity.Postgres.Database.Entities.Base;
 
 public class CountyParishHolding : BaseUpdateEntity
 {
-    public string Identifier { get; set; }
+    public string Identifier { get; set; } = string.Empty;
 
     public int StatusTypeId { get; set; }
 
-    public StatusType StatusType { get; set; }
+    public StatusType StatusType { get; set; } = null!;
 
     public Guid CreatedBy { get; set; }
 

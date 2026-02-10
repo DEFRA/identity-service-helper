@@ -2,12 +2,11 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-using Defra.Identity.Requests.MetaData;
-
 namespace Defra.Identity.Api.Endpoints.Users;
 
 using Defra.Identity.Requests;
 using Defra.Identity.Requests.Filters;
+using Defra.Identity.Requests.MetaData;
 using Defra.Identity.Requests.Users.Commands.Create;
 using Defra.Identity.Requests.Users.Commands.Update;
 using Defra.Identity.Requests.Users.Queries;
