@@ -10,14 +10,6 @@ using Microsoft.AspNetCore.Http;
 
 public class JsonErrorMiddlewareTests
 {
-    private class TestJsonErrorMiddleware : JsonErrorMiddleware
-    {
-        public override async Task InvokeAsync(HttpContext context, RequestDelegate next)
-        {
-            await WriteJsonErrorAsync(context, StatusCodes.Status400BadRequest, "TestCode", "TestMessage", new { Detail = "TestDetail" });
-        }
-    }
-
     [Fact]
     public async Task WriteJsonErrorAsync_Writes_Correct_Response()
     {
@@ -38,15 +30,28 @@ public class JsonErrorMiddlewareTests
 
         context.Response.Body.Seek(0, SeekOrigin.Begin);
         using var reader = new StreamReader(context.Response.Body);
-        var responseBody = await reader.ReadToEndAsync();
+        var responseBody = await reader.ReadToEndAsync(TestContext.Current.CancellationToken);
 
         var json = JsonDocument.Parse(responseBody);
         var error = json.RootElement.GetProperty("error");
+        error.ShouldSatisfyAllConditions(
+            x => x.GetProperty("code").GetString().ShouldNotBeNullOrWhiteSpace(),
+            x => x.GetProperty("message").GetString().ShouldNotBeNullOrWhiteSpace(),
+            x => x.GetProperty("traceId").GetString().ShouldNotBeNullOrWhiteSpace(),
+            x => x.GetProperty("path").GetString().ShouldNotBeNullOrWhiteSpace(),
+            x => x.GetProperty("details").GetProperty("Detail").GetString().ShouldNotBeNullOrWhiteSpace(),
+            x => x.GetProperty("code").GetString().ShouldBe("TestCode"),
+            x => x.GetProperty("message").GetString().ShouldBe("TestMessage"),
+            x => x.GetProperty("traceId").GetString().ShouldBe("test-trace-id"),
+            x => x.GetProperty("path").GetString().ShouldBe("/test-path"),
+            x => x.GetProperty("details").GetProperty("Detail").GetString().ShouldBe("TestDetail"));
+    }
 
-        error.GetProperty("code").GetString().ShouldBe("TestCode");
-        error.GetProperty("message").GetString().ShouldBe("TestMessage");
-        error.GetProperty("traceId").GetString().ShouldBe("test-trace-id");
-        error.GetProperty("path").GetString().ShouldBe("/test-path");
-        error.GetProperty("details").GetProperty("Detail").GetString().ShouldBe("TestDetail");
+    private class TestJsonErrorMiddleware : JsonErrorMiddleware
+    {
+        public override async Task InvokeAsync(HttpContext context, RequestDelegate next)
+        {
+            await WriteJsonErrorAsync(context, StatusCodes.Status400BadRequest, "TestCode", "TestMessage", new { Detail = "TestDetail" });
+        }
     }
 }

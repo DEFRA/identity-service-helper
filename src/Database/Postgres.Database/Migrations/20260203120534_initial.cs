@@ -11,7 +11,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
     using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

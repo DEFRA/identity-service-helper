@@ -141,7 +141,6 @@ public class OperatorIdMiddlewareTests
     {
         // Arrange
         var (middleware, context, next, nextCalled) = CreateContext();
-        // No endpoint setup
 
         // Act
         await middleware.InvokeAsync(context, next);
@@ -155,13 +154,14 @@ public class OperatorIdMiddlewareTests
         var middleware = new OperatorIdMiddleware();
         var context = new DefaultHttpContext();
         var nextCalled = false;
-        RequestDelegate next = (ctx) =>
+
+        Task Next(HttpContext ctx)
         {
             nextCalled = true;
             return Task.CompletedTask;
-        };
+        }
 
-        return (middleware, context, next, () => nextCalled);
+        return (middleware, context, Next, () => nextCalled);
     }
 
     private static void SetupEndpoint(HttpContext context)

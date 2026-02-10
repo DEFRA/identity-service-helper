@@ -13,7 +13,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
 {
     [DbContext(typeof(PostgresDbContext))]
     [Migration("20260203120534_initial")]
-    partial class initial
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
