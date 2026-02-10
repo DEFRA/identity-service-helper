@@ -1,22 +1,4 @@
 <Solution>
-  <Folder Name="/compose/">
-    <File Path="compose/aws.env" />
-    <File Path="compose/start-localstack.sh" />
-  </Folder>
-  <Folder Name="/database/">
-    <File Path="database/db.changelog-master.xml" />
-    <File Path="database/liquibase.advanced.flowfile.yaml" />
-    <File Path="database/liquibase.checks-package.yaml" />
-    <File Path="database/liquibase.endstage.flow" />
-    <File Path="database/liquibase.flowfile.yaml" />
-    <File Path="database/liquibase.flowvariables.yaml" />
-    <File Path="database/liquibase.properties" />
-    <File Path="database/Readme.md" />
-  </Folder>
-  <Folder Name="/database/schema/">
-    <File Path="database/schema/defra.sql" />
-    <File Path="database/schema/seeding.sql" />
-  </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".dockerignore" />
     <File Path=".editorconfig" />
@@ -42,6 +24,24 @@
     <File Path=".github/workflows/publish.yml" />
     <File Path=".github/workflows/publish-hotfix.yml" />
     <File Path=".github/workflows/sonarcloud.yml" /> 
+  </Folder>
+  <Folder Name="/Solution Items/compose/">
+    <File Path="compose/aws.env" />
+    <File Path="compose/start-localstack.sh" />
+  </Folder>
+  <Folder Name="/Solution Items/database/">
+    <File Path="database/db.changelog-master.xml" />
+    <File Path="database/liquibase.advanced.flowfile.yaml" />
+    <File Path="database/liquibase.checks-package.yaml" />
+    <File Path="database/liquibase.endstage.flow" />
+    <File Path="database/liquibase.flowfile.yaml" />
+    <File Path="database/liquibase.flowvariables.yaml" />
+    <File Path="database/liquibase.properties" />
+    <File Path="database/Readme.md" />
+  </Folder>
+  <Folder Name="/Solution Items/database/schema/">
+    <File Path="database/schema/defra.sql" />
+    <File Path="database/schema/seeding.sql" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/Api/Api.csproj" />
