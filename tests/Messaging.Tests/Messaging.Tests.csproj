@@ -17,8 +17,4 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\Messaging\Messaging.csproj" />
-  </ItemGroup>
-
 </Project>
