@@ -1,14 +1,55 @@
 <Solution>
-  <Folder Name="/.github/">
-    <File Path=".github/CODEOWNERS" />
-    <File Path=".github/example.dependabot.yml" />
-    <File Path=".github/publish-hotfix.yml" />
-    <File Path=".github/pull_request_template.md" /> 
+  <Folder Name="/src/">
+    <Project Path="src/Api/Api.csproj" />
+    <Project Path="src/Primitives/Primitives.csproj" />
   </Folder>
-  <Folder Name="/.github/workflows/">
-    <File Path=".github/workflows/check-pull-request.yml" />
-    <File Path=".github/workflows/publish.yml" />
-    <File Path=".github/workflows/publish-hotfix.yml" />
-    <File Path=".github/workflows/sonarcloud.yml" /> 
+  <Folder Name="/src/Database/">
+    <Project Path="src/Database/Postgres.Database.Console/Postgres.Database.Console.csproj" />
+    <Project Path="src\Database\Postgres.Database\Postgres.Database.csproj" />
+  </Folder>
+  <Folder Name="/src/Repositories/">
+    <Project Path="src/Repositories/Repositories.csproj" />
+  </Folder>
+  <Folder Name="/src/Requests/">
+    <Project Path="src/Requests/Requests.csproj" />
+  </Folder>
+  <Folder Name="/src/Responses/">
+    <Project Path="src/Responses/Responses.csproj" />
+  </Folder>
+  <Folder Name="/src/Services/">
+    <Project Path="src/Services/Services.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Requests.Tests/Requests.Tests.csproj" />
+    <Project Path="tests/Services.Tests/Services.Tests.csproj" />
+    <Project Path="tests\Api.Tests\Api.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Database/">
+    <Project Path="tests\Postgres.Database.Tests\Postgres.Database.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Endpoint.Tests/">
+    <File Path="tests\Endpoint.Tests\Tests\http-client.env.json" />
+  </Folder>
+  <Folder Name="/tests/Endpoint.Tests/Asserts/">
+    <File Path="tests\Endpoint.Tests\Asserts\Should_be_200_OK.js" />
+    <File Path="tests\Endpoint.Tests\Asserts\Should_be_200_OK_and_get_top_id.js" />
+    <File Path="tests\Endpoint.Tests\Asserts\Should_be_200_OK_empty_list.js" />
+    <File Path="tests\Endpoint.Tests\Asserts\Should_be_201_created.js" />
+    <File Path="tests\Endpoint.Tests\Asserts\Should_be_204_no_content.js" />
+    <File Path="tests\Endpoint.Tests\Asserts\Should_be_404.js" />
+    <File Path="tests\Endpoint.Tests\Asserts\Should_be_422_error_response.js" />
+  </Folder>
+  <Folder Name="/tests/Endpoint.Tests/Asserts/headers/">
+    <File Path="tests\Endpoint.Tests\Asserts\headers\should_be_400_error_invalid_api_key.js" />
+    <File Path="tests\Endpoint.Tests\Asserts\headers\should_be_400_error_missing_correllation_id.js" />
+    <File Path="tests\Endpoint.Tests\Asserts\headers\should_be_400_error_missing_operator_id.js" />
+  </Folder>
+  <Folder Name="/tests/Endpoint.Tests/Tests/" />
+  <Folder Name="/tests/Endpoint.Tests/Tests/headers/">
+    <File Path="tests\Endpoint.Tests\Tests\headers\missing-header-tests.http" />
+  </Folder>
+  <Folder Name="/tests/Endpoint.Tests/Tests/Users/">
+    <File Path="tests\Endpoint.Tests\Tests\users\command-tests.http" />
+    <File Path="tests\Endpoint.Tests\Tests\users\query-tests.http" />
   </Folder>
 </Solution>

@@ -1,0 +1,26 @@
+// <copyright file="CountyParishHolding.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
+namespace Defra.Identity.Postgres.Database.Entities;
+
+using Defra.Identity.Postgres.Database.Entities.Base;
+
+public class CountyParishHolding : BaseUpdateEntity
+{
+    public string Identifier { get; set; } = string.Empty;
+
+    public int StatusTypeId { get; set; }
+
+    public StatusType StatusType { get; set; } = null!;
+
+    public Guid CreatedBy { get; set; }
+
+    public DateTime ProcessedAt { get; set; }
+
+    public Guid? UpdatedBy { get; set; }
+
+    public ICollection<Delegation> Delegations { get; set; } = new List<Delegation>();
+
+    public ICollection<Registration> Registrations { get; set; } = new List<Registration>();
+}
