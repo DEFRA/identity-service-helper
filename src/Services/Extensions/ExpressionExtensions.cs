@@ -4,6 +4,7 @@
 
 namespace Defra.Identity.Services.Extensions;
 
+using System;
 using System.Linq.Expressions;
 
 public static class ExpressionExtensions

@@ -2,6 +2,11 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+
 namespace Defra.Identity.Services.Users;
 
 using System.Linq.Expressions;

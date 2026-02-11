@@ -4,6 +4,10 @@
 
 namespace Defra.Identity.Services.Users;
 
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Defra.Identity.Requests.Users.Queries;
 using Defra.Identity.Responses.Users;
 
