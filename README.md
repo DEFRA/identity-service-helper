@@ -184,7 +184,7 @@ dotnet test
 
 Run CDP-Deployments application:
 ```bash
-dotnet run --project IdentityServiceHelper --launch-profile Development
+dotnet run --project ./src/Api   --launch-profile Development
 ```
 
 ### SonarCloud
