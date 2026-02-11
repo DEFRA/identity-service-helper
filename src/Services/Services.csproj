@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    
+
+    <ItemGroup>
+      <ProjectReference Include="..\Database\Postgres.Database\Postgres.Database.csproj" />
+      <ProjectReference Include="..\Repositories\Repositories.csproj" />
+      <ProjectReference Include="..\Requests\Requests.csproj" />
+      <ProjectReference Include="..\Responses\Responses.csproj" />
+    </ItemGroup>
+
+</Project>
