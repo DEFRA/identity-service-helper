@@ -51,7 +51,7 @@ public class CorrellationIdMiddlewareTests
         // Arrange
         var middleware = new CorrellationIdMiddleware();
         var context = new DefaultHttpContext();
-        context.Request.Headers[IdentityHeaderNames.CorrelationId] = "test-correlation-id";
+        context.Request.Headers[RequestHeaderNames.CorrelationId] = "test-correlation-id";
 
         var nextCalled = false;
         RequestDelegate next = (ctx) =>
@@ -95,7 +95,7 @@ public class CorrellationIdMiddlewareTests
         using var reader = new StreamReader(context.Response.Body);
         var responseBody = await reader.ReadToEndAsync(TestContext.Current.CancellationToken);
         responseBody.ShouldContain("missing_header");
-        responseBody.ShouldContain($"Header {IdentityHeaderNames.CorrelationId} is required.");
+        responseBody.ShouldContain($"Header {RequestHeaderNames.CorrelationId} is required.");
     }
 
     [Fact]
@@ -104,7 +104,7 @@ public class CorrellationIdMiddlewareTests
         // Arrange
         var middleware = new CorrellationIdMiddleware();
         var context = new DefaultHttpContext();
-        context.Request.Headers[IdentityHeaderNames.CorrelationId] = "   ";
+        context.Request.Headers[RequestHeaderNames.CorrelationId] = "   ";
         context.Response.Body = new MemoryStream();
 
         var nextCalled = false;
@@ -126,6 +126,6 @@ public class CorrellationIdMiddlewareTests
         using var reader = new StreamReader(context.Response.Body);
         var responseBody = await reader.ReadToEndAsync(TestContext.Current.CancellationToken);
         responseBody.ShouldContain("missing_header");
-        responseBody.ShouldContain($"Header {IdentityHeaderNames.CorrelationId} is required.");
+        responseBody.ShouldContain($"Header {RequestHeaderNames.CorrelationId} is required.");
     }
 }

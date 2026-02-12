@@ -4,13 +4,13 @@
 
 namespace Defra.Identity.Requests.Tests;
 
-public class IdentityHeaderNamesTests
+public class RequestHeaderNamesTests
 {
     [Fact]
     public void HeaderNames_Should_Have_Correct_Values()
     {
-        IdentityHeaderNames.CorrelationId.ShouldBe("x-correlation-id");
-        IdentityHeaderNames.OperatorId.ShouldBe("x-operator-id");
-        IdentityHeaderNames.ApiKey.ShouldBe("x-api-key");
+        RequestHeaderNames.CorrelationId.ShouldBe("x-correlation-id");
+        RequestHeaderNames.OperatorId.ShouldBe("x-operator-id");
+        RequestHeaderNames.ApiKey.ShouldBe("x-api-key");
     }
 }

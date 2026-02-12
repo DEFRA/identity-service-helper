@@ -1,10 +1,10 @@
-// <copyright file="IdentityHeaderNames.cs" company="Defra">
+// <copyright file="RequestHeaderNames.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
 namespace Defra.Identity.Requests;
 
-public static class IdentityHeaderNames
+public static class RequestHeaderNames
 {
     public const string CorrelationId = "x-correlation-id";
     public const string OperatorId = "x-operator-id";

@@ -4,7 +4,6 @@
 
 namespace Defra.Identity.Repositories.Users;
 
-using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database.Entities;
 
 public interface IUsersRepository : IRepository<UserAccounts>;

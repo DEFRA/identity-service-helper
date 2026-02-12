@@ -35,7 +35,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
                     processed_ok = table.Column<bool>(type: "boolean", nullable: false),
                     message = table.Column<string>(type: "text", nullable: false),
                     received_at = table.Column<DateTime>(type: "TimestampTz", nullable: false, defaultValueSql: "now()"),
-                    processed_at = table.Column<DateTime>(type: "TimestampTz", nullable: false)
+                    processed_at = table.Column<DateTime>(type: "TimestampTz", nullable: false),
                 },
                 constraints: table =>
                 {
@@ -49,7 +49,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     name = table.Column<string>(type: "varchar", maxLength: 128, nullable: false),
-                    description = table.Column<string>(type: "varchar", maxLength: 2048, nullable: false)
+                    description = table.Column<string>(type: "varchar", maxLength: 2048, nullable: false),
                 },
                 constraints: table =>
                 {
@@ -72,7 +72,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
                     created_by_id = table.Column<Guid>(type: "uuid", nullable: false),
                     deleted_at = table.Column<DateTime>(type: "TimestampTz", nullable: true),
                     deleted_by_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    is_deleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false)
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                 },
                 constraints: table =>
                 {
@@ -106,7 +106,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
                     created_by_id = table.Column<Guid>(type: "uuid", nullable: false),
                     deleted_at = table.Column<DateTime>(type: "TimestampTz", nullable: true),
                     deleted_by_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    is_deleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false)
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                 },
                 constraints: table =>
                 {
@@ -138,7 +138,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
                     created_by_id = table.Column<Guid>(type: "uuid", nullable: false),
                     deleted_at = table.Column<DateTime>(type: "TimestampTz", nullable: true),
                     deleted_by_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    is_deleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false)
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                 },
                 constraints: table =>
                 {
@@ -164,7 +164,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
                 columns: table => new
                 {
                     application_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    role_id = table.Column<Guid>(type: "uuid", nullable: false)
+                    role_id = table.Column<Guid>(type: "uuid", nullable: false),
                 },
                 constraints: table =>
                 {
@@ -199,7 +199,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
                     created_by_id = table.Column<Guid>(type: "uuid", nullable: false),
                     deleted_at = table.Column<DateTime>(type: "TimestampTz", nullable: true),
                     deleted_by_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    is_deleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false)
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                 },
                 constraints: table =>
                 {
@@ -263,7 +263,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
                     created_by_id = table.Column<Guid>(type: "uuid", nullable: false),
                     deleted_at = table.Column<DateTime>(type: "TimestampTz", nullable: true),
                     deleted_by_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    is_deleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false)
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                 },
                 constraints: table =>
                 {
@@ -331,7 +331,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
                     created_by_id = table.Column<Guid>(type: "uuid", nullable: false),
                     deleted_at = table.Column<DateTime>(type: "TimestampTz", nullable: true),
                     deleted_by_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    is_deleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false)
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                 },
                 constraints: table =>
                 {
@@ -377,7 +377,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
                     created_by_id = table.Column<Guid>(type: "uuid", nullable: false),
                     deleted_at = table.Column<DateTime>(type: "TimestampTz", nullable: true),
                     deleted_by_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    is_deleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false)
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                 },
                 constraints: table =>
                 {

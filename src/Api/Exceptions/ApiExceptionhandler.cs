@@ -5,10 +5,12 @@
 namespace Defra.Identity.Api.Exceptions;
 
 using Defra.Identity.Repositories.Exceptions;
+using Defra.Identity.Requests;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Serilog.Context;
 
-public sealed class ApiExceptionHandler : IExceptionHandler
+public sealed class ApiExceptionHandler(ILogger<ApiExceptionHandler> logger) : IExceptionHandler
 {
     public async ValueTask<bool> TryHandleAsync(
         HttpContext httpContext,
@@ -23,6 +25,33 @@ public sealed class ApiExceptionHandler : IExceptionHandler
             _ => (StatusCodes.Status500InternalServerError, "Internal Server Error", "https://httpstatuses.com/500"),
         };
 
+        // Put useful values into the Serilog LogContext (works with Enrich.FromLogContext()).
+        var correlationId = httpContext.Request.Headers[RequestHeaderNames.CorrelationId].ToString();
+        using (LogContext.PushProperty("CorrelationId", correlationId))
+        using (LogContext.PushProperty("TraceId", httpContext.TraceIdentifier))
+        using (LogContext.PushProperty("Path", httpContext.Request.Path.Value))
+        using (LogContext.PushProperty("StatusCode", statusCode))
+        {
+            if (statusCode >= 500)
+            {
+                logger.LogError(
+                    exception,
+                    "Unhandled exception while processing request {Method} {Path}",
+                    httpContext.Request.Method,
+                    httpContext.Request.Path);
+            }
+            else
+            {
+                logger.LogWarning(
+                    exception,
+                    "Request failed with {StatusCode} {Title} for {Method} {Path}",
+                    statusCode,
+                    title,
+                    httpContext.Request.Method,
+                    httpContext.Request.Path);
+            }
+        }
+
         var problem = new ProblemDetails
         {
             Status = statusCode,
@@ -30,9 +59,11 @@ public sealed class ApiExceptionHandler : IExceptionHandler
             Type = type,
             Detail = exception.Message,
             Instance = httpContext.Request.Path,
+            Extensions =
+            {
+                ["traceId"] = httpContext.TraceIdentifier,
+            },
         };
-
-        problem.Extensions["traceId"] = httpContext.TraceIdentifier;
 
         httpContext.Response.StatusCode = statusCode;
         await httpContext.Response.WriteAsJsonAsync(problem, cancellationToken);

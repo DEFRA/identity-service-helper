@@ -6,7 +6,6 @@ namespace Defra.Identity.Requests.Middleware;
 
 using Defra.Identity.Requests.MetaData;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Controllers;
 
 public class OperatorIdMiddleware : JsonErrorMiddleware
 {
@@ -20,7 +19,7 @@ public class OperatorIdMiddleware : JsonErrorMiddleware
         if (requiresOperatorId)
         {
             var headers = context.Request.Headers;
-            var operatorId = headers.TryGetValue(IdentityHeaderNames.OperatorId, out var oid) ? oid.ToString() : null;
+            var operatorId = headers.TryGetValue(RequestHeaderNames.OperatorId, out var oid) ? oid.ToString() : null;
 
             if (string.IsNullOrWhiteSpace(operatorId))
             {
@@ -28,8 +27,8 @@ public class OperatorIdMiddleware : JsonErrorMiddleware
                     context,
                     statusCode: StatusCodes.Status400BadRequest,
                     code: "missing_header",
-                    message: $"Header {IdentityHeaderNames.OperatorId} is required.",
-                    details: new { header = $"{IdentityHeaderNames.OperatorId}" });
+                    message: $"Header {RequestHeaderNames.OperatorId} is required.",
+                    details: new { header = $"{RequestHeaderNames.OperatorId}" });
                 return;
             }
 
@@ -39,8 +38,8 @@ public class OperatorIdMiddleware : JsonErrorMiddleware
                     context,
                     statusCode: StatusCodes.Status400BadRequest,
                     code: "invalid_header",
-                    message: $"Header {IdentityHeaderNames.OperatorId} must be a valid GUID.",
-                    details: new { header = $"{IdentityHeaderNames.OperatorId}" });
+                    message: $"Header {RequestHeaderNames.OperatorId} must be a valid GUID.",
+                    details: new { header = $"{RequestHeaderNames.OperatorId}" });
                 return;
             }
         }

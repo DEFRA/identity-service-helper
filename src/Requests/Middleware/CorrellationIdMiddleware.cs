@@ -11,7 +11,7 @@ public class CorrellationIdMiddleware : JsonErrorMiddleware
     public override async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
         var headers = context.Request.Headers;
-        var correlationId = headers.TryGetValue(IdentityHeaderNames.CorrelationId, out var tid) ? tid.ToString() : null;
+        var correlationId = headers.TryGetValue(RequestHeaderNames.CorrelationId, out var tid) ? tid.ToString() : null;
         correlationId = NormalizeHeaderValue(correlationId);
         if (string.IsNullOrWhiteSpace(correlationId))
         {
@@ -19,8 +19,8 @@ public class CorrellationIdMiddleware : JsonErrorMiddleware
                 context,
                 statusCode: StatusCodes.Status400BadRequest,
                 code: "missing_header",
-                message: $"Header {IdentityHeaderNames.CorrelationId} is required.",
-                details: new { header = $"{IdentityHeaderNames.CorrelationId}" });
+                message: $"Header {RequestHeaderNames.CorrelationId} is required.",
+                details: new { header = $"{RequestHeaderNames.CorrelationId}" });
             return;
         }
 

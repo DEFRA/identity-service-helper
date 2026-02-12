@@ -15,15 +15,15 @@ public class ApiKeyValidationMiddleware(string apiKey) : JsonErrorMiddleware
         var headers = context.Request.Headers;
 
         // 1. Check API Key
-        var headerKey = headers.TryGetValue(IdentityHeaderNames.ApiKey, out var key) ? key.ToString() : null;
+        var headerKey = headers.TryGetValue(RequestHeaderNames.ApiKey, out var key) ? key.ToString() : null;
         if (string.IsNullOrWhiteSpace(key))
         {
             await WriteJsonErrorAsync(
                 context,
                 statusCode: StatusCodes.Status400BadRequest,
                 code: "Invalid header",
-                message: $"Header {IdentityHeaderNames.ApiKey} is required.",
-                details: new { header = $"{IdentityHeaderNames.ApiKey}" });
+                message: $"Header {RequestHeaderNames.ApiKey} is required.",
+                details: new { header = $"{RequestHeaderNames.ApiKey}" });
             return;
         }
 
@@ -33,8 +33,8 @@ public class ApiKeyValidationMiddleware(string apiKey) : JsonErrorMiddleware
                 context,
                 statusCode: StatusCodes.Status400BadRequest,
                 code: "Invalid Api Key",
-                message: $"Header {IdentityHeaderNames.ApiKey} is not valid.",
-                details: new { header = $"{IdentityHeaderNames.ApiKey}" });
+                message: $"Header {RequestHeaderNames.ApiKey} is not valid.",
+                details: new { header = $"{RequestHeaderNames.ApiKey}" });
             return;
         }
 

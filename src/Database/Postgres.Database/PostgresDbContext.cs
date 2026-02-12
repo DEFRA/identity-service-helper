@@ -6,7 +6,6 @@ namespace Defra.Identity.Postgres.Database;
 
 using System.Reflection;
 using Defra.Identity.Postgres.Database.Entities.Base;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 
 /// <summary>
 /// The Authorisation DbContext.

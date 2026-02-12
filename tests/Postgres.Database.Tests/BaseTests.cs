@@ -5,11 +5,9 @@
 namespace Defra.Identity.Postgres.Database.Tests;
 
 using Defra.Identity.Postgres.Database;
-using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Collections;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

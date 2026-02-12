@@ -51,7 +51,7 @@ public class OperatorIdMiddlewareTests
     {
         // Arrange
         var (middleware, context, next, nextCalled) = CreateContext();
-        context.Request.Headers[IdentityHeaderNames.OperatorId] = Guid.NewGuid().ToString();
+        context.Request.Headers[RequestHeaderNames.OperatorId] = Guid.NewGuid().ToString();
         SetupEndpoint(context);
 
         // Act
@@ -83,7 +83,7 @@ public class OperatorIdMiddlewareTests
         var responseBody = await reader.ReadToEndAsync(TestContext.Current.CancellationToken);
         responseBody.ShouldSatisfyAllConditions(
             x => x.ShouldContain("missing_header"),
-            x => x.ShouldContain($"Header {IdentityHeaderNames.OperatorId} is required."));
+            x => x.ShouldContain($"Header {RequestHeaderNames.OperatorId} is required."));
     }
 
     [Fact]
@@ -91,7 +91,7 @@ public class OperatorIdMiddlewareTests
     {
         // Arrange
         var (middleware, context, next, nextCalled) = CreateContext();
-        context.Request.Headers[IdentityHeaderNames.OperatorId] = "   ";
+        context.Request.Headers[RequestHeaderNames.OperatorId] = "   ";
         context.Response.Body = new MemoryStream();
         SetupEndpoint(context);
 
@@ -108,7 +108,7 @@ public class OperatorIdMiddlewareTests
         var responseBody = await reader.ReadToEndAsync(TestContext.Current.CancellationToken);
         responseBody.ShouldSatisfyAllConditions(
             x => x.ShouldContain("missing_header"),
-            x => x.ShouldContain($"Header {IdentityHeaderNames.OperatorId} is required."));
+            x => x.ShouldContain($"Header {RequestHeaderNames.OperatorId} is required."));
     }
 
     [Fact]
@@ -116,7 +116,7 @@ public class OperatorIdMiddlewareTests
     {
         // Arrange
         var (middleware, context, next, nextCalled) = CreateContext();
-        context.Request.Headers[IdentityHeaderNames.OperatorId] = "invalid-guid";
+        context.Request.Headers[RequestHeaderNames.OperatorId] = "invalid-guid";
         context.Response.Body = new MemoryStream();
         SetupEndpoint(context);
 
@@ -133,7 +133,7 @@ public class OperatorIdMiddlewareTests
         var responseBody = await reader.ReadToEndAsync(TestContext.Current.CancellationToken);
         responseBody.ShouldSatisfyAllConditions(
             x => x.ShouldContain("invalid_header"),
-            x => x.ShouldContain($"Header {IdentityHeaderNames.OperatorId} must be a valid GUID."));
+            x => x.ShouldContain($"Header {RequestHeaderNames.OperatorId} must be a valid GUID."));
     }
 
     [Fact]
