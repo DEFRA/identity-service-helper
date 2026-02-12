@@ -27,10 +27,15 @@ public class MigrationTests(PostgreContainerFixture fixture) : BaseTests(fixture
     public void ShouldAllBaseTablesExist()
     {
         // Check Base tables exist
-        Context.Set<UserAccount>().ShouldNotBeNull();
-        Context.Set<Application>().ShouldNotBeNull();
-        Context.Set<Delegation>().ShouldNotBeNull();
-        Context.Set<Federation>().ShouldNotBeNull();
-        Context.Set<KrdsSyncLog>().ShouldNotBeNull();
+        Context.Set<UserAccounts>().ShouldNotBeNull();
+        Context.Set<Entities.Applications>().ShouldNotBeNull();
+        Context.Set<Delegations>().ShouldNotBeNull();
+        Context.Set<KrdsSyncLogs>().ShouldNotBeNull();
+        Context.Set<Roles>().ShouldNotBeNull();
+        Context.Set<CountyParishHoldings>().ShouldNotBeNull();
+        Context.Set<DelegationsCountyParishHoldings>().ShouldNotBeNull();
+        Context.Set<ApplicationRoles>().ShouldNotBeNull();
+        Context.Set<ApplicationUserAccountHoldingAssignments>().ShouldNotBeNull();
+        Context.Set<DelegationInvitations>().ShouldNotBeNull();
     }
 }

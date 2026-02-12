@@ -101,6 +101,7 @@ public class Program
     [ExcludeFromCodeCoverage]
     private static WebApplication SetupApplication(WebApplication app)
     {
+        app.UseSerilogRequestLogging();
         app.UseHeaderPropagation();
         app.UseExceptionHandler();
         app.UseRouting();

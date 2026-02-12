@@ -25,33 +25,30 @@ public class DeleteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         adminUser.ShouldNotBeNull();
 
         var userId = Guid.NewGuid();
-        var operatorId = Guid.NewGuid();
-        var user = new UserAccount
+        var user = new UserAccounts
         {
             Id = userId,
             DisplayName = "To Delete",
             FirstName = "To",
             LastName = "Delete",
             EmailAddress = "delete@test.com",
-            CreatedBy = adminUser.Id,
-            StatusTypeId = 1,
+            CreatedById = adminUser.Id,
         };
-        await Context.Users.AddAsync(user, TestContext.Current.CancellationToken);
+        await Context.UserAccounts.AddAsync(user, TestContext.Current.CancellationToken);
         await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
-        var result = await repository.Delete(x => x.Id == userId, operatorId, TestContext.Current.CancellationToken);
+        var result = await repository.Delete(x => x.Id == userId, adminUser.Id, TestContext.Current.CancellationToken);
 
         // Assert
         result.ShouldBeTrue();
         var deletedUser = await repository.GetSingle(x => x.Id == userId, TestContext.Current.CancellationToken);
         deletedUser.ShouldNotBeNull();
-        deletedUser.StatusTypeId.ShouldBe(4);
     }
 
     [Fact]
-    [Description("Should throw ArgumentException when activating non-existent user account")]
-    public async Task ShouldThrowWhenActivatingNonExistentUser()
+    [Description("Should throw ArgumentException when deleting non-existent user account")]
+    public async Task ShouldThrowWhenDeletingNonExistentUser()
     {
         // Arrange
         var repository = new UsersRepository(Context);

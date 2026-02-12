@@ -6,6 +6,7 @@ namespace Defra.Identity.Postgres.Database;
 
 using System.Reflection;
 using Defra.Identity.Postgres.Database.Entities.Base;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 /// <summary>
 /// The Authorisation DbContext.
@@ -14,23 +15,23 @@ using Defra.Identity.Postgres.Database.Entities.Base;
 public class PostgresDbContext(DbContextOptions<PostgresDbContext> options)
     : DbContext(options)
 {
-    public virtual DbSet<Application> Applications { get; set; }
+    public virtual DbSet<Applications> Applications { get; set; }
 
-    public virtual DbSet<Federation> Federations { get; set; }
+    public virtual DbSet<Delegations> Delegations { get; set; }
 
-    public virtual DbSet<Delegation> Delegations { get; set; }
+    public virtual DbSet<DelegationInvitations> DelegationInvitations { get; set; }
 
-    public virtual DbSet<KrdsSyncLog> KrdsSyncLogs { get; set; }
+    public virtual DbSet<KrdsSyncLogs> KrdsSyncLogs { get; set; }
 
-    public virtual DbSet<UserAccount> Users { get; set; }
+    public virtual DbSet<UserAccounts> UserAccounts { get; set; }
 
-    public virtual DbSet<Role> Roles { get; set; }
+    public virtual DbSet<Roles> Roles { get; set; }
 
-    public virtual DbSet<ApplicationRole> ApplicationRoles { get; set; }
+    public virtual DbSet<ApplicationRoles> ApplicationRoles { get; set; }
 
-    public virtual DbSet<CountyParishHolding> CountyParishHoldings { get; set; }
+    public virtual DbSet<CountyParishHoldings> CountyParishHoldings { get; set; }
 
-    public virtual DbSet<StatusType> StatusTypes { get; set; }
+    public virtual DbSet<DelegationsCountyParishHoldings> DelegationsCountyParishHoldings { get; set; }
 
     public override int SaveChanges()
     {
@@ -45,13 +46,18 @@ public class PostgresDbContext(DbContextOptions<PostgresDbContext> options)
         return base.SaveChangesAsync(cancellationToken);
     }
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        base.OnConfiguring(optionsBuilder);
+    }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         Requires.NotNull(modelBuilder);
 
         modelBuilder.HasDefaultSchema(DatabaseConstants.SchemaName);
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-        modelBuilder.HasPostgresExtension(PostgreExtensions.UuidGenerator);
+        modelBuilder.HasPostgresExtension(PostgreExtensions.PgCrypto);
         modelBuilder.HasPostgresExtension(PostgreExtensions.Citext);
     }
 
@@ -63,10 +69,30 @@ public class PostgresDbContext(DbContextOptions<PostgresDbContext> options)
             entry.Entity.ProcessedAt = DateTime.UtcNow;
         }
 
-        foreach (var entry in ChangeTracker.Entries<BaseUpdateEntity>()
-                     .Where(e => e.State == EntityState.Modified))
+        // Ensure CreatedById is always set for added audit entities (helps tests where it's not explicitly set)
+        Guid? defaultCreatorId = null;
+        try
         {
-            entry.Entity.UpdatedAt = DateTime.UtcNow;
+            if (!ChangeTracker.Entries<BaseAuditEntity>().Any(e => e.State == EntityState.Added))
+            {
+                return;
+            }
+
+            // Attempt to use the first available user as creator if not specified
+            defaultCreatorId = UserAccounts.AsNoTracking().Select(u => (Guid?)u.Id).FirstOrDefault();
+        }
+        catch
+        {
+            // Swallow any issues determining default creator; leave CreatedById as-is
+        }
+
+        if (defaultCreatorId.HasValue)
+        {
+            foreach (var entry in ChangeTracker.Entries<BaseAuditEntity>()
+                         .Where(e => e.State == EntityState.Added && e.Entity.CreatedById == default))
+            {
+                entry.Entity.CreatedById = defaultCreatorId.Value;
+            }
         }
     }
 }

@@ -4,7 +4,8 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
-    <include file="schema/defra.sql" />
-    <include file="schema/seeding.sql" />
+    <include file="schema/01/schema.sql" />
+    <include file="schema/01/defra.sql" />
+    <include file="schema/01/seeding.sql" />
 
 </databaseChangeLog>

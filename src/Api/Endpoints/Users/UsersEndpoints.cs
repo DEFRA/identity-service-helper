@@ -41,16 +41,6 @@ public static class UsersEndpoints
             .WithMetadata(new RequiresOperatorId())
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status404NotFound);
-
-        app.MapPost(RouteNames.Users + "/{id:guid}:suspend", Suspend)
-            .WithMetadata(new RequiresOperatorId())
-            .Produces(StatusCodes.Status204NoContent)
-            .Produces(StatusCodes.Status404NotFound);
-
-        app.MapPost(RouteNames.Users + "/{id:guid}:activate", Activate)
-            .WithMetadata(new RequiresOperatorId())
-            .Produces(StatusCodes.Status204NoContent)
-            .Produces(StatusCodes.Status404NotFound);
     }
 
     private static async Task<IResult> Post(
@@ -117,26 +107,6 @@ public static class UsersEndpoints
         IUserService service)
     {
         var deleted = await service.Delete(id, headers.OperatorId);
-
-        return Results.NoContent();
-    }
-
-    private static async Task<IResult> Activate(
-        CommandRequestHeaders headers,
-        [FromRoute] Guid id,
-        IUserService service)
-    {
-        var user = await service.Activate(id, headers.OperatorId);
-
-        return Results.NoContent();
-    }
-
-    private static async Task<IResult> Suspend(
-        CommandRequestHeaders headers,
-        [FromRoute] Guid id,
-        IUserService service)
-    {
-        var user = await service.Suspend(id, headers.OperatorId);
 
         return Results.NoContent();
     }

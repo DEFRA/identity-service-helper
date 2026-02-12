@@ -25,13 +25,13 @@ public class ExceptionTests(PostgreContainerFixture fixture) : BaseTests(fixture
         var adminUser = await repository.GetSingle(x => x.EmailAddress == AdminEmailAddress, TestContext.Current.CancellationToken);
         adminUser.ShouldNotBeNull();
 
-        var duplicateUser = new UserAccount
+        var duplicateUser = new UserAccounts
         {
             DisplayName = "Dup User",
             FirstName = "Dup",
             LastName = "User",
             EmailAddress = AdminEmailAddress,   // <-- violates unique constraint om email address field
-            CreatedBy = adminUser.Id,
+            CreatedById = adminUser.Id,
         };
 
         // Act

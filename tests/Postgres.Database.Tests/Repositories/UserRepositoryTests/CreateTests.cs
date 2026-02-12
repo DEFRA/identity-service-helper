@@ -29,13 +29,13 @@ public class CreateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 
         adminUser.ShouldNotBeNull("Seeded admin user was not found; check test data initialization.");
 
-        var newUser = new UserAccount
+        var newUser = new UserAccounts
         {
             DisplayName = "Test User",
             FirstName = "Test",
             LastName = "User",
-            EmailAddress = "test1@test.com",
-            CreatedBy = adminUser.Id,
+            EmailAddress = "test1@example.com",
+            CreatedById = adminUser.Id,
         };
 
         // Act
@@ -45,7 +45,6 @@ public class CreateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         createdUser.ShouldSatisfyAllConditions(
             x => x.DisplayName.ShouldBe("Test User"),
             x => x.FirstName.ShouldBe("Test"),
-            x => x.LastName.ShouldBe("User"),
-            x => x.StatusTypeId.ShouldBe(1));
+            x => x.LastName.ShouldBe("User"));
     }
 }
