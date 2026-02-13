@@ -15,6 +15,7 @@ using Defra.Identity.Repositories.Users;
 using Defra.Identity.Requests.Users.Commands.Update;
 using Defra.Identity.Requests.Users.Queries;
 using Defra.Identity.Services.Users;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Shouldly;
 using Xunit;
@@ -22,11 +23,12 @@ using Xunit;
 public class UserServiceTests
 {
     private readonly IUsersRepository repository = Substitute.For<IUsersRepository>();
+    private readonly ILogger<UserService> logger = Substitute.For<ILogger<UserService>>();
     private readonly UserService userService;
 
     public UserServiceTests()
     {
-        userService = new UserService(repository);
+        userService = new UserService(repository, logger);
     }
 
     [Fact]
