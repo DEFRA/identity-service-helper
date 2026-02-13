@@ -44,6 +44,10 @@
     <File Path="tests/Endpoint.Tests/Asserts/headers/should_be_400_error_missing_operator_id.js" />
   </Folder>
   <Folder Name="/tests/Endpoint.Tests/Tests/" />
+  <Folder Name="/tests/Endpoint.Tests/Tests/Applications/">
+    <File Path="tests\Endpoint.Tests\Tests\applications\command-tests.http" />
+    <File Path="tests\Endpoint.Tests\Tests\applications\query-tests.http" />
+  </Folder>
   <Folder Name="/tests/Endpoint.Tests/Tests/headers/">
     <File Path="tests/Endpoint.Tests/Tests/headers/missing-header-tests.http" />
   </Folder>

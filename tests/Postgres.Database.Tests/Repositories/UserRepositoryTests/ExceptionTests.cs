@@ -38,7 +38,7 @@ public class ExceptionTests(PostgreContainerFixture fixture) : BaseTests(fixture
         };
 
         // Act
-        Func<Task> act = async () => await repository.Create(duplicateUser);
+        Func<Task> act = async () => await repository.Create(duplicateUser, TestContext.Current.CancellationToken);
 
         // Assert (Shouldly)
         var ex = await act.ShouldThrowAsync<DbUpdateException>();

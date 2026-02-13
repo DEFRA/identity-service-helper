@@ -1,0 +1,67 @@
+
+### GET request to applications to get top user 
+GET {{host}}/users
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+> ../../Asserts/Should_be_200_OK_and_get_top_id.js
+
+### Create new Application should fail validation error missing name
+POST {{host}}/applications
+Content-Type: application/json
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+{
+  "name": "",
+  "client_id": "{{$random.internet.uuid}}",
+  "tenant_name": "TestTenant",
+  "description": "Test Description"
+}
+
+> ../../Asserts/Should_be_422_error_response.js
+
+### Create new Application
+POST {{host}}/applications
+Content-Type: application/json
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+{
+  "name": "App_{{$random.alphanumeric(8)}}",
+  "client_id": "{{$random.internet.uuid}}",
+  "tenant_name": "Tenant_{{$random.alphanumeric(5)}}",
+  "description": "Description_{{$random.alphanumeric(20)}}"
+}
+
+> ../../Asserts/Should_be_201_created.js
+
+### PUT request to update an existing application
+PUT {{host}}/applications/{{id}}
+Content-Type: application/json
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+{
+  "name": "UpdatedApp_{{$random.alphanumeric(8)}}",
+  "client_id": "{{$random.internet.uuid}}",
+  "tenant_name": "UpdatedTenant",
+  "description": "Updated Description"
+}
+
+> ../../Asserts/Should_be_200_OK.js
+
+
+### DELETE the application 
+DELETE {{host}}/applications/{{id}}
+Content-Type: application/json
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+
+> ../../Asserts/Should_be_204_no_content.js
