@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 public class CorrellationIdMiddlewareTests
 {
@@ -25,6 +27,7 @@ public class CorrellationIdMiddlewareTests
             .Build();
 
         // Act
+        services.AddLogging();
         services.AddRequests(configuration);
         var serviceProvider = services.BuildServiceProvider();
 
@@ -49,7 +52,7 @@ public class CorrellationIdMiddlewareTests
     public async Task InvokeAsync_WithCorrelationIdHeader_CallsNext()
     {
         // Arrange
-        var middleware = new CorrellationIdMiddleware();
+        var middleware = new CorrellationIdMiddleware(NullLogger<CorrellationIdMiddleware>.Instance);
         var context = new DefaultHttpContext();
         context.Request.Headers[RequestHeaderNames.CorrelationId] = "test-correlation-id";
 
@@ -72,7 +75,7 @@ public class CorrellationIdMiddlewareTests
     public async Task InvokeAsync_MissingCorrelationIdHeader_ReturnsBadRequest()
     {
         // Arrange
-        var middleware = new CorrellationIdMiddleware();
+        var middleware = new CorrellationIdMiddleware(NullLogger<CorrellationIdMiddleware>.Instance);
         var context = new DefaultHttpContext();
         context.Response.Body = new MemoryStream();
 
@@ -102,7 +105,7 @@ public class CorrellationIdMiddlewareTests
     public async Task InvokeAsync_WhitespaceCorrelationIdHeader_ReturnsBadRequest()
     {
         // Arrange
-        var middleware = new CorrellationIdMiddleware();
+        var middleware = new CorrellationIdMiddleware(NullLogger<CorrellationIdMiddleware>.Instance);
         var context = new DefaultHttpContext();
         context.Request.Headers[RequestHeaderNames.CorrelationId] = "   ";
         context.Response.Body = new MemoryStream();

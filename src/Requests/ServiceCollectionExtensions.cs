@@ -10,6 +10,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 public static class ServiceCollectionExtensions
 {
@@ -18,7 +19,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddRequests(this IServiceCollection services, IConfigurationRoot config)
     {
         ApiKey = config.GetValue<string>("DefraIndentityApiKey");
-        services.AddTransient<ApiKeyValidationMiddleware>(sp => new ApiKeyValidationMiddleware(ApiKey!));
+        services.AddTransient<ApiKeyValidationMiddleware>(sp => new ApiKeyValidationMiddleware(ApiKey!, sp.GetRequiredService<ILogger<ApiKeyValidationMiddleware>>()));
         services.AddTransient<CorrellationIdMiddleware>();
         services.AddTransient<OperatorIdMiddleware>();
         services.AddValidatorsFromAssemblyContaining<CreateUser>();

@@ -5,26 +5,35 @@
 namespace Defra.Identity.Requests.Middleware;
 
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
-public class CorrellationIdMiddleware : JsonErrorMiddleware
+public class CorrellationIdMiddleware(ILogger<CorrellationIdMiddleware> logger) : JsonErrorMiddleware
 {
     public override async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
-        var headers = context.Request.Headers;
-        var correlationId = headers.TryGetValue(RequestHeaderNames.CorrelationId, out var tid) ? tid.ToString() : null;
-        correlationId = NormalizeHeaderValue(correlationId);
-        if (string.IsNullOrWhiteSpace(correlationId))
+        try
         {
-            await WriteJsonErrorAsync(
-                context,
-                statusCode: StatusCodes.Status400BadRequest,
-                code: "missing_header",
-                message: $"Header {RequestHeaderNames.CorrelationId} is required.",
-                details: new { header = $"{RequestHeaderNames.CorrelationId}" });
-            return;
-        }
+            var headers = context.Request.Headers;
+            var correlationId = headers.TryGetValue(RequestHeaderNames.CorrelationId, out var tid) ? tid.ToString() : null;
+            correlationId = NormalizeHeaderValue(correlationId);
+            if (string.IsNullOrWhiteSpace(correlationId))
+            {
+                await WriteJsonErrorAsync(
+                    context,
+                    statusCode: StatusCodes.Status400BadRequest,
+                    code: "missing_header",
+                    message: $"Header {RequestHeaderNames.CorrelationId} is required.",
+                    details: new { header = $"{RequestHeaderNames.CorrelationId}" });
+                return;
+            }
 
-        await next(context);
+            await next(context);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error in {MiddlewareName}", nameof(CorrellationIdMiddleware));
+            throw;
+        }
     }
 
     private static string? NormalizeHeaderValue(string? value)

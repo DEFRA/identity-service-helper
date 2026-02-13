@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 public class OperatorIdMiddlewareTests
 {
@@ -26,6 +28,7 @@ public class OperatorIdMiddlewareTests
             .Build();
 
         // Act
+        services.AddLogging();
         services.AddRequests(configuration);
         var serviceProvider = services.BuildServiceProvider();
 
@@ -151,7 +154,7 @@ public class OperatorIdMiddlewareTests
 
     private static (OperatorIdMiddleware Middleware, HttpContext Context, RequestDelegate Next, Func<bool> NextCalled) CreateContext()
     {
-        var middleware = new OperatorIdMiddleware();
+        var middleware = new OperatorIdMiddleware(NullLogger<OperatorIdMiddleware>.Instance);
         var context = new DefaultHttpContext();
         var nextCalled = false;
 
