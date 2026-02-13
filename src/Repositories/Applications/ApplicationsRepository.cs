@@ -62,7 +62,6 @@ public class ApplicationsRepository(PostgresDbContext context, ILogger<Applicati
             throw new Exceptions.NotFoundException("Application not found");
         }
 
-        application.IsDeleted = true;
         application.DeletedById = operatorId;
         application.DeletedAt = DateTime.UtcNow;
         context.Applications.Update(application);

@@ -42,11 +42,5 @@ public abstract class BaseAuditEntityConfiguration<TEntity> : IEntityTypeConfigu
             .HasColumnName(nameof(BaseAuditEntity.CreatedById).ToSnakeCase())
             .HasColumnType(ColumnTypes.UniqueIdentifier)
             .IsRequired();
-
-        builder.Property(x => x.IsDeleted)
-            .HasColumnName(nameof(BaseAuditEntity.IsDeleted).ToSnakeCase())
-            .HasColumnType(ColumnTypes.Boolean)
-            .HasDefaultValue(false)
-            .IsRequired();
     }
 }

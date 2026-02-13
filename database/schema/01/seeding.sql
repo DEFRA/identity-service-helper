@@ -7,7 +7,7 @@ WITH seed AS (
     SELECT gen_random_uuid() AS id
 ),
      initial AS (
-INSERT INTO "defra-ci".user_accounts (
+INSERT INTO public.user_accounts (
     id,
     email_address,
     display_name,
@@ -25,7 +25,7 @@ SELECT
 FROM seed s
     RETURNING id
      )
-INSERT INTO "defra-ci".user_accounts (
+INSERT INTO public.user_accounts (
     email_address,
     display_name,
     first_name,
@@ -42,10 +42,10 @@ FROM (VALUES
 
 --- Insert Initial Applications  
 WITH "system_user" AS (SELECT id
-                       FROM "defra-ci".user_accounts
+                       FROM public.user_accounts
                        WHERE email_address = 'system.admin@defra.gov.uk'
                        LIMIT 1)
-INSERT INTO "defra-ci".applications (name, client_id, tenant_name, description, created_by_id)
+INSERT INTO public.applications (name, client_id, tenant_name, description, created_by_id)
 SELECT v.name, v.client_id::uuid, v.tenant_name, v.description, su.id
 FROM (VALUES ('ScotEID - Livestock Service', '93781ffd-55be-4444-80d5-57ca9f6fb846', 'x', 'x'),
              ('Animal Disease Movement Licensing', 'e838f542-c0a0-4436-895f-17aae56b09eb', 'x', 'x'),
@@ -56,11 +56,11 @@ FROM (VALUES ('ScotEID - Livestock Service', '93781ffd-55be-4444-80d5-57ca9f6fb8
 
 --- Insert Initial CPH  
 WITH "system_user" AS (SELECT id
-                       FROM "defra-ci".user_accounts
+                       FROM public.user_accounts
                        WHERE email_address = 'system.admin@defra.gov.uk'
     LIMIT 1)
 INSERT
-INTO "defra-ci".county_parish_holdings (identifier, created_by_id)
+INTO public.county_parish_holdings (identifier, created_by_id)
 SELECT v.identifier, su.id
 FROM (VALUES ('11/111/1945' ),
              ('12/112/5442'),
@@ -86,15 +86,15 @@ FROM (VALUES ('11/111/1945' ),
 
 
 --- Insert ALL Roles
-INSERT INTO "defra-ci".roles ( name, description) VALUES ('agent', 'Agent');
-INSERT INTO "defra-ci".roles ( name, description) VALUES ('citizen', 'Citizen');
-INSERT INTO "defra-ci".roles ( name, description) VALUES ('cph-holder', 'CPH Holder');
-INSERT INTO "defra-ci".roles ( name, description) VALUES ('customer', 'Customer');
-INSERT INTO "defra-ci".roles ( name, description) VALUES ('exporter', 'Exporter');
-INSERT INTO "defra-ci".roles ( name, description) VALUES ('facility-operator', 'Facility Operator');
-INSERT INTO "defra-ci".roles ( name, description) VALUES ('facility-owner', 'Facility Owner');
-INSERT INTO "defra-ci".roles ( name, description) VALUES ('land-owner', 'Land Owner');
-INSERT INTO "defra-ci".roles ( name, description) VALUES ('livestock-keeper', 'Livestock Keeper');
-INSERT INTO "defra-ci".roles ( name, description) VALUES ('livestock-owner', 'Livestock Owner');
-INSERT INTO "defra-ci".roles ( name, description) VALUES ('one-off-exporter', 'One Off Exporter');
-INSERT INTO "defra-ci".roles ( name, description) VALUES ('registrant', 'Registrant');
+INSERT INTO public.roles ( name, description) VALUES ('agent', 'Agent');
+INSERT INTO public.roles ( name, description) VALUES ('citizen', 'Citizen');
+INSERT INTO public.roles ( name, description) VALUES ('cph-holder', 'CPH Holder');
+INSERT INTO public.roles ( name, description) VALUES ('customer', 'Customer');
+INSERT INTO public.roles ( name, description) VALUES ('exporter', 'Exporter');
+INSERT INTO public.roles ( name, description) VALUES ('facility-operator', 'Facility Operator');
+INSERT INTO public.roles ( name, description) VALUES ('facility-owner', 'Facility Owner');
+INSERT INTO public.roles ( name, description) VALUES ('land-owner', 'Land Owner');
+INSERT INTO public.roles ( name, description) VALUES ('livestock-keeper', 'Livestock Keeper');
+INSERT INTO public.roles ( name, description) VALUES ('livestock-owner', 'Livestock Owner');
+INSERT INTO public.roles ( name, description) VALUES ('one-off-exporter', 'One Off Exporter');
+INSERT INTO public.roles ( name, description) VALUES ('registrant', 'Registrant');

@@ -18,7 +18,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasDefaultSchema("defra-ci")
+                .HasDefaultSchema("public")
                 .HasAnnotation("ProductVersion", "10.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
@@ -40,7 +40,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("application_roles", "defra-ci");
+                    b.ToTable("application_roles", "public");
                 });
 
             modelBuilder.Entity("Defra.Identity.Postgres.Database.Entities.ApplicationUserAccountHoldingAssignments", b =>
@@ -77,12 +77,6 @@ namespace Defra.Identity.Postgres.Database.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("deleted_by_id");
 
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("is_deleted");
-
                     b.Property<Guid>("RoleId")
                         .HasColumnType("uuid")
                         .HasColumnName("role_id");
@@ -105,7 +99,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
 
                     b.HasIndex("UserAccountId");
 
-                    b.ToTable("application_user_account_holding_assignments", "defra-ci");
+                    b.ToTable("application_user_account_holding_assignments", "public");
                 });
 
             modelBuilder.Entity("Defra.Identity.Postgres.Database.Entities.Applications", b =>
@@ -144,12 +138,6 @@ namespace Defra.Identity.Postgres.Database.Migrations
                         .HasColumnType("text")
                         .HasColumnName("description");
 
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("is_deleted");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text")
@@ -168,7 +156,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
 
                     b.HasIndex("DeletedById");
 
-                    b.ToTable("applications", "defra-ci");
+                    b.ToTable("applications", "public");
                 });
 
             modelBuilder.Entity("Defra.Identity.Postgres.Database.Entities.CountyParishHoldings", b =>
@@ -207,12 +195,6 @@ namespace Defra.Identity.Postgres.Database.Migrations
                         .HasColumnType("varchar")
                         .HasColumnName("identifier");
 
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("is_deleted");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedById");
@@ -221,7 +203,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
 
                     b.HasIndex("Identifier");
 
-                    b.ToTable("county_parish_holdings", "defra-ci");
+                    b.ToTable("county_parish_holdings", "public");
                 });
 
             modelBuilder.Entity("Defra.Identity.Postgres.Database.Entities.DelegationInvitations", b =>
@@ -294,12 +276,6 @@ namespace Defra.Identity.Postgres.Database.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("invited_user_id");
 
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("is_deleted");
-
                     b.Property<DateTime>("RegisteredAt")
                         .HasColumnType("TimestampTz")
                         .HasColumnName("registered_at");
@@ -322,7 +298,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
 
                     b.HasIndex("DeletedById");
 
-                    b.ToTable("delegation_invitations", "defra-ci");
+                    b.ToTable("delegation_invitations", "public");
                 });
 
             modelBuilder.Entity("Defra.Identity.Postgres.Database.Entities.Delegations", b =>
@@ -358,12 +334,6 @@ namespace Defra.Identity.Postgres.Database.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("deleted_by_id");
 
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("is_deleted");
-
                     b.Property<Guid?>("RolesId")
                         .HasColumnType("uuid");
 
@@ -391,7 +361,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("delegations", "defra-ci");
+                    b.ToTable("delegations", "public");
                 });
 
             modelBuilder.Entity("Defra.Identity.Postgres.Database.Entities.DelegationsCountyParishHoldings", b =>
@@ -428,12 +398,6 @@ namespace Defra.Identity.Postgres.Database.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("deleted_by_id");
 
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("is_deleted");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CountyParishHoldingId");
@@ -444,7 +408,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
 
                     b.HasIndex("DeletedById");
 
-                    b.ToTable("delegations_county_parish_holdings", "defra-ci");
+                    b.ToTable("delegations_county_parish_holdings", "public");
                 });
 
             modelBuilder.Entity("Defra.Identity.Postgres.Database.Entities.KrdsSyncLogs", b =>
@@ -490,7 +454,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
 
                     b.HasIndex("ReceivedAt");
 
-                    b.ToTable("krds_sync_logs", "defra-ci");
+                    b.ToTable("krds_sync_logs", "public");
                 });
 
             modelBuilder.Entity("Defra.Identity.Postgres.Database.Entities.Roles", b =>
@@ -515,7 +479,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("roles", "defra-ci");
+                    b.ToTable("roles", "public");
                 });
 
             modelBuilder.Entity("Defra.Identity.Postgres.Database.Entities.UserAccounts", b =>
@@ -561,12 +525,6 @@ namespace Defra.Identity.Postgres.Database.Migrations
                         .HasColumnType("varchar")
                         .HasColumnName("first_name");
 
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("is_deleted");
-
                     b.Property<Guid?>("KrdsId")
                         .HasColumnType("uuid")
                         .HasColumnName("krds_id");
@@ -591,7 +549,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
                         .IsUnique()
                         .HasDatabaseName("IX_UserAccounts_EmailAddress");
 
-                    b.ToTable("user_accounts", "defra-ci");
+                    b.ToTable("user_accounts", "public");
                 });
 
             modelBuilder.Entity("Defra.Identity.Postgres.Database.Entities.ApplicationRoles", b =>

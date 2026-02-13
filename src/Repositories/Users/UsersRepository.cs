@@ -71,7 +71,6 @@ public class UsersRepository(PostgresDbContext context, ILogger<UsersRepository>
             throw new NotFoundException("User account not found");
         }
 
-        userAccount.IsDeleted = true;
         userAccount.DeletedById = operatorId;
         userAccount.DeletedAt = DateTime.UtcNow;
         context.UserAccounts.Update(userAccount);

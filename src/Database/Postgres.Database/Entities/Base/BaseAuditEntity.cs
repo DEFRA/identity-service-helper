@@ -15,6 +15,4 @@ public abstract class BaseAuditEntity
     public DateTime? DeletedAt { get; set; }
 
     public Guid? DeletedById { get; set; }
-
-    public bool IsDeleted { get; set; }
 }

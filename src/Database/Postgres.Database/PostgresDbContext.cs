@@ -72,7 +72,7 @@ public class PostgresDbContext(DbContextOptions<PostgresDbContext> options)
         Guid? defaultCreatorId = null;
         try
         {
-            if (!ChangeTracker.Entries<BaseAuditEntity>().Any(e => e.State == EntityState.Added))
+            if (ChangeTracker.Entries<BaseAuditEntity>().All(e => e.State != EntityState.Added))
             {
                 return;
             }
