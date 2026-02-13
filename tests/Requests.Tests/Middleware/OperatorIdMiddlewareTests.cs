@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
+using NSubstitute;
 
 public class OperatorIdMiddlewareTests
 {
@@ -152,9 +152,31 @@ public class OperatorIdMiddlewareTests
         nextCalled().ShouldBeTrue();
     }
 
+    [Fact]
+    public async Task InvokeAsync_WhenExceptionThrown_LogsErrorAndReThrows()
+    {
+        // Arrange
+        var logger = Substitute.For<ILogger<OperatorIdMiddleware>>();
+        var middleware = new OperatorIdMiddleware(logger);
+        var context = new DefaultHttpContext();
+        var exception = new Exception("Test exception");
+        RequestDelegate next = (ctx) => throw exception;
+
+        // Act & Assert
+        var ex = await Should.ThrowAsync<Exception>(() => middleware.InvokeAsync(context, next));
+        ex.ShouldBe(exception);
+
+        logger.Received(1).Log(
+            LogLevel.Error,
+            Arg.Any<EventId>(),
+            Arg.Any<Arg.AnyType>(),
+            exception,
+            Arg.Any<Func<Arg.AnyType, Exception?, string>>());
+    }
+
     private static (OperatorIdMiddleware Middleware, HttpContext Context, RequestDelegate Next, Func<bool> NextCalled) CreateContext()
     {
-        var middleware = new OperatorIdMiddleware(NullLogger<OperatorIdMiddleware>.Instance);
+        var middleware = new OperatorIdMiddleware(Substitute.For<ILogger<OperatorIdMiddleware>>());
         var context = new DefaultHttpContext();
         var nextCalled = false;
 

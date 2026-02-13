@@ -9,6 +9,8 @@ using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
 using Defra.Identity.Repositories.Users;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using NSubstitute;
 using Shouldly;
 
 public class UpdateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
@@ -20,7 +22,8 @@ public class UpdateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     public async Task ShouldUpdateUserAccount()
     {
         // Arrange
-        var repository = new UsersRepository(Context);
+        var logger = Substitute.For<ILogger<UsersRepository>>();
+        var repository = new UsersRepository(Context, logger);
         var adminUser = await repository.GetSingle(
             x =>
             x.EmailAddress.Equals(AdminEmailAddress),
@@ -54,5 +57,12 @@ public class UpdateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 
         savedUser.ShouldNotBeNull();
         savedUser.DisplayName.ShouldBe("Updated Name");
+
+        logger.ReceivedWithAnyArgs().Log(
+            LogLevel.Information,
+            Arg.Any<EventId>(),
+            Arg.Any<object>(),
+            Arg.Any<Exception>(),
+            Arg.Any<Func<object, Exception?, string>>());
     }
 }

@@ -53,6 +53,13 @@ public class UserServiceTests
         result.Count.ShouldBe(2);
         result[0].Email.ShouldBe("user1@example.com");
         result[1].Email.ShouldBe("user2@example.com");
+
+        logger.ReceivedWithAnyArgs().Log(
+            LogLevel.Information,
+            Arg.Any<EventId>(),
+            Arg.Any<object>(),
+            Arg.Any<Exception>(),
+            Arg.Any<Func<object, Exception?, string>>());
     }
 
     [Fact]
@@ -81,6 +88,13 @@ public class UserServiceTests
         result.Email.ShouldBe("test@example.com");
         result.FirstName.ShouldBe("John");
         result.LastName.ShouldBe("Doe");
+
+        logger.ReceivedWithAnyArgs().Log(
+            LogLevel.Information,
+            Arg.Any<EventId>(),
+            Arg.Any<object>(),
+            Arg.Any<Exception>(),
+            Arg.Any<Func<object, Exception?, string>>());
     }
 
     [Fact]
@@ -98,6 +112,13 @@ public class UserServiceTests
         // Assert
         result.ShouldBeTrue();
         await repository.Received(1).Delete(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>());
+
+        logger.ReceivedWithAnyArgs().Log(
+            LogLevel.Information,
+            Arg.Any<EventId>(),
+            Arg.Any<object>(),
+            Arg.Any<Exception>(),
+            Arg.Any<Func<object, Exception?, string>>());
     }
 
     [Fact]
@@ -113,6 +134,13 @@ public class UserServiceTests
 
         // Assert
         await act.ShouldThrowAsync<NotFoundException>();
+
+        logger.ReceivedWithAnyArgs().Log(
+            LogLevel.Warning,
+            Arg.Any<EventId>(),
+            Arg.Any<object>(),
+            Arg.Any<Exception>(),
+            Arg.Any<Func<object, Exception?, string>>());
     }
 
     [Fact]
@@ -157,6 +185,13 @@ public class UserServiceTests
             ua.FirstName == updateUser.FirstName &&
             ua.LastName == updateUser.LastName),
             Arg.Any<CancellationToken>());
+
+        logger.ReceivedWithAnyArgs().Log(
+            LogLevel.Information,
+            Arg.Any<EventId>(),
+            Arg.Any<object>(),
+            Arg.Any<Exception>(),
+            Arg.Any<Func<object, Exception?, string>>());
     }
 
     [Fact]
@@ -199,6 +234,13 @@ public class UserServiceTests
             ua.FirstName == updateUser.FirstName &&
             ua.LastName == updateUser.LastName),
             Arg.Any<CancellationToken>());
+
+        logger.ReceivedWithAnyArgs().Log(
+            LogLevel.Information,
+            Arg.Any<EventId>(),
+            Arg.Any<object>(),
+            Arg.Any<Exception>(),
+            Arg.Any<Func<object, Exception?, string>>());
     }
 
     [Fact]
@@ -252,6 +294,13 @@ public class UserServiceTests
             ua.LastName == updateUser.LastName &&
             ua.DisplayName == updateUser.DisplayName),
             Arg.Any<CancellationToken>());
+
+        logger.ReceivedWithAnyArgs().Log(
+            LogLevel.Information,
+            Arg.Any<EventId>(),
+            Arg.Any<object>(),
+            Arg.Any<Exception>(),
+            Arg.Any<Func<object, Exception?, string>>());
     }
 
     [Fact]
@@ -274,5 +323,12 @@ public class UserServiceTests
             await userService.Update(updateUser, TestContext.Current.CancellationToken));
 
         await repository.DidNotReceiveWithAnyArgs().Update(null!, CancellationToken.None);
+
+        logger.ReceivedWithAnyArgs().Log(
+            LogLevel.Warning,
+            Arg.Any<EventId>(),
+            Arg.Any<object>(),
+            Arg.Any<Exception>(),
+            Arg.Any<Func<object, Exception?, string>>());
     }
 }

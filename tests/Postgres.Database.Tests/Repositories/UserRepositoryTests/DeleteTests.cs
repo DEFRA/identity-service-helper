@@ -9,6 +9,8 @@ using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
 using Defra.Identity.Repositories.Exceptions;
 using Defra.Identity.Repositories.Users;
+using Microsoft.Extensions.Logging;
+using NSubstitute;
 using Shouldly;
 
 public class DeleteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
@@ -20,7 +22,8 @@ public class DeleteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     public async Task ShouldDeleteUserAccount()
     {
         // Arrange
-        var repository = new UsersRepository(Context);
+        var logger = Substitute.For<ILogger<UsersRepository>>();
+        var repository = new UsersRepository(Context, logger);
         var adminUser = await repository.GetSingle(x => x.EmailAddress == AdminEmailAddress, TestContext.Current.CancellationToken);
         adminUser.ShouldNotBeNull();
 
@@ -44,6 +47,13 @@ public class DeleteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         result.ShouldBeTrue();
         var deletedUser = await repository.GetSingle(x => x.Id == userId, TestContext.Current.CancellationToken);
         deletedUser.ShouldNotBeNull();
+
+        logger.ReceivedWithAnyArgs().Log(
+            LogLevel.Information,
+            Arg.Any<EventId>(),
+            Arg.Any<object>(),
+            Arg.Any<Exception>(),
+            Arg.Any<Func<object, Exception?, string>>());
     }
 
     [Fact]
@@ -51,7 +61,8 @@ public class DeleteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     public async Task ShouldThrowWhenDeletingNonExistentUser()
     {
         // Arrange
-        var repository = new UsersRepository(Context);
+        var logger = Substitute.For<ILogger<UsersRepository>>();
+        var repository = new UsersRepository(Context, logger);
         var nonExistentId = Guid.NewGuid();
         var operatorId = Guid.NewGuid();
 
@@ -60,5 +71,12 @@ public class DeleteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 
         // Assert
         await act.ShouldThrowAsync<NotFoundException>();
+
+        logger.ReceivedWithAnyArgs().Log(
+            LogLevel.Warning,
+            Arg.Any<EventId>(),
+            Arg.Any<object>(),
+            Arg.Any<Exception>(),
+            Arg.Any<Func<object, Exception?, string>>());
     }
 }

@@ -9,6 +9,9 @@ using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
 using Defra.Identity.Repositories.Users;
 
+using Microsoft.Extensions.Logging;
+using NSubstitute;
+
 public class CreateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 {
     private const string AdminEmailAddress = "test@test.com";
@@ -18,7 +21,8 @@ public class CreateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     public async Task ShouldCreateUserAccount()
     {
         // Arrange
-        var repository = new UsersRepository(Context);
+        var logger = Substitute.For<ILogger<UsersRepository>>();
+        var repository = new UsersRepository(Context, logger);
 
         var adminEmail = AdminEmailAddress;
 
@@ -46,5 +50,12 @@ public class CreateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
             x => x.DisplayName.ShouldBe("Test User"),
             x => x.FirstName.ShouldBe("Test"),
             x => x.LastName.ShouldBe("User"));
+
+        logger.ReceivedWithAnyArgs().Log(
+            LogLevel.Information,
+            Arg.Any<EventId>(),
+            Arg.Any<object>(),
+            Arg.Any<Exception>(),
+            Arg.Any<Func<object, Exception?, string>>());
     }
 }

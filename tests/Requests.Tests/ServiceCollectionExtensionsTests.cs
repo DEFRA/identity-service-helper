@@ -26,6 +26,7 @@ public class ServiceCollectionExtensionsTests
             .Build();
 
         // Act
+        services.AddLogging();
         services.AddRequests(configuration);
         var serviceProvider = services.BuildServiceProvider();
 

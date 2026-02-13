@@ -9,6 +9,8 @@ using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
 using Defra.Identity.Repositories.Users;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using NSubstitute;
 
 public class ExceptionTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 {
@@ -20,7 +22,8 @@ public class ExceptionTests(PostgreContainerFixture fixture) : BaseTests(fixture
     public async Task ShouldThrowDuplicateException()
     {
         // Arrange
-        var repository = new UsersRepository(Context);
+        var logger = Substitute.For<ILogger<UsersRepository>>();
+        var repository = new UsersRepository(Context, logger);
 
         var adminUser = await repository.GetSingle(x => x.EmailAddress == AdminEmailAddress, TestContext.Current.CancellationToken);
         adminUser.ShouldNotBeNull();
@@ -40,5 +43,12 @@ public class ExceptionTests(PostgreContainerFixture fixture) : BaseTests(fixture
         // Assert (Shouldly)
         var ex = await act.ShouldThrowAsync<DbUpdateException>();
         ex.InnerException.ShouldNotBeNull(); // often contains provider-specific details
+
+        logger.ReceivedWithAnyArgs().Log(
+            LogLevel.Information,
+            Arg.Any<EventId>(),
+            Arg.Any<object>(),
+            Arg.Any<Exception>(),
+            Arg.Any<Func<object, Exception?, string>>());
     }
 }
