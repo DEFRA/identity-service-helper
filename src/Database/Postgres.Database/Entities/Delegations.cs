@@ -16,7 +16,5 @@ public class Delegations : BaseAuditEntity
 
     public UserAccounts UserAccount { get; set; } = null!;
 
-    public ICollection<DelegationsCountyParishHoldings> DelegationsCountyParishHoldings { get; set; } = new List<DelegationsCountyParishHoldings>();
-
     public ICollection<DelegationInvitations> DelegationInvitations { get; set; } = new List<DelegationInvitations>();
 }

@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Defra.Identity.Postgres.Database.Migrations
 {
     [DbContext(typeof(PostgresDbContext))]
-    [Migration("20260213113328_Initial")]
+    [Migration("20260214091823_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -217,9 +217,9 @@ namespace Defra.Identity.Postgres.Database.Migrations
                         .HasColumnName("id")
                         .HasDefaultValueSql("gen_random_uuid()");
 
-                    b.Property<DateTime>("AccpetedAt")
+                    b.Property<DateTime>("AcceptedAt")
                         .HasColumnType("TimestampTz")
-                        .HasColumnName("accpeted_at");
+                        .HasColumnName("accepted_at");
 
                     b.Property<DateTime>("ActivatedAt")
                         .HasColumnType("TimestampTz")
@@ -316,9 +316,6 @@ namespace Defra.Identity.Postgres.Database.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("application_id");
 
-                    b.Property<Guid?>("CountyParishHoldingsId")
-                        .HasColumnType("uuid");
-
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TimestampTz")
@@ -337,15 +334,6 @@ namespace Defra.Identity.Postgres.Database.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("deleted_by_id");
 
-                    b.Property<Guid?>("RolesId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("RolesId1")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("UserAccountsId")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid")
                         .HasColumnName("user_id");
@@ -353,14 +341,6 @@ namespace Defra.Identity.Postgres.Database.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ApplicationId");
-
-                    b.HasIndex("CountyParishHoldingsId");
-
-                    b.HasIndex("RolesId");
-
-                    b.HasIndex("RolesId1");
-
-                    b.HasIndex("UserAccountsId");
 
                     b.HasIndex("UserId");
 
@@ -702,22 +682,6 @@ namespace Defra.Identity.Postgres.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Defra.Identity.Postgres.Database.Entities.CountyParishHoldings", null)
-                        .WithMany("Delegations")
-                        .HasForeignKey("CountyParishHoldingsId");
-
-                    b.HasOne("Defra.Identity.Postgres.Database.Entities.Roles", null)
-                        .WithMany("DelegatedRoles")
-                        .HasForeignKey("RolesId");
-
-                    b.HasOne("Defra.Identity.Postgres.Database.Entities.Roles", null)
-                        .WithMany("InvitedByRoles")
-                        .HasForeignKey("RolesId1");
-
-                    b.HasOne("Defra.Identity.Postgres.Database.Entities.UserAccounts", null)
-                        .WithMany("InvitedByUsers")
-                        .HasForeignKey("UserAccountsId");
-
                     b.HasOne("Defra.Identity.Postgres.Database.Entities.UserAccounts", "UserAccount")
                         .WithMany("Delegations")
                         .HasForeignKey("UserId")
@@ -744,7 +708,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
                         .IsRequired();
 
                     b.HasOne("Defra.Identity.Postgres.Database.Entities.Delegations", "Delegation")
-                        .WithMany("DelegationsCountyParishHoldings")
+                        .WithMany()
                         .HasForeignKey("DelegationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -792,16 +756,12 @@ namespace Defra.Identity.Postgres.Database.Migrations
                 {
                     b.Navigation("ApplicationUserAccountHoldingAssignments");
 
-                    b.Navigation("Delegations");
-
                     b.Navigation("DelegationsCountyParishHoldings");
                 });
 
             modelBuilder.Entity("Defra.Identity.Postgres.Database.Entities.Delegations", b =>
                 {
                     b.Navigation("DelegationInvitations");
-
-                    b.Navigation("DelegationsCountyParishHoldings");
                 });
 
             modelBuilder.Entity("Defra.Identity.Postgres.Database.Entities.Roles", b =>
@@ -810,11 +770,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
 
                     b.Navigation("ApplicationUserAccountHoldingAssignments");
 
-                    b.Navigation("DelegatedRoles");
-
                     b.Navigation("DelegationInvitations");
-
-                    b.Navigation("InvitedByRoles");
                 });
 
             modelBuilder.Entity("Defra.Identity.Postgres.Database.Entities.UserAccounts", b =>
@@ -846,8 +802,6 @@ namespace Defra.Identity.Postgres.Database.Migrations
                     b.Navigation("DelegationsCountyParishHoldingsDeletedByUsers");
 
                     b.Navigation("DeletedUsers");
-
-                    b.Navigation("InvitedByUsers");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,4 +1,4 @@
-﻿// <copyright file="20260213113328_Initial.cs" company="Defra">
+﻿// <copyright file="20260214091823_Initial.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
@@ -183,6 +183,38 @@ namespace Defra.Identity.Postgres.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "delegations",
+                schema: "public",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    application_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    created_at = table.Column<DateTime>(type: "TimestampTz", nullable: false, defaultValueSql: "now()"),
+                    created_by_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    deleted_at = table.Column<DateTime>(type: "TimestampTz", nullable: true),
+                    deleted_by_id = table.Column<Guid>(type: "uuid", nullable: true),
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_delegations", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_delegations_applications_application_id",
+                        column: x => x.application_id,
+                        principalSchema: "public",
+                        principalTable: "applications",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_delegations_user_accounts_user_id",
+                        column: x => x.user_id,
+                        principalSchema: "public",
+                        principalTable: "user_accounts",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "application_user_account_holding_assignments",
                 schema: "public",
                 columns: table => new
@@ -244,66 +276,6 @@ namespace Defra.Identity.Postgres.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "delegations",
-                schema: "public",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
-                    application_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    CountyParishHoldingsId = table.Column<Guid>(type: "uuid", nullable: true),
-                    RolesId = table.Column<Guid>(type: "uuid", nullable: true),
-                    RolesId1 = table.Column<Guid>(type: "uuid", nullable: true),
-                    UserAccountsId = table.Column<Guid>(type: "uuid", nullable: true),
-                    created_at = table.Column<DateTime>(type: "TimestampTz", nullable: false, defaultValueSql: "now()"),
-                    created_by_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    deleted_at = table.Column<DateTime>(type: "TimestampTz", nullable: true),
-                    deleted_by_id = table.Column<Guid>(type: "uuid", nullable: true),
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_delegations", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_delegations_applications_application_id",
-                        column: x => x.application_id,
-                        principalSchema: "public",
-                        principalTable: "applications",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_delegations_county_parish_holdings_CountyParishHoldingsId",
-                        column: x => x.CountyParishHoldingsId,
-                        principalSchema: "public",
-                        principalTable: "county_parish_holdings",
-                        principalColumn: "id");
-                    table.ForeignKey(
-                        name: "FK_delegations_roles_RolesId",
-                        column: x => x.RolesId,
-                        principalSchema: "public",
-                        principalTable: "roles",
-                        principalColumn: "id");
-                    table.ForeignKey(
-                        name: "FK_delegations_roles_RolesId1",
-                        column: x => x.RolesId1,
-                        principalSchema: "public",
-                        principalTable: "roles",
-                        principalColumn: "id");
-                    table.ForeignKey(
-                        name: "FK_delegations_user_accounts_UserAccountsId",
-                        column: x => x.UserAccountsId,
-                        principalSchema: "public",
-                        principalTable: "user_accounts",
-                        principalColumn: "id");
-                    table.ForeignKey(
-                        name: "FK_delegations_user_accounts_user_id",
-                        column: x => x.user_id,
-                        principalSchema: "public",
-                        principalTable: "user_accounts",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "delegation_invitations",
                 schema: "public",
                 columns: table => new
@@ -317,7 +289,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
                     delegated_role_id = table.Column<Guid>(type: "uuid", nullable: false),
                     delegated_permissions = table.Column<JsonDocument>(type: "jsonb", nullable: true),
                     invited_at = table.Column<DateTime>(type: "TimestampTz", nullable: false),
-                    accpeted_at = table.Column<DateTime>(type: "TimestampTz", nullable: false),
+                    accepted_at = table.Column<DateTime>(type: "TimestampTz", nullable: false),
                     registered_at = table.Column<DateTime>(type: "TimestampTz", nullable: false),
                     activated_at = table.Column<DateTime>(type: "TimestampTz", nullable: false),
                     revoked_at = table.Column<DateTime>(type: "TimestampTz", nullable: false),
@@ -507,34 +479,10 @@ namespace Defra.Identity.Postgres.Database.Migrations
                 column: "application_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_delegations_CountyParishHoldingsId",
-                schema: "public",
-                table: "delegations",
-                column: "CountyParishHoldingsId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_delegations_RolesId",
-                schema: "public",
-                table: "delegations",
-                column: "RolesId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_delegations_RolesId1",
-                schema: "public",
-                table: "delegations",
-                column: "RolesId1");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_delegations_user_id",
                 schema: "public",
                 table: "delegations",
                 column: "user_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_delegations_UserAccountsId",
-                schema: "public",
-                table: "delegations",
-                column: "UserAccountsId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_delegations_county_parish_holdings_county_parish_holding_id",
@@ -610,11 +558,7 @@ namespace Defra.Identity.Postgres.Database.Migrations
                 schema: "public");
 
             migrationBuilder.DropTable(
-                name: "delegations",
-                schema: "public");
-
-            migrationBuilder.DropTable(
-                name: "applications",
+                name: "roles",
                 schema: "public");
 
             migrationBuilder.DropTable(
@@ -622,7 +566,11 @@ namespace Defra.Identity.Postgres.Database.Migrations
                 schema: "public");
 
             migrationBuilder.DropTable(
-                name: "roles",
+                name: "delegations",
+                schema: "public");
+
+            migrationBuilder.DropTable(
+                name: "applications",
                 schema: "public");
 
             migrationBuilder.DropTable(

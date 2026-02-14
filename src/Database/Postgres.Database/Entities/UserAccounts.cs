@@ -30,8 +30,6 @@ public class UserAccounts : BaseAuditEntity
 
     public ICollection<Delegations> Delegations { get; set; } = new List<Delegations>();
 
-    public ICollection<Delegations> InvitedByUsers { get; set; } = new List<Delegations>();
-
     public ICollection<Applications> ApplicationsCreatedByUsers { get; set; } = new List<Applications>();
 
     public ICollection<Applications> ApplicationsDeletedByUsers { get; set; } = new List<Applications>();

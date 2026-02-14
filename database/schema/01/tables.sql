@@ -152,6 +152,34 @@ alter table public.application_roles
 create index "IX_application_roles_role_id"
     on public.application_roles (role_id);
 
+create table public.delegations
+(
+    id             uuid                     default gen_random_uuid() not null
+        constraint "PK_delegations"
+            primary key,
+    application_id uuid                                               not null
+        constraint "FK_delegations_applications_application_id"
+            references public.applications
+            on delete cascade,
+    user_id        uuid                                               not null
+        constraint "FK_delegations_user_accounts_user_id"
+            references public.user_accounts
+            on delete cascade,
+    created_at     timestamp with time zone default now()             not null,
+    created_by_id  uuid                                               not null,
+    deleted_at     timestamp with time zone,
+    deleted_by_id  uuid
+);
+
+alter table public.delegations
+    owner to postgres;
+
+create index "IX_delegations_application_id"
+    on public.delegations (application_id);
+
+create index "IX_delegations_user_id"
+    on public.delegations (user_id);
+
 create table public.application_user_account_holding_assignments
 (
     id                       uuid                     default gen_random_uuid() not null
@@ -205,58 +233,6 @@ create index "IX_application_user_account_holding_assignments_role_id"
 create index "IX_application_user_account_holding_assignments_user_account_id"
     on public.application_user_account_holding_assignments (user_account_id);
 
-create table public.delegations
-(
-    id                       uuid                     default gen_random_uuid() not null
-        constraint "PK_delegations"
-            primary key,
-    application_id           uuid                                               not null
-        constraint "FK_delegations_applications_application_id"
-            references public.applications
-            on delete cascade,
-    user_id                  uuid                                               not null
-        constraint "FK_delegations_user_accounts_user_id"
-            references public.user_accounts
-            on delete cascade,
-    "CountyParishHoldingsId" uuid
-        constraint "FK_delegations_county_parish_holdings_CountyParishHoldingsId"
-            references public.county_parish_holdings,
-    "RolesId"                uuid
-        constraint "FK_delegations_roles_RolesId"
-            references public.roles,
-    "RolesId1"               uuid
-        constraint "FK_delegations_roles_RolesId1"
-            references public.roles,
-    "UserAccountsId"         uuid
-        constraint "FK_delegations_user_accounts_UserAccountsId"
-            references public.user_accounts,
-    created_at               timestamp with time zone default now()             not null,
-    created_by_id            uuid                                               not null,
-    deleted_at               timestamp with time zone,
-    deleted_by_id            uuid
-);
-
-alter table public.delegations
-    owner to postgres;
-
-create index "IX_delegations_application_id"
-    on public.delegations (application_id);
-
-create index "IX_delegations_CountyParishHoldingsId"
-    on public.delegations ("CountyParishHoldingsId");
-
-create index "IX_delegations_RolesId"
-    on public.delegations ("RolesId");
-
-create index "IX_delegations_RolesId1"
-    on public.delegations ("RolesId1");
-
-create index "IX_delegations_user_id"
-    on public.delegations (user_id);
-
-create index "IX_delegations_UserAccountsId"
-    on public.delegations ("UserAccountsId");
-
 create table public.delegation_invitations
 (
     id                    uuid                     default gen_random_uuid() not null
@@ -276,7 +252,7 @@ create table public.delegation_invitations
             on delete cascade,
     delegated_permissions jsonb,
     invited_at            timestamp with time zone                           not null,
-    accpeted_at           timestamp with time zone                           not null,
+    accepted_at           timestamp with time zone                           not null,
     registered_at         timestamp with time zone                           not null,
     activated_at          timestamp with time zone                           not null,
     revoked_at            timestamp with time zone                           not null,
@@ -345,4 +321,5 @@ create index "IX_delegations_county_parish_holdings_delegation_id"
 
 create index "IX_delegations_county_parish_holdings_deleted_by_id"
     on public.delegations_county_parish_holdings (deleted_by_id);
+
 

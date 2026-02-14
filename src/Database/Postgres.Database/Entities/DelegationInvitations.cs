@@ -29,7 +29,7 @@ public class DelegationInvitations : BaseAuditEntity
 
     public DateTime InvitedAt { get; set; }
 
-    public DateTime AccpetedAt { get; set; }
+    public DateTime AcceptedAt { get; set; }
 
     public DateTime RegisteredAt { get; set; }
 

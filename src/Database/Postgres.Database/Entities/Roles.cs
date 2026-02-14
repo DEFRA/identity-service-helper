@@ -10,10 +10,6 @@ public class Roles : BaseTypeEntity
 {
     public ICollection<ApplicationRoles> ApplicationRoles { get; set; } = new List<ApplicationRoles>();
 
-    public ICollection<Delegations> InvitedByRoles { get; set; } = new List<Delegations>();
-
-    public ICollection<Delegations> DelegatedRoles { get; set; } = new List<Delegations>();
-
     public ICollection<DelegationInvitations> DelegationInvitations { get; set; } = new List<DelegationInvitations>();
 
     public ICollection<ApplicationUserAccountHoldingAssignments> ApplicationUserAccountHoldingAssignments { get; set; } = new List<ApplicationUserAccountHoldingAssignments>();

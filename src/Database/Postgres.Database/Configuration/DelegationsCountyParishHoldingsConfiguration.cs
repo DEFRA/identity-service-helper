@@ -15,10 +15,6 @@ public class DelegationsCountyParishHoldingsConfiguration : BaseAuditEntityConfi
             .HasColumnType(ColumnTypes.UniqueIdentifier)
             .IsRequired();
 
-        builder.HasOne(x => x.Delegation)
-            .WithMany(x => x.DelegationsCountyParishHoldings)
-            .HasForeignKey(x => x.DelegationId);
-
         builder.Property(x => x.CountyParishHoldingId)
             .HasColumnName(nameof(DelegationsCountyParishHoldings.CountyParishHoldingId).ToSnakeCase())
             .HasColumnType(ColumnTypes.UniqueIdentifier)

@@ -59,8 +59,8 @@ internal class DelegationInvitationsConfiguration : BaseAuditEntityConfiguration
             .HasColumnName(nameof(DelegationInvitations.InvitedAt).ToSnakeCase())
             .HasColumnType(ColumnTypes.Timestamp);
 
-        builder.Property(x => x.AccpetedAt)
-            .HasColumnName(nameof(DelegationInvitations.AccpetedAt).ToSnakeCase())
+        builder.Property(x => x.AcceptedAt)
+            .HasColumnName(nameof(DelegationInvitations.AcceptedAt).ToSnakeCase())
             .HasColumnType(ColumnTypes.Timestamp);
 
         builder.Property(x => x.RegisteredAt)
