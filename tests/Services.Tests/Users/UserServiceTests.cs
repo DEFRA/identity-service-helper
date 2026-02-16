@@ -15,6 +15,7 @@ using Defra.Identity.Repositories.Users;
 using Defra.Identity.Requests.Users.Commands.Update;
 using Defra.Identity.Requests.Users.Queries;
 using Defra.Identity.Services.Users;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Shouldly;
 using Xunit;
@@ -22,11 +23,12 @@ using Xunit;
 public class UserServiceTests
 {
     private readonly IUsersRepository repository = Substitute.For<IUsersRepository>();
+    private readonly ILogger<UserService> logger = Substitute.For<ILogger<UserService>>();
     private readonly UserService userService;
 
     public UserServiceTests()
     {
-        userService = new UserService(repository);
+        userService = new UserService(repository, logger);
     }
 
     [Fact]
@@ -34,13 +36,13 @@ public class UserServiceTests
     {
         // Arrange
         var request = new GetUsers();
-        var userAccounts = new List<UserAccount>
+        var userAccounts = new List<UserAccounts>
         {
-            new UserAccount { Id = Guid.NewGuid(), EmailAddress = "user1@example.com", FirstName = "User", LastName = "One" },
-            new UserAccount { Id = Guid.NewGuid(), EmailAddress = "user2@example.com", FirstName = "User", LastName = "Two" },
+            new UserAccounts { Id = Guid.NewGuid(), EmailAddress = "user1@example.com", FirstName = "User", LastName = "One" },
+            new UserAccounts { Id = Guid.NewGuid(), EmailAddress = "user2@example.com", FirstName = "User", LastName = "Two" },
         };
 
-        repository.GetList(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
+        repository.GetList(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(userAccounts);
 
         // Act
@@ -51,6 +53,13 @@ public class UserServiceTests
         result.Count.ShouldBe(2);
         result[0].Email.ShouldBe("user1@example.com");
         result[1].Email.ShouldBe("user2@example.com");
+
+        logger.ReceivedWithAnyArgs().Log(
+            LogLevel.Information,
+            Arg.Any<EventId>(),
+            Arg.Any<object>(),
+            Arg.Any<Exception>(),
+            Arg.Any<Func<object, Exception?, string>>());
     }
 
     [Fact]
@@ -59,16 +68,15 @@ public class UserServiceTests
         // Arrange
         var userId = Guid.NewGuid();
         var request = new GetUserById { Id = userId };
-        var userAccount = new UserAccount
+        var userAccount = new UserAccounts
         {
             Id = userId,
             EmailAddress = "test@example.com",
             FirstName = "John",
             LastName = "Doe",
-            Status = new StatusType() { Id = 1, Name = "Active" },
         };
 
-        repository.GetSingle(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
+        repository.GetSingle(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(userAccount);
 
         // Act
@@ -80,6 +88,13 @@ public class UserServiceTests
         result.Email.ShouldBe("test@example.com");
         result.FirstName.ShouldBe("John");
         result.LastName.ShouldBe("Doe");
+
+        logger.ReceivedWithAnyArgs().Log(
+            LogLevel.Information,
+            Arg.Any<EventId>(),
+            Arg.Any<object>(),
+            Arg.Any<Exception>(),
+            Arg.Any<Func<object, Exception?, string>>());
     }
 
     [Fact]
@@ -88,7 +103,7 @@ public class UserServiceTests
         // Arrange
         var userId = Guid.NewGuid();
         var operatorId = Guid.NewGuid();
-        repository.Delete(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+        repository.Delete(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(true);
 
         // Act
@@ -96,41 +111,14 @@ public class UserServiceTests
 
         // Assert
         result.ShouldBeTrue();
-        await repository.Received(1).Delete(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>());
-    }
+        await repository.Received(1).Delete(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>());
 
-    [Fact]
-    public async Task Activate_CallsRepository()
-    {
-        // Arrange
-        var userId = Guid.NewGuid();
-        var operatorId = Guid.NewGuid();
-        repository.Activate(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>())
-            .Returns(true);
-
-        // Act
-        var result = await userService.Activate(userId, operatorId, TestContext.Current.CancellationToken);
-
-        // Assert
-        result.ShouldBeTrue();
-        await repository.Received(1).Activate(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task Suspend_CallsRepository()
-    {
-        // Arrange
-        var userId = Guid.NewGuid();
-        var operatorId = Guid.NewGuid();
-        repository.Suspend(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>())
-            .Returns(true);
-
-        // Act
-        var result = await userService.Suspend(userId, operatorId, TestContext.Current.CancellationToken);
-
-        // Assert
-        result.ShouldBeTrue();
-        await repository.Received(1).Suspend(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>());
+        logger.ReceivedWithAnyArgs().Log(
+            LogLevel.Information,
+            Arg.Any<EventId>(),
+            Arg.Any<object>(),
+            Arg.Any<Exception>(),
+            Arg.Any<Func<object, Exception?, string>>());
     }
 
     [Fact]
@@ -138,14 +126,21 @@ public class UserServiceTests
     {
         // Arrange
         var request = new GetUserById { Id = Guid.NewGuid() };
-        repository.GetSingle(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns((UserAccount)null!);
+        repository.GetSingle(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns((UserAccounts)null!);
 
         // Act
         Func<Task> act = async () => await userService.Get(request, TestContext.Current.CancellationToken);
 
         // Assert
         await act.ShouldThrowAsync<NotFoundException>();
+
+        logger.ReceivedWithAnyArgs().Log(
+            LogLevel.Warning,
+            Arg.Any<EventId>(),
+            Arg.Any<object>(),
+            Arg.Any<Exception>(),
+            Arg.Any<Func<object, Exception?, string>>());
     }
 
     [Fact]
@@ -159,7 +154,7 @@ public class UserServiceTests
             LastName = "UpdatedLastName",
         };
 
-        var existingUser = new UserAccount
+        var existingUser = new UserAccounts
         {
             Id = Guid.NewGuid(),
             EmailAddress = "test@example.com",
@@ -167,11 +162,11 @@ public class UserServiceTests
             LastName = "OldLastName",
         };
 
-        repository.GetSingle(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
+        repository.GetSingle(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(existingUser);
 
-        repository.Update(Arg.Any<UserAccount>(), Arg.Any<CancellationToken>())
-            .Returns(x => (UserAccount)x[0]);
+        repository.Update(Arg.Any<UserAccounts>(), Arg.Any<CancellationToken>())
+            .Returns(x => (UserAccounts)x[0]);
 
         // Act
         var result = await userService.Upsert(updateUser, TestContext.Current.CancellationToken);
@@ -185,11 +180,18 @@ public class UserServiceTests
             x => x.LastName.ShouldBe(updateUser.LastName));
 
         await repository.Received(1).Update(
-            Arg.Is<UserAccount>(ua =>
+            Arg.Is<UserAccounts>(ua =>
             ua.EmailAddress == updateUser.Email &&
             ua.FirstName == updateUser.FirstName &&
             ua.LastName == updateUser.LastName),
             Arg.Any<CancellationToken>());
+
+        logger.ReceivedWithAnyArgs().Log(
+            LogLevel.Information,
+            Arg.Any<EventId>(),
+            Arg.Any<object>(),
+            Arg.Any<Exception>(),
+            Arg.Any<Func<object, Exception?, string>>());
     }
 
     [Fact]
@@ -203,11 +205,11 @@ public class UserServiceTests
             LastName = "NewLastName",
         };
 
-        repository.GetSingle(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns((UserAccount)null!);
+        repository.GetSingle(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns((UserAccounts)null!);
 
-        repository.Create(Arg.Any<UserAccount>(), Arg.Any<CancellationToken>())
-            .Returns(new UserAccount
+        repository.Create(Arg.Any<UserAccounts>(), Arg.Any<CancellationToken>())
+            .Returns(new UserAccounts
             {
                 Id = Guid.NewGuid(),
                 EmailAddress = updateUser.Email,
@@ -227,11 +229,18 @@ public class UserServiceTests
             x => x.DisplayName.ShouldBe(updateUser.DisplayName));
 
         await repository.Received(1).Create(
-            Arg.Is<UserAccount>(ua =>
+            Arg.Is<UserAccounts>(ua =>
             ua.EmailAddress == updateUser.Email &&
             ua.FirstName == updateUser.FirstName &&
             ua.LastName == updateUser.LastName),
             Arg.Any<CancellationToken>());
+
+        logger.ReceivedWithAnyArgs().Log(
+            LogLevel.Information,
+            Arg.Any<EventId>(),
+            Arg.Any<object>(),
+            Arg.Any<Exception>(),
+            Arg.Any<Func<object, Exception?, string>>());
     }
 
     [Fact]
@@ -250,21 +259,20 @@ public class UserServiceTests
             OperatorId = operatorId,
         };
 
-        var existingUser = new UserAccount
+        var existingUser = new UserAccounts
         {
             Id = userId,
             EmailAddress = "test@example.com",
             FirstName = "OldFirstName",
             LastName = "OldLastName",
             DisplayName = "Old Display Name",
-            Status = new StatusType { Name = "Inactive" },
         };
 
-        repository.GetSingle(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
+        repository.GetSingle(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(existingUser);
 
-        repository.Update(Arg.Any<UserAccount>(), Arg.Any<CancellationToken>())
-            .Returns(x => (UserAccount)x[0]);
+        repository.Update(Arg.Any<UserAccounts>(), Arg.Any<CancellationToken>())
+            .Returns(x => (UserAccounts)x[0]);
 
         // Act
         var result = await userService.Update(updateUser, TestContext.Current.CancellationToken);
@@ -279,14 +287,20 @@ public class UserServiceTests
             x => x.DisplayName.ShouldBe(updateUser.DisplayName));
 
         await repository.Received(1).Update(
-            Arg.Is<UserAccount>(ua =>
+            Arg.Is<UserAccounts>(ua =>
             ua.Id == userId &&
             ua.EmailAddress == updateUser.Email &&
             ua.FirstName == updateUser.FirstName &&
             ua.LastName == updateUser.LastName &&
-            ua.DisplayName == updateUser.DisplayName &&
-            ua.UpdatedBy == operatorId),
+            ua.DisplayName == updateUser.DisplayName),
             Arg.Any<CancellationToken>());
+
+        logger.ReceivedWithAnyArgs().Log(
+            LogLevel.Information,
+            Arg.Any<EventId>(),
+            Arg.Any<object>(),
+            Arg.Any<Exception>(),
+            Arg.Any<Func<object, Exception?, string>>());
     }
 
     [Fact]
@@ -301,13 +315,20 @@ public class UserServiceTests
             LastName = "NewLastName",
         };
 
-        repository.GetSingle(Arg.Any<Expression<Func<UserAccount, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns((UserAccount)null!);
+        repository.GetSingle(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns((UserAccounts)null!);
 
         // Act & Assert
         await Should.ThrowAsync<NullReferenceException>(async () =>
             await userService.Update(updateUser, TestContext.Current.CancellationToken));
 
         await repository.DidNotReceiveWithAnyArgs().Update(null!, CancellationToken.None);
+
+        logger.ReceivedWithAnyArgs().Log(
+            LogLevel.Warning,
+            Arg.Any<EventId>(),
+            Arg.Any<object>(),
+            Arg.Any<Exception>(),
+            Arg.Any<Func<object, Exception?, string>>());
     }
 }

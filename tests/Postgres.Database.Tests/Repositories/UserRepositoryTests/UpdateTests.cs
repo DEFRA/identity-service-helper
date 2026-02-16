@@ -9,6 +9,8 @@ using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
 using Defra.Identity.Repositories.Users;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using NSubstitute;
 using Shouldly;
 
 public class UpdateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
@@ -20,46 +22,47 @@ public class UpdateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     public async Task ShouldUpdateUserAccount()
     {
         // Arrange
-        var repository = new UsersRepository(Context);
+        var logger = Substitute.For<ILogger<UsersRepository>>();
+        var repository = new UsersRepository(Context, logger);
         var adminUser = await repository.GetSingle(
             x =>
             x.EmailAddress.Equals(AdminEmailAddress),
             TestContext.Current.CancellationToken);
 
         adminUser.ShouldNotBeNull();
-        var user = new UserAccount
+        var user = new UserAccounts
         {
             DisplayName = "Test User",
             FirstName = "Test",
             LastName = "User",
             EmailAddress = "test2@test.com",
-            CreatedBy = adminUser.Id,
+            CreatedById = adminUser.Id,
         };
-        await Context.Users.AddAsync(user, TestContext.Current.CancellationToken);
+        await Context.UserAccounts.AddAsync(user, TestContext.Current.CancellationToken);
         await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         user.DisplayName = "Updated Name";
 
         // Act
-        user.Status = new StatusType { Name = "InActive", Description = "Updated Description" };
         var result = await repository.Update(user, TestContext.Current.CancellationToken);
 
         // Assert
         result.ShouldSatisfyAllConditions(
-            x => x.DisplayName.ShouldBe("Updated Name"),
-            x => x.Status.Name.ShouldBe("InActive"));
+            x => x.DisplayName.ShouldBe("Updated Name"));
 
-        var savedUser = await Context.Users.Include(x => x.Status).FirstAsync(x => x.EmailAddress.Equals(user.EmailAddress), TestContext.Current.CancellationToken);
+        var savedUser = await Context.UserAccounts.FirstAsync(x => x.EmailAddress.Equals(user.EmailAddress), TestContext.Current.CancellationToken);
 
         savedUser.ShouldSatisfyAllConditions(
-            x => x.DisplayName.ShouldBe("Updated Name"),
-            x => x.Status.Name.ShouldBe("InActive"));
-
-        var statusInDb = await Context.StatusTypes.FirstAsync(s => s.Name == "InActive", TestContext.Current.CancellationToken);
-        statusInDb.Description.ShouldNotBe("Updated Description");
-        statusInDb.Description.ShouldBe(string.Empty);
+            x => x.DisplayName.ShouldBe("Updated Name"));
 
         savedUser.ShouldNotBeNull();
         savedUser.DisplayName.ShouldBe("Updated Name");
+
+        logger.ReceivedWithAnyArgs().Log(
+            LogLevel.Information,
+            Arg.Any<EventId>(),
+            Arg.Any<object>(),
+            Arg.Any<Exception>(),
+            Arg.Any<Func<object, Exception?, string>>());
     }
 }

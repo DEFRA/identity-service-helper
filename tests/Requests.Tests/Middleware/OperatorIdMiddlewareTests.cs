@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using NSubstitute;
 
 public class OperatorIdMiddlewareTests
 {
@@ -26,6 +28,7 @@ public class OperatorIdMiddlewareTests
             .Build();
 
         // Act
+        services.AddLogging();
         services.AddRequests(configuration);
         var serviceProvider = services.BuildServiceProvider();
 
@@ -51,7 +54,7 @@ public class OperatorIdMiddlewareTests
     {
         // Arrange
         var (middleware, context, next, nextCalled) = CreateContext();
-        context.Request.Headers[IdentityHeaderNames.OperatorId] = Guid.NewGuid().ToString();
+        context.Request.Headers[RequestHeaderNames.OperatorId] = Guid.NewGuid().ToString();
         SetupEndpoint(context);
 
         // Act
@@ -83,7 +86,7 @@ public class OperatorIdMiddlewareTests
         var responseBody = await reader.ReadToEndAsync(TestContext.Current.CancellationToken);
         responseBody.ShouldSatisfyAllConditions(
             x => x.ShouldContain("missing_header"),
-            x => x.ShouldContain($"Header {IdentityHeaderNames.OperatorId} is required."));
+            x => x.ShouldContain($"Header {RequestHeaderNames.OperatorId} is required."));
     }
 
     [Fact]
@@ -91,7 +94,7 @@ public class OperatorIdMiddlewareTests
     {
         // Arrange
         var (middleware, context, next, nextCalled) = CreateContext();
-        context.Request.Headers[IdentityHeaderNames.OperatorId] = "   ";
+        context.Request.Headers[RequestHeaderNames.OperatorId] = "   ";
         context.Response.Body = new MemoryStream();
         SetupEndpoint(context);
 
@@ -108,7 +111,7 @@ public class OperatorIdMiddlewareTests
         var responseBody = await reader.ReadToEndAsync(TestContext.Current.CancellationToken);
         responseBody.ShouldSatisfyAllConditions(
             x => x.ShouldContain("missing_header"),
-            x => x.ShouldContain($"Header {IdentityHeaderNames.OperatorId} is required."));
+            x => x.ShouldContain($"Header {RequestHeaderNames.OperatorId} is required."));
     }
 
     [Fact]
@@ -116,7 +119,7 @@ public class OperatorIdMiddlewareTests
     {
         // Arrange
         var (middleware, context, next, nextCalled) = CreateContext();
-        context.Request.Headers[IdentityHeaderNames.OperatorId] = "invalid-guid";
+        context.Request.Headers[RequestHeaderNames.OperatorId] = "invalid-guid";
         context.Response.Body = new MemoryStream();
         SetupEndpoint(context);
 
@@ -133,7 +136,7 @@ public class OperatorIdMiddlewareTests
         var responseBody = await reader.ReadToEndAsync(TestContext.Current.CancellationToken);
         responseBody.ShouldSatisfyAllConditions(
             x => x.ShouldContain("invalid_header"),
-            x => x.ShouldContain($"Header {IdentityHeaderNames.OperatorId} must be a valid GUID."));
+            x => x.ShouldContain($"Header {RequestHeaderNames.OperatorId} must be a valid GUID."));
     }
 
     [Fact]
@@ -149,9 +152,31 @@ public class OperatorIdMiddlewareTests
         nextCalled().ShouldBeTrue();
     }
 
+    [Fact]
+    public async Task InvokeAsync_WhenExceptionThrown_LogsErrorAndReThrows()
+    {
+        // Arrange
+        var logger = Substitute.For<ILogger<OperatorIdMiddleware>>();
+        var middleware = new OperatorIdMiddleware(logger);
+        var context = new DefaultHttpContext();
+        var exception = new Exception("Test exception");
+        RequestDelegate next = (ctx) => throw exception;
+
+        // Act & Assert
+        var ex = await Should.ThrowAsync<Exception>(() => middleware.InvokeAsync(context, next));
+        ex.ShouldBe(exception);
+
+        logger.Received(1).Log(
+            LogLevel.Error,
+            Arg.Any<EventId>(),
+            Arg.Any<Arg.AnyType>(),
+            exception,
+            Arg.Any<Func<Arg.AnyType, Exception?, string>>());
+    }
+
     private static (OperatorIdMiddleware Middleware, HttpContext Context, RequestDelegate Next, Func<bool> NextCalled) CreateContext()
     {
-        var middleware = new OperatorIdMiddleware();
+        var middleware = new OperatorIdMiddleware(Substitute.For<ILogger<OperatorIdMiddleware>>());
         var context = new DefaultHttpContext();
         var nextCalled = false;
 

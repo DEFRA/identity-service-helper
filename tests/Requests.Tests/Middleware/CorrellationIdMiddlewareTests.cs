@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using NSubstitute;
 
 public class CorrellationIdMiddlewareTests
 {
@@ -25,6 +27,7 @@ public class CorrellationIdMiddlewareTests
             .Build();
 
         // Act
+        services.AddLogging();
         services.AddRequests(configuration);
         var serviceProvider = services.BuildServiceProvider();
 
@@ -49,9 +52,9 @@ public class CorrellationIdMiddlewareTests
     public async Task InvokeAsync_WithCorrelationIdHeader_CallsNext()
     {
         // Arrange
-        var middleware = new CorrellationIdMiddleware();
+        var middleware = new CorrellationIdMiddleware(Substitute.For<ILogger<CorrellationIdMiddleware>>());
         var context = new DefaultHttpContext();
-        context.Request.Headers[IdentityHeaderNames.CorrelationId] = "test-correlation-id";
+        context.Request.Headers[RequestHeaderNames.CorrelationId] = "test-correlation-id";
 
         var nextCalled = false;
         RequestDelegate next = (ctx) =>
@@ -72,7 +75,7 @@ public class CorrellationIdMiddlewareTests
     public async Task InvokeAsync_MissingCorrelationIdHeader_ReturnsBadRequest()
     {
         // Arrange
-        var middleware = new CorrellationIdMiddleware();
+        var middleware = new CorrellationIdMiddleware(Substitute.For<ILogger<CorrellationIdMiddleware>>());
         var context = new DefaultHttpContext();
         context.Response.Body = new MemoryStream();
 
@@ -95,16 +98,16 @@ public class CorrellationIdMiddlewareTests
         using var reader = new StreamReader(context.Response.Body);
         var responseBody = await reader.ReadToEndAsync(TestContext.Current.CancellationToken);
         responseBody.ShouldContain("missing_header");
-        responseBody.ShouldContain($"Header {IdentityHeaderNames.CorrelationId} is required.");
+        responseBody.ShouldContain($"Header {RequestHeaderNames.CorrelationId} is required.");
     }
 
     [Fact]
     public async Task InvokeAsync_WhitespaceCorrelationIdHeader_ReturnsBadRequest()
     {
         // Arrange
-        var middleware = new CorrellationIdMiddleware();
+        var middleware = new CorrellationIdMiddleware(Substitute.For<ILogger<CorrellationIdMiddleware>>());
         var context = new DefaultHttpContext();
-        context.Request.Headers[IdentityHeaderNames.CorrelationId] = "   ";
+        context.Request.Headers[RequestHeaderNames.CorrelationId] = "   ";
         context.Response.Body = new MemoryStream();
 
         var nextCalled = false;
@@ -126,6 +129,29 @@ public class CorrellationIdMiddlewareTests
         using var reader = new StreamReader(context.Response.Body);
         var responseBody = await reader.ReadToEndAsync(TestContext.Current.CancellationToken);
         responseBody.ShouldContain("missing_header");
-        responseBody.ShouldContain($"Header {IdentityHeaderNames.CorrelationId} is required.");
+        responseBody.ShouldContain($"Header {RequestHeaderNames.CorrelationId} is required.");
+    }
+
+    [Fact]
+    public async Task InvokeAsync_WhenExceptionThrown_LogsErrorAndReThrows()
+    {
+        // Arrange
+        var logger = Substitute.For<ILogger<CorrellationIdMiddleware>>();
+        var middleware = new CorrellationIdMiddleware(logger);
+        var context = new DefaultHttpContext();
+        context.Request.Headers[RequestHeaderNames.CorrelationId] = "test-correlation-id";
+        var exception = new Exception("Test exception");
+        RequestDelegate next = (ctx) => throw exception;
+
+        // Act & Assert
+        var ex = await Should.ThrowAsync<Exception>(() => middleware.InvokeAsync(context, next));
+        ex.ShouldBe(exception);
+
+        logger.Received(1).Log(
+            LogLevel.Error,
+            Arg.Any<EventId>(),
+            Arg.Any<Arg.AnyType>(),
+            exception,
+            Arg.Any<Func<Arg.AnyType, Exception?, string>>());
     }
 }

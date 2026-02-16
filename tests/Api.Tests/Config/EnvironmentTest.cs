@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Unit.Tests.Config;
+namespace Defra.Identity.Api.Tests.Config;
 
 using Microsoft.AspNetCore.Builder;
 using Environment = Defra.Identity.Api.Config.Environment;

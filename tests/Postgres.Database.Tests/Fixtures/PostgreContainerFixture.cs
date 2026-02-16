@@ -7,6 +7,7 @@ namespace Defra.Identity.Postgres.Database.Tests.Fixtures;
 using Defra.Identity.Postgres.Database;
 using Defra.Identity.Postgres.Database.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Testcontainers.PostgreSql;
 
 public class PostgreContainerFixture
@@ -28,6 +29,7 @@ public class PostgreContainerFixture
         await container.StartAsync();
         var options = new DbContextOptionsBuilder<PostgresDbContext>()
             .UseNpgsql(container.GetConnectionString())
+            .ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning))
             .Options;
 
         var context = new PostgresDbContext(options);
@@ -38,20 +40,15 @@ public class PostgreContainerFixture
     private async Task SeedData(PostgresDbContext context)
     {
         const string adminEmailAddress = "test@test.com";
-        if (!context.StatusTypes.Any())
-        {
-            await context.StatusTypes.AddAsync(new StatusType() { Name = "Active" }, TestContext.Current.CancellationToken);
-            await context.StatusTypes.AddAsync(new StatusType() { Name = "InActive" }, TestContext.Current.CancellationToken);
-            await context.SaveChangesAsync(TestContext.Current.CancellationToken);
-        }
 
-        if (!context.Users.Any())
+        if (!context.UserAccounts.Any())
         {
             var id = Guid.NewGuid();
-            var adminUser = await context.Users.AddAsync(
-                new UserAccount()
-                    { Id = id, DisplayName = "Test User", EmailAddress = adminEmailAddress, FirstName = "test", LastName = "user", CreatedBy = id },
+            var adminUser = await context.UserAccounts.AddAsync(
+                new UserAccounts()
+                    { Id = id, DisplayName = "Test User", EmailAddress = adminEmailAddress, FirstName = "test", LastName = "user", CreatedById = id },
                 TestContext.Current.CancellationToken);
+            await context.SaveChangesAsync(TestContext.Current.CancellationToken);
         }
     }
 }

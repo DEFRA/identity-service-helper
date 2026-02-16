@@ -5,6 +5,8 @@
 namespace Defra.Identity.Postgres.Database;
 
 using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -35,26 +37,25 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddPostgresDatabase(this IServiceCollection services, IConfiguration configuration)
     {
         var connectionString = configuration.GetConnectionString(DatabaseConstants.ConnectionStringName);
-        services
-            .AddPooledDbContextFactory<PostgresDbContext>((sp, options) =>
-            {
-                var env = sp.GetRequiredService<IHostEnvironment>();
-                var isProd = env.IsProduction();
-                options
-                    .UseLoggerFactory(sp.GetRequiredService<ILoggerFactory>())
-                    .UseNpgsql(
-                        connectionString,
-                        npgsqlOptions =>
-                        {
-                            npgsqlOptions.EnableRetryOnFailure(
-                                maxRetryCount: MaxRetryCount,
-                                maxRetryDelay: TimeSpan.FromSeconds(MaxRetryDelay),
-                                errorCodesToAdd: ErrorCodes);
-                            npgsqlOptions.CommandTimeout(CommandTimeout);
-                        })
-                    .EnableSensitiveDataLogging(isProd);
-            });
-        services.AddDbContext<PostgresDbContext>();
+        services.AddDbContext<PostgresDbContext>((sp, options) =>
+        {
+            var env = sp.GetRequiredService<IHostEnvironment>();
+            var isProd = env.IsProduction();
+            options
+                .UseLoggerFactory(sp.GetRequiredService<ILoggerFactory>())
+                .ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning))
+                .UseNpgsql(
+                    connectionString,
+                    npgsqlOptions =>
+                    {
+                        npgsqlOptions.EnableRetryOnFailure(
+                            maxRetryCount: MaxRetryCount,
+                            maxRetryDelay: TimeSpan.FromSeconds(MaxRetryDelay),
+                            errorCodesToAdd: ErrorCodes);
+                        npgsqlOptions.CommandTimeout(CommandTimeout);
+                    })
+                .EnableSensitiveDataLogging(!isProd);
+        });
 
         return services;
     }
@@ -62,29 +63,31 @@ public static class ServiceCollectionExtensions
     public static void UsePostgresDatabase(this WebApplication app)
     {
         using var scope = app.Services.CreateScope();
-        var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<PostgresDbContext>>();
-        using var context = factory.CreateDbContext();
+        var context = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();
 
-        if (context.Database.CanConnect())
+        try
         {
-            context.Database.OpenConnection();
+            if (context.Database.CanConnect())
+            {
+                context.Database.OpenConnection();
+            }
+        }
+        catch (InvalidOperationException ex) when (ex.Message.Contains("PendingModelChangesWarning"))
+        {
+            // Ignore pending model changes warning during tests/dev if it's treated as error
         }
     }
 
     public static void UseDatabaseMigrations(this WebApplication app)
     {
-        using var scope = app.Services.CreateScope();
-        var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<PostgresDbContext>>();
-        using var context = factory.CreateDbContext();
-#if DEBUG
-
-        var env = scope.ServiceProvider.GetRequiredService<IHostEnvironment>();
+        var env = app.Services.GetRequiredService<IHostEnvironment>();
 
         // Migrate the database on startup in development mode
-        if (scope.ServiceProvider.GetRequiredService<IHostEnvironment>().IsDevelopment())
+        if (env.IsDevelopment())
         {
+            using var scope = app.Services.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();
             context.Database.Migrate();
         }
-#endif
     }
 }

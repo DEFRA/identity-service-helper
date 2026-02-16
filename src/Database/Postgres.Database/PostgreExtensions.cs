@@ -7,7 +7,7 @@ namespace Defra.Identity.Postgres.Database;
 public static class PostgreExtensions
 {
     public const string UuidGenerator = "uuid-ossp";
-    public const string UuidAlgorithm = "uuid_generate_v4()";
+    public const string UuidAlgorithm = "gen_random_uuid()";
     public const string PostGis = "postgis";
     public const string PgCrypto = "pgcrypto";
     public const string PgAudit = "pgaudit";

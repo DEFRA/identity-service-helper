@@ -6,7 +6,7 @@ namespace Defra.Identity.Postgres.Database.Entities.Base;
 
 public abstract class BaseTypeEntity
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
     public string Name { get; set; } = string.Empty;
 

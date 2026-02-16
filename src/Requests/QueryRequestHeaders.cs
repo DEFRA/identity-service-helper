@@ -34,22 +34,22 @@ public sealed record QueryRequestHeaders(Guid CorrelationId, string ApiKey)
         var headers = context.Request.Headers;
 
         var correlationId =
-            headers.TryGetValue(IdentityHeaderNames.CorrelationId, out var tid) ? tid.ToString() : null;
+            headers.TryGetValue(RequestHeaderNames.CorrelationId, out var tid) ? tid.ToString() : null;
 
         if (correlationId == null || !Guid.TryParse(correlationId, out _))
         {
             throw new BadHttpRequestException(
-                $"Header {IdentityHeaderNames.CorrelationId} is required.",
+                $"Header {RequestHeaderNames.CorrelationId} is required.",
                 StatusCodes.Status400BadRequest);
         }
 
         var apiKey =
-            headers.TryGetValue(IdentityHeaderNames.ApiKey, out var key) ? key.ToString() : null;
+            headers.TryGetValue(RequestHeaderNames.ApiKey, out var key) ? key.ToString() : null;
 
         if (string.IsNullOrWhiteSpace(apiKey))
         {
             throw new BadHttpRequestException(
-                $"Header {IdentityHeaderNames.ApiKey} is required.",
+                $"Header {RequestHeaderNames.ApiKey} is required.",
                 StatusCodes.Status400BadRequest);
         }
 

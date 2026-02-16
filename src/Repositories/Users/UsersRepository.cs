@@ -8,104 +8,72 @@ using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Exceptions;
+using Microsoft.Extensions.Logging;
 
-public class UsersRepository(PostgresDbContext context)
+public class UsersRepository(PostgresDbContext context, ILogger<UsersRepository> logger)
     : IUsersRepository
 {
-    public async Task<List<UserAccount>> GetAll()
+    public async Task<List<UserAccounts>> GetAll()
     {
-        var query = context.Users.Include(x => x.Status).AsQueryable();
+        logger.LogInformation("Getting all user accounts");
+        var query = context.UserAccounts.AsQueryable();
         return await query.ToListAsync();
     }
 
-    public async Task<UserAccount?> GetSingle(Expression<Func<UserAccount, bool>> predicate, CancellationToken cancellationToken = default)
+    public async Task<UserAccounts?> GetSingle(Expression<Func<UserAccounts, bool>> predicate, CancellationToken cancellationToken = default)
     {
-        var query = await context.Users
-            .Include(x => x.Status)
+        logger.LogInformation("Getting single user account");
+        var query = await context.UserAccounts
             .SingleOrDefaultAsync(predicate, cancellationToken);
 
         return query;
     }
 
-    public async Task<List<UserAccount>> GetList(Expression<Func<UserAccount, bool>> predicate, CancellationToken cancellationToken = default)
+    public async Task<List<UserAccounts>> GetList(Expression<Func<UserAccounts, bool>> predicate, CancellationToken cancellationToken = default)
     {
-        var query = await context.Users
-            .Include(x => x.Status)
-            .Where(predicate).ToListAsync<UserAccount>(cancellationToken);
+        logger.LogInformation("Getting list of user accounts");
+        var query = await context.UserAccounts
+            .Where(predicate).ToListAsync<UserAccounts>(cancellationToken);
 
         return query;
     }
 
-    public async Task<UserAccount> Create(UserAccount entity, CancellationToken cancellationToken = default)
+    public async Task<UserAccounts> Create(UserAccounts entity, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entity);
 
-        var addedEntry = await context.Users.AddAsync(entity, cancellationToken);
+        logger.LogInformation("Creating user account with id {Id}", entity.Id);
+        var addedEntry = await context.UserAccounts.AddAsync(entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
-
-        await context.Entry(addedEntry.Entity)
-            .Reference(x => x.Status)
-            .LoadAsync(cancellationToken);
 
         return addedEntry.Entity;
     }
 
-    public async Task<UserAccount> Update(UserAccount entity, CancellationToken cancellationToken = default)
+    public async Task<UserAccounts> Update(UserAccounts entity, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entity);
 
+        logger.LogInformation("Updating user account with id {Id}", entity.Id);
         context.Update(entity);
         await context.SaveChangesAsync(cancellationToken);
         return entity;
     }
 
-    public async Task<bool> Delete(Expression<Func<UserAccount, bool>> predicate,  Guid operatorId, CancellationToken cancellationToken = default)
+    public async Task<bool> Delete(Expression<Func<UserAccounts, bool>> predicate,  Guid operatorId, CancellationToken cancellationToken = default)
     {
-        var userAccount = await context.Users
+        logger.LogInformation("Deleting user account with operator id {OperatorId}", operatorId);
+        var userAccount = await context.UserAccounts
             .SingleOrDefaultAsync(predicate, cancellationToken);
 
         if (userAccount == null)
         {
+            logger.LogWarning("User account not found for deletion");
             throw new NotFoundException("User account not found");
         }
 
-        userAccount.StatusTypeId = 4;
-        userAccount.UpdatedBy = userAccount.Id;
-        context.Users.Update(userAccount);
-        await context.SaveChangesAsync(cancellationToken);
-        return true;
-    }
-
-    public async Task<bool> Suspend(Expression<Func<UserAccount, bool>> predicate, Guid operatorId, CancellationToken cancellationToken = default)
-    {
-        var userAccount = await context.Users
-            .SingleOrDefaultAsync(predicate, cancellationToken);
-        if (userAccount == null)
-        {
-            throw new NotFoundException("User account not found");
-        }
-
-        userAccount.StatusTypeId = 3;
-        userAccount.UpdatedBy = operatorId;
-
-        context.Users.Update(userAccount);
-        await context.SaveChangesAsync(cancellationToken);
-        return true;
-    }
-
-    public async Task<bool> Activate(Expression<Func<UserAccount, bool>> predicate,  Guid operatorId, CancellationToken cancellationToken = default)
-    {
-        var userAccount = await context.Users
-            .SingleOrDefaultAsync(predicate, cancellationToken);
-        if (userAccount == null)
-        {
-            throw new NotFoundException("User account not found");
-        }
-
-        userAccount.StatusTypeId = 2;
-        userAccount.UpdatedBy = operatorId;
-        context.Users.Update(userAccount);
-        await context.SaveChangesAsync(cancellationToken);
-        return true;
+        userAccount.DeletedById = operatorId;
+        userAccount.DeletedAt = DateTime.UtcNow;
+        context.UserAccounts.Update(userAccount);
+        return await context.SaveChangesAsync(cancellationToken) > 0;
     }
 }

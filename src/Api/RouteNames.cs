@@ -4,12 +4,12 @@
 
 namespace Defra.Identity.Api;
 
-internal static class RouteNames
+public static class RouteNames
 {
-    internal const string Users = "users";
-    internal const string Roles = "roles";
-    internal const string Permissions = "permissions";
-    internal const string Groups = "groups";
-    internal const string Applications = "applications";
-    internal const string CountyParishHoldings = "countyParishHoldings";
+    public const string Users = "users";
+    public const string Roles = "roles";
+    public const string Permissions = "permissions";
+    public const string Groups = "groups";
+    public const string Applications = "applications";
+    public const string CountyParishHoldings = "countyParishHoldings";
 }
