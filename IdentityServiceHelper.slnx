@@ -37,6 +37,7 @@
     <File Path="tests/Endpoint.Tests/Asserts/Should_be_204_no_content.js" />
     <File Path="tests/Endpoint.Tests/Asserts/Should_be_404.js" />
     <File Path="tests/Endpoint.Tests/Asserts/Should_be_422_error_response.js" />
+    <File Path="tests\Endpoint.Tests\Asserts\Should_be_ok_and_get_top_application_id.js" />
   </Folder>
   <Folder Name="/tests/Endpoint.Tests/Asserts/headers/">
     <File Path="tests/Endpoint.Tests/Asserts/headers/should_be_400_error_invalid_api_key.js" />
@@ -47,6 +48,10 @@
   <Folder Name="/tests/Endpoint.Tests/Tests/Applications/">
     <File Path="tests\Endpoint.Tests\Tests\applications\command-tests.http" />
     <File Path="tests\Endpoint.Tests\Tests\applications\query-tests.http" />
+  </Folder>
+  <Folder Name="/tests/Endpoint.Tests/Tests/Delegates/">
+    <File Path="tests\Endpoint.Tests\Tests\delegates\command-tests.http" />
+    <File Path="tests\Endpoint.Tests\Tests\delegates\query-tests.http" />
   </Folder>
   <Folder Name="/tests/Endpoint.Tests/Tests/headers/">
     <File Path="tests/Endpoint.Tests/Tests/headers/missing-header-tests.http" />
