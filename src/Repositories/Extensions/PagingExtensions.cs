@@ -24,8 +24,8 @@ public static class PagingExtensions
         var resultsList = await query
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
-            .ToListAsync<TEntity>(cancellationToken);
+            .ToListAsync(cancellationToken);
 
-        return new PagedEntities<TEntity>(resultsList, pageNumber, pageSize, totalCount);
+        return new PagedEntities<TEntity>(resultsList, totalCount, pageNumber, pageSize);
     }
 }
