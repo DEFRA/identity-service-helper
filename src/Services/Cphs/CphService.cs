@@ -52,7 +52,7 @@ public class CphService : ICphService
 
         var cphEntity = await repository.GetSingle(filter, cancellationToken);
 
-        if (cphEntity == null)
+        if (cphEntity is not { DeletedAt: null })
         {
             logger.LogWarning("County parish holding with id {Id} not found", request.Id);
 
