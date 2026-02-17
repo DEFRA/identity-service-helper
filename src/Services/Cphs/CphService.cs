@@ -28,7 +28,7 @@ public class CphService : ICphService
     {
         logger.LogInformation("Getting all county parish holdings by page");
 
-        Expression<Func<CountyParishHoldings, bool>> filter = cph => (request.Expired.HasValue || cph.ExpiredAt == null) && cph.DeletedAt == null;
+        Expression<Func<CountyParishHoldings, bool>> filter = cph => (IsExpiredInferred(request) || cph.ExpiredAt == null) && cph.DeletedAt == null;
         Expression<Func<CountyParishHoldings, string>> orderBy = cph => cph.Identifier;
 
         var pagedCphEntities = await repository.GetPaged(filter, request.PageNumber, request.PageSize, orderBy, request.OrderByDescending ?? false, cancellationToken);
@@ -81,4 +81,7 @@ public class CphService : ICphService
         {
             Id = cphEntity.Id, CphNumber = cphEntity.Identifier, Expired = cphEntity.ExpiredAt != null, ExpiredAt = cphEntity.ExpiredAt,
         };
+
+    private static bool IsExpiredInferred(GetCphs request)
+        => request.Expired != null && (request.Expired == string.Empty || request.Expired.Equals("true", StringComparison.InvariantCultureIgnoreCase));
 }

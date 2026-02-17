@@ -8,5 +8,5 @@ using Defra.Identity.Requests.Common.Queries;
 
 public class GetCphs : PagedQueryBase
 {
-    public bool? Expired { get; set; }
+    public string? Expired { get; set; } = null;
 }
