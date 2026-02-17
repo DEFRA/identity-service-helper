@@ -53,7 +53,10 @@ public static class UsersEndpoints
 
         return Results.CreatedAtRoute(
             routeName: RouteNames.Users,
-            routeValues: new { id = result.Id },
+            routeValues: new
+            {
+                id = result.Id,
+            },
             value: result);
     }
 

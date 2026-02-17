@@ -1,0 +1,61 @@
+﻿// <copyright file="CphEndpoints.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
+namespace Defra.Identity.Api.Endpoints.Cphs;
+
+using Defra.Identity.Requests;
+using Defra.Identity.Requests.Common.Queries;
+using Defra.Identity.Requests.Cphs.Queries;
+using Defra.Identity.Requests.Filters;
+using Defra.Identity.Requests.MetaData;
+using Defra.Identity.Services.Cphs;
+using Microsoft.AspNetCore.Mvc;
+
+public static class CphEndpoints
+{
+    public static void UseCphEndpoints(this IEndpointRouteBuilder app)
+    {
+        app.MapGet(RouteNames.CountyParishHoldings, GetAllPaged)
+            .AddEndpointFilter<ValidationFilter<PagedQueryBase>>();
+
+        app.MapGet(RouteNames.CountyParishHoldings + "/{id:guid}", Get)
+            .Produces<Responses.Cphs.Cph>(StatusCodes.Status200OK, "application/json")
+            .Produces(StatusCodes.Status404NotFound);
+
+        app.MapDelete(RouteNames.CountyParishHoldings + "/{id:guid}", Delete)
+            .WithMetadata(new RequiresOperatorId())
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces(StatusCodes.Status404NotFound);
+    }
+
+    private static async Task<IResult> GetAllPaged(
+        QueryRequestHeaders headers,
+        [AsParameters] GetCphs request,
+        ICphService service)
+    {
+        var pagedCphResults = await service.GetAllPaged(request);
+
+        return Results.Ok(pagedCphResults);
+    }
+
+    private static async Task<IResult> Get(
+        QueryRequestHeaders headers,
+        [AsParameters] GetCphById request,
+        ICphService service)
+    {
+        var cph = await service.Get(request);
+
+        return Results.Ok(cph);
+    }
+
+    private static async Task<IResult> Delete(
+        CommandRequestHeaders headers,
+        [FromRoute] Guid id,
+        ICphService service)
+    {
+        await service.Delete(id, headers.OperatorId);
+
+        return Results.NoContent();
+    }
+}
