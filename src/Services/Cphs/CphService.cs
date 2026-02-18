@@ -11,6 +11,7 @@ using Defra.Identity.Repositories.Exceptions;
 using Defra.Identity.Requests.Cphs.Queries;
 using Defra.Identity.Responses.Common;
 using Defra.Identity.Responses.Cphs;
+using Defra.Identity.Services.Extensions;
 using Microsoft.Extensions.Logging;
 
 public class CphService : ICphService
@@ -34,12 +35,7 @@ public class CphService : ICphService
         Expression<Func<CountyParishHoldings, string>> orderBy = cph => cph.Identifier;
 
         var pagedCphEntities = await repository.GetPaged(filter, request.PageNumber, request.PageSize, orderBy, request.OrderByDescending ?? false, cancellationToken);
-
-        var pagedCphResults = new PagedResults<Cph>(
-            pagedCphEntities.Items.Select(MapCphEntityToCph),
-            pagedCphEntities.TotalCount,
-            pagedCphEntities.PageNumber,
-            pagedCphEntities.PageSize);
+        var pagedCphResults = pagedCphEntities.ToPagedResults(MapCphEntityToCph);
 
         return pagedCphResults;
     }

@@ -6,10 +6,11 @@ namespace Defra.Identity.Responses.Common;
 
 public class PagedResults<T>
 {
-    public PagedResults(IEnumerable<T> items, int totalCount, int pageNumber, int pageSize)
+    public PagedResults(IEnumerable<T> items, int totalCount, int totalPages, int pageNumber, int pageSize)
     {
         Items = items;
         TotalCount = totalCount;
+        TotalPages = totalPages;
         PageNumber = pageNumber;
         PageSize = pageSize;
     }
@@ -17,6 +18,8 @@ public class PagedResults<T>
     public IEnumerable<T> Items { get; }
 
     public int TotalCount { get; }
+
+    public int TotalPages { get; }
 
     public int PageNumber { get; }
 

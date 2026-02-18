@@ -6,10 +6,11 @@ namespace Defra.Identity.Repositories.Common;
 
 public class PagedEntities<TEntity>
 {
-    public PagedEntities(List<TEntity> items, int totalCount, int pageNumber, int pageSize)
+    public PagedEntities(List<TEntity> items, int totalCount, int totalPages, int pageNumber, int pageSize)
     {
         Items = items;
         TotalCount = totalCount;
+        TotalPages = totalPages;
         PageNumber = pageNumber;
         PageSize = pageSize;
     }
@@ -17,6 +18,8 @@ public class PagedEntities<TEntity>
     public List<TEntity> Items { get; }
 
     public int TotalCount { get; }
+
+    public int TotalPages { get; }
 
     public int PageNumber { get; }
 
