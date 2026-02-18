@@ -6,8 +6,7 @@ namespace Defra.Identity.Api.Endpoints.Cphs;
 
 using Defra.Identity.Requests;
 using Defra.Identity.Requests.Common.Queries;
-using Defra.Identity.Requests.Cphs.Commands.Delete;
-using Defra.Identity.Requests.Cphs.Commands.Expire;
+using Defra.Identity.Requests.Cphs.Commands;
 using Defra.Identity.Requests.Cphs.Queries;
 using Defra.Identity.Requests.Filters;
 using Defra.Identity.Requests.MetaData;
