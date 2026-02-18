@@ -6,7 +6,7 @@ namespace Defra.Identity.Requests.Cphs.Queries;
 
 using Defra.Identity.Requests.Common.Queries;
 
-public class GetCphs : PagedQueryBase
+public class GetCphs : PagedQuery
 {
     public string? Expired { get; set; } = null;
 }

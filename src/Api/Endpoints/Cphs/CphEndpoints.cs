@@ -18,7 +18,7 @@ public static class CphEndpoints
     public static void UseCphEndpoints(this IEndpointRouteBuilder app)
     {
         app.MapGet(RouteNames.CountyParishHoldings, GetAllPaged)
-            .AddEndpointFilter<ValidationFilter<PagedQueryBase>>();
+            .AddEndpointFilter<ValidationFilter<PagedQuery>>();
 
         app.MapGet(RouteNames.CountyParishHoldings + "/{id:guid}", Get)
             .Produces<Responses.Cphs.Cph>(StatusCodes.Status200OK, "application/json")
