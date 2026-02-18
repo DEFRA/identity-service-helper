@@ -1,4 +1,4 @@
-﻿// <copyright file="PagingQueryableExtensions.cs" company="Defra">
+﻿// <copyright file="QueryablePagingExtensions.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
@@ -7,7 +7,7 @@ namespace Defra.Identity.Repositories.Extensions;
 using System.Linq.Expressions;
 using Defra.Identity.Repositories.Common;
 
-public static class PagingQueryableExtensions
+public static class QueryablePagingExtensions
 {
     public static async Task<PagedEntities<TEntity>> ToPaged<TEntity, TOrderBy>(
         this IQueryable<TEntity> query,

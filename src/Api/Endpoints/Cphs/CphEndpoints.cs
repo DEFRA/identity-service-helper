@@ -6,6 +6,8 @@ namespace Defra.Identity.Api.Endpoints.Cphs;
 
 using Defra.Identity.Requests;
 using Defra.Identity.Requests.Common.Queries;
+using Defra.Identity.Requests.Cphs.Commands.Delete;
+using Defra.Identity.Requests.Cphs.Commands.Expire;
 using Defra.Identity.Requests.Cphs.Queries;
 using Defra.Identity.Requests.Filters;
 using Defra.Identity.Requests.MetaData;
@@ -47,7 +49,7 @@ public static class CphEndpoints
 
     private static async Task<IResult> Get(
         QueryRequestHeaders headers,
-        [AsParameters] GetCphById request,
+        [AsParameters] GetCph request,
         ICphService service)
     {
         var cph = await service.Get(request);
@@ -57,20 +59,20 @@ public static class CphEndpoints
 
     private static async Task<IResult> Expire(
         CommandRequestHeaders headers,
-        [FromRoute] Guid id,
+        [AsParameters] ExpireCph request,
         ICphService service)
     {
-        await service.Expire(id, headers.OperatorId);
+        await service.Expire(request, headers.OperatorId);
 
         return Results.NoContent();
     }
 
     private static async Task<IResult> Delete(
         CommandRequestHeaders headers,
-        [FromRoute] Guid id,
+        [AsParameters] DeleteCph request,
         ICphService service)
     {
-        await service.Delete(id, headers.OperatorId);
+        await service.Delete(request, headers.OperatorId);
 
         return Results.NoContent();
     }

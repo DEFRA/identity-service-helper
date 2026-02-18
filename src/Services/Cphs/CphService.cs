@@ -8,6 +8,8 @@ using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Cphs;
 using Defra.Identity.Repositories.Exceptions;
+using Defra.Identity.Requests.Cphs.Commands.Delete;
+using Defra.Identity.Requests.Cphs.Commands.Expire;
 using Defra.Identity.Requests.Cphs.Queries;
 using Defra.Identity.Responses.Common;
 using Defra.Identity.Responses.Cphs;
@@ -41,7 +43,7 @@ public class CphService : ICphService
         return pagedCphResults;
     }
 
-    public async Task<Cph> Get(GetCphById request, CancellationToken cancellationToken = default)
+    public async Task<Cph> Get(GetCph request, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Getting county parish holding by id {Id}", request.Id);
 
@@ -61,24 +63,24 @@ public class CphService : ICphService
         return cphResult;
     }
 
-    public async Task Expire(Guid id, Guid operatorId, CancellationToken cancellationToken = default)
+    public async Task Expire(ExpireCph request, Guid operatorId, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Expiring county parish holding with id {Id} by operator {OperatorId}", id, operatorId);
+        logger.LogInformation("Expiring county parish holding with id {Id} by operator {OperatorId}", request.Id, operatorId);
 
-        Expression<Func<CountyParishHoldings, bool>> filter = cph => cph.Id == id;
+        Expression<Func<CountyParishHoldings, bool>> filter = cph => cph.Id == request.Id;
 
         var cphEntity = await repository.GetSingle(filter, cancellationToken);
 
         if (cphEntity is not { DeletedAt: null })
         {
-            logger.LogWarning("County parish holding with id {Id} not found", id);
+            logger.LogWarning("County parish holding with id {Id} not found", request.Id);
 
             throw new NotFoundException("County parish holding not found.");
         }
 
         if (cphEntity.ExpiredAt != null)
         {
-            logger.LogWarning("County parish holding with id {Id} is already expired", id);
+            logger.LogWarning("County parish holding with id {Id} is already expired", request.Id);
 
             throw new ConflictException("County parish holding already expired.");
         }
@@ -88,17 +90,17 @@ public class CphService : ICphService
         await repository.Update(cphEntity, cancellationToken);
     }
 
-    public async Task Delete(Guid id, Guid operatorId, CancellationToken cancellationToken = default)
+    public async Task Delete(DeleteCph request, Guid operatorId, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Deleting county parish holding with id {Id} by operator {OperatorId}", id, operatorId);
+        logger.LogInformation("Deleting county parish holding with id {Id} by operator {OperatorId}", request.Id, operatorId);
 
-        Expression<Func<CountyParishHoldings, bool>> filter = cph => cph.Id == id;
+        Expression<Func<CountyParishHoldings, bool>> filter = cph => cph.Id == request.Id;
 
         var cphEntity = await repository.GetSingle(filter, cancellationToken);
 
         if (cphEntity is not { DeletedAt: null })
         {
-            logger.LogWarning("County parish holding with id {Id} not found", id);
+            logger.LogWarning("County parish holding with id {Id} not found", request.Id);
 
             throw new NotFoundException("County parish holding not found.");
         }
