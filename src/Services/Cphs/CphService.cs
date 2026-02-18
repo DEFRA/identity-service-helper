@@ -11,6 +11,7 @@ using Defra.Identity.Repositories.Exceptions;
 using Defra.Identity.Requests.Cphs.Queries;
 using Defra.Identity.Responses.Common;
 using Defra.Identity.Responses.Cphs;
+using Defra.Identity.Services.Exceptions;
 using Defra.Identity.Services.Extensions;
 using Microsoft.Extensions.Logging;
 
@@ -73,6 +74,13 @@ public class CphService : ICphService
             logger.LogWarning("County parish holding with id {Id} not found", id);
 
             throw new NotFoundException("County parish holding not found.");
+        }
+
+        if (cphEntity.ExpiredAt != null)
+        {
+            logger.LogWarning("County parish holding with id {Id} is already expired", id);
+
+            throw new ConflictException("County parish holding already expired.");
         }
 
         cphEntity.ExpiredAt = DateTime.UtcNow;
