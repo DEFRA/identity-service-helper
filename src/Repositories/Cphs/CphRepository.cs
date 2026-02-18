@@ -58,26 +58,4 @@ public class CphRepository(PostgresDbContext context, ILogger<ICphRepository> lo
 
         return entity;
     }
-
-    public async Task<CountyParishHoldings?> Delete(Expression<Func<CountyParishHoldings, bool>> predicate, Guid operatorId, CancellationToken cancellationToken = default)
-    {
-        var entity = await context.CountyParishHoldings
-            .SingleOrDefaultAsync(predicate, cancellationToken);
-
-        if (entity == null)
-        {
-            return null;
-        }
-
-        logger.LogInformation("Deleting county parish holding with id {Id}", entity.Id);
-
-        entity.DeletedById = operatorId;
-        entity.DeletedAt = DateTime.UtcNow;
-
-        context.CountyParishHoldings.Update(entity);
-
-        await context.SaveChangesAsync(cancellationToken);
-
-        return entity;
-    }
 }

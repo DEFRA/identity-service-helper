@@ -23,6 +23,4 @@ public interface IPageableRepository<TEntity>
     Task<TEntity> Create(TEntity entity, Guid operatorId, CancellationToken cancellationToken = default);
 
     Task<TEntity> Update(TEntity entity, CancellationToken cancellationToken = default);
-
-    Task<TEntity?> Delete(Expression<Func<TEntity, bool>> predicate, Guid operatorId, CancellationToken cancellationToken = default);
 }

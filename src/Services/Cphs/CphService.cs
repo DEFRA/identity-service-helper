@@ -84,14 +84,21 @@ public class CphService : ICphService
     {
         logger.LogInformation("Deleting county parish holding with id {Id} by operator {OperatorId}", id, operatorId);
 
-        var deletedCphEntity = await repository.Delete(cph => cph.Id == id, operatorId, cancellationToken);
+        Expression<Func<CountyParishHoldings, bool>> filter = cph => cph.Id == id;
 
-        if (deletedCphEntity == null)
+        var cphEntity = await repository.GetSingle(filter, cancellationToken);
+
+        if (cphEntity is not { DeletedAt: null })
         {
-            logger.LogWarning("County parish holding not found for deletion");
+            logger.LogWarning("County parish holding with id {Id} not found", id);
 
-            throw new NotFoundException("County parish holding not found");
+            throw new NotFoundException("County parish holding not found.");
         }
+
+        cphEntity.DeletedById = operatorId;
+        cphEntity.DeletedAt = DateTime.UtcNow;
+
+        await repository.Update(cphEntity, cancellationToken);
     }
 
     private static Cph MapCphEntityToCph(CountyParishHoldings cphEntity)
