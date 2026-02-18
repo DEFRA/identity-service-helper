@@ -26,7 +26,8 @@ public static class CphEndpoints
         app.MapPost(RouteNames.CountyParishHoldings + "/{id:guid}:expire", Expire)
             .WithMetadata(new RequiresOperatorId())
             .Produces(StatusCodes.Status204NoContent)
-            .Produces(StatusCodes.Status404NotFound);
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status409Conflict);
 
         app.MapDelete(RouteNames.CountyParishHoldings + "/{id:guid}", Delete)
             .WithMetadata(new RequiresOperatorId())
