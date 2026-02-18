@@ -1,0 +1,96 @@
+
+### GET request to users to get top admin
+GET {{host}}/users
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+> ../../Asserts/Should_be_200_OK_and_get_top_id.js
+
+### GET request to get top none expired cph on first page
+GET {{host}}/cphs?pageNumber=1&pageSize=20
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+> ../../Asserts/Should_be_200_OK_and_get_paged_top_id.js
+
+### EXPIRE the cph
+POST {{host}}/cphs/{{id}}:expire
+Content-Type: application/json
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+> ../../Asserts/Should_be_204_no_content.js
+
+### EXPIRE the cph again and expect a conflict
+POST {{host}}/cphs/{{id}}:expire
+Content-Type: application/json
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+> ../../Asserts/Should_be_409_conflict.js
+
+### DELETE the cph
+DELETE {{host}}/cphs/{{id}}
+Content-Type: application/json
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+> ../../Asserts/Should_be_204_no_content.js
+
+### DELETE the cph again and expect not found
+DELETE {{host}}/cphs/{{id}}
+Content-Type: application/json
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+> ../../Asserts/Should_be_404.js
+
+### GET request to get top cph on first page including expired
+GET {{host}}/cphs?pageNumber=1&pageSize=20&expired
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+> ../../Asserts/Should_be_200_OK_and_get_paged_top_id.js
+
+### EXPIRE the cph
+POST {{host}}/cphs/{{id}}:expire
+Content-Type: application/json
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+> ../../Asserts/Should_be_204_no_content.js
+
+### GET request to get top cph on first page including expired
+GET {{host}}/cphs?pageNumber=1&pageSize=20&expired
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+> ../../Asserts/Should_be_200_OK_and_get_paged_top_id.js
+
+### EXPIRE the cph and expect a conflict
+POST {{host}}/cphs/{{id}}:expire
+Content-Type: application/json
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+> ../../Asserts/Should_be_409_conflict.js
+
+### DELETE the cph
+DELETE {{host}}/cphs/{{id}}
+Content-Type: application/json
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+> ../../Asserts/Should_be_204_no_content.js
+
