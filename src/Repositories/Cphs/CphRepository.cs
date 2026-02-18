@@ -46,30 +46,38 @@ public class CphRepository(PostgresDbContext context, ILogger<ICphRepository> lo
         throw new NotImplementedException();
     }
 
-    public async Task<CountyParishHoldings> Update(CountyParishHoldings entity, Guid operatorId, CancellationToken cancellationToken = default)
+    public async Task<CountyParishHoldings> Update(CountyParishHoldings entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(entity);
+
+        logger.LogInformation("Updating county parish holding with id {Id}", entity.Id);
+
+        context.Update(entity);
+
+        await context.SaveChangesAsync(cancellationToken);
+
+        return entity;
     }
 
     public async Task<CountyParishHoldings?> Delete(Expression<Func<CountyParishHoldings, bool>> predicate, Guid operatorId, CancellationToken cancellationToken = default)
     {
-        var cph = await context.CountyParishHoldings
+        var entity = await context.CountyParishHoldings
             .SingleOrDefaultAsync(predicate, cancellationToken);
 
-        if (cph == null)
+        if (entity == null)
         {
             return null;
         }
 
-        logger.LogInformation("Deleting county parish holding with id {Id}", cph.Id);
+        logger.LogInformation("Deleting county parish holding with id {Id}", entity.Id);
 
-        cph.DeletedById = operatorId;
-        cph.DeletedAt = DateTime.UtcNow;
+        entity.DeletedById = operatorId;
+        entity.DeletedAt = DateTime.UtcNow;
 
-        context.CountyParishHoldings.Update(cph);
+        context.CountyParishHoldings.Update(entity);
 
         await context.SaveChangesAsync(cancellationToken);
 
-        return cph;
+        return entity;
     }
 }

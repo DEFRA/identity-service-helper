@@ -60,6 +60,26 @@ public class CphService : ICphService
         return cphResult;
     }
 
+    public async Task Expire(Guid id, Guid operatorId, CancellationToken cancellationToken = default)
+    {
+        logger.LogInformation("Expiring county parish holding with id {Id} by operator {OperatorId}", id, operatorId);
+
+        Expression<Func<CountyParishHoldings, bool>> filter = cph => cph.Id == id;
+
+        var cphEntity = await repository.GetSingle(filter, cancellationToken);
+
+        if (cphEntity is not { DeletedAt: null })
+        {
+            logger.LogWarning("County parish holding with id {Id} not found", id);
+
+            throw new NotFoundException("County parish holding not found.");
+        }
+
+        cphEntity.ExpiredAt = DateTime.UtcNow;
+
+        await repository.Update(cphEntity, cancellationToken);
+    }
+
     public async Task Delete(Guid id, Guid operatorId, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Deleting county parish holding with id {Id} by operator {OperatorId}", id, operatorId);

@@ -23,6 +23,11 @@ public static class CphEndpoints
             .Produces<Responses.Cphs.Cph>(StatusCodes.Status200OK, "application/json")
             .Produces(StatusCodes.Status404NotFound);
 
+        app.MapPost(RouteNames.CountyParishHoldings + "/{id:guid}:expire", Expire)
+            .WithMetadata(new RequiresOperatorId())
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces(StatusCodes.Status404NotFound);
+
         app.MapDelete(RouteNames.CountyParishHoldings + "/{id:guid}", Delete)
             .WithMetadata(new RequiresOperatorId())
             .Produces(StatusCodes.Status204NoContent)
@@ -47,6 +52,16 @@ public static class CphEndpoints
         var cph = await service.Get(request);
 
         return Results.Ok(cph);
+    }
+
+    private static async Task<IResult> Expire(
+        CommandRequestHeaders headers,
+        [FromRoute] Guid id,
+        ICphService service)
+    {
+        await service.Expire(id, headers.OperatorId);
+
+        return Results.NoContent();
     }
 
     private static async Task<IResult> Delete(
