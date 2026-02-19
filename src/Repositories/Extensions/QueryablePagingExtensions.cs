@@ -2,9 +2,9 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Repositories.Extensions;
+// ReSharper disable CheckNamespace
+namespace System.Linq.Expressions;
 
-using System.Linq.Expressions;
 using Defra.Identity.Repositories.Common;
 
 public static class QueryablePagingExtensions

@@ -8,7 +8,6 @@ using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Common;
-using Defra.Identity.Repositories.Extensions;
 using Microsoft.Extensions.Logging;
 
 public class CphRepository(PostgresDbContext context, ILogger<ICphRepository> logger)
