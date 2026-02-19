@@ -2,9 +2,9 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Services.Extensions;
+// ReSharper disable CheckNamespace
+namespace Defra.Identity.Repositories.Common;
 
-using Defra.Identity.Repositories.Common;
 using Defra.Identity.Responses.Common;
 
 public static class PagedEntitiesExtensions

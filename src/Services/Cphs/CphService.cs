@@ -6,6 +6,7 @@ namespace Defra.Identity.Services.Cphs;
 
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database.Entities;
+using Defra.Identity.Repositories.Common;
 using Defra.Identity.Repositories.Cphs;
 using Defra.Identity.Repositories.Exceptions;
 using Defra.Identity.Requests.Cphs.Commands;
@@ -13,7 +14,6 @@ using Defra.Identity.Requests.Cphs.Queries;
 using Defra.Identity.Responses.Common;
 using Defra.Identity.Responses.Cphs;
 using Defra.Identity.Services.Exceptions;
-using Defra.Identity.Services.Extensions;
 using Microsoft.Extensions.Logging;
 
 public class CphService : ICphService
