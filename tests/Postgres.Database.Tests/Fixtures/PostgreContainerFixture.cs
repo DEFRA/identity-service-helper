@@ -6,6 +6,8 @@ namespace Defra.Identity.Postgres.Database.Tests.Fixtures;
 
 using Defra.Identity.Postgres.Database;
 using Defra.Identity.Postgres.Database.Entities;
+using Defra.Identity.Postgres.Database.Tests.Fixtures.TestData;
+using Defra.Identity.Postgres.Database.Tests.Fixtures.TestData.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Testcontainers.PostgreSql;
@@ -34,21 +36,65 @@ public class PostgreContainerFixture
 
         var context = new PostgresDbContext(options);
         await context.Database.MigrateAsync();
+        await TearDownData(context);
         await SeedData(context);
     }
 
-    private async Task SeedData(PostgresDbContext context)
+    private static async Task TearDownData(PostgresDbContext context)
     {
-        const string adminEmailAddress = "test@test.com";
+        var adminUser = await CreateAdminUser(context);
 
-        if (!context.UserAccounts.Any())
+        await DeleteCphs(context);
+    }
+
+    private static async Task SeedData(PostgresDbContext context)
+    {
+        var adminUser = await CreateAdminUser(context);
+
+        await CreateCphs(adminUser, context);
+    }
+
+    private static async Task<UserAccounts> CreateAdminUser(PostgresDbContext context)
+    {
+        if (!await context.UserAccounts.AnyAsync(user => user.EmailAddress == TestDataHelper.AdminEmailAddress))
         {
             var id = Guid.NewGuid();
-            var adminUser = await context.UserAccounts.AddAsync(
+
+            await context.UserAccounts.AddAsync(
                 new UserAccounts()
-                    { Id = id, DisplayName = "Test User", EmailAddress = adminEmailAddress, FirstName = "test", LastName = "user", CreatedById = id },
+                {
+                    Id = id,
+                    DisplayName = "Test User",
+                    EmailAddress = TestDataHelper.AdminEmailAddress,
+                    FirstName = "test",
+                    LastName = "user",
+                    CreatedById = id,
+                },
                 TestContext.Current.CancellationToken);
             await context.SaveChangesAsync(TestContext.Current.CancellationToken);
         }
+
+        var adminUser = await TestDataHelper.GetAdminUser(context);
+
+        return adminUser;
+    }
+
+    private static async Task CreateCphs(UserAccounts adminUser, PostgresDbContext context)
+    {
+        var cphEntities = CphTestData.CreateCphEntities(adminUser.CreatedById);
+
+        foreach (var entity in cphEntities)
+        {
+            await context.CountyParishHoldings.AddAsync(entity, TestContext.Current.CancellationToken);
+        }
+
+        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
+    }
+
+    private static async Task DeleteCphs(PostgresDbContext context)
+    {
+        var cphEntities = await context.CountyParishHoldings.ToListAsync();
+        context.CountyParishHoldings.RemoveRange(cphEntities);
+        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
     }
 }
