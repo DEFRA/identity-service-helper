@@ -51,16 +51,25 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         firstItem.Identifier.ShouldBe("44/000/0001");
         firstItem.CreatedAt.ShouldBe(DateTime.Parse("2026-02-01").ToUniversalTime());
         firstItem.CreatedById.ShouldBe(adminUser.Id);
+        firstItem.ExpiredAt.ShouldBeNull();
+        firstItem.DeletedAt.ShouldBeNull();
+        firstItem.DeletedById.ShouldBeNull();
 
         secondItem.Id.ShouldBe(new Guid("204459b1-3a07-4e65-9122-91c1699e3d3f"));
         secondItem.Identifier.ShouldBe("44/000/0002");
         secondItem.CreatedAt.ShouldBe(DateTime.Parse("2026-02-02").ToUniversalTime());
         secondItem.CreatedById.ShouldBe(adminUser.Id);
+        firstItem.ExpiredAt.ShouldBeNull();
+        firstItem.DeletedAt.ShouldBeNull();
+        firstItem.DeletedById.ShouldBeNull();
 
         thirdItem.Id.ShouldBe(new Guid("1eb0f2fb-a332-4cd5-8a20-02d7adfd7156"));
         thirdItem.Identifier.ShouldBe("44/000/0003");
         thirdItem.CreatedAt.ShouldBe(DateTime.Parse("2026-02-03").ToUniversalTime());
         thirdItem.CreatedById.ShouldBe(adminUser.Id);
+        firstItem.ExpiredAt.ShouldBeNull();
+        firstItem.DeletedAt.ShouldBeNull();
+        firstItem.DeletedById.ShouldBeNull();
     }
 
     [Fact]
@@ -99,15 +108,24 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         firstItem.Identifier.ShouldBe("44/000/0007");
         firstItem.CreatedAt.ShouldBe(DateTime.Parse("2026-02-07").ToUniversalTime());
         firstItem.CreatedById.ShouldBe(adminUser.Id);
+        firstItem.ExpiredAt.ShouldBe(DateTime.Parse("2026-02-12").ToUniversalTime());
+        firstItem.DeletedAt.ShouldBe(DateTime.Parse("2026-02-13").ToUniversalTime());
+        firstItem.DeletedById.ShouldBe(adminUser.Id);
 
         secondItem.Id.ShouldBe(new Guid("82181a8b-7f7f-470c-9263-2b94675599df"));
         secondItem.Identifier.ShouldBe("44/000/0006");
         secondItem.CreatedAt.ShouldBe(DateTime.Parse("2026-02-06").ToUniversalTime());
         secondItem.CreatedById.ShouldBe(adminUser.Id);
+        secondItem.ExpiredAt.ShouldBeNull();
+        secondItem.DeletedAt.ShouldBe(DateTime.Parse("2026-02-11").ToUniversalTime());
+        secondItem.DeletedById.ShouldBe(adminUser.Id);
 
         thirdItem.Id.ShouldBe(new Guid("7973060a-d483-4ad4-9716-c70415ed620a"));
         thirdItem.Identifier.ShouldBe("44/000/0005");
         thirdItem.CreatedAt.ShouldBe(DateTime.Parse("2026-02-05").ToUniversalTime());
         thirdItem.CreatedById.ShouldBe(adminUser.Id);
+        thirdItem.ExpiredAt.ShouldBe(DateTime.Parse("2026-02-10").ToUniversalTime());
+        thirdItem.DeletedAt.ShouldBeNull();
+        thirdItem.DeletedById.ShouldBeNull();
     }
 }
