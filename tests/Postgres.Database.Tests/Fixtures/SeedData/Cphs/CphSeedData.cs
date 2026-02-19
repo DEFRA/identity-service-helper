@@ -1,4 +1,4 @@
-﻿// <copyright file="CphTestData.cs" company="Defra">
+﻿// <copyright file="CphSeedData.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
@@ -8,8 +8,6 @@ using Defra.Identity.Postgres.Database.Entities;
 
 public static class CphSeedData
 {
-    public const string AdminEmailAddress = "test@test.com";
-
     public static CountyParishHoldings[] GetCphEntities(Guid adminUserId)
         =>
         [

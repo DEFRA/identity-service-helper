@@ -8,7 +8,7 @@ using System.ComponentModel;
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
-using Defra.Identity.Postgres.Database.Tests.Fixtures.SeedData.Helpers;
+using Defra.Identity.Postgres.Database.Tests.Fixtures.SeedData;
 using Defra.Identity.Repositories.Cphs;
 using Microsoft.Extensions.Logging;
 using NSubstitute;

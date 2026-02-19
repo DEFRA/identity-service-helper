@@ -8,7 +8,7 @@ using Defra.Identity.Postgres.Database;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures.SeedData;
 using Defra.Identity.Postgres.Database.Tests.Fixtures.SeedData.Cphs;
-using Defra.Identity.Postgres.Database.Tests.Fixtures.SeedData.Helpers;
+using Defra.Identity.Postgres.Database.Tests.Fixtures.SeedData.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Testcontainers.PostgreSql;
@@ -57,27 +57,15 @@ public class PostgreContainerFixture
 
     private static async Task<UserAccounts> CreateAdminUser(PostgresDbContext context)
     {
-        if (!await context.UserAccounts.AnyAsync(user => user.EmailAddress == SeedDataQueryHelper.AdminEmailAddress))
+        if (!await context.UserAccounts.AnyAsync(user => user.EmailAddress == UserSeedData.AdminEmailAddress))
         {
-            var id = Guid.NewGuid();
+            var adminUserEntity = UserSeedData.GetAdminUserEntity();
 
-            await context.UserAccounts.AddAsync(
-                new UserAccounts()
-                {
-                    Id = id,
-                    DisplayName = "Test User",
-                    EmailAddress = SeedDataQueryHelper.AdminEmailAddress,
-                    FirstName = "test",
-                    LastName = "user",
-                    CreatedById = id,
-                },
-                TestContext.Current.CancellationToken);
+            await context.UserAccounts.AddAsync(adminUserEntity, TestContext.Current.CancellationToken);
             await context.SaveChangesAsync(TestContext.Current.CancellationToken);
         }
 
-        var adminUser = await SeedDataQueryHelper.GetAdminUser(context);
-
-        return adminUser;
+        return await SeedDataQueryHelper.GetAdminUser(context);
     }
 
     private static async Task CreateCphs(UserAccounts adminUser, PostgresDbContext context)
