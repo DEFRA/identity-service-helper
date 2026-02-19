@@ -4,7 +4,7 @@ on:
   pull_request:
 
 env:
-  LIQUIBASE_VERSION: 4.27.0
+  LIQUIBASE_VERSION: 4.3.3
 
   POSTGRES_USER: liquibase
   POSTGRES_PASSWORD: liquibase
