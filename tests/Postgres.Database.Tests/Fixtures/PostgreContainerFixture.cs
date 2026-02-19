@@ -6,8 +6,9 @@ namespace Defra.Identity.Postgres.Database.Tests.Fixtures;
 
 using Defra.Identity.Postgres.Database;
 using Defra.Identity.Postgres.Database.Entities;
-using Defra.Identity.Postgres.Database.Tests.Fixtures.TestData;
-using Defra.Identity.Postgres.Database.Tests.Fixtures.TestData.Helpers;
+using Defra.Identity.Postgres.Database.Tests.Fixtures.SeedData;
+using Defra.Identity.Postgres.Database.Tests.Fixtures.SeedData.Cphs;
+using Defra.Identity.Postgres.Database.Tests.Fixtures.SeedData.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Testcontainers.PostgreSql;
@@ -56,7 +57,7 @@ public class PostgreContainerFixture
 
     private static async Task<UserAccounts> CreateAdminUser(PostgresDbContext context)
     {
-        if (!await context.UserAccounts.AnyAsync(user => user.EmailAddress == TestDataHelper.AdminEmailAddress))
+        if (!await context.UserAccounts.AnyAsync(user => user.EmailAddress == SeedDataQueryHelper.AdminEmailAddress))
         {
             var id = Guid.NewGuid();
 
@@ -65,7 +66,7 @@ public class PostgreContainerFixture
                 {
                     Id = id,
                     DisplayName = "Test User",
-                    EmailAddress = TestDataHelper.AdminEmailAddress,
+                    EmailAddress = SeedDataQueryHelper.AdminEmailAddress,
                     FirstName = "test",
                     LastName = "user",
                     CreatedById = id,
@@ -74,14 +75,14 @@ public class PostgreContainerFixture
             await context.SaveChangesAsync(TestContext.Current.CancellationToken);
         }
 
-        var adminUser = await TestDataHelper.GetAdminUser(context);
+        var adminUser = await SeedDataQueryHelper.GetAdminUser(context);
 
         return adminUser;
     }
 
     private static async Task CreateCphs(UserAccounts adminUser, PostgresDbContext context)
     {
-        var cphEntities = CphTestData.CreateCphEntities(adminUser.CreatedById);
+        var cphEntities = CphSeedData.GetCphEntities(adminUser.CreatedById);
 
         foreach (var entity in cphEntities)
         {

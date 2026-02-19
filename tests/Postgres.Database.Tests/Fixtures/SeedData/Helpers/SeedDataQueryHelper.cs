@@ -2,12 +2,12 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Postgres.Database.Tests.Fixtures.TestData.Helpers;
+namespace Defra.Identity.Postgres.Database.Tests.Fixtures.SeedData.Helpers;
 
 using Defra.Identity.Postgres.Database.Entities;
 using Microsoft.EntityFrameworkCore;
 
-public static class TestDataHelper
+public static class SeedDataQueryHelper
 {
     public const string AdminEmailAddress = "test@test.com";
 

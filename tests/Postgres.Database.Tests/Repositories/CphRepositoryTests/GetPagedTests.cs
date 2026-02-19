@@ -8,7 +8,7 @@ using System.ComponentModel;
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
-using Defra.Identity.Postgres.Database.Tests.Fixtures.TestData.Helpers;
+using Defra.Identity.Postgres.Database.Tests.Fixtures.SeedData.Helpers;
 using Defra.Identity.Repositories.Cphs;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
@@ -30,7 +30,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         const int pageSize = 3;
         const bool descendingOrder = false;
 
-        var adminUser = await TestDataHelper.GetAdminUser(Context);
+        var adminUser = await SeedDataQueryHelper.GetAdminUser(Context);
 
         // Act
         var pagedEntities = await repository.GetPaged(filter, pageNumber, pageSize, orderBy, descendingOrder, TestContext.Current.CancellationToken);
@@ -78,7 +78,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         const int pageSize = 3;
         const bool descendingOrder = true;
 
-        var adminUser = await TestDataHelper.GetAdminUser(Context);
+        var adminUser = await SeedDataQueryHelper.GetAdminUser(Context);
 
         // Act
         var pagedEntities = await repository.GetPaged(filter, pageNumber, pageSize, orderBy, descendingOrder, TestContext.Current.CancellationToken);

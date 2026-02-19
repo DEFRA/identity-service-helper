@@ -2,15 +2,15 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Postgres.Database.Tests.Fixtures.TestData;
+namespace Defra.Identity.Postgres.Database.Tests.Fixtures.SeedData.Cphs;
 
 using Defra.Identity.Postgres.Database.Entities;
 
-public static class CphTestData
+public static class CphSeedData
 {
     public const string AdminEmailAddress = "test@test.com";
 
-    public static CountyParishHoldings[] CreateCphEntities(Guid adminUserId)
+    public static CountyParishHoldings[] GetCphEntities(Guid adminUserId)
         =>
         [
             new()
