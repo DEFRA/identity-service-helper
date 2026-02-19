@@ -7,6 +7,7 @@ namespace Defra.Identity.Api;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using Defra.Identity.Api.Endpoints.Applications;
+using Defra.Identity.Api.Endpoints.Delegations;
 using Defra.Identity.Api.Endpoints.Users;
 using Defra.Identity.Api.Exceptions;
 using Defra.Identity.Api.Utility.Utils.Http;
@@ -110,6 +111,7 @@ public class Program
         app.MapHealthChecks("/healthz");
         app.UseUsersEndpoints();
         app.UseApplicationEndpoints();
+        app.UseDelegationEndpoints();
 
         return app;
     }

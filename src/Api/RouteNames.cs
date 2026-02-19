@@ -11,5 +11,6 @@ public static class RouteNames
     public const string Permissions = "permissions";
     public const string Groups = "groups";
     public const string Applications = "applications";
+    public const string Delegations = "delegations";
     public const string CountyParishHoldings = "countyParishHoldings";
 }

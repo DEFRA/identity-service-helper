@@ -1,0 +1,23 @@
+### GET request to delegations (Defaults to all delegations)
+GET {{host}}/delegations
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+
+
+> ../../Asserts/Should_be_200_OK_and_get_top_id.js
+
+### Get application By Id
+GET {{host}}/delegations/{{id}}
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+
+
+> ../../Asserts/Should_be_200_OK.js
+
+### Should return 404 application does not exist
+GET {{host}}/delegations/{{$random.internet.uuid}}
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+
+
+> ../../Asserts/Should_be_404.js

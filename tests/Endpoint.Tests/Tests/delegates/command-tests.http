@@ -1,0 +1,71 @@
+
+### GET request to delegations to get top user 
+GET {{host}}/users
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+> ../../Asserts/Should_be_200_OK_and_get_top_id.js
+
+### GET request to applications to get top user 
+GET {{host}}/applications
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+> ../../Asserts/Should_be_ok_and_get_top_application_id.js
+
+### Create new Delegation
+POST {{host}}/delegations
+Content-Type:application/json
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+{
+  "application_id": {{Application-Id}},
+  "user_id": {{id}}
+}
+
+> ../../Asserts/Should_be_201_created.js
+
+### Create new Delegation
+POST {{host}}/delegations
+Content-Type: application/json
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+{
+  "application_id": "{{Application-Id}}",
+  "user_id": "{{id}}"
+}
+
+> ../../Asserts/Should_be_201_created.js
+
+### PUT request to update an existing Delegation
+PUT {{host}}/delegations/{{id}}
+Content-Type:application/json
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+{
+  "name": "UpdatedApp_{{$random.alphanumeric(8)}}",
+  "client_id": "{{$random.internet.uuid}}",
+  "tenant_name": "UpdatedTenant",
+  "description": "Updated Description"
+}
+
+> ../../Asserts/Should_be_200_OK.js
+
+
+### DELETE the Delegation 
+DELETE {{host}}/delegations/{{id}}
+Content-Type:application/json
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+
+> ../../Asserts/Should_be_204_no_content.js

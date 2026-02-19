@@ -52,13 +52,13 @@ services:
       start_period: 10s
       
   liquibase:
-    image: liquibase/liquibase
+    image: liquibase/liquibase:4.3.3
     depends_on:
       postgres:
         condition: service_healthy
     volumes:
       - ./database:/liquibase/changelog
-    command: --url=jdbc:postgresql://postgres:5432/livestock_auth --username=postgres --password=postgres --changelog-file=db.changelog-master.xml --liquibase-schema-name=public update
+    command: --url=jdbc:postgresql://postgres:5432/livestock_auth --username=postgres --password=postgres --changeLogFile=db.changelog-master.xml --liquibaseSchemaName=public update
     networks:
       - cdp-tenant
       

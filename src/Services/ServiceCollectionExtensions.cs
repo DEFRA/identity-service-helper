@@ -6,6 +6,7 @@ namespace Defra.Identity.Services;
 
 using Defra.Identity.Services.Applications;
 using Defra.Identity.Services.Users;
+using Defra.Identity.Services.Delegations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,6 +18,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddTransient<IUserService, UserService>();
         services.AddTransient<IApplicationService, ApplicationService>();
+        services.AddTransient<IDelegationsService, DelegationsService>();
 
         return services;
     }
