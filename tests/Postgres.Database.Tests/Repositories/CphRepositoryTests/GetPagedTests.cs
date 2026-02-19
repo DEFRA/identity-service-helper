@@ -49,17 +49,17 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 
         firstItem.Id.ShouldBe(new Guid("4435a146-d0ac-4260-8a27-c550e0ed9563"));
         firstItem.Identifier.ShouldBe("44/000/0001");
-        firstItem.CreatedAt.ShouldBe(DateTime.Parse("01/02/2026"));
+        firstItem.CreatedAt.ShouldBe(DateTime.Parse("2026-02-01").ToUniversalTime());
         firstItem.CreatedById.ShouldBe(adminUser.Id);
 
         secondItem.Id.ShouldBe(new Guid("204459b1-3a07-4e65-9122-91c1699e3d3f"));
         secondItem.Identifier.ShouldBe("44/000/0002");
-        secondItem.CreatedAt.ShouldBe(DateTime.Parse("02/02/2026"));
+        secondItem.CreatedAt.ShouldBe(DateTime.Parse("2026-02-02").ToUniversalTime());
         secondItem.CreatedById.ShouldBe(adminUser.Id);
 
         thirdItem.Id.ShouldBe(new Guid("1eb0f2fb-a332-4cd5-8a20-02d7adfd7156"));
         thirdItem.Identifier.ShouldBe("44/000/0003");
-        thirdItem.CreatedAt.ShouldBe(DateTime.Parse("03/02/2026"));
+        thirdItem.CreatedAt.ShouldBe(DateTime.Parse("2026-02-03").ToUniversalTime());
         thirdItem.CreatedById.ShouldBe(adminUser.Id);
     }
 
@@ -97,17 +97,17 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 
         firstItem.Id.ShouldBe(new Guid("088967e7-71b8-457a-9001-5b71f24798fd"));
         firstItem.Identifier.ShouldBe("44/000/0007");
-        firstItem.CreatedAt.ShouldBe(DateTime.Parse("07/02/2026"));
+        firstItem.CreatedAt.ShouldBe(DateTime.Parse("2026-02-07").ToUniversalTime());
         firstItem.CreatedById.ShouldBe(adminUser.Id);
 
         secondItem.Id.ShouldBe(new Guid("82181a8b-7f7f-470c-9263-2b94675599df"));
         secondItem.Identifier.ShouldBe("44/000/0006");
-        secondItem.CreatedAt.ShouldBe(DateTime.Parse("06/02/2026"));
+        secondItem.CreatedAt.ShouldBe(DateTime.Parse("2026-02-06").ToUniversalTime());
         secondItem.CreatedById.ShouldBe(adminUser.Id);
 
         thirdItem.Id.ShouldBe(new Guid("7973060a-d483-4ad4-9716-c70415ed620a"));
         thirdItem.Identifier.ShouldBe("44/000/0005");
-        thirdItem.CreatedAt.ShouldBe(DateTime.Parse("05/02/2026"));
+        thirdItem.CreatedAt.ShouldBe(DateTime.Parse("2026-02-05").ToUniversalTime());
         thirdItem.CreatedById.ShouldBe(adminUser.Id);
     }
 }
