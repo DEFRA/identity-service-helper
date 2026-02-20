@@ -9,8 +9,10 @@ using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Cphs;
 using Defra.Identity.Repositories.Exceptions;
+using Defra.Identity.Requests.Cphs.Commands;
 using Defra.Identity.Requests.Cphs.Queries;
 using Defra.Identity.Services.Cphs;
+using Defra.Identity.Services.Exceptions;
 using Defra.Identity.Services.Tests.Cphs.TestData;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
@@ -543,5 +545,119 @@ public class CphServiceTests
 
         logger.VerifyLogReceivedOnce(LogLevel.Information, $"Getting county parish holding by id {request.Id.ToString()}");
         logger.VerifyLogReceivedOnce(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");
+    }
+
+    [Fact]
+    [Description("Expire Should expire none expired and none deleted item")]
+    public async Task Expire_ShouldExpireNoneExpiredAndNonDeletedItem()
+    {
+        // Arrange
+        var logger = Substitute.For<ILogger<CphService>>();
+        var repository = Substitute.For<ICphRepository>();
+        var cphService = new CphService(repository, logger);
+
+        repository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns(CphServiceTestDataHelper.GetSingleMockEntityResultFromCallInfo);
+
+        var request = new ExpireCph()
+        {
+            Id = new Guid("1cd09a5b-6b00-4f30-b03e-8de45130cad6"),
+        };
+
+        var operatorId = new Guid("a4ae3558-90b7-48a4-90c4-a32c086ff769");
+
+        // Act
+        await cphService.Expire(request, operatorId, TestContext.Current.CancellationToken);
+
+        // Assert
+        logger.VerifyLogReceivedOnce(LogLevel.Information, $"Expiring county parish holding with id {request.Id.ToString()} by operator {operatorId}");
+
+        await repository.Received(1).Update(Arg.Is<CountyParishHoldings>(v => v.ExpiredAt != null), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    [Description("Expire Should throw conflict exception when already expired")]
+    public async Task Expire_ShouldThrowConflictExceptionWhenAlreadyExpired()
+    {
+        // Arrange
+        var logger = Substitute.For<ILogger<CphService>>();
+        var repository = Substitute.For<ICphRepository>();
+        var cphService = new CphService(repository, logger);
+
+        repository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns(CphServiceTestDataHelper.GetSingleMockEntityResultFromCallInfo);
+
+        var request = new ExpireCph()
+        {
+            Id = new Guid("802428bd-0411-451b-b75c-2fb6c037f271"),
+        };
+
+        var operatorId = new Guid("a4ae3558-90b7-48a4-90c4-a32c086ff769");
+
+        // Act & Assert
+        Should.Throw<ConflictException>(async () => await cphService.Expire(request, operatorId, TestContext.Current.CancellationToken));
+
+        logger.VerifyLogReceivedOnce(LogLevel.Information, $"Expiring county parish holding with id {request.Id.ToString()} by operator {operatorId}");
+        logger.VerifyLogReceivedOnce(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} is already expired");
+
+        await repository.DidNotReceive().Update(Arg.Any<CountyParishHoldings>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    [Description("Expire Should throw not found exception when deleted")]
+    public async Task Expire_ShouldThrowNotFoundExceptionWhenDeleted()
+    {
+        // Arrange
+        var logger = Substitute.For<ILogger<CphService>>();
+        var repository = Substitute.For<ICphRepository>();
+        var cphService = new CphService(repository, logger);
+
+        repository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns(CphServiceTestDataHelper.GetSingleMockEntityResultFromCallInfo);
+
+        var request = new ExpireCph()
+        {
+            Id = new Guid("a4343f59-011c-46dc-a9fe-553923338e0a"),
+        };
+
+        var operatorId = new Guid("a4ae3558-90b7-48a4-90c4-a32c086ff769");
+
+        // Act & Assert
+        Should.Throw<NotFoundException>(async () => await cphService.Expire(request, operatorId, TestContext.Current.CancellationToken));
+
+        logger.VerifyLogReceivedOnce(LogLevel.Information, $"Expiring county parish holding with id {request.Id.ToString()} by operator {operatorId}");
+        logger.VerifyLogReceivedOnce(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");
+
+        await repository.DidNotReceive().Update(Arg.Any<CountyParishHoldings>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    [Description("Expire Should throw not found exception when entity does not exist")]
+    public async Task Expire_ShouldThrowNotFoundExceptionWhenEntityDoesNotExist()
+    {
+        // Arrange
+        var logger = Substitute.For<ILogger<CphService>>();
+        var repository = Substitute.For<ICphRepository>();
+        var cphService = new CphService(repository, logger);
+
+        repository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns(CphServiceTestDataHelper.GetSingleMockEntityResultFromCallInfo);
+
+        var nonExistingEntityId = new Guid("109d340f-16b7-45fc-83d4-9ea8968df112");
+
+        var request = new ExpireCph()
+        {
+            Id = nonExistingEntityId,
+        };
+
+        var operatorId = new Guid("a4ae3558-90b7-48a4-90c4-a32c086ff769");
+
+        // Act & Assert
+        Should.Throw<NotFoundException>(async () => await cphService.Expire(request, operatorId, TestContext.Current.CancellationToken));
+
+        logger.VerifyLogReceivedOnce(LogLevel.Information, $"Expiring county parish holding with id {request.Id.ToString()} by operator {operatorId}");
+        logger.VerifyLogReceivedOnce(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");
+
+        await repository.DidNotReceive().Update(Arg.Any<CountyParishHoldings>(), Arg.Any<CancellationToken>());
     }
 }
