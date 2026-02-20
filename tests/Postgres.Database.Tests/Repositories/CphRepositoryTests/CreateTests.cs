@@ -14,7 +14,7 @@ using NSubstitute;
 public class CreateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 {
     [Fact]
-    [Description("Should get paged cphs in ascending order with correct paging details")]
+    [Description("Should throw an exception when attempting to create a new entity")]
     public Task ShouldThrowNotImplementedException()
     {
         // Arrange

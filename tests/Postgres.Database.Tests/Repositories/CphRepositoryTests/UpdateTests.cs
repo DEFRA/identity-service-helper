@@ -15,7 +15,7 @@ using NSubstitute;
 public class UpdateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 {
     [Fact]
-    [Description("Should update an existing user account")]
+    [Description("Should update an existing entity")]
     public async Task ShouldUpdateEntity()
     {
         // Arrange
