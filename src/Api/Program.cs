@@ -7,6 +7,7 @@ namespace Defra.Identity.Api;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using Defra.Identity.Api.Endpoints.Applications;
+using Defra.Identity.Api.Endpoints.Cphs;
 using Defra.Identity.Api.Endpoints.Delegations;
 using Defra.Identity.Api.Endpoints.Users;
 using Defra.Identity.Api.Exceptions;
@@ -112,6 +113,7 @@ public class Program
         app.UseUsersEndpoints();
         app.UseApplicationEndpoints();
         app.UseDelegationEndpoints();
+        app.UseCphEndpoints();
 
         return app;
     }

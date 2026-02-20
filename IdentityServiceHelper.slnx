@@ -31,11 +31,14 @@
   </Folder>
   <Folder Name="/tests/Endpoint.Tests/Asserts/">
     <File Path="tests/Endpoint.Tests/Asserts/Should_be_200_OK.js" />
+    <File Path="tests/Endpoint.Tests/Asserts/Should_be_200_OK_and_get_paged_5_results.js" />
+    <File Path="tests/Endpoint.Tests/Asserts/Should_be_200_OK_and_get_paged_top_id.js" />
     <File Path="tests/Endpoint.Tests/Asserts/Should_be_200_OK_and_get_top_id.js" />
     <File Path="tests/Endpoint.Tests/Asserts/Should_be_200_OK_empty_list.js" />
     <File Path="tests/Endpoint.Tests/Asserts/Should_be_201_created.js" />
     <File Path="tests/Endpoint.Tests/Asserts/Should_be_204_no_content.js" />
     <File Path="tests/Endpoint.Tests/Asserts/Should_be_404.js" />
+    <File Path="tests/Endpoint.Tests/Asserts/Should_be_409_conflict.js" />
     <File Path="tests/Endpoint.Tests/Asserts/Should_be_422_error_response.js" />
     <File Path="tests\Endpoint.Tests\Asserts\Should_be_ok_and_get_top_application_id.js" />
   </Folder>
@@ -53,11 +56,18 @@
     <File Path="tests\Endpoint.Tests\Tests\delegates\command-tests.http" />
     <File Path="tests\Endpoint.Tests\Tests\delegates\query-tests.http" />
   </Folder>
+  <Folder Name="/tests/Endpoint.Tests/Tests/Cphs/">
+    <File Path="tests/Endpoint.Tests/Tests/cphs/command-tests.http" />
+    <File Path="tests/Endpoint.Tests/Tests/cphs/query-tests.http" />
+  </Folder>
   <Folder Name="/tests/Endpoint.Tests/Tests/headers/">
     <File Path="tests/Endpoint.Tests/Tests/headers/missing-header-tests.http" />
   </Folder>
   <Folder Name="/tests/Endpoint.Tests/Tests/Users/">
     <File Path="tests/Endpoint.Tests/Tests/users/command-tests.http" />
     <File Path="tests/Endpoint.Tests/Tests/users/query-tests.http" />
+  </Folder>
+  <Folder Name="/tests/Utilities/">
+    <Project Path="tests/Test.Utilities/Test.Utilities.csproj" />
   </Folder>
 </Solution>

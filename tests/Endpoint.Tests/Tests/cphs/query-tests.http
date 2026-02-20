@@ -1,0 +1,71 @@
+### GET request to get first 5 results of first page excluding expired
+GET {{host}}/cphs?pageNumber=1&pageSize=5
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+> ../../Asserts/Should_be_200_OK_and_get_paged_5_results.js
+
+### GET request to get first 5 results of second page excluding expired
+GET {{host}}/cphs?pageNumber=2&pageSize=5
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+> ../../Asserts/Should_be_200_OK_and_get_paged_5_results.js
+
+### GET request to get first 5 results of first page including expired
+GET {{host}}/cphs?pageNumber=1&pageSize=5&expired
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+> ../../Asserts/Should_be_200_OK_and_get_paged_5_results.js
+
+### GET request to get first 5 results of second page including expired
+GET {{host}}/cphs?pageNumber=2&pageSize=5&expired
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+> ../../Asserts/Should_be_200_OK_and_get_paged_5_results.js
+
+### GET request to get first 5 results of first page excluding expired order by descending
+GET {{host}}/cphs?pageNumber=1&pageSize=5&orderByDescending=true
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+> ../../Asserts/Should_be_200_OK_and_get_paged_5_results.js
+
+### GET request to get first 5 results of first page including expired order by descending
+GET {{host}}/cphs?expired&pageNumber=1&pageSize=5&orderByDescending=true
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+> ../../Asserts/Should_be_200_OK_and_get_paged_5_results.js
+
+### GET request to get top none expired cph on first page
+GET {{host}}/cphs?pageNumber=1&pageSize=20
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+> ../../Asserts/Should_be_200_OK_and_get_paged_top_id.js
+
+### GET request to get specific cph
+GET {{host}}/cphs/{{id}}
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+> ../../Asserts/Should_be_200_OK.js
+
+### GET request to get specific cph which does not exist
+GET {{host}}/cphs/bc3f59a3-cb2d-4db0-a237-2d58d360f41d
+X-Correlation-ID: {{Correlation-ID}}
+x-api-key: {{api-key}}
+X-Operator-Id: {{Operator-Id}}
+
+> ../../Asserts/Should_be_404.js

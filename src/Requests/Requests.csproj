@@ -1,10 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-    
-
     <ItemGroup>
-      <Folder Include="Exceptions\" />
+    <Compile Remove="Exceptions\**" />
     </ItemGroup>
-
- 
-
+  <ItemGroup>
+    <EmbeddedResource Remove="Exceptions\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Exceptions\**" />
+  </ItemGroup>
 </Project>
