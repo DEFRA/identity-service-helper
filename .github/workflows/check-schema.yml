@@ -10,7 +10,7 @@ env:
   POSTGRES_PASSWORD: liquibase
   POSTGRES_DB: liquibase
 
-  LIQUIBASE_CHANGELOG_PATH: ./database/db.changelog-master.xml
+  LIQUIBASE_CHANGELOG_PATH: ./database/db.changelog.xml
 
 jobs:
   liquibase-update:
