@@ -20,7 +20,7 @@ public interface IPageableRepository<TEntity>
         bool orderByDescending,
         CancellationToken cancellationToken = default);
 
-    Task<TEntity> Create(TEntity entity, Guid operatorId, CancellationToken cancellationToken = default);
+    Task<TEntity> Create(TEntity entity, CancellationToken cancellationToken = default);
 
     Task<TEntity> Update(TEntity entity, CancellationToken cancellationToken = default);
 }

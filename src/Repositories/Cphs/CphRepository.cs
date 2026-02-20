@@ -40,7 +40,7 @@ public class CphRepository(PostgresDbContext context, ILogger<ICphRepository> lo
         return results;
     }
 
-    public async Task<CountyParishHoldings> Create(CountyParishHoldings entity, Guid operatorId, CancellationToken cancellationToken = default)
+    public async Task<CountyParishHoldings> Create(CountyParishHoldings entity, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }
