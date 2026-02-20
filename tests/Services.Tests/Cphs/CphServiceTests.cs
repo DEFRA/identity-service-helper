@@ -660,4 +660,90 @@ public class CphServiceTests
 
         await repository.DidNotReceive().Update(Arg.Any<CountyParishHoldings>(), Arg.Any<CancellationToken>());
     }
+
+    [Fact]
+    [Description("Delete Should delete none deleted item")]
+    public async Task Delete_ShouldDeleteNoneDeletedItem()
+    {
+        // Arrange
+        var logger = Substitute.For<ILogger<CphService>>();
+        var repository = Substitute.For<ICphRepository>();
+        var cphService = new CphService(repository, logger);
+
+        repository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns(CphServiceTestDataHelper.GetSingleMockEntityResultFromCallInfo);
+
+        var request = new DeleteCph()
+        {
+            Id = new Guid("1cd09a5b-6b00-4f30-b03e-8de45130cad6"),
+        };
+
+        var operatorId = new Guid("a4ae3558-90b7-48a4-90c4-a32c086ff769");
+
+        // Act
+        await cphService.Delete(request, operatorId, TestContext.Current.CancellationToken);
+
+        // Assert
+        logger.VerifyLogReceivedOnce(LogLevel.Information, $"Deleting county parish holding with id {request.Id.ToString()} by operator {operatorId}");
+
+        await repository.Received(1).Update(Arg.Is<CountyParishHoldings>(v => v.DeletedAt != null && v.DeletedById == operatorId), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    [Description("Delete Should throw not found exception when deleted")]
+    public async Task Delete_ShouldThrowNotFoundExceptionWhenDeleted()
+    {
+        // Arrange
+        var logger = Substitute.For<ILogger<CphService>>();
+        var repository = Substitute.For<ICphRepository>();
+        var cphService = new CphService(repository, logger);
+
+        repository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns(CphServiceTestDataHelper.GetSingleMockEntityResultFromCallInfo);
+
+        var request = new DeleteCph()
+        {
+            Id = new Guid("a4343f59-011c-46dc-a9fe-553923338e0a"),
+        };
+
+        var operatorId = new Guid("a4ae3558-90b7-48a4-90c4-a32c086ff769");
+
+        // Act & Assert
+        Should.Throw<NotFoundException>(async () => await cphService.Delete(request, operatorId, TestContext.Current.CancellationToken));
+
+        logger.VerifyLogReceivedOnce(LogLevel.Information, $"Deleting county parish holding with id {request.Id.ToString()} by operator {operatorId}");
+        logger.VerifyLogReceivedOnce(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");
+
+        await repository.DidNotReceive().Update(Arg.Any<CountyParishHoldings>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    [Description("Expire Should throw not found exception when entity does not exist")]
+    public async Task Delete_ShouldThrowNotFoundExceptionWhenEntityDoesNotExist()
+    {
+        // Arrange
+        var logger = Substitute.For<ILogger<CphService>>();
+        var repository = Substitute.For<ICphRepository>();
+        var cphService = new CphService(repository, logger);
+
+        repository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns(CphServiceTestDataHelper.GetSingleMockEntityResultFromCallInfo);
+
+        var nonExistingEntityId = new Guid("109d340f-16b7-45fc-83d4-9ea8968df112");
+
+        var request = new DeleteCph()
+        {
+            Id = nonExistingEntityId,
+        };
+
+        var operatorId = new Guid("a4ae3558-90b7-48a4-90c4-a32c086ff769");
+
+        // Act & Assert
+        Should.Throw<NotFoundException>(async () => await cphService.Delete(request, operatorId, TestContext.Current.CancellationToken));
+
+        logger.VerifyLogReceivedOnce(LogLevel.Information, $"Deleting county parish holding with id {request.Id.ToString()} by operator {operatorId}");
+        logger.VerifyLogReceivedOnce(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");
+
+        await repository.DidNotReceive().Update(Arg.Any<CountyParishHoldings>(), Arg.Any<CancellationToken>());
+    }
 }
