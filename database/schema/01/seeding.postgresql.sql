@@ -1,8 +1,23 @@
 -- liquibase formatted sql
 
--- changeset gary:seeding runOnChange:true
----- Insert Initial Users  
+-- changeset gary:seeding-1 runOnChange:true
+--- Insert ALL Roles
+INSERT INTO public.roles ( name, description) VALUES ('agent', 'Agent');
+INSERT INTO public.roles ( name, description) VALUES ('citizen', 'Citizen');
+INSERT INTO public.roles ( name, description) VALUES ('cph-holder', 'CPH Holder');
+INSERT INTO public.roles ( name, description) VALUES ('customer', 'Customer');
+INSERT INTO public.roles ( name, description) VALUES ('exporter', 'Exporter');
+INSERT INTO public.roles ( name, description) VALUES ('facility-operator', 'Facility Operator');
+INSERT INTO public.roles ( name, description) VALUES ('facility-owner', 'Facility Owner');
+INSERT INTO public.roles ( name, description) VALUES ('land-owner', 'Land Owner');
+INSERT INTO public.roles ( name, description) VALUES ('livestock-keeper', 'Livestock Keeper');
+INSERT INTO public.roles ( name, description) VALUES ('livestock-owner', 'Livestock Owner');
+INSERT INTO public.roles ( name, description) VALUES ('one-off-exporter', 'One Off Exporter');
+INSERT INTO public.roles ( name, description) VALUES ('registrant', 'Registrant');
 
+
+-- changeset gary:seeding-2 runOnChange:true context:!prod
+---- Insert Initial Users  
 WITH seed AS (
     SELECT gen_random_uuid() AS id
 ),
@@ -35,7 +50,7 @@ INSERT INTO public.user_accounts (
 SELECT v.email_address, v.display_name, v.first_name, v.last_name, i.id
 FROM (VALUES
           ('cedric.brasey@esynergy.co.uk', 'Cedric Brasey', 'Cedric', 'Brasey'),
-          ('cedric.brasey@planet-side.co.uk', 'Cedric Brasey', 'Cedric', 'Brasey')
+          ('cedric.brasey@defra.gov.uk', 'Cedric Brasey', 'Cedric', 'Brasey')
      ) AS v(email_address, display_name, first_name, last_name)
          CROSS JOIN initial i
     RETURNING *;
@@ -51,8 +66,6 @@ FROM (VALUES ('ScotEID - Livestock Service', '93781ffd-55be-4444-80d5-57ca9f6fb8
              ('Animal Disease Movement Licensing', 'e838f542-c0a0-4436-895f-17aae56b09eb', 'x', 'x'),
              ('England - Livestock Service', 'f6b380bd-2326-4b20-a53b-d2601cd23049', 'x', 'x')) AS v(name, client_id, tenant_name, description)
          CROSS JOIN "system_user" su;
-
-
 
 --- Insert Initial CPH  
 WITH "system_user" AS (SELECT id
@@ -83,18 +96,3 @@ FROM (VALUES ('11/111/1945' ),
              ('13/113/9849'),
              ('10/102/4749')) AS v(identifier)
          CROSS JOIN "system_user" su;
-
-
---- Insert ALL Roles
-INSERT INTO public.roles ( name, description) VALUES ('agent', 'Agent');
-INSERT INTO public.roles ( name, description) VALUES ('citizen', 'Citizen');
-INSERT INTO public.roles ( name, description) VALUES ('cph-holder', 'CPH Holder');
-INSERT INTO public.roles ( name, description) VALUES ('customer', 'Customer');
-INSERT INTO public.roles ( name, description) VALUES ('exporter', 'Exporter');
-INSERT INTO public.roles ( name, description) VALUES ('facility-operator', 'Facility Operator');
-INSERT INTO public.roles ( name, description) VALUES ('facility-owner', 'Facility Owner');
-INSERT INTO public.roles ( name, description) VALUES ('land-owner', 'Land Owner');
-INSERT INTO public.roles ( name, description) VALUES ('livestock-keeper', 'Livestock Keeper');
-INSERT INTO public.roles ( name, description) VALUES ('livestock-owner', 'Livestock Owner');
-INSERT INTO public.roles ( name, description) VALUES ('one-off-exporter', 'One Off Exporter');
-INSERT INTO public.roles ( name, description) VALUES ('registrant', 'Registrant');

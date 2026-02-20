@@ -1,4 +1,4 @@
-﻿-- changeset gary:raw::includeAll runOnChange:true
+﻿-- changeset gary:seeding-3 runOnChange:true
 SET search_path TO  public;
 
 create table public.krds_sync_logs
