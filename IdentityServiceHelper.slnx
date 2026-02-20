@@ -67,4 +67,7 @@
     <File Path="tests/Endpoint.Tests/Tests/users/command-tests.http" />
     <File Path="tests/Endpoint.Tests/Tests/users/query-tests.http" />
   </Folder>
+  <Folder Name="/tests/Utilities/">
+    <Project Path="tests/Test.Utilities/Test.Utilities.csproj" />
+  </Folder>
 </Solution>

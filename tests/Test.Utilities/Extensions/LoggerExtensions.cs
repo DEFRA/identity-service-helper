@@ -5,9 +5,10 @@
 // ReSharper disable CheckNamespace
 namespace Microsoft.Extensions.Logging;
 
-using Microsoft.Extensions.Logging;
+using System.Diagnostics.CodeAnalysis;
 using NSubstitute;
 
+[ExcludeFromCodeCoverage]
 public static class LoggerExtensions
 {
     public static void VerifyLogReceivedOnce(this ILogger logger, LogLevel logLevel, string message)
