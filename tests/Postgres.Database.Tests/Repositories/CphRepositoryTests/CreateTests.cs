@@ -15,16 +15,16 @@ public class CreateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 {
     [Fact]
     [Description("Should get paged cphs in ascending order with correct paging details")]
-    public async Task ShouldThrowNotImplementedException()
+    public Task ShouldThrowNotImplementedException()
     {
         // Arrange
         var logger = Substitute.For<ILogger<CphRepository>>();
         var repository = new CphRepository(Context, logger);
 
         var newEntity = new CountyParishHoldings();
-        var operatorId = Guid.NewGuid();
 
         // Act & Assert
         Should.Throw<NotImplementedException>(async () => await repository.Create(newEntity, TestContext.Current.CancellationToken));
+        return Task.CompletedTask;
     }
 }
