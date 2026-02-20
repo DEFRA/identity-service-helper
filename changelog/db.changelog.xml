@@ -7,5 +7,7 @@
     <include file="schema/01/schema.postgresql.sql" />
     <include file="schema/01/tables.postgresql.sql" />
     <include file="schema/01/seeding.postgresql.sql" />
-
+    <include file="schema/02/add_animal_species.postgresql.sql" />
+    <include file="schema/02/seed_animal_species.postgresql.sql" />
+    <include file="schema/02/validate_animal_species.postgresql.sql" />
 </databaseChangeLog>
