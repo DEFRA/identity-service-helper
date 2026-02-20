@@ -5,8 +5,8 @@
 namespace Defra.Identity.Repositories;
 
 using Defra.Identity.Repositories.Applications;
-using Defra.Identity.Repositories.Delegates;
 using Defra.Identity.Repositories.Cphs;
+using Defra.Identity.Repositories.Delegates;
 using Defra.Identity.Repositories.Users;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
