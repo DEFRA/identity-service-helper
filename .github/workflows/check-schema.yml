@@ -4,13 +4,13 @@ on:
   pull_request:
 
 env:
-  LIQUIBASE_VERSION: 4.3.3
+  LIQUIBASE_VERSION: 5.0.1
 
-  POSTGRES_USER: liquibase
-  POSTGRES_PASSWORD: liquibase
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
   POSTGRES_DB: liquibase
 
-  LIQUIBASE_CHANGELOG_PATH: ./database/db.changelog.xml
+  LIQUIBASE_CHANGELOG_PATH: db.changelog.xml
 
 jobs:
   liquibase-update:
@@ -38,10 +38,12 @@ jobs:
         run: |
           mkdir -p ./liquibase
           curl -sL "https://github.com/liquibase/liquibase/releases/download/v${LIQUIBASE_VERSION}/liquibase-${LIQUIBASE_VERSION}.tar.gz" | tar xz -C ./liquibase
+          ./liquibase/liquibase lpm add postgresql
 
       - name: Validate Liquibase changelog
         run: |
           ./liquibase/liquibase \
+          --searchPath=./database \
           --changeLogFile=${LIQUIBASE_CHANGELOG_PATH} \
           --url=jdbc:postgresql://localhost:5432/${POSTGRES_DB} \
           --username=${POSTGRES_USER} \
@@ -51,6 +53,7 @@ jobs:
       - name: Run Liquibase update
         run: |
           ./liquibase/liquibase \
+          --searchPath=./database \
             --changeLogFile=${LIQUIBASE_CHANGELOG_PATH} \
             --url=jdbc:postgresql://localhost:5432/${POSTGRES_DB} \
             --username=${POSTGRES_USER} \
