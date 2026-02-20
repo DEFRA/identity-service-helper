@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Cphs;
+using Defra.Identity.Repositories.Exceptions;
 using Defra.Identity.Requests.Cphs.Queries;
 using Defra.Identity.Services.Cphs;
 using Defra.Identity.Services.Tests.Cphs.TestData;
@@ -432,5 +433,115 @@ public class CphServiceTests
             (x) => x.CphNumber.ShouldBe("44/100/0002"),
             (x) => x.Expired.ShouldBe(true),
             (x) => x.ExpiredAt.ShouldBe(DateTime.Parse("2026-02-12").ToUniversalTime()));
+    }
+
+    [Fact]
+    [Description("Get Should return result when item is not expired and not deleted")]
+    public async Task Get_ShouldReturnResultWhenItemIsNotExpiredAndNotDeleted()
+    {
+        // Arrange
+        var logger = Substitute.For<ILogger<CphService>>();
+        var repository = Substitute.For<ICphRepository>();
+        var cphService = new CphService(repository, logger);
+
+        repository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns(CphServiceTestDataHelper.GetSingleMockEntityResultFromCallInfo);
+
+        var request = new GetCph()
+        {
+            Id = new Guid("77b9c956-2780-4b48-9abc-71bf505466f9"),
+        };
+
+        // Act
+        var result = await cphService.Get(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        logger.VerifyLogReceivedOnce(LogLevel.Information, $"Getting county parish holding by id {request.Id.ToString()}");
+
+        result.ShouldSatisfyAllConditions(
+            (x) => x.Id.ShouldBe(new Guid("77b9c956-2780-4b48-9abc-71bf505466f9")),
+            (x) => x.CphNumber.ShouldBe("44/100/0004"),
+            (x) => x.Expired.ShouldBe(false),
+            (x) => x.ExpiredAt.ShouldBeNull());
+    }
+
+    [Fact]
+    [Description("Get Should return result when item is expired and not deleted")]
+    public async Task Get_ShouldReturnResultWhenItemIsExpiredAndNotDeleted()
+    {
+        // Arrange
+        var logger = Substitute.For<ILogger<CphService>>();
+        var repository = Substitute.For<ICphRepository>();
+        var cphService = new CphService(repository, logger);
+
+        repository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns(CphServiceTestDataHelper.GetSingleMockEntityResultFromCallInfo);
+
+        var request = new GetCph()
+        {
+            Id = new Guid("e7009d6d-0a29-4e3f-ac0b-7bf0c7497f46"),
+        };
+
+        // Act
+        var result = await cphService.Get(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        logger.VerifyLogReceivedOnce(LogLevel.Information, $"Getting county parish holding by id {request.Id.ToString()}");
+
+        result.ShouldSatisfyAllConditions(
+            (x) => x.Id.ShouldBe(new Guid("e7009d6d-0a29-4e3f-ac0b-7bf0c7497f46")),
+            (x) => x.CphNumber.ShouldBe("44/100/0002"),
+            (x) => x.Expired.ShouldBe(true),
+            (x) => x.ExpiredAt.ShouldBe(DateTime.Parse("2026-02-12").ToUniversalTime()));
+    }
+
+    [Fact]
+    [Description("Get Should throw not found exception when item is deleted")]
+    public void Get_ShouldThrowNotFoundExceptionWhenItemIsDeleted()
+    {
+        // Arrange
+        var logger = Substitute.For<ILogger<CphService>>();
+        var repository = Substitute.For<ICphRepository>();
+        var cphService = new CphService(repository, logger);
+
+        repository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns(CphServiceTestDataHelper.GetSingleMockEntityResultFromCallInfo);
+
+        var request = new GetCph()
+        {
+            Id = new Guid("5bc8f1a5-2d44-40b5-93e4-52b613bf099f"),
+        };
+
+        // Act & Assert
+        Should.Throw<NotFoundException>(async () => await cphService.Get(request, TestContext.Current.CancellationToken));
+
+        logger.VerifyLogReceivedOnce(LogLevel.Information, $"Getting county parish holding by id {request.Id.ToString()}");
+        logger.VerifyLogReceivedOnce(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");
+    }
+
+    [Fact]
+    [Description("Get Should throw not found exception when item is not in the repository")]
+    public void Get_ShouldThrowNotFoundExceptionWhenItemIsNotInRepository()
+    {
+        // Arrange
+        var logger = Substitute.For<ILogger<CphService>>();
+        var repository = Substitute.For<ICphRepository>();
+        var cphService = new CphService(repository, logger);
+
+        repository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns(CphServiceTestDataHelper.GetSingleMockEntityResultFromCallInfo);
+
+        var nonExistingEntityId = new Guid("109d340f-16b7-45fc-83d4-9ea8968df112");
+
+        var request = new GetCph()
+        {
+            Id = nonExistingEntityId,
+        };
+
+        // Act & Assert
+        Should.Throw<NotFoundException>(async () => await cphService.Get(request, TestContext.Current.CancellationToken));
+
+        logger.VerifyLogReceivedOnce(LogLevel.Information, $"Getting county parish holding by id {request.Id.ToString()}");
+        logger.VerifyLogReceivedOnce(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");
     }
 }

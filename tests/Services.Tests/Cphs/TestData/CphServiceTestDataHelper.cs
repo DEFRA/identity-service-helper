@@ -11,14 +11,14 @@ using NSubstitute.Core;
 
 public static class CphServiceTestDataHelper
 {
-    public static PagedEntities<CountyParishHoldings> MockGetAllPagedEntitiesResultFromCallInfo(CallInfo x)
+    public static PagedEntities<CountyParishHoldings> MockGetAllPagedEntitiesResultFromCallInfo(CallInfo callInfo)
     {
-        var actualFilter = (Expression<Func<CountyParishHoldings, bool>>)x.Args()[0];
-        var actualOrderBy = (Expression<Func<CountyParishHoldings, string>>)x.Args()[3];
+        var actualFilter = (Expression<Func<CountyParishHoldings, bool>>)callInfo.Args()[0];
+        var actualOrderBy = (Expression<Func<CountyParishHoldings, string>>)callInfo.Args()[3];
 
-        var pageNumber = (int)x.Args()[1];
-        var pageSize = (int)x.Args()[2];
-        var orderByDescending = (bool)x.Args()[4];
+        var pageNumber = (int)callInfo.Args()[1];
+        var pageSize = (int)callInfo.Args()[2];
+        var orderByDescending = (bool)callInfo.Args()[4];
 
         var compiledFilter = actualFilter.Compile();
         var compiledOrderBy = actualOrderBy.Compile();
@@ -35,6 +35,16 @@ public static class CphServiceTestDataHelper
             .ToList();
 
         return new PagedEntities<CountyParishHoldings>(pagedEntities, totalCount, totalPages, pageNumber, pageSize);
+    }
+
+    public static CountyParishHoldings? GetSingleMockEntityResultFromCallInfo(CallInfo callInfo)
+    {
+        var actualFilter = (Expression<Func<CountyParishHoldings, bool>>)callInfo.Args()[0];
+        var compiledFilter = actualFilter.Compile();
+
+        var entity = GetCphEntities().FirstOrDefault(compiledFilter);
+
+        return entity;
     }
 
     private static CountyParishHoldings[] GetCphEntities() =>
