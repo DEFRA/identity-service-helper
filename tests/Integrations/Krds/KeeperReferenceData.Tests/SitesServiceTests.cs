@@ -27,7 +27,7 @@ public class SitesServiceTests
         var api = Options.Create(new KrdsApi
         {
             Url = server.Urls[0],
-            Key = "secret-key"
+            Key = "secret-key",
         });
         var logger = NullLogger<SitesService>.Instance;
         var sut = new SitesService(logger, api);
@@ -40,7 +40,7 @@ public class SitesServiceTests
             .RespondWith(Response.Create().WithStatusCode(200).WithHeader("Content-Type", "application/json").WithBodyAsJson(new[]
             {
                 new Site { Id = "1" },
-                new Site { Id = "2" }
+                new Site { Id = "2" },
             }));
 
         // Act
@@ -53,11 +53,13 @@ public class SitesServiceTests
         // Verify request to KRDS API
         Assert.Single(server.LogEntries);
         var entry = server.LogEntries[0];
-        Assert.Equal("/sites", entry.RequestMessage.Path);
-        Assert.True(entry.RequestMessage.Headers.ContainsKey("x-api-key"));
-        Assert.Contains("secret-key", entry.RequestMessage.Headers["x-api-key"]);
-        Assert.True(entry.RequestMessage.Query.ContainsKey("since"));
-        Assert.Equal(expectedSince, entry.RequestMessage.Query["since"]);
+
+        entry.ShouldSatisfyAllConditions(
+            x => x.RequestMessage.Path.ShouldBe("/sites"),
+            x => x.RequestMessage.Headers?.ContainsKey("x-api-key").ShouldBeTrue(),
+            x => x.RequestMessage.Headers?["x-api-key"].ShouldBe("secret-key"),
+            x => x.RequestMessage.Query?.ContainsKey("since").ShouldBeTrue(),
+            x => x.RequestMessage.Query?["since"].ShouldBe(expectedSince));
     }
 
     [Fact]
@@ -69,7 +71,7 @@ public class SitesServiceTests
         var api = Options.Create(new KrdsApi
         {
             Url = server.Urls[0],
-            Key = "secret-key"
+            Key = "secret-key",
         });
         var logger = NullLogger<SitesService>.Instance;
         var sut = new SitesService(logger, api);
@@ -83,8 +85,10 @@ public class SitesServiceTests
 
         Assert.Single(server.LogEntries);
         var entry = server.LogEntries[0];
-        Assert.Equal("/sites", entry.RequestMessage.Path);
-        Assert.True(entry.RequestMessage.Headers.ContainsKey("x-api-key"));
-        Assert.Contains("secret-key", entry.RequestMessage.Headers["x-api-key"]);
+
+        entry.ShouldSatisfyAllConditions(
+            x => x.RequestMessage.Path.ShouldBe("/sites"),
+            x => x.RequestMessage.Headers?.ContainsKey("x-api-key").ShouldBeTrue(),
+            x => x.RequestMessage.Headers?["x-api-key"].ShouldBe("secret-key"));
     }
 }
