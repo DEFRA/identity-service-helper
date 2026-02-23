@@ -6,9 +6,9 @@ on:
 env:
   LIQUIBASE_VERSION: 5.0.1
 
-  POSTGRES_USER: postgres
+  POSTGRES_USER: identity_service_helper_ddl
   POSTGRES_PASSWORD: postgres
-  POSTGRES_DB: liquibase
+  POSTGRES_DB: identity_service_helper
 
   LIQUIBASE_CHANGELOG_PATH: db.changelog.xml
 

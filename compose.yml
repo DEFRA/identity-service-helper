@@ -36,29 +36,32 @@ services:
     ports:
       - '5432:5432'
     environment:
-      POSTGRES_USER: postgres
+      POSTGRES_USER: identity_service_helper_ddl
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: livestock_auth
+      POSTGRES_DB: identity_service_helper
     networks:
       - cdp-tenant
     volumes:
       - postgres-data:/data
     restart: always
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres -d livestock_auth" ]
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d identity_service_helper" ]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 10s
       
   liquibase:
-    image: liquibase/liquibase:4.3.3
+    image: liquibase/liquibase:5.0.1
     depends_on:
       postgres:
         condition: service_healthy
+    entrypoint: ["/bin/sh", "-c"]
     volumes:
-      - ./database:/liquibase/changelog
-    command: --url=jdbc:postgresql://postgres:5432/livestock_auth --username=postgres --password=postgres --changeLogFile=db.changelog-master.xml --liquibaseSchemaName=public update
+      - ./changelog:/liquibase/changelog
+    command: >
+      "/liquibase/liquibase lpm add postgresql && 
+      /liquibase/liquibase --url=jdbc:postgresql://postgres:5432/identity_service_helper --username=identity_service_helper_ddl --password=postgres --searchPath=/liquibase/changelog --changeLogFile=db.changelog.xml --liquibaseSchemaName=public update"
     networks:
       - cdp-tenant
       

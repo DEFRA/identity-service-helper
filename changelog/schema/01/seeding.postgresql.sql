@@ -1,6 +1,6 @@
 -- liquibase formatted sql
 
--- changeset gary:seeding-1 runOnChange:true
+-- changeset gary:seeding-1
 --- Insert ALL Roles
 INSERT INTO public.roles ( name, description) VALUES ('agent', 'Agent');
 INSERT INTO public.roles ( name, description) VALUES ('citizen', 'Citizen');
@@ -16,7 +16,7 @@ INSERT INTO public.roles ( name, description) VALUES ('one-off-exporter', 'One O
 INSERT INTO public.roles ( name, description) VALUES ('registrant', 'Registrant');
 
 
--- changeset gary:seeding-2 runOnChange:true context:!prod
+-- changeset gary:seeding-2 context:!prod
 ---- Insert Initial Users  
 WITH seed AS (
     SELECT gen_random_uuid() AS id
