@@ -2,10 +2,10 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Api.Utility.Utils.Logging;
-
 using System.Diagnostics.CodeAnalysis;
 using Serilog;
+
+namespace Defra.Identity.Api.Utility.Logging;
 
 public static class CdpLogging
 {

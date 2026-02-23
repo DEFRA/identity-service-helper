@@ -2,6 +2,9 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
+using Defra.Identity.Api.Utility.Http;
+using Defra.Identity.Api.Utility.Logging;
+
 namespace Defra.Identity.Api;
 
 using System.Diagnostics.CodeAnalysis;
@@ -11,8 +14,6 @@ using Defra.Identity.Api.Endpoints.Cphs;
 using Defra.Identity.Api.Endpoints.Delegations;
 using Defra.Identity.Api.Endpoints.Users;
 using Defra.Identity.Api.Exceptions;
-using Defra.Identity.Api.Utility.Utils.Http;
-using Defra.Identity.Api.Utility.Utils.Logging;
 using Defra.Identity.Postgres.Database;
 using Defra.Identity.Repositories;
 using Defra.Identity.Requests;

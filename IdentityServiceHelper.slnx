@@ -8,7 +8,7 @@
   </Folder>
   <Folder Name="/src/Integrations/" />
   <Folder Name="/src/Integrations/Krds/">
-    <Project Path="src/Integrations/Krds/Krds/Krds.csproj" />
+    <Project Path="src\Integrations\Krds\KeeperReferenceData\KeeperReferenceData.csproj" />
   </Folder>
   <Folder Name="/src/Repositories/">
     <Project Path="src/Repositories/Repositories.csproj" />
@@ -70,6 +70,10 @@
   <Folder Name="/tests/Endpoint.Tests/Tests/Users/">
     <File Path="tests/Endpoint.Tests/Tests/users/command-tests.http" />
     <File Path="tests/Endpoint.Tests/Tests/users/query-tests.http" />
+  </Folder>
+  <Folder Name="/tests/Integrations/" />
+  <Folder Name="/tests/Integrations/Krds/">
+    <Project Path="tests/Integrations/Krds/KeeperReferenceData.Tests/KeeperReferenceData.Tests.csproj" />
   </Folder>
   <Folder Name="/tests/Utilities/">
     <Project Path="tests/Test.Utilities/Test.Utilities.csproj" />

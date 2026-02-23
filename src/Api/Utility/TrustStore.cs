@@ -2,12 +2,12 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Api.Utility.Utils;
-
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+
+namespace Defra.Identity.Api.Utility;
 
 [ExcludeFromCodeCoverage]
 public static class TrustStore
