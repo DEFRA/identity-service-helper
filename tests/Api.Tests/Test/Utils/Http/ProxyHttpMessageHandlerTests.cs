@@ -2,9 +2,9 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-using Defra.Identity.Api.Utility.Http;
-
 namespace Defra.Identity.Api.Tests.Test.Utils.Http;
+
+using Defra.Identity.Api.Utility.Http;
 
 public class ProxyHttpMessageHandlerTests
 {
