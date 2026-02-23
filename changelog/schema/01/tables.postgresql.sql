@@ -16,7 +16,7 @@ create table public.krds_sync_logs
 );
 
 alter table public.krds_sync_logs
-    owner to postgres;
+    owner to identity_service_helper_ddl;
 
 create index "IX_krds_sync_logs_received_at"
     on public.krds_sync_logs (received_at);
@@ -31,7 +31,7 @@ create table public.roles
 );
 
 alter table public.roles
-    owner to postgres;
+    owner to identity_service_helper_ddl;
 
 create table public.user_accounts
 (
@@ -56,7 +56,7 @@ create table public.user_accounts
 );
 
 alter table public.user_accounts
-    owner to postgres;
+    owner to identity_service_helper_ddl;
 
 create index "IX_user_accounts_created_by_id"
     on public.user_accounts (created_by_id);
@@ -94,7 +94,7 @@ comment on column public.applications.client_id is 'Azure AD B2C application Cli
 comment on column public.applications.tenant_name is 'Azure AD B2C tenant name e.g defra.onmicrosoft.com';
 
 alter table public.applications
-    owner to postgres;
+    owner to identity_service_helper_ddl;
 
 create index "IX_applications_created_by_id"
     on public.applications (created_by_id);
@@ -121,7 +121,7 @@ create table public.county_parish_holdings
 );
 
 alter table public.county_parish_holdings
-    owner to postgres;
+    owner to identity_service_helper_ddl;
 
 create index "IX_county_parish_holdings_created_by_id"
     on public.county_parish_holdings (created_by_id);
@@ -147,7 +147,7 @@ create table public.application_roles
 );
 
 alter table public.application_roles
-    owner to postgres;
+    owner to identity_service_helper_ddl;
 
 create index "IX_application_roles_role_id"
     on public.application_roles (role_id);
@@ -172,7 +172,7 @@ create table public.delegations
 );
 
 alter table public.delegations
-    owner to postgres;
+    owner to identity_service_helper_ddl;
 
 create index "IX_delegations_application_id"
     on public.delegations (application_id);
@@ -213,7 +213,7 @@ create table public.application_user_account_holding_assignments
 );
 
 alter table public.application_user_account_holding_assignments
-    owner to postgres;
+    owner to identity_service_helper_ddl;
 
 create index "IX_application_user_account_holding_assignments_application_id"
     on public.application_user_account_holding_assignments (application_id);
@@ -269,7 +269,7 @@ create table public.delegation_invitations
 );
 
 alter table public.delegation_invitations
-    owner to postgres;
+    owner to identity_service_helper_ddl;
 
 create index "IX_delegation_invitations_created_by_id"
     on public.delegation_invitations (created_by_id);
@@ -308,7 +308,7 @@ create table public.delegations_county_parish_holdings
 );
 
 alter table public.delegations_county_parish_holdings
-    owner to postgres;
+    owner to identity_service_helper_ddl;
 
 create index "IX_delegations_county_parish_holdings_county_parish_holding_id"
     on public.delegations_county_parish_holdings (county_parish_holding_id);
