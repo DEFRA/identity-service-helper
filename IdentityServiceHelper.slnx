@@ -6,6 +6,10 @@
     <Project Path="src/Database/Postgres.Database.Console/Postgres.Database.Console.csproj" />
     <Project Path="src/Database/Postgres.Database/Postgres.Database.csproj" />
   </Folder>
+  <Folder Name="/src/Integrations/" />
+  <Folder Name="/src/Integrations/Krds/">
+    <Project Path="src/Integrations/Krds/Krds/Krds.csproj" />
+  </Folder>
   <Folder Name="/src/Repositories/">
     <Project Path="src/Repositories/Repositories.csproj" />
   </Folder>
