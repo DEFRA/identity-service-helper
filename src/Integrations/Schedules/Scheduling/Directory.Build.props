@@ -1,9 +1,9 @@
 <Project>
   <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))"/>
   <ItemGroup>
-      <PackageReference Include="Microsoft.Extensions.Http.Polly" />
       <PackageReference Include="Quartz"/>
       <PackageReference Include="Quartz.Extensions.DependencyInjection"/>
       <PackageReference Include="Quartz.Extensions.Hosting"/>
+      <PackageReference Include="Quartz.AspNetCore" />
   </ItemGroup>
 </Project>

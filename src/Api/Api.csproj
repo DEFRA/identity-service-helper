@@ -2,6 +2,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Database\Postgres.Database\Postgres.Database.csproj" />
     <ProjectReference Include="..\Integrations\Krds\KeeperReferenceData\KeeperReferenceData.csproj" />
+    <ProjectReference Include="..\Integrations\Schedules\Scheduling\Scheduling.csproj" />
     <ProjectReference Include="..\Repositories\Repositories.csproj" />
     <ProjectReference Include="..\Requests\Requests.csproj" />
     <ProjectReference Include="..\Responses\Responses.csproj" />

@@ -17,6 +17,7 @@ using Defra.Identity.KeeperReferenceData;
 using Defra.Identity.Postgres.Database;
 using Defra.Identity.Repositories;
 using Defra.Identity.Requests;
+using Defra.Identity.Scheduling;
 using Defra.Identity.Services;
 using FluentValidation;
 using Serilog;
@@ -101,6 +102,7 @@ public class Program
         builder.Services.AddRepositories(configuration);
         builder.Services.AddDataServices(configuration);
         builder.Services.AddKeeperRecordsDataIntegrationService(configuration);
+        builder.Services.AddScheduling(configuration);
     }
 
     [ExcludeFromCodeCoverage]

@@ -10,6 +10,9 @@
   <Folder Name="/src/Integrations/Krds/">
     <Project Path="src\Integrations\Krds\KeeperReferenceData\KeeperReferenceData.csproj" />
   </Folder>
+  <Folder Name="/src/Integrations/Schedules/">
+    <Project Path="src\Integrations\Schedules\Scheduling\Scheduling.csproj" />
+  </Folder>
   <Folder Name="/src/Repositories/">
     <Project Path="src/Repositories/Repositories.csproj" />
   </Folder>
