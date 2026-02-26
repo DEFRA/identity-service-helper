@@ -25,6 +25,7 @@ public class KeeperReferenceDataJob(
 
             // For now, we fetch since 24 hours ago as a default, or we could add it to options
             var since = DateTime.UtcNow.AddDays(-1);
+            logger.LogInformation("Fetching sites since {Date}", since);
             var sites = await sitesService.Sites(since, context.CancellationToken);
 
             logger.LogInformation("KeeperReferenceDataJob succeeded. Found {Count} sites.", sites.Count);

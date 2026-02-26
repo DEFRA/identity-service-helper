@@ -2,6 +2,9 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
+using Polly;
+using Polly.Extensions.Http;
+
 namespace Defra.Identity.KeeperReferenceData;
 
 using System.Net;
@@ -29,8 +32,18 @@ public static class ServiceCollectionExtensions
             .ConfigureHttpClient(client =>
             {
                 client.BaseAddress = new Uri(krdsApi.Url);
-            }).SetHandlerLifetime(TimeSpan.FromMinutes(5));
+            }).SetHandlerLifetime(TimeSpan.FromMinutes(5))
+            .AddPolicyHandler(GetRetryPolicy());
 
         return services;
+    }
+
+    private static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
+    {
+        return HttpPolicyExtensions
+            .HandleTransientHttpError()
+            .OrResult(msg => msg.StatusCode == HttpStatusCode.NotFound)
+            .OrResult(msg => (int)msg.StatusCode == 429)
+            .WaitAndRetryAsync(6, retryAttempt => TimeSpan.FromMilliseconds(150 * retryAttempt));
     }
 }
