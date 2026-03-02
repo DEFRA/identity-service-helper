@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Quartz;
 
+[DisallowConcurrentExecution]
 public class KeeperReferenceDataJob(
     ISitesProvider sitesService,
     ILogger<KeeperReferenceDataJob> logger,
@@ -21,23 +22,23 @@ public class KeeperReferenceDataJob(
     {
         try
         {
-            logger.LogInformation("KeeperReferenceDataJob starting");
+            logger.LogInformation("{Job} starting {Date}", context.JobDetail.Key.Name, DateTime.UtcNow);
 
-            // For now, we fetch since 24 hours ago as a default, or we could add it to options
+            // We fetch since 24 hours ago as a default, or we could add it to options
             var since = DateTime.UtcNow.AddDays(-1);
             logger.LogInformation("Fetching sites since {Date}", since);
             var sites = await sitesService.Sites(since, context.CancellationToken);
 
-            logger.LogInformation("KeeperReferenceDataJob succeeded. Found {Count} sites.", sites.Count);
+            logger.LogInformation("{Job} succeeded. Found {Count} sites.", context.JobDetail.Key.Name, sites.Count);
         }
         catch (OperationCanceledException)
         {
-            logger.LogWarning("KeeperReferenceDataJob cancelled.");
+            logger.LogWarning("{Job} cancelled.", context.JobDetail.Key.Name);
             throw;
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "KeeperReferenceDataJob failed");
+            logger.LogError(ex, "{Job} failed", context.JobDetail.Key.Name);
             throw;
         }
     }

@@ -32,7 +32,8 @@ public static class ServiceCollectionExtensions
                 q.AddTrigger(t => t
                     .ForJob(jobKey)
                     .WithIdentity("KeeperReferenceDataJob-trigger")
-                    .WithCronSchedule(cron));
+                    .WithCronSchedule(cron))
+                    ;
             }
         });
 

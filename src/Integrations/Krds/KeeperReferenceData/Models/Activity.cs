@@ -6,15 +6,15 @@ namespace Defra.Identity.KeeperReferenceData.Models;
 
 public class Activity
 {
-    public string Id { get; set; }
+    public string Id { get; set; } = string.Empty;
 
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
-    public string Description { get; set; }
+    public string Description { get; set; } = string.Empty;
 
-    public string StartDate { get; set; }
+    public string StartDate { get; set; } = string.Empty;
 
-    public object EndDate { get; set; }
+    public object EndDate { get; set; } = null!;
 
-    public string LastUpdatedDate { get; set; }
+    public string LastUpdatedDate { get; set; } = string.Empty;
 }
