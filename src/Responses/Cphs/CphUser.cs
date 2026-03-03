@@ -15,4 +15,6 @@ public class CphUser
     public Guid RoleId { get; set; }
 
     public required string Email { get; set; }
+
+    public required string DisplayName { get; set; }
 }

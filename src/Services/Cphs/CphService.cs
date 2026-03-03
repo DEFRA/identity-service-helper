@@ -160,6 +160,7 @@ public class CphService : ICphService
             ApplicationId = cphUserEntity.ApplicationId,
             RoleId = cphUserEntity.RoleId,
             Email = cphUserEntity.UserAccount.EmailAddress,
+            DisplayName = cphUserEntity.UserAccount.DisplayName,
         };
     }
 

@@ -36,7 +36,7 @@ public class CphServiceTests
                 Arg.Any<Expression<Func<CountyParishHoldings, string>>>(),
                 Arg.Any<bool>(),
                 Arg.Any<CancellationToken>())
-            .Returns(CphServiceTestDataHelper.MockGetAllPagedEntitiesResultFromCallInfo);
+            .Returns(CphRepositoryMockingHelper.MockGetAllPagedEntitiesResultFromCallInfo);
 
         var request = new GetCphs
         {
@@ -91,7 +91,7 @@ public class CphServiceTests
                 Arg.Any<Expression<Func<CountyParishHoldings, string>>>(),
                 Arg.Any<bool>(),
                 Arg.Any<CancellationToken>())
-            .Returns(CphServiceTestDataHelper.MockGetAllPagedEntitiesResultFromCallInfo);
+            .Returns(CphRepositoryMockingHelper.MockGetAllPagedEntitiesResultFromCallInfo);
 
         var request = new GetCphs
         {
@@ -139,7 +139,7 @@ public class CphServiceTests
                 Arg.Any<Expression<Func<CountyParishHoldings, string>>>(),
                 Arg.Any<bool>(),
                 Arg.Any<CancellationToken>())
-            .Returns(CphServiceTestDataHelper.MockGetAllPagedEntitiesResultFromCallInfo);
+            .Returns(CphRepositoryMockingHelper.MockGetAllPagedEntitiesResultFromCallInfo);
 
         var request = new GetCphs
         {
@@ -194,7 +194,7 @@ public class CphServiceTests
                 Arg.Any<Expression<Func<CountyParishHoldings, string>>>(),
                 Arg.Any<bool>(),
                 Arg.Any<CancellationToken>())
-            .Returns(CphServiceTestDataHelper.MockGetAllPagedEntitiesResultFromCallInfo);
+            .Returns(CphRepositoryMockingHelper.MockGetAllPagedEntitiesResultFromCallInfo);
 
         var request = new GetCphs
         {
@@ -249,7 +249,7 @@ public class CphServiceTests
                 Arg.Any<Expression<Func<CountyParishHoldings, string>>>(),
                 Arg.Any<bool>(),
                 Arg.Any<CancellationToken>())
-            .Returns(CphServiceTestDataHelper.MockGetAllPagedEntitiesResultFromCallInfo);
+            .Returns(CphRepositoryMockingHelper.MockGetAllPagedEntitiesResultFromCallInfo);
 
         var request = new GetCphs
         {
@@ -304,7 +304,7 @@ public class CphServiceTests
                 Arg.Any<Expression<Func<CountyParishHoldings, string>>>(),
                 Arg.Any<bool>(),
                 Arg.Any<CancellationToken>())
-            .Returns(CphServiceTestDataHelper.MockGetAllPagedEntitiesResultFromCallInfo);
+            .Returns(CphRepositoryMockingHelper.MockGetAllPagedEntitiesResultFromCallInfo);
 
         var request = new GetCphs
         {
@@ -352,7 +352,7 @@ public class CphServiceTests
                 Arg.Any<Expression<Func<CountyParishHoldings, string>>>(),
                 Arg.Any<bool>(),
                 Arg.Any<CancellationToken>())
-            .Returns(CphServiceTestDataHelper.MockGetAllPagedEntitiesResultFromCallInfo);
+            .Returns(CphRepositoryMockingHelper.MockGetAllPagedEntitiesResultFromCallInfo);
 
         var request = new GetCphs
         {
@@ -407,7 +407,7 @@ public class CphServiceTests
                 Arg.Any<Expression<Func<CountyParishHoldings, string>>>(),
                 Arg.Any<bool>(),
                 Arg.Any<CancellationToken>())
-            .Returns(CphServiceTestDataHelper.MockGetAllPagedEntitiesResultFromCallInfo);
+            .Returns(CphRepositoryMockingHelper.MockGetAllPagedEntitiesResultFromCallInfo);
 
         var request = new GetCphs
         {
@@ -456,7 +456,7 @@ public class CphServiceTests
         var cphService = new CphService(cphRepository, cphUsersRepository, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(CphServiceTestDataHelper.GetSingleMockEntityResultFromCallInfo);
+            .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
 
         var request = new GetCph
         {
@@ -467,7 +467,7 @@ public class CphServiceTests
         var result = await cphService.Get(request, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.VerifyLogReceivedOnce(LogLevel.Information, $"Getting county parish holding by id {request.Id.ToString()}");
+        logger.VerifyLogContainsOne(LogLevel.Information, $"Getting county parish holding by id {request.Id.ToString()}");
 
         result.ShouldSatisfyAllConditions(
             (x) => x.Id.ShouldBe(new Guid("77b9c956-2780-4b48-9abc-71bf505466f9")),
@@ -487,7 +487,7 @@ public class CphServiceTests
         var cphService = new CphService(cphRepository, cphUsersRepository, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(CphServiceTestDataHelper.GetSingleMockEntityResultFromCallInfo);
+            .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
 
         var request = new GetCph
         {
@@ -498,7 +498,7 @@ public class CphServiceTests
         var result = await cphService.Get(request, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.VerifyLogReceivedOnce(LogLevel.Information, $"Getting county parish holding by id {request.Id.ToString()}");
+        logger.VerifyLogContainsOne(LogLevel.Information, $"Getting county parish holding by id {request.Id.ToString()}");
 
         result.ShouldSatisfyAllConditions(
             (x) => x.Id.ShouldBe(new Guid("e7009d6d-0a29-4e3f-ac0b-7bf0c7497f46")),
@@ -518,7 +518,7 @@ public class CphServiceTests
         var cphService = new CphService(cphRepository, cphUsersRepository, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(CphServiceTestDataHelper.GetSingleMockEntityResultFromCallInfo);
+            .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
 
         var request = new GetCph
         {
@@ -528,8 +528,8 @@ public class CphServiceTests
         // Act & Assert
         Should.Throw<NotFoundException>(async () => await cphService.Get(request, TestContext.Current.CancellationToken));
 
-        logger.VerifyLogReceivedOnce(LogLevel.Information, $"Getting county parish holding by id {request.Id.ToString()}");
-        logger.VerifyLogReceivedOnce(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");
+        logger.VerifyLogContainsOne(LogLevel.Information, $"Getting county parish holding by id {request.Id.ToString()}");
+        logger.VerifyLogContainsOne(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");
     }
 
     [Fact]
@@ -543,7 +543,7 @@ public class CphServiceTests
         var cphService = new CphService(cphRepository, cphUsersRepository, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(CphServiceTestDataHelper.GetSingleMockEntityResultFromCallInfo);
+            .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
 
         var nonExistingEntityId = new Guid("109d340f-16b7-45fc-83d4-9ea8968df112");
 
@@ -555,8 +555,8 @@ public class CphServiceTests
         // Act & Assert
         Should.Throw<NotFoundException>(async () => await cphService.Get(request, TestContext.Current.CancellationToken));
 
-        logger.VerifyLogReceivedOnce(LogLevel.Information, $"Getting county parish holding by id {request.Id.ToString()}");
-        logger.VerifyLogReceivedOnce(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");
+        logger.VerifyLogContainsOne(LogLevel.Information, $"Getting county parish holding by id {request.Id.ToString()}");
+        logger.VerifyLogContainsOne(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");
     }
 
     [Fact]
@@ -570,7 +570,7 @@ public class CphServiceTests
         var cphService = new CphService(cphRepository, cphUsersRepository, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(CphServiceTestDataHelper.GetSingleMockEntityResultFromCallInfo);
+            .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
 
         var request = new ExpireCph
         {
@@ -583,7 +583,7 @@ public class CphServiceTests
         await cphService.Expire(request, operatorId, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.VerifyLogReceivedOnce(LogLevel.Information, $"Expiring county parish holding with id {request.Id.ToString()} by operator {operatorId}");
+        logger.VerifyLogContainsOne(LogLevel.Information, $"Expiring county parish holding with id {request.Id.ToString()} by operator {operatorId}");
 
         await cphRepository.Received(1).Update(Arg.Is<CountyParishHoldings>(v => v.ExpiredAt != null), Arg.Any<CancellationToken>());
     }
@@ -599,7 +599,7 @@ public class CphServiceTests
         var cphService = new CphService(cphRepository, cphUsersRepository, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(CphServiceTestDataHelper.GetSingleMockEntityResultFromCallInfo);
+            .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
 
         var request = new ExpireCph
         {
@@ -611,8 +611,8 @@ public class CphServiceTests
         // Act & Assert
         Should.Throw<ConflictException>(async () => await cphService.Expire(request, operatorId, TestContext.Current.CancellationToken));
 
-        logger.VerifyLogReceivedOnce(LogLevel.Information, $"Expiring county parish holding with id {request.Id.ToString()} by operator {operatorId}");
-        logger.VerifyLogReceivedOnce(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} is already expired");
+        logger.VerifyLogContainsOne(LogLevel.Information, $"Expiring county parish holding with id {request.Id.ToString()} by operator {operatorId}");
+        logger.VerifyLogContainsOne(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} is already expired");
 
         await cphRepository.DidNotReceive().Update(Arg.Any<CountyParishHoldings>(), Arg.Any<CancellationToken>());
     }
@@ -628,7 +628,7 @@ public class CphServiceTests
         var cphService = new CphService(cphRepository, cphUsersRepository, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(CphServiceTestDataHelper.GetSingleMockEntityResultFromCallInfo);
+            .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
 
         var request = new ExpireCph
         {
@@ -640,8 +640,8 @@ public class CphServiceTests
         // Act & Assert
         Should.Throw<NotFoundException>(async () => await cphService.Expire(request, operatorId, TestContext.Current.CancellationToken));
 
-        logger.VerifyLogReceivedOnce(LogLevel.Information, $"Expiring county parish holding with id {request.Id.ToString()} by operator {operatorId}");
-        logger.VerifyLogReceivedOnce(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");
+        logger.VerifyLogContainsOne(LogLevel.Information, $"Expiring county parish holding with id {request.Id.ToString()} by operator {operatorId}");
+        logger.VerifyLogContainsOne(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");
 
         await cphRepository.DidNotReceive().Update(Arg.Any<CountyParishHoldings>(), Arg.Any<CancellationToken>());
     }
@@ -657,7 +657,7 @@ public class CphServiceTests
         var cphService = new CphService(cphRepository, cphUsersRepository, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(CphServiceTestDataHelper.GetSingleMockEntityResultFromCallInfo);
+            .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
 
         var nonExistingEntityId = new Guid("109d340f-16b7-45fc-83d4-9ea8968df112");
 
@@ -671,8 +671,8 @@ public class CphServiceTests
         // Act & Assert
         Should.Throw<NotFoundException>(async () => await cphService.Expire(request, operatorId, TestContext.Current.CancellationToken));
 
-        logger.VerifyLogReceivedOnce(LogLevel.Information, $"Expiring county parish holding with id {request.Id.ToString()} by operator {operatorId}");
-        logger.VerifyLogReceivedOnce(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");
+        logger.VerifyLogContainsOne(LogLevel.Information, $"Expiring county parish holding with id {request.Id.ToString()} by operator {operatorId}");
+        logger.VerifyLogContainsOne(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");
 
         await cphRepository.DidNotReceive().Update(Arg.Any<CountyParishHoldings>(), Arg.Any<CancellationToken>());
     }
@@ -688,7 +688,7 @@ public class CphServiceTests
         var cphService = new CphService(cphRepository, cphUsersRepository, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(CphServiceTestDataHelper.GetSingleMockEntityResultFromCallInfo);
+            .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
 
         var request = new DeleteCph
         {
@@ -701,7 +701,7 @@ public class CphServiceTests
         await cphService.Delete(request, operatorId, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.VerifyLogReceivedOnce(LogLevel.Information, $"Deleting county parish holding with id {request.Id.ToString()} by operator {operatorId}");
+        logger.VerifyLogContainsOne(LogLevel.Information, $"Deleting county parish holding with id {request.Id.ToString()} by operator {operatorId}");
 
         await cphRepository.Received(1).Update(Arg.Is<CountyParishHoldings>(v => v.DeletedAt != null && v.DeletedById == operatorId), Arg.Any<CancellationToken>());
     }
@@ -717,7 +717,7 @@ public class CphServiceTests
         var cphService = new CphService(cphRepository, cphUsersRepository, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(CphServiceTestDataHelper.GetSingleMockEntityResultFromCallInfo);
+            .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
 
         var request = new DeleteCph
         {
@@ -729,8 +729,8 @@ public class CphServiceTests
         // Act & Assert
         Should.Throw<NotFoundException>(async () => await cphService.Delete(request, operatorId, TestContext.Current.CancellationToken));
 
-        logger.VerifyLogReceivedOnce(LogLevel.Information, $"Deleting county parish holding with id {request.Id.ToString()} by operator {operatorId}");
-        logger.VerifyLogReceivedOnce(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");
+        logger.VerifyLogContainsOne(LogLevel.Information, $"Deleting county parish holding with id {request.Id.ToString()} by operator {operatorId}");
+        logger.VerifyLogContainsOne(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");
 
         await cphRepository.DidNotReceive().Update(Arg.Any<CountyParishHoldings>(), Arg.Any<CancellationToken>());
     }
@@ -746,7 +746,7 @@ public class CphServiceTests
         var cphService = new CphService(cphRepository, cphUsersRepository, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(CphServiceTestDataHelper.GetSingleMockEntityResultFromCallInfo);
+            .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
 
         var nonExistingEntityId = new Guid("109d340f-16b7-45fc-83d4-9ea8968df112");
 
@@ -760,9 +760,72 @@ public class CphServiceTests
         // Act & Assert
         Should.Throw<NotFoundException>(async () => await cphService.Delete(request, operatorId, TestContext.Current.CancellationToken));
 
-        logger.VerifyLogReceivedOnce(LogLevel.Information, $"Deleting county parish holding with id {request.Id.ToString()} by operator {operatorId}");
-        logger.VerifyLogReceivedOnce(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");
+        logger.VerifyLogContainsOne(LogLevel.Information, $"Deleting county parish holding with id {request.Id.ToString()} by operator {operatorId}");
+        logger.VerifyLogContainsOne(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");
 
         await cphRepository.DidNotReceive().Update(Arg.Any<CountyParishHoldings>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    [Description("GetAllCphUsersPaged Should return page one results in ascending order and does not return deleted")]
+    public async Task GetAllCphUsersPaged_ShouldReturnPageOneResultsAscendingOrderAndDoesNotReturnDeleted()
+    {
+        // Arrange
+        var logger = Substitute.For<ILogger<CphService>>();
+        var cphRepository = Substitute.For<ICphRepository>();
+        var cphUsersRepository = Substitute.For<ICphUsersRepository>();
+        var cphService = new CphService(cphRepository, cphUsersRepository, logger);
+
+        cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
+
+        cphUsersRepository.GetPaged(
+                Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(),
+                Arg.Any<Expression<Func<ApplicationUserAccountHoldingAssignments, bool>>>(),
+                Arg.Any<int>(),
+                Arg.Any<int>(),
+                Arg.Any<Expression<Func<ApplicationUserAccountHoldingAssignments, string>>>(),
+                Arg.Any<bool>(),
+                Arg.Any<CancellationToken>())
+            .Returns(CphRepositoryMockingHelper.MockGetAllCphUsersPagedEntitiesResultFromCallInfo);
+
+        var request = new GetCphUsers()
+        {
+            Id = new Guid("7140056b-b2ee-40d6-9be1-882bdff30cc2"), PageNumber = 1, PageSize = 2,
+        };
+
+        // Act
+        var pagedResults = await cphService.GetAllCphUsersPaged(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        logger.VerifyLogContainsOne(LogLevel.Information, $"Getting all county parish holding users for id {request.Id.ToString()} by page");
+
+        pagedResults.ShouldSatisfyAllConditions(
+            (x) => x.Items.Count().ShouldBe(2),
+            (x) => x.PageNumber.ShouldBe(1),
+            (x) => x.PageSize.ShouldBe(2),
+            (x) => x.TotalCount.ShouldBe(3),
+            (x) => x.TotalPages.ShouldBe(2));
+
+        var pagedResultItems = pagedResults.Items.ToList();
+
+        var firstItem = pagedResultItems[0];
+        var secondItem = pagedResultItems[1];
+
+        firstItem.ShouldSatisfyAllConditions(
+            (x) => x.Id.ShouldBe(new Guid("560ce019-2e6e-4f76-8b86-de302bbceb2e")),
+            (x) => x.UserId.ShouldBe(new Guid("95bdde08-b510-40e3-a09d-6d4c48f122b2")),
+            (x) => x.ApplicationId.ShouldBe(new Guid("0bcd7934-4e18-414a-a6a8-d94d6a45c148")),
+            (x) => x.RoleId.ShouldBe(new Guid("81b11eb8-2ac7-468f-a80a-cfeb24f70585")),
+            (x) => x.Email.ShouldBe("test101@test.com"),
+            (x) => x.DisplayName.ShouldBe("Test 101"));
+
+        secondItem.ShouldSatisfyAllConditions(
+            (x) => x.Id.ShouldBe(new Guid("5d04e4fb-cbf7-4ed3-8bfc-38da192ea4ce")),
+            (x) => x.UserId.ShouldBe(new Guid("d686d63e-a9a0-469a-a864-a2c33436f9a7")),
+            (x) => x.ApplicationId.ShouldBe(new Guid("0bcd7934-4e18-414a-a6a8-d94d6a45c148")),
+            (x) => x.RoleId.ShouldBe(new Guid("81b11eb8-2ac7-468f-a80a-cfeb24f70585")),
+            (x) => x.Email.ShouldBe("test102@test.com"),
+            (x) => x.DisplayName.ShouldBe("Test 102"));
     }
 }
