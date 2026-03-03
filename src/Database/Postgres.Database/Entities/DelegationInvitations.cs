@@ -25,6 +25,10 @@ public class DelegationInvitations : BaseAuditEntity
 
     public Roles DelegatedRole { get; set; } = null!;
 
+    public string SpeciesTypeId { get; set; } = null!;
+
+    public AnimalSpecies SpeciesType { get; set; } = null!;
+
     public JsonDocument? DelegatedPermissions { get; set; }
 
     public DateTime InvitedAt { get; set; }

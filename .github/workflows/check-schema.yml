@@ -10,7 +10,7 @@ env:
   POSTGRES_PASSWORD: postgres
   POSTGRES_DB: identity_service_helper
 
-  LIQUIBASE_CHANGELOG_PATH: db.changelog.xml
+  LIQUIBASE_CHANGELOG_PATH: ./changelog/db.changelog.xml
 
 jobs:
   liquibase-update:
@@ -43,17 +43,15 @@ jobs:
       - name: Validate Liquibase changelog
         run: |
           ./liquibase/liquibase \
-          --searchPath=./changelog \
-          --changeLogFile=${LIQUIBASE_CHANGELOG_PATH} \
-          --url=jdbc:postgresql://localhost:5432/${POSTGRES_DB} \
-          --username=${POSTGRES_USER} \
-          --password=${POSTGRES_PASSWORD} \
-          validate
+            --changeLogFile=${LIQUIBASE_CHANGELOG_PATH} \
+            --url=jdbc:postgresql://localhost:5432/${POSTGRES_DB} \
+            --username=${POSTGRES_USER} \
+            --password=${POSTGRES_PASSWORD} \
+            validate
 
       - name: Run Liquibase update
         run: |
           ./liquibase/liquibase \
-          --searchPath=./changelog \
             --changeLogFile=${LIQUIBASE_CHANGELOG_PATH} \
             --url=jdbc:postgresql://localhost:5432/${POSTGRES_DB} \
             --username=${POSTGRES_USER} \

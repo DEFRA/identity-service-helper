@@ -1,6 +1,6 @@
 -- liquibase formatted sql
 
--- changeset cedricbrasey:1771532961448-2 runOnChange:true splitStatements:false
+-- changeset cedricbrasey:1771532961448-2 splitStatements:false
 insert into animal_species (id, name, is_active) values
     ('ALP','Alpaca',false),
     ('BFF','Buffalo',false),
@@ -9,7 +9,7 @@ insert into animal_species (id, name, is_active) values
     ('CHK','Chicken',false),
     ('CML','Camel',false),
     ('CT','Cat',false),
-    ('CTT','Cattle',false),
+    ('CTT','Cattle',true),
     ('DCK','Duck',false),
     ('DG','Dog',false),
     ('DR','Deer',false),

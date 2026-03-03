@@ -6,4 +6,9 @@ namespace Defra.Identity.Repositories.Users;
 
 using Defra.Identity.Postgres.Database.Entities;
 
-public interface IUsersRepository : IRepository<UserAccounts>;
+public interface IUsersRepository :
+    IGetListRepository<UserAccounts>,
+    IGetSingleRepository<UserAccounts>,
+    ICreateRepository<UserAccounts>,
+    IUpdateRepository<UserAccounts>,
+    IDeleteRepository<UserAccounts>;

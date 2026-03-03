@@ -12,6 +12,7 @@ ALTER TABLE "application_user_account_holding_assignments"
             ON UPDATE NO ACTION
             ON DELETE NO ACTION
             NOT VALID;
+
 ALTER TABLE "delegation_invitations"
     ADD CONSTRAINT "delegation_invitations_animal_species_id_fk"
         FOREIGN KEY ("species_type")
@@ -22,11 +23,11 @@ ALTER TABLE "delegation_invitations"
 
 -- changeset cedricbrasey:1771532961448-5 splitStatements:false
 UPDATE "application_user_account_holding_assignments"
-SET "species_type" = 'CTT'
-WHERE "species_type" IS NULL;
+    SET "species_type" = 'CTT'
+    WHERE "species_type" IS NULL;
 UPDATE "delegation_invitations"
-SET "species_type" = 'CTT'
-WHERE "species_type" IS NULL;
+    SET "species_type" = 'CTT'
+    WHERE "species_type" IS NULL;
 
 -- changeset cedricbrasey:1771532961448-6 splitStatements:false
 ALTER TABLE "application_user_account_holding_assignments"

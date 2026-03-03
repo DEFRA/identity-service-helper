@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Api.Utility.Utils;
+namespace Defra.Identity.Api.Utility;
 
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;

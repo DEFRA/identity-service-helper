@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Api.Utility.Utils.Logging;
+namespace Defra.Identity.Api.Utility.Logging;
 
 using System.Diagnostics.CodeAnalysis;
 using Serilog;

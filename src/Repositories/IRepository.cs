@@ -5,7 +5,17 @@
 namespace Defra.Identity.Repositories;
 
 using System.Linq.Expressions;
-using Defra.Identity.Repositories.Common.Composites;
 
-public interface IRepository<TEntity> : IGettable<TEntity>, IListable<TEntity>, ICreatable<TEntity>, IUpdatable<TEntity>, IDeletable<TEntity>
-    where TEntity : class;
+public interface IRepository<TEntity>
+    where TEntity : class
+{
+    Task<TEntity?> GetSingle(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default);
+
+    Task<List<TEntity>> GetList(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default);
+
+    Task<TEntity> Create(TEntity entity, CancellationToken cancellationToken = default);
+
+    Task<TEntity> Update(TEntity entity, CancellationToken cancellationToken = default);
+
+    Task<bool> Delete(Expression<Func<TEntity, bool>> predicate,  Guid operatorId, CancellationToken cancellationToken = default);
+}
