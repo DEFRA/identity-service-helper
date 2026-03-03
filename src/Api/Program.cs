@@ -11,11 +11,13 @@ using Defra.Identity.Api.Endpoints.Cphs;
 using Defra.Identity.Api.Endpoints.Delegations;
 using Defra.Identity.Api.Endpoints.Users;
 using Defra.Identity.Api.Exceptions;
-using Defra.Identity.Api.Utility.Utils.Http;
-using Defra.Identity.Api.Utility.Utils.Logging;
+using Defra.Identity.Api.Utility.Http;
+using Defra.Identity.Api.Utility.Logging;
+using Defra.Identity.KeeperReferenceData;
 using Defra.Identity.Postgres.Database;
 using Defra.Identity.Repositories;
 using Defra.Identity.Requests;
+using Defra.Identity.Scheduling;
 using Defra.Identity.Services;
 using FluentValidation;
 using Serilog;
@@ -99,6 +101,8 @@ public class Program
         // Set up the endpoints and their dependencies
         builder.Services.AddRepositories(configuration);
         builder.Services.AddDataServices(configuration);
+        builder.Services.AddKeeperRecordsDataIntegrationService(configuration);
+        builder.Services.AddScheduling(configuration);
     }
 
     [ExcludeFromCodeCoverage]
