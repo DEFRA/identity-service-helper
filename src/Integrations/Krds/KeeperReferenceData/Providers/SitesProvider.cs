@@ -15,6 +15,7 @@ public class SitesProvider(HttpClient client, ILogger<SitesProvider> logger) : I
     {
         logger.LogInformation("Getting sites");
         var request = string.Concat(client.BaseAddress, GetSitesSince(since));
+
         logger.LogInformation("Request: {Request}", request);
         using var response = await client.GetAsync(request, cancellationToken);
         response.EnsureSuccessStatusCode();
