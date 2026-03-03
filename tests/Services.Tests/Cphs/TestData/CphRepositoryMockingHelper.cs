@@ -169,5 +169,31 @@ public static class CphRepositoryMockingHelper
             RoleId = new Guid("42452ec5-8393-4674-8968-f4929be60099"),
             DeletedAt = null,
         },
+        new()
+        {
+            Id = new Guid("439c56e2-7521-4d6b-9106-b10a91805e9f"),
+            CountyParishHoldingId = new Guid("1cd09a5b-6b00-4f30-b03e-8de45130cad6"),
+            UserAccountId = new Guid("43426677-8dba-46d0-b429-d7192dfeb6f5"),
+            UserAccount = new UserAccounts()
+            {
+                DisplayName = "Test 105", EmailAddress = "test105@test.com",
+            },
+            ApplicationId = new Guid("97193f21-877d-4806-9f1b-7ba0730245e4"),
+            RoleId = new Guid("b49960ce-5c27-451b-b0f0-bdd297a933ef"),
+            DeletedAt = null,
+        },
+        new()
+        {
+            Id = new Guid("81b3624b-4c2b-4247-be3a-82ae5b76573e"),
+            CountyParishHoldingId = new Guid("1cd09a5b-6b00-4f30-b03e-8de45130cad6"),
+            UserAccountId = new Guid("75db555e-b686-40ff-abdb-e2683b91feb1"),
+            UserAccount = new UserAccounts()
+            {
+                DisplayName = "Test 106", EmailAddress = "test106@test.com",
+            },
+            ApplicationId = new Guid("97193f21-877d-4806-9f1b-7ba0730245e4"),
+            RoleId = new Guid("b49960ce-5c27-451b-b0f0-bdd297a933ef"),
+            DeletedAt = null,
+        },
     ];
 }
