@@ -19,6 +19,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IApplicationsRepository, ApplicationsRepository>();
         services.AddTransient<IDelegatesRepository, DelegatesRepository>();
         services.AddTransient<ICphRepository, CphRepository>();
+        services.AddTransient<ICphUsersRepository, CphUsersRepository>();
 
         return services;
     }

@@ -18,12 +18,14 @@ using Microsoft.Extensions.Logging;
 
 public class CphService : ICphService
 {
-    private readonly ICphRepository repository;
+    private readonly ICphRepository cphRepository;
+    private readonly ICphUsersRepository cphUsersRepository;
     private readonly ILogger<CphService> logger;
 
-    public CphService(ICphRepository repository, ILogger<CphService> logger)
+    public CphService(ICphRepository cphRepository, ICphUsersRepository cphUsersRepository, ILogger<CphService> logger)
     {
-        this.repository = repository;
+        this.cphRepository = cphRepository;
+        this.cphUsersRepository = cphUsersRepository;
         this.logger = logger;
     }
 
@@ -36,7 +38,7 @@ public class CphService : ICphService
         Expression<Func<CountyParishHoldings, bool>> filter = cph => (includeExpired || cph.ExpiredAt == null) && cph.DeletedAt == null;
         Expression<Func<CountyParishHoldings, string>> orderBy = cph => cph.Identifier;
 
-        var pagedCphEntities = await repository.GetPaged(filter, request.PageNumber, request.PageSize, orderBy, request.OrderByDescending ?? false, cancellationToken);
+        var pagedCphEntities = await cphRepository.GetPaged(filter, request.PageNumber, request.PageSize, orderBy, request.OrderByDescending ?? false, cancellationToken);
         var pagedCphResults = pagedCphEntities.ToPagedResults(MapCphEntityToCph);
 
         return pagedCphResults;
@@ -48,7 +50,7 @@ public class CphService : ICphService
 
         Expression<Func<CountyParishHoldings, bool>> filter = cph => cph.Id == request.Id;
 
-        var cphEntity = await repository.GetSingle(filter, cancellationToken);
+        var cphEntity = await cphRepository.GetSingle(filter, cancellationToken);
 
         if (cphEntity is not { DeletedAt: null })
         {
@@ -68,7 +70,7 @@ public class CphService : ICphService
 
         Expression<Func<CountyParishHoldings, bool>> filter = cph => cph.Id == request.Id;
 
-        var cphEntity = await repository.GetSingle(filter, cancellationToken);
+        var cphEntity = await cphRepository.GetSingle(filter, cancellationToken);
 
         if (cphEntity is not { DeletedAt: null })
         {
@@ -86,7 +88,7 @@ public class CphService : ICphService
 
         cphEntity.ExpiredAt = DateTime.UtcNow;
 
-        await repository.Update(cphEntity, cancellationToken);
+        await cphRepository.Update(cphEntity, cancellationToken);
     }
 
     public async Task Delete(DeleteCph request, Guid operatorId, CancellationToken cancellationToken = default)
@@ -95,7 +97,7 @@ public class CphService : ICphService
 
         Expression<Func<CountyParishHoldings, bool>> filter = cph => cph.Id == request.Id;
 
-        var cphEntity = await repository.GetSingle(filter, cancellationToken);
+        var cphEntity = await cphRepository.GetSingle(filter, cancellationToken);
 
         if (cphEntity is not { DeletedAt: null })
         {
@@ -107,15 +109,62 @@ public class CphService : ICphService
         cphEntity.DeletedById = operatorId;
         cphEntity.DeletedAt = DateTime.UtcNow;
 
-        await repository.Update(cphEntity, cancellationToken);
+        await cphRepository.Update(cphEntity, cancellationToken);
+    }
+
+    public async Task<PagedResults<CphUser>> GetAllCphUsersPaged(GetCphUsers request, CancellationToken cancellationToken = default)
+    {
+        logger.LogInformation("Getting all county parish holding users for id {Id} by page", request.Id);
+
+        Expression<Func<CountyParishHoldings, bool>> primaryFilter = cph => cph.Id == request.Id;
+        Expression<Func<ApplicationUserAccountHoldingAssignments, bool>> associationFilter = cphUser => cphUser.DeletedAt == null;
+        Expression<Func<ApplicationUserAccountHoldingAssignments, string>> orderBy = cphUser => cphUser.UserAccount.DisplayName;
+
+        var cphEntity = await cphRepository.GetSingle(primaryFilter, cancellationToken);
+
+        if (cphEntity is not { DeletedAt: null })
+        {
+            logger.LogWarning("County parish holding with id {Id} not found", request.Id);
+
+            throw new NotFoundException("County parish holding not found.");
+        }
+
+        var pageCphUserEntities = await cphUsersRepository.GetPaged(
+            primaryFilter,
+            associationFilter,
+            request.PageNumber,
+            request.PageSize,
+            orderBy,
+            request.OrderByDescending ?? false,
+            cancellationToken);
+
+        var pagedCphUserResults = pageCphUserEntities.ToPagedResults(MapCphUserEntityToCphUser);
+
+        return pagedCphUserResults;
     }
 
     private static Cph MapCphEntityToCph(CountyParishHoldings cphEntity)
-        => new()
+    {
+        return new Cph
         {
             Id = cphEntity.Id, CphNumber = cphEntity.Identifier, Expired = cphEntity.ExpiredAt != null, ExpiredAt = cphEntity.ExpiredAt,
         };
+    }
+
+    private static CphUser MapCphUserEntityToCphUser(ApplicationUserAccountHoldingAssignments cphUserEntity)
+    {
+        return new CphUser
+        {
+            Id = cphUserEntity.Id,
+            UserId = cphUserEntity.UserAccountId,
+            ApplicationId = cphUserEntity.ApplicationId,
+            RoleId = cphUserEntity.RoleId,
+            Email = cphUserEntity.UserAccount.EmailAddress,
+        };
+    }
 
     private static bool IsExpiredInferred(GetCphs request)
-        => request.Expired != null && (request.Expired == string.Empty || request.Expired.Equals("true", StringComparison.InvariantCultureIgnoreCase));
+    {
+        return request.Expired != null && (request.Expired == string.Empty || request.Expired.Equals("true", StringComparison.InvariantCultureIgnoreCase));
+    }
 }

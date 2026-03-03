@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Postgres.Database.Tests.Fixtures.SeedData.Cphs;
+namespace Defra.Identity.Postgres.Database.Tests.Fixtures.SeedData.Primary;
 
 using Defra.Identity.Postgres.Database.Entities;
 

@@ -34,6 +34,10 @@ public static class CphEndpoints
             .WithMetadata(new RequiresOperatorId())
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status404NotFound);
+
+        app.MapGet(RouteNames.CountyParishHoldings + "/{id:guid}/users", GetAllCphUsersPaged)
+            .AddEndpointFilter<ValidationFilter<PagedQuery>>()
+            .Produces(StatusCodes.Status404NotFound);
     }
 
     private static async Task<IResult> GetAllPaged(
@@ -74,5 +78,15 @@ public static class CphEndpoints
         await service.Delete(request, headers.OperatorId);
 
         return Results.NoContent();
+    }
+
+    private static async Task<IResult> GetAllCphUsersPaged(
+        QueryRequestHeaders headers,
+        [AsParameters] GetCphUsers request,
+        ICphService service)
+    {
+        var pagedCphUsersResults = await service.GetAllCphUsersPaged(request);
+
+        return Results.Ok(pagedCphUsersResults);
     }
 }

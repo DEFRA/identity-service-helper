@@ -7,6 +7,7 @@ namespace Defra.Identity.Postgres.Database.Tests.Repositories;
 using System.ComponentModel;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
+using Defra.Identity.Postgres.Database.Tests.Fixtures.SeedData;
 using Defra.Identity.Repositories.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -15,8 +16,6 @@ using Shouldly;
 
 public class UpdateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 {
-    private const string AdminEmailAddress = "test@test.com";
-
     [Fact]
     [Description("Should update an existing user account")]
     public async Task ShouldUpdateUserAccount()
@@ -24,20 +23,19 @@ public class UpdateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         // Arrange
         var logger = Substitute.For<ILogger<UsersRepository>>();
         var repository = new UsersRepository(Context, logger);
-        var adminUser = await repository.GetSingle(
-            x =>
-            x.EmailAddress.Equals(AdminEmailAddress),
-            TestContext.Current.CancellationToken);
+        var adminUser = await SeedDataQueryHelper.GetAdminUser(Context);
 
         adminUser.ShouldNotBeNull();
+
         var user = new UserAccounts
         {
             DisplayName = "Test User",
             FirstName = "Test",
             LastName = "User",
-            EmailAddress = "test2@test.com",
+            EmailAddress = "test20@test.com",
             CreatedById = adminUser.Id,
         };
+
         await Context.UserAccounts.AddAsync(user, TestContext.Current.CancellationToken);
         await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
@@ -47,13 +45,11 @@ public class UpdateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         var result = await repository.Update(user, TestContext.Current.CancellationToken);
 
         // Assert
-        result.ShouldSatisfyAllConditions(
-            x => x.DisplayName.ShouldBe("Updated Name"));
+        result.ShouldSatisfyAllConditions(x => x.DisplayName.ShouldBe("Updated Name"));
 
         var savedUser = await Context.UserAccounts.FirstAsync(x => x.EmailAddress.Equals(user.EmailAddress), TestContext.Current.CancellationToken);
 
-        savedUser.ShouldSatisfyAllConditions(
-            x => x.DisplayName.ShouldBe("Updated Name"));
+        savedUser.ShouldSatisfyAllConditions(x => x.DisplayName.ShouldBe("Updated Name"));
 
         savedUser.ShouldNotBeNull();
         savedUser.DisplayName.ShouldBe("Updated Name");
