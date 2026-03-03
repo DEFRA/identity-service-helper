@@ -18,4 +18,6 @@ public interface ICphService
     Task Expire(ExpireCph request, Guid operatorId, CancellationToken cancellationToken = default);
 
     Task Delete(DeleteCph request, Guid operatorId, CancellationToken cancellationToken = default);
+
+    Task<PagedResults<CphUser>> GetAllCphUsersPaged(GetCphUsers request, CancellationToken cancellationToken = default);
 }

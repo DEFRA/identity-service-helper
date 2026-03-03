@@ -11,7 +11,7 @@ using NSubstitute;
 [ExcludeFromCodeCoverage]
 public static class LoggerExtensions
 {
-    public static void VerifyLogReceivedOnce(this ILogger logger, LogLevel logLevel, string message)
+    public static void VerifyLogContainsOne(this ILogger logger, LogLevel logLevel, string message)
     {
         logger.Received(1).Log(
             logLevel,

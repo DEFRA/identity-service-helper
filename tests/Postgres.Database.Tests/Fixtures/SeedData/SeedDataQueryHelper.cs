@@ -5,7 +5,7 @@
 namespace Defra.Identity.Postgres.Database.Tests.Fixtures.SeedData;
 
 using Defra.Identity.Postgres.Database.Entities;
-using Defra.Identity.Postgres.Database.Tests.Fixtures.SeedData.Users;
+using Defra.Identity.Postgres.Database.Tests.Fixtures.SeedData.Primary;
 using Microsoft.EntityFrameworkCore;
 
 public static class SeedDataQueryHelper

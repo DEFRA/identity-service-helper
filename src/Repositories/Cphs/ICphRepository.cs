@@ -5,5 +5,6 @@
 namespace Defra.Identity.Repositories.Cphs;
 
 using Defra.Identity.Postgres.Database.Entities;
+using Defra.Identity.Repositories.Common.Composites;
 
-public interface ICphRepository : IPageableRepository<CountyParishHoldings>;
+public interface ICphRepository : IGettable<CountyParishHoldings>, IPageable<CountyParishHoldings>, IUpdatable<CountyParishHoldings>;

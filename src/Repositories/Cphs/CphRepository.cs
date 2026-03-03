@@ -10,7 +10,7 @@ using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Common;
 using Microsoft.Extensions.Logging;
 
-public class CphRepository(PostgresDbContext context, ILogger<ICphRepository> logger)
+public class CphRepository(PostgresDbContext context, ILogger<CphRepository> logger)
     : ICphRepository
 {
     public async Task<CountyParishHoldings?> GetSingle(Expression<Func<CountyParishHoldings, bool>> predicate, CancellationToken cancellationToken = default)
@@ -38,11 +38,6 @@ public class CphRepository(PostgresDbContext context, ILogger<ICphRepository> lo
             .ToPaged(pageNumber, pageSize, orderBy, orderByDescending, cancellationToken);
 
         return results;
-    }
-
-    public async Task<CountyParishHoldings> Create(CountyParishHoldings entity, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
     }
 
     public async Task<CountyParishHoldings> Update(CountyParishHoldings entity, CancellationToken cancellationToken = default)
