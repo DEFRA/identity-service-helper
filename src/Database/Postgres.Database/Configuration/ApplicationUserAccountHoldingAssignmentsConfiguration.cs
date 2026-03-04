@@ -45,7 +45,7 @@ internal class ApplicationUserAccountHoldingAssignmentsConfiguration
             .IsRequired();
 
         builder.Property(x => x.SpeciesTypeId)
-            .HasColumnName(nameof(ApplicationUserAccountHoldingAssignments.SpeciesTypeId).ToSnakeCase())
+            .HasColumnName(nameof(ApplicationUserAccountHoldingAssignments.SpeciesType).ToSnakeCase())
             .HasColumnType(ColumnTypes.Char)
             .HasMaxLength(20)
             .IsRequired();

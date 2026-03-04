@@ -12,7 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 [Collection(nameof(PostgreCollection))]
-public abstract class BaseTests(PostgreContainerFixture fixture) : IAsyncLifetime
+public abstract partial class BaseTests(PostgreContainerFixture fixture) : IAsyncLifetime
 {
     private IServiceScope? scope;
 
@@ -41,7 +41,6 @@ public abstract class BaseTests(PostgreContainerFixture fixture) : IAsyncLifetim
         var app = builder.Build();
 
         app.UsePostgresDatabase();
-        app.UseDatabaseMigrations();
 
         scope = app.Services.CreateScope();
         Context = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();

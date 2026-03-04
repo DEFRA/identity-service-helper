@@ -12,6 +12,11 @@
     <Using Include="Xunit.v3"/>
     <Using Include="Shouldly" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildProjectDirectory)\..\..\changelog\**\*"
+          Link="changelog\%(RecursiveDir)%(Filename)%(Extension)"
+          CopyToOutputDirectory="Always" />
+  </ItemGroup>
     <PropertyGroup>
         <CoverletExcludeByFile>**/Migrations/**/*.cs</CoverletExcludeByFile>
     </PropertyGroup>

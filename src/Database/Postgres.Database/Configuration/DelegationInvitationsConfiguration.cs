@@ -5,7 +5,6 @@
 namespace Defra.Identity.Postgres.Database.Configuration;
 
 using Defra.Identity.Postgres.Database.Configuration.Base;
-using Defra.Identity.Postgres.Database.Converters;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 internal class DelegationInvitationsConfiguration : BaseAuditEntityConfiguration<DelegationInvitations>
@@ -52,7 +51,7 @@ internal class DelegationInvitationsConfiguration : BaseAuditEntityConfiguration
             .HasColumnType(ColumnTypes.JsonB);
 
         builder.Property(x => x.SpeciesTypeId)
-            .HasColumnName(nameof(DelegationInvitations.SpeciesTypeId).ToSnakeCase())
+            .HasColumnName(nameof(DelegationInvitations.SpeciesType).ToSnakeCase())
             .HasColumnType(ColumnTypes.Char)
             .HasMaxLength(20)
             .IsRequired();

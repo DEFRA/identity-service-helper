@@ -1,6 +1,6 @@
 -- liquibase formatted sql
 
--- changeset cedricbrasey:1771532961448-2 splitStatements:false
+-- changeset cedricbrasey:1771532961448-2 context:"!testcontainer" splitStatements:false
 insert into animal_species (id, name, is_active) values
     ('ALP','Alpaca',false),
     ('BFF','Buffalo',false),

@@ -4,7 +4,9 @@
 
 namespace Defra.Identity.Repositories.Species;
 
+using Defra.Identity.Repositories.Common.Composites;
+
 public interface IAnimalSpeciesRepository :
-    IGetListRepository<Postgres.Database.Entities.AnimalSpecies>,
-    IGetSingleRepository<Postgres.Database.Entities.AnimalSpecies>,
-    IUpdateRepository<Postgres.Database.Entities.AnimalSpecies>;
+    IListable<Postgres.Database.Entities.AnimalSpecies>,
+    IGettable<Postgres.Database.Entities.AnimalSpecies>,
+    IUpdatable<Postgres.Database.Entities.AnimalSpecies>;

@@ -10,4 +10,7 @@
     <include file="schema/02/add_animal_species.postgresql.sql" />
     <include file="schema/02/seed_animal_species.postgresql.sql" />
     <include file="schema/02/validate_animal_species.postgresql.sql" />
+  
+    <!-- must be last -->
+    <include file="schema/testcontainer.postgresql.sql" />
 </databaseChangeLog>
