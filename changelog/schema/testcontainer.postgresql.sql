@@ -45,7 +45,7 @@ insert into roles (id, name, description) values
     ('306fa0fc-bd1a-45d3-9fef-e6f11a85b601', 'test-role-4', 'Test Role 4');
 
 insert into user_accounts (id, display_name, email_address, first_name, last_name, created_at, created_by_id) values
-    ('df6990d6-e61a-4e14-aa79-5479dc7b3569', 'Admin User', ADMIN_EMAIL_ADDRESS, 'Admin', 'User', '2026-02-24 00:00:00.000000 +00:00', ADMIN_USER_ID),
+    (ADMIN_USER_ID, 'Admin User', ADMIN_EMAIL_ADDRESS, 'Admin', 'User', '2026-02-24 00:00:00.000000 +00:00', ADMIN_USER_ID),
     ('0a629f9f-2d25-4ac5-afbf-e821f5c6e7d1', 'Test User', 'test@test.com', 'test', 'user', '2026-02-24 00:00:00.000000 +00:00', ADMIN_USER_ID),
     ('42bde7a0-9efe-402a-a7c3-9161be7b00ba', 'Test User 1', 'test1@test.com', 'test 1', 'user 1', '2026-03-01 00:00:00.000000 +00:00', ADMIN_USER_ID),
     ('1e21b685-2247-4d96-bf39-f7dc30f356c2', 'Test User 2', 'test2@test.com', 'test 2', 'user 2', '2026-03-02 00:00:00.000000 +00:00', ADMIN_USER_ID),

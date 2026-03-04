@@ -1,6 +1,8 @@
 ﻿-- liquibase formatted sql
 
--- changeset gary:seeding-3
+-- changeset gary:seeding-2
+SET search_path TO public;
+
 create table krds_sync_logs
 (
     id              uuid                                   not null
@@ -33,7 +35,7 @@ create table user_accounts
         constraint "PK_user_accounts"
             primary key,
     email_address varchar                                            not null,
-    display_name  varchar                                            not null,
+    display_name  citext                                             not null,
     first_name    varchar                                            not null,
     last_name     varchar                                            not null,
     krds_id       uuid,
