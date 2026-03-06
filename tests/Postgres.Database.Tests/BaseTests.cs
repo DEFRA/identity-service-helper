@@ -20,7 +20,7 @@ public abstract partial class BaseTests(PostgreContainerFixture fixture) : IAsyn
 
     private Dictionary<string, string> ConnectionStringConfiguration => new()
     {
-        { $"ConnectionStrings:{DatabaseConstants.ConnectionStringName}", $"{fixture.ConnectionString}" },
+        { $"ConnectionStrings:{DatabaseConstants.ConnectionStringName}", $"{PostgreContainerFixture.ConnectionString}" },
         { "Deployment:Environment", "Dev" },
     };
 

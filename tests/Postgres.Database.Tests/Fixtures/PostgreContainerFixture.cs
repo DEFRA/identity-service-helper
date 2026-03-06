@@ -2,8 +2,11 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
+// ReSharper disable ClassNeverInstantiated.Global
 namespace Defra.Identity.Postgres.Database.Tests.Fixtures;
 
+using Defra.Identity.Test.Utilities.Database;
+using Defra.Identity.Test.Utilities.Locking;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
@@ -13,9 +16,6 @@ using Testcontainers.PostgreSql;
 public class PostgreContainerFixture
     : IAsyncLifetime
 {
-    private readonly SemaphoreSlim initLock = new(1, 1);
-    private bool upgraded;
-
     private static readonly INetwork Network = new NetworkBuilder()
         .Build();
 
@@ -32,14 +32,17 @@ public class PostgreContainerFixture
         .WithImage("liquibase/liquibase:5.0.1")
         .WithNetwork(Network)
         .WithBindMount(
-            Path.GetFullPath("changelog"),   // folder containing master changelog + scripts
+            Path.GetFullPath("changelog"), // folder containing master changelog + scripts
             "/liquibase/changelog",
             AccessMode.ReadOnly)
         .WithEntrypoint("sh", "-lc")
         .WithCommand("tail -f /dev/null") // keep container alive
         .Build();
 
-    public string ConnectionString => Db.GetConnectionString();
+    private readonly OnceExecutor liquibaseStartExecutor = new OnceExecutor();
+    private readonly OnceExecutor liquibaseUpdateExecutor = new OnceExecutor();
+
+    public static string ConnectionString => Db.GetConnectionString();
 
     public async ValueTask DisposeAsync()
     {
@@ -49,42 +52,43 @@ public class PostgreContainerFixture
 
     public async ValueTask InitializeAsync()
     {
+        await liquibaseStartExecutor.ExecuteOnce(StartLiquibase);
+        await liquibaseUpdateExecutor.ExecuteOnce(UpdateLiquibase);
+        await ResetData();
+    }
+
+    private static async Task StartLiquibase()
+    {
         await Db.StartAsync();
         await Liquibase.StartAsync();
 
-        await initLock.WaitAsync();
-        try
-        {
-            if (!upgraded)
-            {
-                var install = await Liquibase.ExecAsync(new[] { "liquibase", "lpm", "add", "postgresql", });
-                if (install.ExitCode != 0)
-                {
-                    throw new Exception($"lpm failed: {install.Stderr}");
-                }
+        var install = await Liquibase.ExecAsync(
+        [
+            "liquibase", "lpm", "add", "postgresql",
+        ]);
 
-                upgraded = true;
-            }
-        }
-        finally
+        if (install.ExitCode != 0)
         {
-            initLock.Release();
+            throw new Exception($"lpm failed: {install.Stderr}");
         }
+    }
 
-        var update = await Liquibase.ExecAsync(new[]
-        {
-            "liquibase",
-            "--url=jdbc:postgresql://pg:5432/appdb",
-            "--username=identity_service_helper_ddl",
-            "--password=app",
-            "--search-path=/liquibase/changelog",
-            "--changelog-file=db.changelog.xml",
-            "update",
-            "--context-filter=TESTCONTAINER",
-        });
+    private static async Task UpdateLiquibase()
+    {
+        var update = await Liquibase.ExecAsync(
+        [
+            "liquibase", "--url=jdbc:postgresql://pg:5432/appdb", "--username=identity_service_helper_ddl", "--password=app", "--search-path=/liquibase/changelog",
+            "--changelog-file=db.changelog.xml", "update", "--context-filter=TESTCONTAINER",
+        ]);
+
         if (update.ExitCode != 0)
         {
             throw new Exception($"liquibase update failed: {update.Stderr}");
         }
+    }
+
+    private static async Task ResetData()
+    {
+        await SqlHelper.ExecuteSqlFile(ConnectionString, "../../../../../changelog/schema/testcontainer.postgresql.sql");
     }
 }
