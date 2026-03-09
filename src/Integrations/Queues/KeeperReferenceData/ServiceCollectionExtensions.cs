@@ -29,7 +29,7 @@ public static class ServiceCollectionExtensions
         {
             builder.AddSQSPoller(queueOptions.IntakeQueueOptions.Url);
 
-            builder.AddMessageHandler<KeeperDataImportCompleteHandler, KeeperDataImportComplete>("ls_keeper_data_import_complete");
+            builder.AddMessageHandler<KeeperDataImportCompleteHandler, KeeperDataImportComplete>(QueueNames.KeeperDataImportComplete);
         });
 
         return services;
