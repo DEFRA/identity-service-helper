@@ -1,8 +1,8 @@
-// <copyright file="ApplicationService.cs" company="Defra">
+// <copyright file="AnimalSpeciesService.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Services.AnimalSpecies;
+namespace Defra.Identity.Services.Species;
 
 using System.Linq.Expressions;
 using Defra.Identity.Repositories.Exceptions;
@@ -30,7 +30,7 @@ public class AnimalSpeciesService
         CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Getting all animal species, includeHidden: {IncludeHidden}", request.IncludeInactive);
-        Expression<Func<ModelAnimalSpecies, bool>> filter = x => request.IncludeInactive || x.IsActive == true;
+        Expression<Func<ModelAnimalSpecies, bool>> filter = x => IncludeInactiveInferred(request) || x.IsActive == true;
 
         var result = await repository.GetList(filter, cancellationToken);
 
@@ -84,5 +84,12 @@ public class AnimalSpeciesService
             Name = updated.Name,
             IsActive = updated.IsActive,
         };
+    }
+
+    private static bool IncludeInactiveInferred(GetAllAnimalSpecies request)
+    {
+        return request.IncludeInactive != null &&
+               (request.IncludeInactive == string.Empty ||
+                request.IncludeInactive.Equals("true", StringComparison.InvariantCultureIgnoreCase));
     }
 }

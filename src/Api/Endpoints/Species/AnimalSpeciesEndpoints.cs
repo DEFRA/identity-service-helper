@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Api.Endpoints.AnimalSpecies;
+namespace Defra.Identity.Api.Endpoints.Species;
 
 using Defra.Identity.Requests;
 using Defra.Identity.Requests.Common.Queries;
@@ -10,21 +10,21 @@ using Defra.Identity.Requests.Filters;
 using Defra.Identity.Requests.MetaData;
 using Defra.Identity.Requests.Species.Commands;
 using Defra.Identity.Requests.Species.Queries;
-using Defra.Identity.Services.AnimalSpecies;
+using Defra.Identity.Services.Species;
+using Microsoft.AspNetCore.Mvc;
 
 public static class AnimalSpeciesEndpoints
 {
-    public static void UseApplicationEndpoints(this IEndpointRouteBuilder app)
+    public static void UseAnimalSpeciesEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapGet(RouteNames.AnimalSpecies, GetAll)
-            .AddEndpointFilter<ValidationFilter<PagedQuery>>();
+        app.MapGet(RouteNames.AnimalSpecies, GetAll);
 
-        app.MapGet(RouteNames.AnimalSpecies + "/{id:string}", Get)
+        app.MapGet(RouteNames.AnimalSpecies + "/{id}", Get)
             .WithName(RouteNames.AnimalSpecies)
             .Produces<Responses.Applications.Application>(StatusCodes.Status200OK, "application/json")
             .Produces(StatusCodes.Status404NotFound);
 
-        app.MapPost(RouteNames.AnimalSpecies + "/{id:string}:toggle", Toggle)
+        app.MapPost(RouteNames.AnimalSpecies + "/{id}:toggle", Toggle)
             .WithMetadata(new RequiresOperatorId())
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status404NotFound)
@@ -33,9 +33,12 @@ public static class AnimalSpeciesEndpoints
 
     private static async Task<IResult> Toggle(
         CommandRequestHeaders headers,
-        [AsParameters] ToggleAnimalSpecies request,
+        [FromRoute] string id,
+        [FromBody] ToggleAnimalSpeciesBody body,
         IAnimalSpeciesService service)
     {
+        var request = new ToggleAnimalSpecies() { Id = id, IsActive = body.IsActive };
+
         await service.Toggle(request, headers.OperatorId);
 
         return Results.NoContent();

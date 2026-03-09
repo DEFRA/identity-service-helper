@@ -9,6 +9,7 @@ using System.Text.Json;
 using Defra.Identity.Api.Endpoints.Applications;
 using Defra.Identity.Api.Endpoints.Cphs;
 using Defra.Identity.Api.Endpoints.Delegations;
+using Defra.Identity.Api.Endpoints.Species;
 using Defra.Identity.Api.Endpoints.Users;
 using Defra.Identity.Api.Exceptions;
 using Defra.Identity.Api.Utility.Http;
@@ -114,6 +115,7 @@ public class Program
         app.UseApplicationEndpoints();
         app.UseDelegationEndpoints();
         app.UseCphEndpoints();
+        app.UseAnimalSpeciesEndpoints();
 
         return app;
     }

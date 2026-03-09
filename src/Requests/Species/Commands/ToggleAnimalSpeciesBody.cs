@@ -1,12 +1,10 @@
-﻿// <copyright file="ToggleAnimalSpecies.cs" company="Defra">
+﻿// <copyright file="ToggleAnimalSpeciesBody.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
 namespace Defra.Identity.Requests.Species.Commands;
 
-public class ToggleAnimalSpecies
+public class ToggleAnimalSpeciesBody
 {
-    public string Id { get; set; }
-
     public bool IsActive { get; set; }
 }

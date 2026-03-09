@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Services.AnimalSpecies;
+namespace Defra.Identity.Services.Species;
 
 using Defra.Identity.Requests.Species.Commands;
 using Defra.Identity.Requests.Species.Queries;

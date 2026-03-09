@@ -4,9 +4,7 @@
 
 namespace Defra.Identity.Requests.Species.Queries;
 
-using Defra.Identity.Requests.Common.Queries;
-
-public class GetAllAnimalSpecies : PagedQuery
+public class GetAllAnimalSpecies
 {
-    public bool IncludeInactive { get; set; } = false;
+    public string? IncludeInactive { get; set; } = null;
 }
