@@ -4,7 +4,6 @@
 
 namespace Defra.Identity.Api.Tests.Test.Utils.Http;
 
-using System;
 using Defra.Identity.Api.Utility.Http;
 
 public class ProxyHttpMessageHandlerTests

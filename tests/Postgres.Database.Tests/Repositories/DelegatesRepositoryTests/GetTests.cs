@@ -77,7 +77,7 @@ public class GetTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 
         // We need another user for another delegation to the same app, or another app for the same user
         var anotherUser = new UserAccounts { Id = Guid.NewGuid(), DisplayName = "Another User", EmailAddress = "another@test.com", CreatedById = adminUser.Id };
-        await Context.UserAccounts.AddAsync(anotherUser);
+        await Context.UserAccounts.AddAsync(anotherUser, TestContext.Current.CancellationToken);
 
         delegations.Add(new() { ApplicationId = application.Id, UserId = anotherUser.Id, CreatedById = adminUser.Id });
 
