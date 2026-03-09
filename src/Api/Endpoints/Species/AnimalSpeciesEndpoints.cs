@@ -32,12 +32,10 @@ public static class AnimalSpeciesEndpoints
     private static async Task<IResult> Toggle(
         CommandRequestHeaders headers,
         [FromRoute] string id,
-        [FromBody] ToggleAnimalSpeciesBody body,
+        [FromBody] ToggleAnimalSpecies request,
         IAnimalSpeciesService service)
     {
-        var request = new ToggleAnimalSpecies() { Id = id, IsActive = body.IsActive };
-
-        await service.Toggle(request, headers.OperatorId);
+        await service.Toggle(request.WithId(id), headers.OperatorId);
 
         return Results.NoContent();
     }

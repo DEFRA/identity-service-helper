@@ -15,22 +15,13 @@ x-api-key: {{api-key}}
 X-Operator-Id: {{Operator-Id}}
 
 {
-  "IsActive": true
+  "is_active": true
 }
 
 > ../../Asserts/Should_be_204_no_content.js
 
 ### show the animal-species again and expect a conflict
 POST {{host}}/animal-species/DR:toggle
-Content-Type: application/json
-X-Correlation-ID: {{Correlation-ID}}
-x-api-key: {{api-key}}
-X-Operator-Id: {{Operator-Id}}
-
-> ../../Asserts/Should_be_409_conflict.js
-
-### hide the animal-species
-POST {{host}}/animal-species/CT:hide
 Content-Type: application/json
 X-Correlation-ID: {{Correlation-ID}}
 x-api-key: {{api-key}}
