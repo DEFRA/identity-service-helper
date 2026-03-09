@@ -4,13 +4,12 @@ on:
   pull_request:
 
 env:
-  LIQUIBASE_VERSION: 5.0.1
-
   POSTGRES_USER: identity_service_helper_ddl
   POSTGRES_PASSWORD: postgres
   POSTGRES_DB: identity_service_helper
 
-  LIQUIBASE_CHANGELOG_PATH: ./changelog/db.changelog.xml
+  LB_VER: 5.0.1
+  CHANGELOG: db.changelog.xml
 
 jobs:
   liquibase-update:
@@ -37,7 +36,7 @@ jobs:
       - name: Install Liquibase
         run: |
           mkdir -p ./liquibase
-          curl -sL "https://github.com/liquibase/liquibase/releases/download/v${LIQUIBASE_VERSION}/liquibase-${LIQUIBASE_VERSION}.tar.gz" | tar xz -C ./liquibase
+          curl -sL "https://github.com/liquibase/liquibase/releases/download/v${LB_VER}/liquibase-${LB_VER}.tar.gz" | tar xz -C ./liquibase
           ./liquibase/liquibase lpm add postgresql
 
       - name: Validate Liquibase changelog
@@ -46,7 +45,8 @@ jobs:
             --url=jdbc:postgresql://localhost:5432/${POSTGRES_DB} \
             --username=${POSTGRES_USER} \
             --password=${POSTGRES_PASSWORD} \
-            --changelog-file=${LIQUIBASE_CHANGELOG_PATH} \
+            --search-path=./changelog \
+            --changelog-file=${CHANGELOG} \
             validate
 
       - name: Run Liquibase update
@@ -55,5 +55,6 @@ jobs:
             --url=jdbc:postgresql://localhost:5432/${POSTGRES_DB} \
             --username=${POSTGRES_USER} \
             --password=${POSTGRES_PASSWORD} \
-            --changelog-file=${LIQUIBASE_CHANGELOG_PATH} \
+            --search-path=./changelog \
+            --changelog-file=${CHANGELOG} \
             update
