@@ -1,12 +1,10 @@
-// <copyright file="ApplicationEndpoints.cs" company="Defra">
+// <copyright file="AnimalSpeciesEndpoints.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
 namespace Defra.Identity.Api.Endpoints.Species;
 
 using Defra.Identity.Requests;
-using Defra.Identity.Requests.Common.Queries;
-using Defra.Identity.Requests.Filters;
 using Defra.Identity.Requests.MetaData;
 using Defra.Identity.Requests.Species.Commands;
 using Defra.Identity.Requests.Species.Queries;
@@ -21,7 +19,7 @@ public static class AnimalSpeciesEndpoints
 
         app.MapGet(RouteNames.AnimalSpecies + "/{id}", Get)
             .WithName(RouteNames.AnimalSpecies)
-            .Produces<Responses.Applications.Application>(StatusCodes.Status200OK, "application/json")
+            .Produces<Responses.Species.AnimalSpecies>(StatusCodes.Status200OK, "application/json")
             .Produces(StatusCodes.Status404NotFound);
 
         app.MapPost(RouteNames.AnimalSpecies + "/{id}:toggle", Toggle)
