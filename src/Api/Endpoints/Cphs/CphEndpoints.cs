@@ -4,6 +4,7 @@
 
 namespace Defra.Identity.Api.Endpoints.Cphs;
 
+using System.Net.Mime;
 using Defra.Identity.Requests;
 using Defra.Identity.Requests.Common.Queries;
 using Defra.Identity.Requests.Cphs.Commands;
@@ -21,7 +22,7 @@ public static class CphEndpoints
             .AddEndpointFilter<ValidationFilter<PagedQuery>>();
 
         app.MapGet(RouteNames.CountyParishHoldings + "/{id:guid}", Get)
-            .Produces<Responses.Cphs.Cph>(StatusCodes.Status200OK, "application/json")
+            .Produces<Responses.Cphs.Cph>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
             .Produces(StatusCodes.Status404NotFound);
 
         app.MapPost(RouteNames.CountyParishHoldings + "/{id:guid}:expire", Expire)

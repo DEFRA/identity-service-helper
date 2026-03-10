@@ -4,6 +4,7 @@
 
 namespace Defra.Identity.Api.Endpoints.Delegations;
 
+using System.Net.Mime;
 using Defra.Identity.Requests;
 using Defra.Identity.Requests.Delegations.Commands.Create;
 using Defra.Identity.Requests.Delegations.Commands.Update;
@@ -21,7 +22,7 @@ public static class DelegationEndpoints
 
         app.MapGet(RouteNames.Delegations + "/{id:guid}", Get)
             .WithName(RouteNames.Delegations)
-            .Produces<Responses.Delegations.Delegation>(StatusCodes.Status200OK, "application/json")
+            .Produces<Responses.Delegations.Delegation>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
             .Produces(StatusCodes.Status404NotFound);
 
         app.MapPut(RouteNames.Delegations + "/{id:guid}", Put)
