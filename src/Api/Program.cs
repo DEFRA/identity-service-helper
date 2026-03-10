@@ -102,7 +102,8 @@ public class Program
         builder.Services.AddRepositories(configuration);
         builder.Services.AddDataServices(configuration);
         builder.Services.AddScheduling(configuration);
-        builder.Services.AddKeeperReferenceDataQueueIntegration(configuration);
+        // intentionally commented out until we get a queue to interact with  -- Gary Woodfine
+        //builder.Services.AddKeeperReferenceDataQueueIntegration(configuration);
     }
 
     [ExcludeFromCodeCoverage]
