@@ -2,9 +2,6 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-using Polly;
-using Polly.Extensions.Http;
-
 namespace Defra.Identity.KeeperReferenceData;
 
 using System.Net;
@@ -13,6 +10,8 @@ using Defra.Identity.KeeperReferenceData.Exceptions;
 using Defra.Identity.KeeperReferenceData.Providers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Polly;
+using Polly.Extensions.Http;
 
 public static class ServiceCollectionExtensions
 {

@@ -4,6 +4,7 @@
 
 namespace Defra.Identity.Api.Endpoints.Users;
 
+using System.Net.Mime;
 using Defra.Identity.Requests;
 using Defra.Identity.Requests.Filters;
 using Defra.Identity.Requests.MetaData;
@@ -21,7 +22,7 @@ public static class UsersEndpoints
 
         app.MapGet(RouteNames.Users + "/{id:guid}", Get)
             .WithName(RouteNames.Users)
-            .Produces<Responses.Users.User>(StatusCodes.Status200OK, "application/json")
+            .Produces<Responses.Users.User>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
             .Produces(StatusCodes.Status404NotFound);
 
         app.MapPut(RouteNames.Users + "/{id:guid}", Put)
@@ -34,7 +35,7 @@ public static class UsersEndpoints
         app.MapPost(RouteNames.Users, Post)
             .AddEndpointFilter<ValidationFilter<CreateUser>>()
             .WithMetadata(new RequiresOperatorId())
-            .Produces<Responses.Users.User>(StatusCodes.Status201Created, "application/json")
+            .Produces<Responses.Users.User>(StatusCodes.Status201Created, MediaTypeNames.Application.Json)
             .ProducesProblem(StatusCodes.Status422UnprocessableEntity);
 
         app.MapDelete(RouteNames.Users + "/{id:guid}", Delete)
