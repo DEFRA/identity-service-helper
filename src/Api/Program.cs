@@ -101,8 +101,9 @@ public class Program
         // Set up the endpoints and their dependencies
         builder.Services.AddRepositories(configuration);
         builder.Services.AddDataServices(configuration);
-        builder.Services.AddKeeperRecordsDataIntegrationService(configuration);
         builder.Services.AddScheduling(configuration);
+        // intentionally commented out until we get a queue to interact with  -- Gary Woodfine
+        //builder.Services.AddKeeperReferenceDataQueueIntegration(configuration);
     }
 
     [ExcludeFromCodeCoverage]
