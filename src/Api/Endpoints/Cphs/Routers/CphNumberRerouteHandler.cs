@@ -4,10 +4,8 @@
 
 namespace Defra.Identity.Api.Endpoints.Cphs.Routers;
 
-using Defra.Identity.Requests;
 using Defra.Identity.Requests.Common;
 using Defra.Identity.Requests.Common.Queries;
-using Defra.Identity.Requests.Cphs;
 using Defra.Identity.Requests.Cphs.Common;
 using Defra.Identity.Services.Cphs;
 
@@ -30,7 +28,7 @@ public class CphNumberRerouteHandler<TTarget, TSource, THeaders>
         [AsParameters] TSource sourceRequest,
         ICphService service)
     {
-        var cphId = await service.GetIdFromCphNumber(sourceRequest.County, sourceRequest.Parish, sourceRequest.Holding);
+        var cphId = await service.GetIdFromCphNumber(sourceRequest);
         var targetRequest = CreateTargetRequestWithId(cphId);
 
         MapPagingQueryToTargetRequest(targetRequest, sourceRequest);

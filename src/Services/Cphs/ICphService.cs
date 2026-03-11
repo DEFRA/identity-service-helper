@@ -5,13 +5,14 @@
 namespace Defra.Identity.Services.Cphs;
 
 using Defra.Identity.Requests.Cphs.Commands;
+using Defra.Identity.Requests.Cphs.Common;
 using Defra.Identity.Requests.Cphs.Queries;
 using Defra.Identity.Responses.Common;
 using Defra.Identity.Responses.Cphs;
 
 public interface ICphService
 {
-    Task<Guid> GetIdFromCphNumber(int county, int parish, int holding, CancellationToken cancellationToken = default);
+    Task<Guid> GetIdFromCphNumber(IOperationByCphNumber request, CancellationToken cancellationToken = default);
 
     Task<PagedResults<Cph>> GetAllPaged(GetCphs request, CancellationToken cancellationToken = default);
 

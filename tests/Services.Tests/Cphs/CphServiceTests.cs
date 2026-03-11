@@ -10,10 +10,12 @@ using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Cphs;
 using Defra.Identity.Repositories.Exceptions;
 using Defra.Identity.Requests.Cphs.Commands;
+using Defra.Identity.Requests.Cphs.Common;
 using Defra.Identity.Requests.Cphs.Queries;
 using Defra.Identity.Services.Cphs;
 using Defra.Identity.Services.Exceptions;
 using Defra.Identity.Services.Tests.Cphs.TestData;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 
@@ -27,7 +29,8 @@ public class CphServiceTests
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
         var cphUsersRepository = Substitute.For<ICphUsersRepository>();
-        var cphService = new CphService(cphRepository, cphUsersRepository, logger);
+        var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
+        var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetPaged(
                 Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(),
@@ -82,7 +85,8 @@ public class CphServiceTests
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
         var cphUsersRepository = Substitute.For<ICphUsersRepository>();
-        var cphService = new CphService(cphRepository, cphUsersRepository, logger);
+        var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
+        var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetPaged(
                 Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(),
@@ -130,7 +134,8 @@ public class CphServiceTests
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
         var cphUsersRepository = Substitute.For<ICphUsersRepository>();
-        var cphService = new CphService(cphRepository, cphUsersRepository, logger);
+        var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
+        var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetPaged(
                 Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(),
@@ -185,7 +190,8 @@ public class CphServiceTests
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
         var cphUsersRepository = Substitute.For<ICphUsersRepository>();
-        var cphService = new CphService(cphRepository, cphUsersRepository, logger);
+        var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
+        var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetPaged(
                 Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(),
@@ -240,7 +246,8 @@ public class CphServiceTests
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
         var cphUsersRepository = Substitute.For<ICphUsersRepository>();
-        var cphService = new CphService(cphRepository, cphUsersRepository, logger);
+        var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
+        var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetPaged(
                 Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(),
@@ -295,7 +302,8 @@ public class CphServiceTests
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
         var cphUsersRepository = Substitute.For<ICphUsersRepository>();
-        var cphService = new CphService(cphRepository, cphUsersRepository, logger);
+        var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
+        var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetPaged(
                 Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(),
@@ -343,7 +351,8 @@ public class CphServiceTests
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
         var cphUsersRepository = Substitute.For<ICphUsersRepository>();
-        var cphService = new CphService(cphRepository, cphUsersRepository, logger);
+        var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
+        var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetPaged(
                 Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(),
@@ -398,7 +407,8 @@ public class CphServiceTests
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
         var cphUsersRepository = Substitute.For<ICphUsersRepository>();
-        var cphService = new CphService(cphRepository, cphUsersRepository, logger);
+        var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
+        var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetPaged(
                 Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(),
@@ -453,7 +463,8 @@ public class CphServiceTests
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
         var cphUsersRepository = Substitute.For<ICphUsersRepository>();
-        var cphService = new CphService(cphRepository, cphUsersRepository, logger);
+        var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
+        var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
@@ -484,7 +495,8 @@ public class CphServiceTests
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
         var cphUsersRepository = Substitute.For<ICphUsersRepository>();
-        var cphService = new CphService(cphRepository, cphUsersRepository, logger);
+        var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
+        var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
@@ -515,7 +527,8 @@ public class CphServiceTests
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
         var cphUsersRepository = Substitute.For<ICphUsersRepository>();
-        var cphService = new CphService(cphRepository, cphUsersRepository, logger);
+        var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
+        var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(
@@ -544,7 +557,8 @@ public class CphServiceTests
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
         var cphUsersRepository = Substitute.For<ICphUsersRepository>();
-        var cphService = new CphService(cphRepository, cphUsersRepository, logger);
+        var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
+        var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult<CountyParishHoldings?>(null));
@@ -571,7 +585,8 @@ public class CphServiceTests
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
         var cphUsersRepository = Substitute.For<ICphUsersRepository>();
-        var cphService = new CphService(cphRepository, cphUsersRepository, logger);
+        var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
+        var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
@@ -600,7 +615,8 @@ public class CphServiceTests
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
         var cphUsersRepository = Substitute.For<ICphUsersRepository>();
-        var cphService = new CphService(cphRepository, cphUsersRepository, logger);
+        var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
+        var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
@@ -629,7 +645,8 @@ public class CphServiceTests
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
         var cphUsersRepository = Substitute.For<ICphUsersRepository>();
-        var cphService = new CphService(cphRepository, cphUsersRepository, logger);
+        var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
+        var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(
@@ -662,7 +679,8 @@ public class CphServiceTests
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
         var cphUsersRepository = Substitute.For<ICphUsersRepository>();
-        var cphService = new CphService(cphRepository, cphUsersRepository, logger);
+        var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
+        var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult<CountyParishHoldings?>(null));
@@ -693,7 +711,8 @@ public class CphServiceTests
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
         var cphUsersRepository = Substitute.For<ICphUsersRepository>();
-        var cphService = new CphService(cphRepository, cphUsersRepository, logger);
+        var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
+        var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
@@ -722,7 +741,8 @@ public class CphServiceTests
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
         var cphUsersRepository = Substitute.For<ICphUsersRepository>();
-        var cphService = new CphService(cphRepository, cphUsersRepository, logger);
+        var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
+        var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(
@@ -755,7 +775,8 @@ public class CphServiceTests
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
         var cphUsersRepository = Substitute.For<ICphUsersRepository>();
-        var cphService = new CphService(cphRepository, cphUsersRepository, logger);
+        var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
+        var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult<CountyParishHoldings?>(null));
@@ -786,7 +807,8 @@ public class CphServiceTests
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
         var cphUsersRepository = Substitute.For<ICphUsersRepository>();
-        var cphService = new CphService(cphRepository, cphUsersRepository, logger);
+        var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
+        var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
@@ -849,7 +871,8 @@ public class CphServiceTests
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
         var cphUsersRepository = Substitute.For<ICphUsersRepository>();
-        var cphService = new CphService(cphRepository, cphUsersRepository, logger);
+        var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
+        var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
@@ -903,7 +926,8 @@ public class CphServiceTests
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
         var cphUsersRepository = Substitute.For<ICphUsersRepository>();
-        var cphService = new CphService(cphRepository, cphUsersRepository, logger);
+        var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
+        var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
@@ -966,7 +990,8 @@ public class CphServiceTests
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
         var cphUsersRepository = Substitute.For<ICphUsersRepository>();
-        var cphService = new CphService(cphRepository, cphUsersRepository, logger);
+        var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
+        var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
@@ -1020,7 +1045,8 @@ public class CphServiceTests
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
         var cphUsersRepository = Substitute.For<ICphUsersRepository>();
-        var cphService = new CphService(cphRepository, cphUsersRepository, logger);
+        var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
+        var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
@@ -1083,7 +1109,8 @@ public class CphServiceTests
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
         var cphUsersRepository = Substitute.For<ICphUsersRepository>();
-        var cphService = new CphService(cphRepository, cphUsersRepository, logger);
+        var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
+        var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
@@ -1146,7 +1173,8 @@ public class CphServiceTests
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
         var cphUsersRepository = Substitute.For<ICphUsersRepository>();
-        var cphService = new CphService(cphRepository, cphUsersRepository, logger);
+        var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
+        var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(
@@ -1184,7 +1212,8 @@ public class CphServiceTests
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
         var cphUsersRepository = Substitute.For<ICphUsersRepository>();
-        var cphService = new CphService(cphRepository, cphUsersRepository, logger);
+        var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
+        var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult<CountyParishHoldings?>(null));

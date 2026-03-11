@@ -10,28 +10,39 @@ using Defra.Identity.Repositories.Common;
 using Defra.Identity.Repositories.Cphs;
 using Defra.Identity.Repositories.Exceptions;
 using Defra.Identity.Requests.Cphs.Commands;
+using Defra.Identity.Requests.Cphs.Common;
 using Defra.Identity.Requests.Cphs.Queries;
 using Defra.Identity.Responses.Common;
 using Defra.Identity.Responses.Cphs;
 using Defra.Identity.Services.Exceptions;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 
 public class CphService : ICphService
 {
     private readonly ICphRepository cphRepository;
     private readonly ICphUsersRepository cphUsersRepository;
+    private readonly IValidator<IOperationByCphNumber> cphNumberValidator;
     private readonly ILogger<CphService> logger;
 
-    public CphService(ICphRepository cphRepository, ICphUsersRepository cphUsersRepository, ILogger<CphService> logger)
+    public CphService(ICphRepository cphRepository, ICphUsersRepository cphUsersRepository, IValidator<IOperationByCphNumber> cphNumberValidator, ILogger<CphService> logger)
     {
         this.cphRepository = cphRepository;
         this.cphUsersRepository = cphUsersRepository;
+        this.cphNumberValidator = cphNumberValidator;
         this.logger = logger;
     }
 
-    public async Task<Guid> GetIdFromCphNumber(int county, int parish, int holding, CancellationToken cancellationToken = default)
+    public async Task<Guid> GetIdFromCphNumber(IOperationByCphNumber request, CancellationToken cancellationToken = default)
     {
-        var formattedCphNumber = $"{county:D2}/{parish:D3}/{holding:D4}";
+        var cphNumberValidationResult = await cphNumberValidator.ValidateAsync(request, cancellationToken);
+
+        if (!cphNumberValidationResult.IsValid)
+        {
+            throw new ValidationException(cphNumberValidationResult.Errors);
+        }
+
+        var formattedCphNumber = $"{request.County:D2}/{request.Parish:D3}/{request.Holding:D4}";
 
         logger.LogInformation("Getting county parish holding id by cph number {FormattedCphNumber}", formattedCphNumber);
 
