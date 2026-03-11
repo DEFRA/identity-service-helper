@@ -4,8 +4,12 @@
 
 namespace Defra.Identity.Repositories;
 
-using System.Linq.Expressions;
 using Defra.Identity.Repositories.Common.Composites;
 
-public interface IRepository<TEntity> : IGettable<TEntity>, IListable<TEntity>, ICreatable<TEntity>, IUpdatable<TEntity>, IDeletable<TEntity>
-    where TEntity : class;
+public interface IRepository<TEntity> :
+    IGettable<TEntity>,
+    IListable<TEntity>,
+    ICreatable<TEntity>,
+    IUpdatable<TEntity>,
+    IDeletable<TEntity>
+where TEntity : class;

@@ -2,206 +2,93 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
+// ReSharper disable ClassNeverInstantiated.Global
 namespace Defra.Identity.Postgres.Database.Tests.Fixtures;
 
-using Defra.Identity.Postgres.Database;
-using Defra.Identity.Postgres.Database.Entities;
-using Defra.Identity.Postgres.Database.Tests.Fixtures.SeedData;
-using Defra.Identity.Postgres.Database.Tests.Fixtures.SeedData.Associations;
-using Defra.Identity.Postgres.Database.Tests.Fixtures.SeedData.Primary;
-using Microsoft.AspNetCore.Mvc.TagHelpers;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+using Defra.Identity.Test.Utilities.Database;
+using Defra.Identity.Test.Utilities.Locking;
+using DotNet.Testcontainers.Builders;
+using DotNet.Testcontainers.Configurations;
+using DotNet.Testcontainers.Containers;
+using DotNet.Testcontainers.Networks;
 using Testcontainers.PostgreSql;
 
 public class PostgreContainerFixture
     : IAsyncLifetime
 {
-    private readonly PostgreSqlContainer container = new PostgreSqlBuilder()
-        .WithImage("postgres:16")
+    private static readonly INetwork Network = new NetworkBuilder()
         .Build();
 
-    public string ConnectionString => container.GetConnectionString();
+    private static readonly PostgreSqlContainer Db = new PostgreSqlBuilder()
+        .WithImage("postgres:16")
+        .WithDatabase("appdb")
+        .WithUsername("identity_service_helper_ddl")
+        .WithPassword("app")
+        .WithNetwork(Network)
+        .WithNetworkAliases("pg")
+        .Build();
+
+    private static readonly IContainer Liquibase = new ContainerBuilder()
+        .WithImage("liquibase/liquibase:5.0.1")
+        .WithNetwork(Network)
+        .WithBindMount(
+            Path.GetFullPath("changelog"), // folder containing master changelog + scripts
+            "/liquibase/changelog",
+            AccessMode.ReadOnly)
+        .WithEntrypoint("sh", "-lc")
+        .WithCommand("tail -f /dev/null") // keep container alive
+        .Build();
+
+    private readonly OnceExecutor liquibaseStartExecutor = new OnceExecutor();
+    private readonly OnceExecutor liquibaseUpdateExecutor = new OnceExecutor();
+
+    public static string ConnectionString => Db.GetConnectionString();
 
     public async ValueTask DisposeAsync()
     {
-        await container.StopAsync();
+        await Db.StopAsync();
+        await Liquibase.StopAsync();
     }
 
     public async ValueTask InitializeAsync()
     {
-        await container.StartAsync();
-        var options = new DbContextOptionsBuilder<PostgresDbContext>()
-            .UseNpgsql(container.GetConnectionString())
-            .ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning))
-            .Options;
-
-        var context = new PostgresDbContext(options);
-        await context.Database.MigrateAsync();
-        await TearDownData(context);
-        await SeedData(context);
+        await liquibaseStartExecutor.ExecuteOnce(StartLiquibase);
+        await liquibaseUpdateExecutor.ExecuteOnce(UpdateLiquibase);
+        await ResetData();
     }
 
-    private static async Task TearDownData(PostgresDbContext context)
+    private static async Task StartLiquibase()
     {
-        var adminUser = await CreateAdminUser(context);
+        await Db.StartAsync();
+        await Liquibase.StartAsync();
 
-        await DeleteCphUsers(adminUser, context);
-        await DeleteApplicationRoles(context);
+        var install = await Liquibase.ExecAsync(
+        [
+            "liquibase", "lpm", "add", "postgresql",
+        ]);
 
-        await DeleteCphs(context);
-        await DeleteRoles(context);
-        await DeleteApplications(context);
-        await DeleteUsers(context);
-    }
-
-    private static async Task SeedData(PostgresDbContext context)
-    {
-        var adminUser = await CreateAdminUser(context);
-
-        await CreateStandardUsers(context);
-        await CreateApplications(adminUser, context);
-        await CreateRoles(context);
-        await CreateCphs(adminUser, context);
-
-        await CreateApplicationRoles(context);
-        await CreateCphUsers(adminUser, context);
-    }
-
-    private static async Task<UserAccounts> CreateAdminUser(PostgresDbContext context)
-    {
-        if (!await context.UserAccounts.AnyAsync(user => user.EmailAddress == UserSeedData.AdminEmailAddress))
+        if (install.ExitCode != 0)
         {
-            var adminUserEntity = UserSeedData.GetAdminUserEntity();
-
-            await context.UserAccounts.AddAsync(adminUserEntity, TestContext.Current.CancellationToken);
-            await context.SaveChangesAsync(TestContext.Current.CancellationToken);
+            throw new Exception($"lpm failed: {install.Stderr}");
         }
-
-        return await SeedDataQueryHelper.GetAdminUser(context);
     }
 
-    private static async Task CreateStandardUsers(PostgresDbContext context)
+    private static async Task UpdateLiquibase()
     {
-        var userAccountEntities = UserSeedData.GetStandardUserEntities();
+        var update = await Liquibase.ExecAsync(
+        [
+            "liquibase", "--url=jdbc:postgresql://pg:5432/appdb", "--username=identity_service_helper_ddl", "--password=app", "--search-path=/liquibase/changelog",
+            "--changelog-file=db.changelog.xml", "update", "--context-filter=TESTCONTAINER",
+        ]);
 
-        foreach (var entity in userAccountEntities)
+        if (update.ExitCode != 0)
         {
-            await context.UserAccounts.AddAsync(entity, TestContext.Current.CancellationToken);
+            throw new Exception($"liquibase update failed: {update.Stderr}");
         }
-
-        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
     }
 
-    private static async Task DeleteUsers(PostgresDbContext context)
+    private static async Task ResetData()
     {
-        var userAccountEntities = await context.UserAccounts.ToListAsync();
-        context.UserAccounts.RemoveRange(userAccountEntities);
-        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
-    }
-
-    private static async Task CreateApplications(UserAccounts adminUser, PostgresDbContext context)
-    {
-        var applicationEntities = ApplicationSeedData.GetApplicationEntities(adminUser.Id);
-
-        foreach (var entity in applicationEntities)
-        {
-            await context.Applications.AddAsync(entity, TestContext.Current.CancellationToken);
-        }
-
-        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
-    }
-
-    private static async Task DeleteApplications(PostgresDbContext context)
-    {
-        var applicationEntities = await context.Applications.ToListAsync();
-        context.Applications.RemoveRange(applicationEntities);
-        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
-    }
-
-    private static async Task CreateRoles(PostgresDbContext context)
-    {
-        var roleEntities = RoleSeedData.GetRoleEntities();
-
-        foreach (var entity in roleEntities)
-        {
-            await context.Roles.AddAsync(entity, TestContext.Current.CancellationToken);
-        }
-
-        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
-    }
-
-    private static async Task DeleteRoles(PostgresDbContext context)
-    {
-        var roleEntities = await context.Roles.ToListAsync();
-        context.Roles.RemoveRange(roleEntities);
-        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
-    }
-
-    private static async Task CreateCphs(UserAccounts adminUser, PostgresDbContext context)
-    {
-        var cphEntities = CphSeedData.GetCphEntities(adminUser.Id);
-
-        foreach (var entity in cphEntities)
-        {
-            await context.CountyParishHoldings.AddAsync(entity, TestContext.Current.CancellationToken);
-        }
-
-        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
-    }
-
-    private static async Task DeleteCphs(PostgresDbContext context)
-    {
-        var cphEntities = await context.CountyParishHoldings.ToListAsync();
-        context.CountyParishHoldings.RemoveRange(cphEntities);
-        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
-    }
-
-    private static async Task CreateApplicationRoles(PostgresDbContext context)
-    {
-        var applicationRoleEntities = ApplicationRoleSeedData.GetApplicationRoleEntities(context);
-
-        foreach (var entity in applicationRoleEntities)
-        {
-            await context.ApplicationRoles.AddAsync(entity, TestContext.Current.CancellationToken);
-        }
-
-        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
-    }
-
-    private static async Task DeleteApplicationRoles(PostgresDbContext context)
-    {
-        var applicationRoleEntities = await context.ApplicationRoles.ToListAsync();
-        context.ApplicationRoles.RemoveRange(applicationRoleEntities);
-        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
-    }
-
-    private static async Task CreateCphUsers(UserAccounts adminUser, PostgresDbContext context)
-    {
-        var cphUserEntities = CphUserSeedData.GetCphUserEntities(adminUser.Id);
-
-        foreach (var entity in cphUserEntities)
-        {
-            var userAccount = await context.UserAccounts.FirstAsync(u => u.Id == entity.UserAccountId, TestContext.Current.CancellationToken);
-
-            userAccount.ApplicationUserAccountHoldingAssignments.Add(entity);
-        }
-
-        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
-    }
-
-    private static async Task DeleteCphUsers(UserAccounts adminUser, PostgresDbContext context)
-    {
-        var userEntities = await context.UserAccounts.Include(userAccounts => userAccounts.ApplicationUserAccountHoldingAssignments).ToListAsync();
-
-        foreach (var userEntityToClear in userEntities)
-        {
-            foreach (var associationToRemove in userEntityToClear.ApplicationUserAccountHoldingAssignments.ToList())
-            {
-                userEntityToClear.ApplicationUserAccountHoldingAssignments.Remove(associationToRemove);
-            }
-        }
-
-        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
+        await SqlHelper.ExecuteSqlFile(ConnectionString, "../../../../../changelog/schema/testcontainer.postgresql.sql");
     }
 }

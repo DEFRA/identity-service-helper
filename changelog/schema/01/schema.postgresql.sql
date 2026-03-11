@@ -1,4 +1,5 @@
+-- liquibase formatted sql
 
--- Ensure extensions are in the public schema so they are accessible
+-- changeset gary:seeding-1
 CREATE EXTENSION IF NOT EXISTS citext SCHEMA public;
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp" SCHEMA public;

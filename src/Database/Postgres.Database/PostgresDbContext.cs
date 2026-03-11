@@ -14,6 +14,8 @@ using Defra.Identity.Postgres.Database.Entities.Base;
 public class PostgresDbContext(DbContextOptions<PostgresDbContext> options)
     : DbContext(options)
 {
+    public virtual DbSet<AnimalSpecies> AnimalSpecies { get; set; }
+
     public virtual DbSet<Applications> Applications { get; set; }
 
     public virtual DbSet<Delegations> Delegations { get; set; }

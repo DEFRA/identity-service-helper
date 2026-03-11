@@ -50,6 +50,16 @@ internal class DelegationInvitationsConfiguration : BaseAuditEntityConfiguration
             .HasColumnName(nameof(DelegationInvitations.DelegatedPermissions).ToSnakeCase())
             .HasColumnType(ColumnTypes.JsonB);
 
+        builder.Property(x => x.SpeciesTypeId)
+            .HasColumnName(nameof(DelegationInvitations.SpeciesType).ToSnakeCase())
+            .HasColumnType(ColumnTypes.Char)
+            .HasMaxLength(20)
+            .IsRequired();
+
+        builder.HasOne(x => x.SpeciesType)
+            .WithMany(x => x.DelegationInvitations)
+            .HasForeignKey(x => x.SpeciesTypeId);
+
         // Date/times
         builder.Property(x => x.TokenExpiresAt)
             .HasColumnName(nameof(DelegationInvitations.TokenExpiresAt).ToSnakeCase())

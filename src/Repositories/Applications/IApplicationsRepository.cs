@@ -4,4 +4,5 @@
 
 namespace Defra.Identity.Repositories.Applications;
 
-public interface IApplicationsRepository : IRepository<Postgres.Database.Entities.Applications>;
+public interface IApplicationsRepository :
+    IRepository<Postgres.Database.Entities.Applications>;

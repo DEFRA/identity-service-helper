@@ -8,7 +8,6 @@ using System.ComponentModel;
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
-using Defra.Identity.Postgres.Database.Tests.Fixtures.SeedData;
 using Defra.Identity.Repositories.Cphs;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
@@ -32,8 +31,6 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         Expression<Func<ApplicationUserAccountHoldingAssignments, bool>> associationFilter = cphUser => cphUser.DeletedAt == null;
         Expression<Func<ApplicationUserAccountHoldingAssignments, string>> orderBy = cphUser => cphUser.UserAccount.DisplayName;
 
-        var adminUser = await SeedDataQueryHelper.GetAdminUser(Context);
-
         // Act
         var pagedEntities = await repository.GetPaged(primaryFilter, associationFilter, pageNumber, pageSize, orderBy, descendingOrder, TestContext.Current.CancellationToken);
 
@@ -55,7 +52,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
             (x) => x.RoleId.ShouldBe(new Guid("0c15ba2f-b4ba-406a-a0ae-213de64600a9")),
             (x) => x.UserAccountId.ShouldBe(new Guid("42bde7a0-9efe-402a-a7c3-9161be7b00ba")),
             (x) => x.CreatedAt.ShouldBe(DateTime.Parse("2026-03-01").ToUniversalTime()),
-            (x) => x.CreatedById.ShouldBe(adminUser.Id),
+            (x) => x.CreatedById.ShouldBe(AdminUserId),
             (x) => x.DeletedAt.ShouldBeNull(),
             (x) => x.DeletedById.ShouldBeNull());
 
@@ -64,7 +61,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
             (x) => x.RoleId.ShouldBe(new Guid("817647b3-d5d2-45e9-8833-df36d8264102")),
             (x) => x.UserAccountId.ShouldBe(new Guid("1e21b685-2247-4d96-bf39-f7dc30f356c2")),
             (x) => x.CreatedAt.ShouldBe(DateTime.Parse("2026-03-02").ToUniversalTime()),
-            (x) => x.CreatedById.ShouldBe(adminUser.Id),
+            (x) => x.CreatedById.ShouldBe(AdminUserId),
             (x) => x.DeletedAt.ShouldBeNull(),
             (x) => x.DeletedById.ShouldBeNull());
     }
@@ -86,8 +83,6 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         Expression<Func<ApplicationUserAccountHoldingAssignments, bool>> associationFilter = cphUser => cphUser.DeletedAt == null;
         Expression<Func<ApplicationUserAccountHoldingAssignments, string>> orderBy = cphUser => cphUser.UserAccount.DisplayName;
 
-        var adminUser = await SeedDataQueryHelper.GetAdminUser(Context);
-
         // Act
         var pagedEntities = await repository.GetPaged(primaryFilter, associationFilter, pageNumber, pageSize, orderBy, descendingOrder, TestContext.Current.CancellationToken);
 
@@ -108,7 +103,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
             (x) => x.RoleId.ShouldBe(new Guid("306fa0fc-bd1a-45d3-9fef-e6f11a85b601")),
             (x) => x.UserAccountId.ShouldBe(new Guid("d1354eb1-dd1c-471e-bd0e-2626e2e21366")),
             (x) => x.CreatedAt.ShouldBe(DateTime.Parse("2026-03-04").ToUniversalTime()),
-            (x) => x.CreatedById.ShouldBe(adminUser.Id),
+            (x) => x.CreatedById.ShouldBe(AdminUserId),
             (x) => x.DeletedAt.ShouldBeNull(),
             (x) => x.DeletedById.ShouldBeNull());
     }
@@ -130,8 +125,6 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         Expression<Func<ApplicationUserAccountHoldingAssignments, bool>> associationFilter = cphUser => cphUser.DeletedAt == null;
         Expression<Func<ApplicationUserAccountHoldingAssignments, string>> orderBy = cphUser => cphUser.UserAccount.DisplayName;
 
-        var adminUser = await SeedDataQueryHelper.GetAdminUser(Context);
-
         // Act
         var pagedEntities = await repository.GetPaged(primaryFilter, associationFilter, pageNumber, pageSize, orderBy, descendingOrder, TestContext.Current.CancellationToken);
 
@@ -153,7 +146,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
             (x) => x.RoleId.ShouldBe(new Guid("306fa0fc-bd1a-45d3-9fef-e6f11a85b601")),
             (x) => x.UserAccountId.ShouldBe(new Guid("d1354eb1-dd1c-471e-bd0e-2626e2e21366")),
             (x) => x.CreatedAt.ShouldBe(DateTime.Parse("2026-03-04").ToUniversalTime()),
-            (x) => x.CreatedById.ShouldBe(adminUser.Id),
+            (x) => x.CreatedById.ShouldBe(AdminUserId),
             (x) => x.DeletedAt.ShouldBeNull(),
             (x) => x.DeletedById.ShouldBeNull());
 
@@ -162,7 +155,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
             (x) => x.RoleId.ShouldBe(new Guid("817647b3-d5d2-45e9-8833-df36d8264102")),
             (x) => x.UserAccountId.ShouldBe(new Guid("1e21b685-2247-4d96-bf39-f7dc30f356c2")),
             (x) => x.CreatedAt.ShouldBe(DateTime.Parse("2026-03-02").ToUniversalTime()),
-            (x) => x.CreatedById.ShouldBe(adminUser.Id),
+            (x) => x.CreatedById.ShouldBe(AdminUserId),
             (x) => x.DeletedAt.ShouldBeNull(),
             (x) => x.DeletedById.ShouldBeNull());
     }
@@ -184,8 +177,6 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         Expression<Func<ApplicationUserAccountHoldingAssignments, bool>> associationFilter = cphUser => cphUser.DeletedAt == null;
         Expression<Func<ApplicationUserAccountHoldingAssignments, string>> orderBy = cphUser => cphUser.UserAccount.DisplayName;
 
-        var adminUser = await SeedDataQueryHelper.GetAdminUser(Context);
-
         // Act
         var pagedEntities = await repository.GetPaged(primaryFilter, associationFilter, pageNumber, pageSize, orderBy, descendingOrder, TestContext.Current.CancellationToken);
 
@@ -206,7 +197,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
             (x) => x.RoleId.ShouldBe(new Guid("0c15ba2f-b4ba-406a-a0ae-213de64600a9")),
             (x) => x.UserAccountId.ShouldBe(new Guid("42bde7a0-9efe-402a-a7c3-9161be7b00ba")),
             (x) => x.CreatedAt.ShouldBe(DateTime.Parse("2026-03-01").ToUniversalTime()),
-            (x) => x.CreatedById.ShouldBe(adminUser.Id),
+            (x) => x.CreatedById.ShouldBe(AdminUserId),
             (x) => x.DeletedAt.ShouldBeNull(),
             (x) => x.DeletedById.ShouldBeNull());
     }
@@ -228,8 +219,6 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         Expression<Func<ApplicationUserAccountHoldingAssignments, bool>> associationFilter = cphUser => cphUser.DeletedAt == null;
         Expression<Func<ApplicationUserAccountHoldingAssignments, string>> orderBy = cphUser => cphUser.UserAccount.DisplayName;
 
-        var adminUser = await SeedDataQueryHelper.GetAdminUser(Context);
-
         // Act
         var pagedEntities = await repository.GetPaged(primaryFilter, associationFilter, pageNumber, pageSize, orderBy, descendingOrder, TestContext.Current.CancellationToken);
 
@@ -251,7 +240,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
             (x) => x.RoleId.ShouldBe(new Guid("0c15ba2f-b4ba-406a-a0ae-213de64600a9")),
             (x) => x.UserAccountId.ShouldBe(new Guid("42bde7a0-9efe-402a-a7c3-9161be7b00ba")),
             (x) => x.CreatedAt.ShouldBe(DateTime.Parse("2026-03-01").ToUniversalTime()),
-            (x) => x.CreatedById.ShouldBe(adminUser.Id),
+            (x) => x.CreatedById.ShouldBe(AdminUserId),
             (x) => x.DeletedAt.ShouldBeNull(),
             (x) => x.DeletedById.ShouldBeNull());
 
@@ -260,7 +249,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
             (x) => x.RoleId.ShouldBe(new Guid("817647b3-d5d2-45e9-8833-df36d8264102")),
             (x) => x.UserAccountId.ShouldBe(new Guid("1e21b685-2247-4d96-bf39-f7dc30f356c2")),
             (x) => x.CreatedAt.ShouldBe(DateTime.Parse("2026-03-02").ToUniversalTime()),
-            (x) => x.CreatedById.ShouldBe(adminUser.Id),
+            (x) => x.CreatedById.ShouldBe(AdminUserId),
             (x) => x.DeletedAt.ShouldBeNull(),
             (x) => x.DeletedById.ShouldBeNull());
     }
@@ -282,8 +271,6 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         Expression<Func<ApplicationUserAccountHoldingAssignments, bool>> associationFilter = cphUser => cphUser.DeletedAt == null;
         Expression<Func<ApplicationUserAccountHoldingAssignments, string>> orderBy = cphUser => cphUser.UserAccount.DisplayName;
 
-        var adminUser = await SeedDataQueryHelper.GetAdminUser(Context);
-
         // Act
         var pagedEntities = await repository.GetPaged(primaryFilter, associationFilter, pageNumber, pageSize, orderBy, descendingOrder, TestContext.Current.CancellationToken);
 
@@ -305,7 +292,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
             (x) => x.RoleId.ShouldBe(new Guid("817647b3-d5d2-45e9-8833-df36d8264102")),
             (x) => x.UserAccountId.ShouldBe(new Guid("1e21b685-2247-4d96-bf39-f7dc30f356c2")),
             (x) => x.CreatedAt.ShouldBe(DateTime.Parse("2026-03-02").ToUniversalTime()),
-            (x) => x.CreatedById.ShouldBe(adminUser.Id),
+            (x) => x.CreatedById.ShouldBe(AdminUserId),
             (x) => x.DeletedAt.ShouldBeNull(),
             (x) => x.DeletedById.ShouldBeNull());
 
@@ -314,7 +301,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
             (x) => x.RoleId.ShouldBe(new Guid("0c15ba2f-b4ba-406a-a0ae-213de64600a9")),
             (x) => x.UserAccountId.ShouldBe(new Guid("42bde7a0-9efe-402a-a7c3-9161be7b00ba")),
             (x) => x.CreatedAt.ShouldBe(DateTime.Parse("2026-03-01").ToUniversalTime()),
-            (x) => x.CreatedById.ShouldBe(adminUser.Id),
+            (x) => x.CreatedById.ShouldBe(AdminUserId),
             (x) => x.DeletedAt.ShouldBeNull(),
             (x) => x.DeletedById.ShouldBeNull());
     }

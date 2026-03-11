@@ -27,4 +27,8 @@ public class ApplicationUserAccountHoldingAssignments : BaseAuditEntity
     public UserAccounts? DeletedByUser { get; set; }
 
     public UserAccounts CreatedByUser { get; set; } = null!;
+
+    public string SpeciesTypeId { get; set; } = null!;
+
+    public AnimalSpecies SpeciesType { get; set; } = null!;
 }

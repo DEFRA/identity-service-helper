@@ -7,6 +7,7 @@ namespace Defra.Identity.Services;
 using Defra.Identity.Services.Applications;
 using Defra.Identity.Services.Cphs;
 using Defra.Identity.Services.Delegations;
+using Defra.Identity.Services.Species;
 using Defra.Identity.Services.Users;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +22,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IApplicationService, ApplicationService>();
         services.AddTransient<IDelegationsService, DelegationsService>();
         services.AddTransient<ICphService, CphService>();
+        services.AddTransient<IAnimalSpeciesService, AnimalSpeciesService>();
 
         return services;
     }

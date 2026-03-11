@@ -8,7 +8,6 @@ using System.ComponentModel;
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
-using Defra.Identity.Postgres.Database.Tests.Fixtures.SeedData;
 using Defra.Identity.Repositories.Cphs;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
@@ -25,8 +24,6 @@ public class GetSingleTests(PostgreContainerFixture fixture) : BaseTests(fixture
 
         Expression<Func<CountyParishHoldings, bool>> filter = cph => cph.Id == new Guid("088967e7-71b8-457a-9001-5b71f24798fd");
 
-        var adminUser = await SeedDataQueryHelper.GetAdminUser(Context);
-
         // Act
         var entity = await repository.GetSingle(filter, TestContext.Current.CancellationToken);
 
@@ -39,10 +36,10 @@ public class GetSingleTests(PostgreContainerFixture fixture) : BaseTests(fixture
             (x) => x.Id.ShouldBe(new Guid("088967e7-71b8-457a-9001-5b71f24798fd")),
             (x) => x.Identifier.ShouldBe("44/000/0007"),
             (x) => x.CreatedAt.ShouldBe(DateTime.Parse("2026-02-07").ToUniversalTime()),
-            (x) => x.CreatedById.ShouldBe(adminUser.Id),
+            (x) => x.CreatedById.ShouldBe(AdminUserId),
             (x) => x.ExpiredAt.ShouldBe(DateTime.Parse("2026-02-12").ToUniversalTime()),
             (x) => x.DeletedAt.ShouldBe(DateTime.Parse("2026-02-13").ToUniversalTime()),
-            (x) => x.DeletedById.ShouldBe(adminUser.Id));
+            (x) => x.DeletedById.ShouldBe(AdminUserId));
     }
 
     [Fact]

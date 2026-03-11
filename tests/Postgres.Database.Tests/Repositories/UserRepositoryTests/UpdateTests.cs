@@ -7,7 +7,6 @@ namespace Defra.Identity.Postgres.Database.Tests.Repositories;
 using System.ComponentModel;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
-using Defra.Identity.Postgres.Database.Tests.Fixtures.SeedData;
 using Defra.Identity.Repositories.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -23,9 +22,6 @@ public class UpdateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         // Arrange
         var logger = Substitute.For<ILogger<UsersRepository>>();
         var repository = new UsersRepository(Context, logger);
-        var adminUser = await SeedDataQueryHelper.GetAdminUser(Context);
-
-        adminUser.ShouldNotBeNull();
 
         var user = new UserAccounts
         {
@@ -33,7 +29,7 @@ public class UpdateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
             FirstName = "Test",
             LastName = "User",
             EmailAddress = "test20@test.com",
-            CreatedById = adminUser.Id,
+            CreatedById = AdminUserId,
         };
 
         await Context.UserAccounts.AddAsync(user, TestContext.Current.CancellationToken);

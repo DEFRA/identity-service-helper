@@ -3,7 +3,6 @@
     <Project Path="src/Api/Api.csproj" />
   </Folder>
   <Folder Name="/src/Database/">
-    <Project Path="src/Database/Postgres.Database.Console/Postgres.Database.Console.csproj" />
     <Project Path="src/Database/Postgres.Database/Postgres.Database.csproj" />
   </Folder>
   <Folder Name="/src/Integrations/" />
@@ -50,6 +49,7 @@
     <File Path="tests/Endpoint.Tests/Asserts/Should_be_404.js" />
     <File Path="tests/Endpoint.Tests/Asserts/Should_be_409_conflict.js" />
     <File Path="tests/Endpoint.Tests/Asserts/Should_be_422_error_response.js" />
+    <File Path="tests\Endpoint.Tests\Asserts\Should_be_200_OK_and_get_pages_ids.js" />
     <File Path="tests\Endpoint.Tests\Asserts\Should_be_ok_and_get_top_application_id.js" />
   </Folder>
   <Folder Name="/tests/Endpoint.Tests/Asserts/headers/">

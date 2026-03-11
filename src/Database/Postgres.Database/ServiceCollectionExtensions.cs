@@ -77,17 +77,4 @@ public static class ServiceCollectionExtensions
             // Ignore pending model changes warning during tests/dev if it's treated as error
         }
     }
-
-    public static void UseDatabaseMigrations(this WebApplication app)
-    {
-        var env = app.Services.GetRequiredService<IHostEnvironment>();
-
-        // Migrate the database on startup in development mode
-        if (env.IsDevelopment())
-        {
-            using var scope = app.Services.CreateScope();
-            var context = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();
-            context.Database.Migrate();
-        }
-    }
 }

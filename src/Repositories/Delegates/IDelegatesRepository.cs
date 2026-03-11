@@ -6,4 +6,5 @@ namespace Defra.Identity.Repositories.Delegates;
 
 using Defra.Identity.Postgres.Database.Entities;
 
-public interface IDelegatesRepository : IRepository<Delegations>;
+public interface IDelegatesRepository :
+    IRepository<Delegations>;
