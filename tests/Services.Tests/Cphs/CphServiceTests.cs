@@ -458,7 +458,7 @@ public class CphServiceTests
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
 
-        var request = new GetCph
+        var request = new GetCphByCphId
         {
             Id = new Guid("77b9c956-2780-4b48-9abc-71bf505466f9"),
         };
@@ -489,7 +489,7 @@ public class CphServiceTests
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
 
-        var request = new GetCph
+        var request = new GetCphByCphId
         {
             Id = new Guid("e7009d6d-0a29-4e3f-ac0b-7bf0c7497f46"),
         };
@@ -524,7 +524,7 @@ public class CphServiceTests
                     Id = new Guid("5bc8f1a5-2d44-40b5-93e4-52b613bf099f"), DeletedAt = DateTime.Parse("2026-02-13").ToUniversalTime(),
                 });
 
-        var request = new GetCph
+        var request = new GetCphByCphId
         {
             Id = new Guid("5bc8f1a5-2d44-40b5-93e4-52b613bf099f"),
         };
@@ -551,7 +551,7 @@ public class CphServiceTests
 
         var nonExistingEntityId = new Guid("109d340f-16b7-45fc-83d4-9ea8968df112");
 
-        var request = new GetCph
+        var request = new GetCphByCphId
         {
             Id = nonExistingEntityId,
         };
@@ -576,7 +576,7 @@ public class CphServiceTests
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
 
-        var request = new ExpireCph
+        var request = new ExpireCphByCphId
         {
             Id = new Guid("1cd09a5b-6b00-4f30-b03e-8de45130cad6"),
         };
@@ -605,7 +605,7 @@ public class CphServiceTests
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
 
-        var request = new ExpireCph
+        var request = new ExpireCphByCphId
         {
             Id = new Guid("802428bd-0411-451b-b75c-2fb6c037f271"),
         };
@@ -638,7 +638,7 @@ public class CphServiceTests
                     Id = new Guid("a4343f59-011c-46dc-a9fe-553923338e0a"), DeletedAt = DateTime.Parse("2026-02-13").ToUniversalTime(),
                 });
 
-        var request = new ExpireCph
+        var request = new ExpireCphByCphId
         {
             Id = new Guid("a4343f59-011c-46dc-a9fe-553923338e0a"),
         };
@@ -669,7 +669,7 @@ public class CphServiceTests
 
         var nonExistingEntityId = new Guid("109d340f-16b7-45fc-83d4-9ea8968df112");
 
-        var request = new ExpireCph
+        var request = new ExpireCphByCphId
         {
             Id = nonExistingEntityId,
         };
@@ -698,7 +698,7 @@ public class CphServiceTests
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
 
-        var request = new DeleteCph
+        var request = new DeleteCphByCphId
         {
             Id = new Guid("1cd09a5b-6b00-4f30-b03e-8de45130cad6"),
         };
@@ -731,7 +731,7 @@ public class CphServiceTests
                     Id = new Guid("a4343f59-011c-46dc-a9fe-553923338e0a"), DeletedAt = DateTime.Parse("2026-02-13").ToUniversalTime(),
                 });
 
-        var request = new DeleteCph
+        var request = new DeleteCphByCphId
         {
             Id = new Guid("a4343f59-011c-46dc-a9fe-553923338e0a"),
         };
@@ -762,7 +762,7 @@ public class CphServiceTests
 
         var nonExistingEntityId = new Guid("109d340f-16b7-45fc-83d4-9ea8968df112");
 
-        var request = new DeleteCph
+        var request = new DeleteCphByCphId
         {
             Id = nonExistingEntityId,
         };
@@ -801,7 +801,7 @@ public class CphServiceTests
                 Arg.Any<CancellationToken>())
             .Returns(CphRepositoryMockingHelper.MockGetAllCphUsersPagedEntitiesResultFromCallInfo);
 
-        var request = new GetCphUsers()
+        var request = new GetCphUsersByCphId()
         {
             Id = new Guid("7140056b-b2ee-40d6-9be1-882bdff30cc2"), PageNumber = 1, PageSize = 2,
         };
@@ -864,7 +864,7 @@ public class CphServiceTests
                 Arg.Any<CancellationToken>())
             .Returns(CphRepositoryMockingHelper.MockGetAllCphUsersPagedEntitiesResultFromCallInfo);
 
-        var request = new GetCphUsers()
+        var request = new GetCphUsersByCphId()
         {
             Id = new Guid("7140056b-b2ee-40d6-9be1-882bdff30cc2"), PageNumber = 2, PageSize = 2,
         };
@@ -918,7 +918,7 @@ public class CphServiceTests
                 Arg.Any<CancellationToken>())
             .Returns(CphRepositoryMockingHelper.MockGetAllCphUsersPagedEntitiesResultFromCallInfo);
 
-        var request = new GetCphUsers()
+        var request = new GetCphUsersByCphId()
         {
             Id = new Guid("7140056b-b2ee-40d6-9be1-882bdff30cc2"), PageNumber = 1, PageSize = 2, OrderByDescending = true,
         };
@@ -981,7 +981,7 @@ public class CphServiceTests
                 Arg.Any<CancellationToken>())
             .Returns(CphRepositoryMockingHelper.MockGetAllCphUsersPagedEntitiesResultFromCallInfo);
 
-        var request = new GetCphUsers()
+        var request = new GetCphUsersByCphId()
         {
             Id = new Guid("7140056b-b2ee-40d6-9be1-882bdff30cc2"), PageNumber = 2, PageSize = 2, OrderByDescending = true,
         };
@@ -1035,7 +1035,7 @@ public class CphServiceTests
                 Arg.Any<CancellationToken>())
             .Returns(CphRepositoryMockingHelper.MockGetAllCphUsersPagedEntitiesResultFromCallInfo);
 
-        var request = new GetCphUsers()
+        var request = new GetCphUsersByCphId()
         {
             Id = new Guid("1cd09a5b-6b00-4f30-b03e-8de45130cad6"), PageNumber = 1, PageSize = 2,
         };
@@ -1098,7 +1098,7 @@ public class CphServiceTests
                 Arg.Any<CancellationToken>())
             .Returns(CphRepositoryMockingHelper.MockGetAllCphUsersPagedEntitiesResultFromCallInfo);
 
-        var request = new GetCphUsers()
+        var request = new GetCphUsersByCphId()
         {
             Id = new Guid("1cd09a5b-6b00-4f30-b03e-8de45130cad6"), PageNumber = 1, PageSize = 2, OrderByDescending = true,
         };
@@ -1155,7 +1155,7 @@ public class CphServiceTests
                     Id = new Guid("cb84868b-00c1-4981-bb66-b6e45f9391f1"), DeletedAt = DateTime.Parse("2026-02-13").ToUniversalTime(),
                 });
 
-        var request = new GetCphUsers()
+        var request = new GetCphUsersByCphId()
         {
             Id = new Guid("cb84868b-00c1-4981-bb66-b6e45f9391f1"), PageNumber = 1, PageSize = 2,
         };
@@ -1189,7 +1189,7 @@ public class CphServiceTests
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult<CountyParishHoldings?>(null));
 
-        var request = new GetCphUsers()
+        var request = new GetCphUsersByCphId()
         {
             Id = new Guid("52b5185d-c03e-475f-8a60-52b6b75b6d90"), PageNumber = 1, PageSize = 2,
         };

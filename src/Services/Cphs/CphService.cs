@@ -29,6 +29,26 @@ public class CphService : ICphService
         this.logger = logger;
     }
 
+    public async Task<Guid> GetIdFromCphNumber(int county, int parish, int holding, CancellationToken cancellationToken = default)
+    {
+        var formattedCphNumber = $"{county:D2}/{parish:D3}/{holding:D4}";
+
+        logger.LogInformation("Getting county parish holding id by cph number {FormattedCphNumber}", formattedCphNumber);
+
+        Expression<Func<CountyParishHoldings, bool>> filter = cph => cph.Identifier == formattedCphNumber;
+
+        var cphEntity = await cphRepository.GetSingle(filter, cancellationToken);
+
+        if (cphEntity is not { DeletedAt: null })
+        {
+            logger.LogWarning("County parish holding with cph number {FormattedCphNumber} not found", formattedCphNumber);
+
+            throw new NotFoundException("County parish holding not found.");
+        }
+
+        return cphEntity.Id;
+    }
+
     public async Task<PagedResults<Cph>> GetAllPaged(GetCphs request, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Getting all county parish holdings by page");
@@ -44,7 +64,7 @@ public class CphService : ICphService
         return pagedCphResults;
     }
 
-    public async Task<Cph> Get(GetCph request, CancellationToken cancellationToken = default)
+    public async Task<Cph> Get(GetCphByCphId request, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Getting county parish holding by id {Id}", request.Id);
 
@@ -64,7 +84,7 @@ public class CphService : ICphService
         return cphResult;
     }
 
-    public async Task Expire(ExpireCph request, Guid operatorId, CancellationToken cancellationToken = default)
+    public async Task Expire(ExpireCphByCphId request, Guid operatorId, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Expiring county parish holding with id {Id} by operator {OperatorId}", request.Id, operatorId);
 
@@ -91,7 +111,7 @@ public class CphService : ICphService
         await cphRepository.Update(cphEntity, cancellationToken);
     }
 
-    public async Task Delete(DeleteCph request, Guid operatorId, CancellationToken cancellationToken = default)
+    public async Task Delete(DeleteCphByCphId request, Guid operatorId, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Deleting county parish holding with id {Id} by operator {OperatorId}", request.Id, operatorId);
 
@@ -112,7 +132,7 @@ public class CphService : ICphService
         await cphRepository.Update(cphEntity, cancellationToken);
     }
 
-    public async Task<PagedResults<CphUser>> GetAllCphUsersPaged(GetCphUsers request, CancellationToken cancellationToken = default)
+    public async Task<PagedResults<CphUser>> GetAllCphUsersPaged(GetCphUsersByCphId request, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Getting all county parish holding users for id {Id} by page", request.Id);
 
