@@ -34,6 +34,21 @@ internal class ApplicationsConfiguration
             .HasColumnName(nameof(Applications.Description).ToSnakeCase())
             .HasColumnType(ColumnTypes.Text);
 
+        builder.Property(x => x.Scope)
+            .HasColumnName(nameof(Applications.Scope).ToSnakeCase())
+            .HasColumnType(ColumnTypes.Varchar)
+            .HasMaxLength(500);
+
+        builder.Property(x => x.Secret)
+            .HasColumnName(nameof(Applications.Secret).ToSnakeCase())
+            .HasColumnType(ColumnTypes.Varchar)
+            .HasMaxLength(74);
+
+        builder.Property(x => x.RedirectUri)
+            .HasColumnName(nameof(Applications.RedirectUri).ToSnakeCase())
+            .HasColumnType(ColumnTypes.Varchar)
+            .HasMaxLength(1000);
+
         builder.HasOne(x => x.CreatedByUser)
             .WithMany(x => x.ApplicationsCreatedByUsers)
             .HasForeignKey(x => x.CreatedById);
