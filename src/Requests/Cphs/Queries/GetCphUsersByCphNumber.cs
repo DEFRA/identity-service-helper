@@ -6,6 +6,7 @@ namespace Defra.Identity.Requests.Cphs.Queries;
 
 using Defra.Identity.Requests.Common;
 using Defra.Identity.Requests.Common.Queries;
+using Defra.Identity.Requests.Cphs.Common;
 
 public class GetCphUsersByCphNumber : PagedQuery, IOperationByCphNumber
 {

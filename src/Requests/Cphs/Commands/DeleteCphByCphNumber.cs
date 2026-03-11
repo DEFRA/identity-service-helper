@@ -4,6 +4,8 @@
 
 namespace Defra.Identity.Requests.Cphs.Commands;
 
+using Defra.Identity.Requests.Cphs.Common;
+
 public class DeleteCphByCphNumber : IOperationByCphNumber
 {
     public int County { get; set; }

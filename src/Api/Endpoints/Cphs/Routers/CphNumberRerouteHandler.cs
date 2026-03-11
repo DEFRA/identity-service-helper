@@ -8,6 +8,7 @@ using Defra.Identity.Requests;
 using Defra.Identity.Requests.Common;
 using Defra.Identity.Requests.Common.Queries;
 using Defra.Identity.Requests.Cphs;
+using Defra.Identity.Requests.Cphs.Common;
 using Defra.Identity.Services.Cphs;
 
 public class CphNumberRerouteHandler<TTarget, TSource, THeaders>

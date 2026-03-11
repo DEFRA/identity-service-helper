@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Requests.Cphs;
+namespace Defra.Identity.Requests.Cphs.Common;
 
 public interface IOperationByCphNumber
 {

@@ -4,6 +4,8 @@
 
 namespace Defra.Identity.Requests.Cphs.Queries;
 
+using Defra.Identity.Requests.Cphs.Common;
+
 public class GetCphByCphNumber : IOperationByCphNumber
 {
     public int County { get; set; }
