@@ -35,8 +35,24 @@ public class ApplicationServiceTests
         var request = new GetApplications();
         var applicationEntities = new List<Applications>
         {
-            new Applications { Id = Guid.NewGuid(), Name = "App 1", ClientId = Guid.NewGuid(), TenantName = "Tenant 1" },
-            new Applications { Id = Guid.NewGuid(), Name = "App 2", ClientId = Guid.NewGuid(), TenantName = "Tenant 2" },
+            new Applications
+            {
+                Id = Guid.NewGuid(),
+                Name = "App 1",
+                ClientId = Guid.NewGuid(),
+                TenantName = "Tenant 1",
+                Scopes = "scope1;scope2",
+                RedirectUris = "https://callback1",
+            },
+            new Applications
+            {
+                Id = Guid.NewGuid(),
+                Name = "App 2",
+                ClientId = Guid.NewGuid(),
+                TenantName = "Tenant 2",
+                Scopes = "scope3",
+                RedirectUris = "https://callback2",
+            },
         };
 
         repository.GetList(Arg.Any<Expression<Func<Applications, bool>>>(), Arg.Any<CancellationToken>())
@@ -49,7 +65,11 @@ public class ApplicationServiceTests
         result.ShouldNotBeNull();
         result.Count.ShouldBe(2);
         result[0].Name.ShouldBe("App 1");
+        result[0].Scopes.ShouldBe(["scope1", "scope2"]);
+        result[0].RedirectUri.ShouldBe(["https://callback1"]);
         result[1].Name.ShouldBe("App 2");
+        result[1].Scopes.ShouldBe(["scope3"]);
+        result[1].RedirectUri.ShouldBe(["https://callback2"]);
     }
 
     [Fact]
@@ -64,6 +84,8 @@ public class ApplicationServiceTests
             Name = "Test App",
             ClientId = Guid.NewGuid(),
             TenantName = "Test Tenant",
+            Scopes = "scope1;scope2",
+            RedirectUris = "https://callback",
         };
 
         repository.GetSingle(Arg.Any<Expression<Func<Applications, bool>>>(), Arg.Any<CancellationToken>())
@@ -76,6 +98,8 @@ public class ApplicationServiceTests
         result.ShouldNotBeNull();
         result.Id.ShouldBe(appId);
         result.Name.ShouldBe("Test App");
+        result.Scopes.ShouldBe(["scope1", "scope2"]);
+        result.RedirectUri.ShouldBe(["https://callback"]);
     }
 
     [Fact]
@@ -102,7 +126,11 @@ public class ApplicationServiceTests
             Name = "New App",
             ClientId = Guid.NewGuid(),
             TenantName = "New Tenant",
+            Description = "New Description",
             OperatorId = Guid.NewGuid(),
+            Scopes = ["scope1", "scope2"],
+            RedirectUris = ["https://localhost/callback"],
+            Secret = "secret123",
         };
 
         var createdEntity = new Applications
@@ -111,6 +139,10 @@ public class ApplicationServiceTests
             Name = request.Name,
             ClientId = request.ClientId,
             TenantName = request.TenantName,
+            Description = request.Description,
+            Scopes = "scope1;scope2",
+            RedirectUris = "https://localhost/callback",
+            Secret = "secret123",
         };
 
         repository.Create(Arg.Any<Applications>(), Arg.Any<CancellationToken>())
@@ -122,7 +154,15 @@ public class ApplicationServiceTests
         // Assert
         result.ShouldNotBeNull();
         result.Name.ShouldBe(request.Name);
-        await repository.Received(1).Create(Arg.Any<Applications>(), Arg.Any<CancellationToken>());
+        result.Scopes.ShouldBe(request.Scopes);
+        result.RedirectUri.ShouldBe(request.RedirectUris);
+        await repository.Received(1).Create(
+            Arg.Is<Applications>(a =>
+                a.Name == request.Name &&
+                a.Scopes == "scope1;scope2" &&
+                a.RedirectUris == "https://localhost/callback" &&
+                a.Secret == "secret123"),
+            Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -136,6 +176,10 @@ public class ApplicationServiceTests
             Name = "Updated App",
             ClientId = Guid.NewGuid(),
             TenantName = "Updated Tenant",
+            Description = "Updated Description",
+            Scopes = ["scope1", "scope2"],
+            RedirectUris = ["https://localhost/callback"],
+            Secret = "updatedSecret",
         };
 
         var existingEntity = new Applications
@@ -144,6 +188,10 @@ public class ApplicationServiceTests
             Name = "Old App",
             ClientId = Guid.NewGuid(),
             TenantName = "Old Tenant",
+            Description = "Old Description",
+            Scopes = "oldScope",
+            RedirectUris = "https://old/callback",
+            Secret = "oldSecret",
         };
 
         repository.GetSingle(Arg.Any<Expression<Func<Applications, bool>>>(), Arg.Any<CancellationToken>())
@@ -158,7 +206,15 @@ public class ApplicationServiceTests
         // Assert
         result.ShouldNotBeNull();
         result.Name.ShouldBe("Updated App");
-        await repository.Received(1).Update(Arg.Any<Applications>(), Arg.Any<CancellationToken>());
+        result.Scopes.ShouldBe(request.Scopes);
+        result.RedirectUri.ShouldBe(request.RedirectUris);
+        await repository.Received(1).Update(
+            Arg.Is<Applications>(a =>
+                a.Name == request.Name &&
+                a.Scopes == "scope1;scope2" &&
+                a.RedirectUris == "https://localhost/callback" &&
+                a.Secret == "updatedSecret"),
+            Arg.Any<CancellationToken>());
     }
 
     [Fact]

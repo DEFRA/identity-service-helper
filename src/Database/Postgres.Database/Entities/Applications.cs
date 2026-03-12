@@ -16,11 +16,11 @@ public class Applications : BaseAuditEntity
 
     public string Description { get; set; } = string.Empty;
 
-    public string Scope { get; set; } = string.Empty;
+    public string Scopes { get; set; } = string.Empty;
 
     public string Secret { get; set; } = string.Empty;
 
-    public string RedirectUri { get; set; } = string.Empty;
+    public string RedirectUris { get; set; } = string.Empty;
 
     public UserAccounts? DeletedByUser { get; set; }
 
