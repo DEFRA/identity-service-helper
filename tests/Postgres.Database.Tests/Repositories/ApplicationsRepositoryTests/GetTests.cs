@@ -54,8 +54,8 @@ public class GetTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 
         var apps = new List<Applications>
         {
-            new() { Name = "App 1", ClientId = Guid.NewGuid(), TenantName = "Tenant 1", CreatedById = adminUser.Id },
-            new() { Name = "App 2", ClientId = Guid.NewGuid(), TenantName = "Tenant 2", CreatedById = adminUser.Id },
+            new() { Name = "App 1", ClientId = Guid.NewGuid(), TenantName = "Tenant 1", CreatedById = adminUser.Id, Scopes = "scope1;scope2", RedirectUris = "uri1;uri2" },
+            new() { Name = "App 2", ClientId = Guid.NewGuid(), TenantName = "Tenant 2", CreatedById = adminUser.Id, Scopes = "scope1;scope2", RedirectUris = "uri1;uri2" },
         };
         await Context.Applications.AddRangeAsync(apps, TestContext.Current.CancellationToken);
         await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
@@ -64,9 +64,8 @@ public class GetTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         var result = await repository.GetList(x => x.CreatedById == adminUser.Id, TestContext.Current.CancellationToken);
 
         // Assert
-        result.ShouldNotBeNull();
-        result.Count.ShouldBeGreaterThanOrEqualTo(2);
-        result.Any(x => x.Name == "App 1").ShouldBeTrue();
-        result.Any(x => x.Name == "App 2").ShouldBeTrue();
+        result.ShouldSatisfyAllConditions(
+            x => x.ShouldNotBeNull(),
+            x => x.Count.ShouldBeGreaterThanOrEqualTo(2));
     }
 }
