@@ -2,4 +2,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Api\Api.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Endpoints\Cphs\Factories\" />
+  </ItemGroup>
 </Project>

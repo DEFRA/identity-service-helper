@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Api.Endpoints.Cphs.Routers;
+namespace Defra.Identity.Api.Endpoints.Cphs.Handlers;
 
 using Defra.Identity.Requests.Common;
 using Defra.Identity.Requests.Common.Queries;
@@ -23,7 +23,7 @@ public class CphNumberRerouteHandler<TTarget, TSource, THeaders>
         this.action = action;
     }
 
-    public async Task<IResult> GetRerouteHandler(
+    public async Task<IResult> Handler(
         THeaders headers,
         [AsParameters] TSource sourceRequest,
         ICphService service)
