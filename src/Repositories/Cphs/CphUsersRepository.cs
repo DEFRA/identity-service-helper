@@ -39,6 +39,7 @@ public class CphUsersRepository(
             .Entry(primaryEntity)
             .Collection(p => p.ApplicationUserAccountHoldingAssignments)
             .Query()
+            .Include(p => p.UserAccount)
             .Where(associationsPredicate)
             .ToPaged(pageNumber, pageSize, orderBy, orderByDescending, cancellationToken);
 

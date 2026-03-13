@@ -1,10 +1,12 @@
-﻿// <copyright file="GetCph.cs" company="Defra">
+﻿// <copyright file="GetCphByCphId.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
 namespace Defra.Identity.Requests.Cphs.Queries;
 
-public class GetCph
+using Defra.Identity.Requests.Common;
+
+public class GetCphByCphId : IOperationById
 {
     public Guid Id { get; set; }
 }
