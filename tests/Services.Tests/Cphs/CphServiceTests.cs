@@ -22,6 +22,97 @@ using NSubstitute;
 public class CphServiceTests
 {
     [Fact]
+    [Description("GetIdFromCphNumber Should return an id given a valid cph number")]
+    public async Task GetIdFromCphNumber_ShouldReturnIdGivenValidCphNumber()
+    {
+        // Arrange
+        var logger = Substitute.For<ILogger<CphService>>();
+        var cphRepository = Substitute.For<ICphRepository>();
+        var cphUsersRepository = Substitute.For<ICphUsersRepository>();
+        var cphNumberValidator = new OperationByCphNumberValidator();
+        var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
+
+        cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns(CphRepositoryMockingHelper.MockGetEntityResultFromCallInfoForSimpleFilterChecks);
+
+        var request = new OperationByCphNumberFake(1, 28, 1);
+        const string formattedCphNumber = "01/028/0001";
+
+        // Act
+        var result = await cphService.GetIdFromCphNumber(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        logger.VerifyLogContainsOne(LogLevel.Information, $"Getting county parish holding id by cph number {formattedCphNumber}");
+
+        result.ShouldBe(new Guid("68625a5c-7999-4394-836f-9ee55cac0a21"));
+    }
+
+    [Fact]
+    [Description("GetIdFromCphNumber Should thrown not found exception when cph is deleted")]
+    public void GetIdFromCphNumber_ShouldThrowNotFoundExceptionWhenItemIsDeleted()
+    {
+        // Arrange
+        var logger = Substitute.For<ILogger<CphService>>();
+        var cphRepository = Substitute.For<ICphRepository>();
+        var cphUsersRepository = Substitute.For<ICphUsersRepository>();
+        var cphNumberValidator = new OperationByCphNumberValidator();
+        var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
+
+        cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns(CphRepositoryMockingHelper.MockGetEntityResultFromCallInfoForSimpleFilterChecks);
+
+        var request = new OperationByCphNumberFake(1, 28, 2);
+        const string formattedCphNumber = "01/028/0002";
+
+        // Act & Assert
+        Should.Throw<NotFoundException>(async () => await cphService.GetIdFromCphNumber(request, TestContext.Current.CancellationToken));
+
+        logger.VerifyLogContainsOne(LogLevel.Information, $"Getting county parish holding id by cph number {formattedCphNumber}");
+        logger.VerifyLogContainsOne(LogLevel.Warning, $"County parish holding with cph number {formattedCphNumber} not found");
+    }
+
+    [Fact]
+    [Description("GetIdFromCphNumber Should thrown not found exception when cph is not found")]
+    public void GetIdFromCphNumber_ShouldThrowNotFoundExceptionWhenItemIsNotFound()
+    {
+        // Arrange
+        var logger = Substitute.For<ILogger<CphService>>();
+        var cphRepository = Substitute.For<ICphRepository>();
+        var cphUsersRepository = Substitute.For<ICphUsersRepository>();
+        var cphNumberValidator = new OperationByCphNumberValidator();
+        var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
+
+        cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns(CphRepositoryMockingHelper.MockGetEntityResultFromCallInfoForSimpleFilterChecks);
+
+        var requestWithNonExistingCphNumber = new OperationByCphNumberFake(1, 28, 100);
+        const string formattedCphNumber = "01/028/0100";
+
+        // Act & Assert
+        Should.Throw<NotFoundException>(async () => await cphService.GetIdFromCphNumber(requestWithNonExistingCphNumber, TestContext.Current.CancellationToken));
+
+        logger.VerifyLogContainsOne(LogLevel.Information, $"Getting county parish holding id by cph number {formattedCphNumber}");
+        logger.VerifyLogContainsOne(LogLevel.Warning, $"County parish holding with cph number {formattedCphNumber} not found");
+    }
+
+    [Fact]
+    [Description("GetIdFromCphNumber Should throw validation exception when cph number invalid")]
+    public void GetIdFromCphNumber_ShouldThrowValidationExceptionWhenCphNumberInvalid()
+    {
+        // Arrange
+        var logger = Substitute.For<ILogger<CphService>>();
+        var cphRepository = Substitute.For<ICphRepository>();
+        var cphUsersRepository = Substitute.For<ICphUsersRepository>();
+        var cphNumberValidator = new OperationByCphNumberValidator();
+        var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
+
+        var requestWithNonExistingCphNumber = new OperationByCphNumberFake(999, 9999, 99999);
+
+        // Act & Assert
+        Should.Throw<ValidationException>(async () => await cphService.GetIdFromCphNumber(requestWithNonExistingCphNumber, TestContext.Current.CancellationToken));
+    }
+
+    [Fact]
     [Description("GetAllPaged Should return page one results in ascending order and does not return expired or deleted")]
     public async Task GetAllPaged_ShouldReturnPageOneResultsAscendingOrderAndDoesNotReturnExpiredOrDeleted()
     {

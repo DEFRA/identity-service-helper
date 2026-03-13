@@ -64,7 +64,6 @@ public class CphNumberRerouteHandlerTests
 
         cphEndpointsFake.ShouldSatisfyAllConditions(
             (x) => x.CapturedCallCount.ShouldBe(1),
-            (x) => x.CapturedCallCount.ShouldBe(1),
             (x) => x.CapturedRequest.ShouldNotBeNull(),
             (x) => x.CapturedRequest!.Id.ShouldBe(new Guid("63bd6b64-9d67-4076-9855-507289ba4067")),
             (x) => x.CapturedHeaders.ShouldNotBeNull(),
@@ -101,7 +100,6 @@ public class CphNumberRerouteHandlerTests
         await mockCphService.Received(1).GetIdFromCphNumber(Arg.Is(sourceRequestToReroute), Arg.Any<CancellationToken>());
 
         cphEndpointsFake.ShouldSatisfyAllConditions(
-            (x) => x.CapturedCallCount.ShouldBe(1),
             (x) => x.CapturedCallCount.ShouldBe(1),
             (x) => x.CapturedRequest.ShouldNotBeNull(),
             (x) => x.CapturedRequest!.Id.ShouldBe(new Guid("cafcdc34-150e-478c-81e0-9d247188ba15")),
@@ -142,7 +140,6 @@ public class CphNumberRerouteHandlerTests
         await mockCphService.Received(1).GetIdFromCphNumber(Arg.Is(sourceRequestToReroute), Arg.Any<CancellationToken>());
 
         cphEndpointsFake.ShouldSatisfyAllConditions(
-            (x) => x.CapturedCallCount.ShouldBe(1),
             (x) => x.CapturedCallCount.ShouldBe(1),
             (x) => x.CapturedRequest.ShouldNotBeNull(),
             (x) => x.CapturedRequest!.Id.ShouldBe(new Guid("8cd5ae10-4567-4213-b865-ba301ac9e0e6")),

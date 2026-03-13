@@ -2,7 +2,4 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Api\Api.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Endpoints\Cphs\Handlers\TestData\" />
-  </ItemGroup>
 </Project>
