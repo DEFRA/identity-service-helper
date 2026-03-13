@@ -3,7 +3,7 @@
 // </copyright>
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-namespace Defra.Identity.Api.Tests.Endpoints.Cphs.Handlers.TestData;
+namespace Defra.Identity.Api.Tests.Endpoints.Cphs.TestData;
 
 using Defra.Identity.Services.Cphs;
 using Microsoft.AspNetCore.Http;

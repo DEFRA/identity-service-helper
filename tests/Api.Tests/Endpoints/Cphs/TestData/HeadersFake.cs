@@ -2,6 +2,6 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Api.Tests.Endpoints.Cphs.Handlers.TestData;
+namespace Defra.Identity.Api.Tests.Endpoints.Cphs.TestData;
 
 public class HeadersFake;
