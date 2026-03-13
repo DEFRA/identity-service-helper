@@ -11,6 +11,16 @@ using NSubstitute.Core;
 
 public static class CphRepositoryMockingHelper
 {
+    public static CountyParishHoldings? MockGetEntityResultFromCallInfoForSimpleFilterChecks(CallInfo callInfo)
+    {
+        var actualFilter = (Expression<Func<CountyParishHoldings, bool>>)callInfo.Args()[0];
+        var compiledFilter = actualFilter.Compile();
+
+        var filteredEntity = GetCphEntitiesForSimpleFilterChecks().SingleOrDefault(compiledFilter);
+
+        return filteredEntity;
+    }
+
     public static PagedEntities<CountyParishHoldings> MockGetAllPagedEntitiesResultFromCallInfo(CallInfo callInfo)
     {
         var actualFilter = (Expression<Func<CountyParishHoldings, bool>>)callInfo.Args()[0];
@@ -82,6 +92,18 @@ public static class CphRepositoryMockingHelper
 
         return entity;
     }
+
+    private static CountyParishHoldings[] GetCphEntitiesForSimpleFilterChecks() =>
+    [
+        new()
+        {
+            Id = new Guid("68625a5c-7999-4394-836f-9ee55cac0a21"), Identifier = $"01/028/0001", ExpiredAt = null, DeletedAt = null,
+        },
+        new()
+        {
+            Id = new Guid("335c9de9-a516-4fc6-98ab-8ccfa9f015de"), Identifier = $"01/028/0002", ExpiredAt = null, DeletedAt = DateTime.Parse("2026-02-12").ToUniversalTime(),
+        },
+    ];
 
     private static CountyParishHoldings[] GetCphEntities() =>
     [
