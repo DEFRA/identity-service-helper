@@ -53,6 +53,9 @@ public class ApplicationsTests(PostgreContainerFixture fixture) : BaseTests(fixt
             TenantName = "Test Tenant",
             Name = "Test Application",
             Description = "Test Application Description",
+            RedirectUris = "https://localhost/callback;https://localhost/callback2",
+            Scopes = "scope1;scope2",
+            Secret = "secret123",
         };
         await Context.Applications.AddAsync(app, TestContext.Current.CancellationToken);
         await Context.SaveChangesAsync(TestContext.Current.CancellationToken);

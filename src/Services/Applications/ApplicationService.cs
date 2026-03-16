@@ -16,6 +16,7 @@ using Microsoft.Extensions.Logging;
 
 public class ApplicationService : IApplicationService
 {
+    private const string Separator = ";";
     private readonly IApplicationsRepository repository;
     private readonly ILogger<ApplicationService> logger;
 
@@ -37,6 +38,8 @@ public class ApplicationService : IApplicationService
             ClientId = app.ClientId,
             TenantName = app.TenantName,
             Description = app.Description,
+            Scopes = app.Scopes.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
+            RedirectUri = app.RedirectUris.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
         }).ToList();
 
         return applications;
@@ -62,6 +65,8 @@ public class ApplicationService : IApplicationService
             ClientId = application.ClientId,
             TenantName = application.TenantName,
             Description = application.Description,
+            Scopes = application.Scopes.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
+            RedirectUri = application.RedirectUris.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
         };
     }
 
@@ -80,6 +85,9 @@ public class ApplicationService : IApplicationService
         existingApplication.ClientId = application.ClientId;
         existingApplication.TenantName = application.TenantName;
         existingApplication.Description = application.Description;
+        existingApplication.Scopes = string.Join(Separator, application.Scopes);
+        existingApplication.RedirectUris = string.Join(Separator, application.RedirectUris);
+        existingApplication.Secret = application.Secret;
 
         var updated = await repository.Update(existingApplication, cancellationToken);
 
@@ -90,12 +98,15 @@ public class ApplicationService : IApplicationService
             ClientId = updated.ClientId,
             TenantName = updated.TenantName,
             Description = updated.Description,
+            Scopes = updated.Scopes.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
+            RedirectUri = updated.RedirectUris.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
         };
     }
 
     public async Task<Application> Create(CreateApplication application, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Creating new application with name {Name}", application.Name);
+
         var newApplication = new Applications
         {
             Name = application.Name,
@@ -103,6 +114,9 @@ public class ApplicationService : IApplicationService
             TenantName = application.TenantName,
             Description = application.Description,
             CreatedById = application.OperatorId,
+            Scopes = string.Join(Separator, application.Scopes),
+            Secret = application.Secret,
+            RedirectUris = string.Join(Separator, application.RedirectUris),
         };
 
         var createdApplication = await repository.Create(newApplication, cancellationToken);
@@ -113,6 +127,8 @@ public class ApplicationService : IApplicationService
             ClientId = createdApplication.ClientId,
             TenantName = createdApplication.TenantName,
             Description = createdApplication.Description,
+            Scopes = createdApplication.Scopes.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
+            RedirectUri = createdApplication.RedirectUris.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
         };
     }
 
