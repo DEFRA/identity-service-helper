@@ -7,6 +7,7 @@ namespace Defra.Identity.Services.Delegations;
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Applications;
+using Defra.Identity.Repositories.Cphs;
 using Defra.Identity.Repositories.Delegates;
 using Defra.Identity.Repositories.Exceptions;
 using Defra.Identity.Repositories.Users;
@@ -20,22 +21,22 @@ public class DelegationsService : IDelegationsService
 {
     private readonly IDelegatesRepository repository;
     private readonly IUsersRepository usersRepository;
-    private readonly IApplicationsRepository applicationsRepository;
+    private readonly ICphRepository cphRepository;
     private readonly ILogger<DelegationsService> logger;
 
     public DelegationsService(
         IDelegatesRepository repository,
         IUsersRepository usersRepository,
-        IApplicationsRepository applicationsRepository,
+        ICphRepository cphRepository,
         ILogger<DelegationsService> logger)
     {
         this.repository = repository;
         this.usersRepository = usersRepository;
-        this.applicationsRepository = applicationsRepository;
+        this.cphRepository = cphRepository;
         this.logger = logger;
     }
 
-    public async Task<List<Delegation>> GetAll(GetDelegations request, CancellationToken cancellationToken = default)
+    public async Task<List<CountyParishHoldingDelegation>> GetAll(GetDelegations request, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Getting all delegations");
         var entities = await repository.GetList(x => true, cancellationToken);
@@ -43,10 +44,10 @@ public class DelegationsService : IDelegationsService
         return entities.Select(MapToResponse).ToList();
     }
 
-    public async Task<Delegation> Get(GetDelegationById request, CancellationToken cancellationToken = default)
+    public async Task<CountyParishHoldingDelegation> Get(GetDelegationById request, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Getting delegation by id {Id}", request.Id);
-        Expression<Func<Delegations, bool>> filter = x => x.Id == request.Id;
+        Expression<Func<CountyParishHoldingDelegations, bool>> filter = x => x.Id == request.Id;
 
         var entity = await repository.GetSingle(filter, cancellationToken);
         if (entity == null)
@@ -58,7 +59,7 @@ public class DelegationsService : IDelegationsService
         return MapToResponse(entity);
     }
 
-    public async Task<Delegation> Update(UpdateDelegation request, CancellationToken cancellationToken = default)
+    public async Task<CountyParishHoldingDelegation> Update(UpdateDelegation request, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Updating delegation with id {Id}", request.Id);
         var existing = await repository.GetSingle(x => x.Id.Equals(request.Id), cancellationToken);
@@ -77,13 +78,13 @@ public class DelegationsService : IDelegationsService
         return MapToResponse(updated);
     }
 
-    public async Task<Delegation> Create(CreateDelegation request, CancellationToken cancellationToken = default)
+    public async Task<CountyParishHoldingDelegation> Create(CreateDelegation request, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Creating new delegation for application {ApplicationId} and user {UserId}", request.ApplicationId, request.UserId);
 
         await ValidateReferences(request.ApplicationId, request.UserId, cancellationToken);
 
-        var entity = new Delegations
+        var entity = new CountyParishHoldingDelegations
         {
             ApplicationId = request.ApplicationId,
             UserId = request.UserId,
@@ -100,30 +101,53 @@ public class DelegationsService : IDelegationsService
         return await repository.Delete(x => x.Id == id, operatorId, cancellationToken);
     }
 
-    private async Task ValidateReferences(Guid applicationId, Guid userId, CancellationToken cancellationToken)
+    private async Task ValidateReferences(Guid countyParishHoldingId, Guid delegatingUserId, Guid? delegatedUserId, CancellationToken cancellationToken)
     {
-        var application = await applicationsRepository.GetSingle(x => x.Id == applicationId, cancellationToken);
-        if (application == null)
+        var countyParishHolding = await cphRepository.GetSingle(x => x.Id == countyParishHoldingId, cancellationToken);
+        if (countyParishHolding == null)
         {
-            logger.LogWarning("Application with id {Id} not found", applicationId);
-            throw new NotFoundException($"Application with id {applicationId} not found.");
+            logger.LogWarning("CountyParishHolding with id {Id} not found", countyParishHoldingId);
+            throw new NotFoundException($"CountyParishHolding with id {countyParishHoldingId} not found.");
         }
 
-        var user = await usersRepository.GetSingle(x => x.Id == userId, cancellationToken);
+        var user = await usersRepository.GetSingle(x => x.Id == delegatingUserId, cancellationToken);
         if (user == null)
         {
-            logger.LogWarning("User with id {Id} not found", userId);
-            throw new NotFoundException($"User with id {userId} not found.");
+            logger.LogWarning("User with id {Id} not found", delegatingUserId);
+            throw new NotFoundException($"User with id {delegatingUserId} not found.");
+        }
+
+        if (delegatedUserId is not null)
+        {
+            user = await usersRepository.GetSingle(x => x.Id == delegatedUserId, cancellationToken);
+            if (user == null)
+            {
+                logger.LogWarning("User with id {Id} not found", delegatedUserId);
+                throw new NotFoundException($"User with id {delegatedUserId} not found.");
+            }
         }
     }
 
-    private static Delegation MapToResponse(Delegations entity)
+    private static CountyParishHoldingDelegation MapToResponse(CountyParishHoldingDelegations entity)
     {
-        return new Delegation
+        return new CountyParishHoldingDelegation
         {
             Id = entity.Id,
-            ApplicationId = entity.ApplicationId,
-            UserId = entity.UserId,
+            CountyParishHoldingId = entity.CountyParishHolding.Id,
+            CountyParishHolding = entity.CountyParishHolding.Identifier,
+            DelegatingUserId = entity.DelegatingUserId,
+            DelegatingUserName = entity.DelegatingUser.DisplayName,
+            DelegatedUserId = entity.DelegatedUserId,
+            DelegatedUserName = entity.DelegatedUser.DisplayName,
+            DelegatedUserRoleId = entity.DelegatedUserRoleId,
+            DelegatedUserRoleName = entity.DelegatedUserRole.Name,
+            InvitationExpiresAt = entity.InvitationExpiresAt,
+            InvitationAcceptedAt = entity.InvitationAcceptedAt,
+            InvitationRejectedAt = entity.InvitationRejectedAt,
+            RevokedAt = entity.RevokedAt,
+            ExpiresAt = entity.ExpiresAt,
+            RevokedById = entity.RevokedById,
+            RevokedByName = entity.RevokedByUser.DisplayName,
         };
     }
 }

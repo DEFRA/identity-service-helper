@@ -33,13 +33,13 @@ public class UpdateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         await Context.Applications.AddAsync(application, TestContext.Current.CancellationToken);
         await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
-        var delegation = new Delegations
+        var delegation = new CountyParishHoldingDelegations
         {
-            ApplicationId = application.Id,
-            UserId = adminUser.Id,
+            DelegatingUserId = adminUser.Id,
             CreatedById = adminUser.Id,
+            DelegatedUserEmail = AdminEmailAddress,
         };
-        await Context.Delegations.AddAsync(delegation, TestContext.Current.CancellationToken);
+        await Context.CountyParishHoldingDelegations.AddAsync(delegation, TestContext.Current.CancellationToken);
         await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // In this case, we might update some property if there were any,

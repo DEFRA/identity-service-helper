@@ -18,10 +18,6 @@ public class PostgresDbContext(DbContextOptions<PostgresDbContext> options)
 
     public virtual DbSet<Applications> Applications { get; set; }
 
-    public virtual DbSet<Delegations> Delegations { get; set; }
-
-    public virtual DbSet<DelegationInvitations> DelegationInvitations { get; set; }
-
     public virtual DbSet<KrdsSyncLogs> KrdsSyncLogs { get; set; }
 
     public virtual DbSet<UserAccounts> UserAccounts { get; set; }
@@ -32,7 +28,7 @@ public class PostgresDbContext(DbContextOptions<PostgresDbContext> options)
 
     public virtual DbSet<CountyParishHoldings> CountyParishHoldings { get; set; }
 
-    public virtual DbSet<DelegationsCountyParishHoldings> DelegationsCountyParishHoldings { get; set; }
+    public virtual DbSet<CountyParishHoldingDelegations> CountyParishHoldingDelegations { get; set; }
 
     public override int SaveChanges()
     {

@@ -12,36 +12,36 @@ using Microsoft.Extensions.Logging;
 
 public class DelegatesRepository(PostgresDbContext context, ILogger<DelegatesRepository> logger) : IDelegatesRepository
 {
-    public async Task<Delegations?> GetSingle(Expression<Func<Delegations, bool>> predicate, CancellationToken cancellationToken = default)
+    public async Task<CountyParishHoldingDelegations?> GetSingle(Expression<Func<CountyParishHoldingDelegations, bool>> predicate, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Getting single delegation");
-        var query = await context.Delegations
+        var query = await context.CountyParishHoldingDelegations
             .SingleOrDefaultAsync(predicate, cancellationToken);
 
         return query;
     }
 
-    public async Task<List<Delegations>> GetList(Expression<Func<Delegations, bool>> predicate, CancellationToken cancellationToken = default)
+    public async Task<List<CountyParishHoldingDelegations>> GetList(Expression<Func<CountyParishHoldingDelegations, bool>> predicate, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Getting list of delegations");
-        var query = await context.Delegations
-            .Where(predicate).ToListAsync<Delegations>(cancellationToken);
+        logger.LogInformation("Getting list of CountyParishHoldingDelegations");
+        var query = await context.CountyParishHoldingDelegations
+            .Where(predicate).ToListAsync<CountyParishHoldingDelegations>(cancellationToken);
 
         return query;
     }
 
-    public async Task<Delegations> Create(Delegations entity, CancellationToken cancellationToken = default)
+    public async Task<CountyParishHoldingDelegations> Create(CountyParishHoldingDelegations entity, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entity);
 
         logger.LogInformation("Creating delegation with id {Id}", entity.Id);
-        var addedEntry = await context.Delegations.AddAsync(entity, cancellationToken);
+        var addedEntry = await context.CountyParishHoldingDelegations.AddAsync(entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
         return addedEntry.Entity;
     }
 
-    public async Task<Delegations> Update(Delegations entity, CancellationToken cancellationToken = default)
+    public async Task<CountyParishHoldingDelegations> Update(CountyParishHoldingDelegations entity, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entity);
 
@@ -51,10 +51,10 @@ public class DelegatesRepository(PostgresDbContext context, ILogger<DelegatesRep
         return entity;
     }
 
-    public async Task<bool> Delete(Expression<Func<Delegations, bool>> predicate, Guid operatorId, CancellationToken cancellationToken = default)
+    public async Task<bool> Delete(Expression<Func<CountyParishHoldingDelegations, bool>> predicate, Guid operatorId, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Deleting delegation with operator id {OperatorId}", operatorId);
-        var delegation = await context.Delegations
+        var delegation = await context.CountyParishHoldingDelegations
             .SingleOrDefaultAsync(predicate, cancellationToken);
 
         if (delegation == null)
@@ -65,7 +65,7 @@ public class DelegatesRepository(PostgresDbContext context, ILogger<DelegatesRep
 
         delegation.DeletedById = operatorId;
         delegation.DeletedAt = DateTime.UtcNow;
-        context.Delegations.Update(delegation);
+        context.CountyParishHoldingDelegations.Update(delegation);
         return await context.SaveChangesAsync(cancellationToken) > 0;
     }
 }

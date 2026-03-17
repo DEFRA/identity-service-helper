@@ -35,13 +35,12 @@ public class DeleteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         await Context.Applications.AddAsync(application, TestContext.Current.CancellationToken);
         await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
-        var delegation = new Delegations
+        var delegation = new CountyParishHoldingDelegations
         {
-            ApplicationId = application.Id,
-            UserId = adminUser.Id,
             CreatedById = adminUser.Id,
+            DelegatedUserEmail = AdminEmailAddress,
         };
-        await Context.Delegations.AddAsync(delegation, TestContext.Current.CancellationToken);
+        await Context.CountyParishHoldingDelegations.AddAsync(delegation, TestContext.Current.CancellationToken);
         await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var operatorId = adminUser.Id;
@@ -51,7 +50,7 @@ public class DeleteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 
         // Assert
         result.ShouldBeTrue();
-        var deletedDelegation = await Context.Delegations.IgnoreQueryFilters().SingleOrDefaultAsync(x => x.Id == delegation.Id, TestContext.Current.CancellationToken);
+        var deletedDelegation = await Context.CountyParishHoldingDelegations.IgnoreQueryFilters().SingleOrDefaultAsync(x => x.Id == delegation.Id, TestContext.Current.CancellationToken);
         deletedDelegation.ShouldNotBeNull();
         deletedDelegation.DeletedById.ShouldBe(operatorId);
         deletedDelegation.DeletedAt.ShouldNotBeNull();
