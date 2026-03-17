@@ -37,24 +37,17 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddPostgresDatabase(this IServiceCollection services, IConfiguration configuration)
     {
         var connectionString = configuration.GetConnectionString(DatabaseConstants.ConnectionStringName);
+        var readOnlyConnectionString = configuration.GetConnectionString(DatabaseConstants.ReadOnlyConnectionStringName) ?? connectionString;
+
         services.AddDbContext<PostgresDbContext>((sp, options) =>
         {
-            var env = sp.GetRequiredService<IHostEnvironment>();
-            var isProd = env.IsProduction();
-            options
-                .UseLoggerFactory(sp.GetRequiredService<ILoggerFactory>())
-                .ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning))
-                .UseNpgsql(
-                    connectionString,
-                    npgsqlOptions =>
-                    {
-                        npgsqlOptions.EnableRetryOnFailure(
-                            maxRetryCount: MaxRetryCount,
-                            maxRetryDelay: TimeSpan.FromSeconds(MaxRetryDelay),
-                            errorCodesToAdd: ErrorCodes);
-                        npgsqlOptions.CommandTimeout(CommandTimeout);
-                    })
-                .EnableSensitiveDataLogging(!isProd);
+            ConfigureNpgsql(sp, options, connectionString!);
+        });
+
+        services.AddDbContext<ReadOnlyPostgresDbContext>((sp, options) =>
+        {
+            ConfigureNpgsql(sp, options, readOnlyConnectionString!);
+            options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         });
 
         return services;
@@ -76,5 +69,25 @@ public static class ServiceCollectionExtensions
         {
             // Ignore pending model changes warning during tests/dev if it's treated as error
         }
+    }
+
+    private static void ConfigureNpgsql(IServiceProvider sp, DbContextOptionsBuilder options, string connectionString)
+    {
+        var env = sp.GetRequiredService<IHostEnvironment>();
+        var isProd = env.IsProduction();
+        options
+            .UseLoggerFactory(sp.GetRequiredService<ILoggerFactory>())
+            .ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning))
+            .UseNpgsql(
+                connectionString,
+                npgsqlOptions =>
+                {
+                    npgsqlOptions.EnableRetryOnFailure(
+                        maxRetryCount: MaxRetryCount,
+                        maxRetryDelay: TimeSpan.FromSeconds(MaxRetryDelay),
+                        errorCodesToAdd: ErrorCodes);
+                    npgsqlOptions.CommandTimeout(CommandTimeout);
+                })
+            .EnableSensitiveDataLogging(!isProd);
     }
 }

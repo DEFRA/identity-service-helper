@@ -22,7 +22,7 @@ public class CreateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     {
         // Arrange
         var logger = Substitute.For<ILogger<UsersRepository>>();
-        var repository = new UsersRepository(Context, logger);
+        var repository = new UsersRepository(Context, ReadOnlyContext, logger);
 
         var adminEmail = AdminEmailAddress;
 

@@ -23,7 +23,7 @@ public class DeleteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     {
         // Arrange
         var logger = Substitute.For<ILogger<UsersRepository>>();
-        var repository = new UsersRepository(Context, logger);
+        var repository = new UsersRepository(Context, ReadOnlyContext, logger);
         var adminUser = await repository.GetSingle(x => x.EmailAddress == AdminEmailAddress, TestContext.Current.CancellationToken);
         adminUser.ShouldNotBeNull();
 
@@ -62,7 +62,7 @@ public class DeleteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     {
         // Arrange
         var logger = Substitute.For<ILogger<UsersRepository>>();
-        var repository = new UsersRepository(Context, logger);
+        var repository = new UsersRepository(Context, ReadOnlyContext, logger);
         var nonExistentId = Guid.NewGuid();
         var operatorId = Guid.NewGuid();
 

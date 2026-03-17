@@ -8,7 +8,7 @@ using System.Reflection;
 using Defra.Identity.Postgres.Database.Entities.Base;
 
 /// <summary>
-/// The Authorisation DbContext.
+/// The Read-Write Authorisation DbContext.
 /// </summary>
 /// <param name="options">options to apply to the context.</param>
 public class PostgresDbContext(DbContextOptions<PostgresDbContext> options)
@@ -52,7 +52,7 @@ public class PostgresDbContext(DbContextOptions<PostgresDbContext> options)
         base.OnConfiguring(optionsBuilder);
     }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected virtual void ConfigureModel(ModelBuilder modelBuilder)
     {
         Requires.NotNull(modelBuilder);
 
@@ -60,6 +60,11 @@ public class PostgresDbContext(DbContextOptions<PostgresDbContext> options)
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         modelBuilder.HasPostgresExtension(PostgreExtensions.PgCrypto);
         modelBuilder.HasPostgresExtension(PostgreExtensions.Citext);
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        ConfigureModel(modelBuilder);
     }
 
     private void SetProcessingDateTimes()

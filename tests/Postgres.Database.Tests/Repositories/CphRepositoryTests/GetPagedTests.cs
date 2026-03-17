@@ -20,7 +20,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     {
         // Arrange
         var logger = Substitute.For<ILogger<CphRepository>>();
-        var repository = new CphRepository(Context, logger);
+        var repository = new CphRepository(Context, ReadOnlyContext, logger);
 
         Expression<Func<CountyParishHoldings, bool>> filter = cph => true;
         Expression<Func<CountyParishHoldings, string>> orderBy = cph => cph.Identifier;
@@ -80,7 +80,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     {
         // Arrange
         var logger = Substitute.For<ILogger<CphRepository>>();
-        var repository = new CphRepository(Context, logger);
+        var repository = new CphRepository(Context, ReadOnlyContext, logger);
 
         Expression<Func<CountyParishHoldings, bool>> filter = cph => true;
         Expression<Func<CountyParishHoldings, string>> orderBy = cph => cph.Identifier;

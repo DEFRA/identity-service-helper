@@ -23,10 +23,10 @@ public class CreateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     {
         // Arrange
         var logger = Substitute.For<ILogger<DelegatesRepository>>();
-        var repository = new DelegatesRepository(Context, logger);
+        var repository = new DelegatesRepository(Context, ReadOnlyContext, logger);
 
         var userLogger = Substitute.For<ILogger<UsersRepository>>();
-        var userRepository = new UsersRepository(Context, userLogger);
+        var userRepository = new UsersRepository(Context, ReadOnlyContext, userLogger);
 
         var adminUser = await userRepository.GetSingle(
             x => x.EmailAddress == AdminEmailAddress,

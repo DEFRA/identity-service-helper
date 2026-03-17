@@ -20,7 +20,7 @@ public class GetSingleTests(PostgreContainerFixture fixture) : BaseTests(fixture
     {
         // Arrange
         var logger = Substitute.For<ILogger<CphRepository>>();
-        var repository = new CphRepository(Context, logger);
+        var repository = new CphRepository(Context, ReadOnlyContext, logger);
 
         Expression<Func<CountyParishHoldings, bool>> filter = cph => cph.Id == new Guid("088967e7-71b8-457a-9001-5b71f24798fd");
 
@@ -48,7 +48,7 @@ public class GetSingleTests(PostgreContainerFixture fixture) : BaseTests(fixture
     {
         // Arrange
         var logger = Substitute.For<ILogger<CphRepository>>();
-        var repository = new CphRepository(Context, logger);
+        var repository = new CphRepository(Context, ReadOnlyContext, logger);
 
         var noneExistingEntityId = new Guid("e2dd6e69-2866-4065-bbac-b716853889b8");
 

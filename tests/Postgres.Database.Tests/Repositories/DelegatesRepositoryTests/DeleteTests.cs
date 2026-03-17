@@ -22,7 +22,7 @@ public class DeleteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     {
         // Arrange
         var logger = Substitute.For<ILogger<DelegatesRepository>>();
-        var repository = new DelegatesRepository(Context, logger);
+        var repository = new DelegatesRepository(Context, ReadOnlyContext, logger);
 
         var adminUser = Context.UserAccounts.First();
         var application = new Applications
@@ -63,7 +63,7 @@ public class DeleteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     {
         // Arrange
         var logger = Substitute.For<ILogger<DelegatesRepository>>();
-        var repository = new DelegatesRepository(Context, logger);
+        var repository = new DelegatesRepository(Context, ReadOnlyContext, logger);
         var adminUser = Context.UserAccounts.First();
         var operatorId = adminUser.Id;
 

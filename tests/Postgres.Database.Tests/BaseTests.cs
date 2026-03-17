@@ -18,15 +18,19 @@ public abstract partial class BaseTests(PostgreContainerFixture fixture) : IAsyn
 
     protected PostgresDbContext Context { get; private set; } = null!;
 
+    protected ReadOnlyPostgresDbContext ReadOnlyContext { get; private set; } = null!;
+
     private Dictionary<string, string> ConnectionStringConfiguration => new()
     {
         { $"ConnectionStrings:{DatabaseConstants.ConnectionStringName}", $"{PostgreContainerFixture.ConnectionString}" },
+        { $"ConnectionStrings:{DatabaseConstants.ReadOnlyConnectionStringName}", $"{PostgreContainerFixture.ConnectionString}" },
         { "Deployment:Environment", "Dev" },
     };
 
     public async ValueTask DisposeAsync()
     {
         await Context.DisposeAsync();
+        await ReadOnlyContext.DisposeAsync();
         scope?.Dispose();
     }
 
@@ -44,5 +48,6 @@ public abstract partial class BaseTests(PostgreContainerFixture fixture) : IAsyn
 
         scope = app.Services.CreateScope();
         Context = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();
+        ReadOnlyContext = scope.ServiceProvider.GetRequiredService<ReadOnlyPostgresDbContext>();
     }
 }

@@ -30,3 +30,18 @@ internal class PostgresDbContextFactory : IDesignTimeDbContextFactory<PostgresDb
         return new PostgresDbContext(dbContextOptionsBuilder.Options);
     }
 }
+
+[ExcludeFromCodeCoverage]
+internal class ReadOnlyPostgresDbContextFactory : IDesignTimeDbContextFactory<ReadOnlyPostgresDbContext>
+{
+    private const string LocalBuild = "LocalBuild";
+
+    public ReadOnlyPostgresDbContext CreateDbContext(string[] args)
+    {
+        DbContextOptionsBuilder<ReadOnlyPostgresDbContext> dbContextOptionsBuilder =
+            new();
+
+        dbContextOptionsBuilder.UseNpgsql(LocalBuild);
+        return new ReadOnlyPostgresDbContext(dbContextOptionsBuilder.Options);
+    }
+}

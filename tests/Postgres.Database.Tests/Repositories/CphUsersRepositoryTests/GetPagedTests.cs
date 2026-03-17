@@ -20,7 +20,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     {
         // Arrange
         var logger = Substitute.For<ILogger<CphUsersRepository>>();
-        var repository = new CphUsersRepository(Context, logger);
+        var repository = new CphUsersRepository(Context, ReadOnlyContext, logger);
 
         var cphId = new Guid("4435a146-d0ac-4260-8a27-c550e0ed9563");
         const int pageNumber = 1;
@@ -72,7 +72,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     {
         // Arrange
         var logger = Substitute.For<ILogger<CphUsersRepository>>();
-        var repository = new CphUsersRepository(Context, logger);
+        var repository = new CphUsersRepository(Context, ReadOnlyContext, logger);
 
         var cphId = new Guid("4435a146-d0ac-4260-8a27-c550e0ed9563");
         const int pageNumber = 2;
@@ -114,7 +114,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     {
         // Arrange
         var logger = Substitute.For<ILogger<CphUsersRepository>>();
-        var repository = new CphUsersRepository(Context, logger);
+        var repository = new CphUsersRepository(Context, ReadOnlyContext, logger);
 
         var cphId = new Guid("4435a146-d0ac-4260-8a27-c550e0ed9563");
         const int pageNumber = 1;
@@ -166,7 +166,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     {
         // Arrange
         var logger = Substitute.For<ILogger<CphUsersRepository>>();
-        var repository = new CphUsersRepository(Context, logger);
+        var repository = new CphUsersRepository(Context, ReadOnlyContext, logger);
 
         var cphId = new Guid("4435a146-d0ac-4260-8a27-c550e0ed9563");
         const int pageNumber = 2;
@@ -208,7 +208,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     {
         // Arrange
         var logger = Substitute.For<ILogger<CphUsersRepository>>();
-        var repository = new CphUsersRepository(Context, logger);
+        var repository = new CphUsersRepository(Context, ReadOnlyContext, logger);
 
         var cphId = new Guid("204459b1-3a07-4e65-9122-91c1699e3d3f");
         const int pageNumber = 1;
@@ -260,7 +260,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     {
         // Arrange
         var logger = Substitute.For<ILogger<CphUsersRepository>>();
-        var repository = new CphUsersRepository(Context, logger);
+        var repository = new CphUsersRepository(Context, ReadOnlyContext, logger);
 
         var cphId = new Guid("204459b1-3a07-4e65-9122-91c1699e3d3f");
         const int pageNumber = 1;
