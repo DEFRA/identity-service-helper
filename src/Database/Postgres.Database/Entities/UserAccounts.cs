@@ -28,8 +28,6 @@ public class UserAccounts : BaseAuditEntity
 
     public ICollection<UserAccounts> CreatedUsers { get; set; } = new List<UserAccounts>();
 
-    public ICollection<Delegations> Delegations { get; set; } = new List<Delegations>();
-
     public ICollection<Applications> ApplicationsCreatedByUsers { get; set; } = new List<Applications>();
 
     public ICollection<Applications> ApplicationsDeletedByUsers { get; set; } = new List<Applications>();
@@ -44,11 +42,9 @@ public class UserAccounts : BaseAuditEntity
 
     public ICollection<ApplicationUserAccountHoldingAssignments> ApplicationUserAccountHoldingAssignmentsDeletedByUsers { get; set; } = new List<ApplicationUserAccountHoldingAssignments>();
 
-    public ICollection<DelegationsCountyParishHoldings> DelegationsCountyParishHoldingsCreatedByUsers { get; set; } = new List<DelegationsCountyParishHoldings>();
+    public ICollection<CountyParishHoldingDelegations> CountyParishHoldingDelegationsCreatedByUsers { get; set; } = new List<CountyParishHoldingDelegations>();
 
-    public ICollection<DelegationsCountyParishHoldings> DelegationsCountyParishHoldingsDeletedByUsers { get; set; } = new List<DelegationsCountyParishHoldings>();
+    public ICollection<CountyParishHoldingDelegations> CountyParishHoldingDelegationsDeletedByUsers { get; set; } = new List<CountyParishHoldingDelegations>();
 
-    public ICollection<DelegationInvitations> DelegationInvitationsCreatedByUsers { get; set; } = new List<DelegationInvitations>();
-
-    public ICollection<DelegationInvitations> DelegationInvitationsDeletedByUsers { get; set; } = new List<DelegationInvitations>();
+    public ICollection<CountyParishHoldingDelegations>? CountyParishHoldingDelegationsRevokedByUsers { get; set; } = new List<CountyParishHoldingDelegations>();
 }

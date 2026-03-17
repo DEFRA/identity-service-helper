@@ -23,32 +23,25 @@ public class GetTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         var repository = new DelegatesRepository(Context, ReadOnlyContext, logger);
 
         var adminUser = Context.UserAccounts.First();
-        var application = new Applications
+        var delegation = new CountyParishHoldingDelegations
         {
-            Name = "Delegates Test App",
-            ClientId = Guid.NewGuid(),
-            TenantName = "Test Tenant",
+            DelegatedUserId = adminUser.Id,
             CreatedById = adminUser.Id,
+            DelegatedUserEmail = AdminEmailAddress,
         };
-        await Context.Applications.AddAsync(application, TestContext.Current.CancellationToken);
-        await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
-
-        var delegation = new Delegations
-        {
-            ApplicationId = application.Id,
-            UserId = adminUser.Id,
-            CreatedById = adminUser.Id,
-        };
-        await Context.Delegations.AddAsync(delegation, TestContext.Current.CancellationToken);
+        await Context.CountyParishHoldingDelegations.AddAsync(delegation, TestContext.Current.CancellationToken);
         await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
-        var result = await repository.GetSingle(x => x.ApplicationId == application.Id && x.UserId == adminUser.Id, TestContext.Current.CancellationToken);
+        var result = await repository.GetSingle(
+            x => x.DelegatedUserId == adminUser.Id,
+            TestContext.Current.CancellationToken);
 
         // Assert
         result.ShouldNotBeNull();
-        result.ApplicationId.ShouldBe(application.Id);
-        result.UserId.ShouldBe(adminUser.Id);
+        result.DelegatedUserId.ShouldBe(adminUser.Id);
+        result.DelegatedUserId.ShouldBe(adminUser.Id);
+        result.DelegatedUserEmail.ShouldBe(AdminEmailAddress);
     }
 
     [Fact]
@@ -60,32 +53,30 @@ public class GetTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         var repository = new DelegatesRepository(Context, ReadOnlyContext, logger);
 
         var adminUser = Context.UserAccounts.First();
-        var application = new Applications
+        var delegations = new List<CountyParishHoldingDelegations>
         {
-            Name = "Delegates List Test App",
-            ClientId = Guid.NewGuid(),
-            TenantName = "Test Tenant",
-            CreatedById = adminUser.Id,
-        };
-        await Context.Applications.AddAsync(application, TestContext.Current.CancellationToken);
-        await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
-
-        var delegations = new List<Delegations>
-        {
-            new() { ApplicationId = application.Id, UserId = adminUser.Id, CreatedById = adminUser.Id },
+            new()
+            {
+                DelegatedUserId = adminUser.Id,
+                CreatedById = adminUser.Id,
+                DelegatedUserEmail = AdminEmailAddress,
+            },
         };
 
         // We need another user for another delegation to the same app, or another app for the same user
         var anotherUser = new UserAccounts { Id = Guid.NewGuid(), DisplayName = "Another User", EmailAddress = "another@test.com", CreatedById = adminUser.Id };
         await Context.UserAccounts.AddAsync(anotherUser, TestContext.Current.CancellationToken);
 
-        delegations.Add(new() { ApplicationId = application.Id, UserId = anotherUser.Id, CreatedById = adminUser.Id });
+        delegations.Add(new()
+        {
+            DelegatedUserId = DelegatedUserId, CreatedById = adminUser.Id, DelegatedUserEmail = DelegatedEmailAddress,
+        });
 
-        await Context.Delegations.AddRangeAsync(delegations, TestContext.Current.CancellationToken);
+        await Context.CountyParishHoldingDelegations.AddRangeAsync(delegations, TestContext.Current.CancellationToken);
         await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
-        var result = await repository.GetList(x => x.ApplicationId == application.Id, TestContext.Current.CancellationToken);
+        var result = await repository.GetList(x => x.CountyParishHolding.Identifier == "11/222/3333", TestContext.Current.CancellationToken);
 
         // Assert
         result.ShouldNotBeNull();

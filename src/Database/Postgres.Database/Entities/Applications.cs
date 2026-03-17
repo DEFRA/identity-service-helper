@@ -26,8 +26,6 @@ public class Applications : BaseAuditEntity
 
     public UserAccounts CreatedByUser { get; set; } = null!;
 
-    public ICollection<Delegations> Delegations { get; set; } = new List<Delegations>();
-
     public ICollection<ApplicationRoles> ApplicationRoles { get; set; } = new List<ApplicationRoles>();
 
     public ICollection<ApplicationUserAccountHoldingAssignments> ApplicationUserAccountHoldingAssignments { get; set; } = new List<ApplicationUserAccountHoldingAssignments>();

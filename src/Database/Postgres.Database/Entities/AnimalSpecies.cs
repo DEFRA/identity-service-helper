@@ -15,6 +15,4 @@ public class AnimalSpecies
     public required bool IsActive { get; set; }
 
     public ICollection<ApplicationUserAccountHoldingAssignments> ApplicationUserAccountHoldingAssignments { get; set; } = new List<ApplicationUserAccountHoldingAssignments>();
-
-    public ICollection<DelegationInvitations> DelegationInvitations { get; set; } = new List<DelegationInvitations>();
 }

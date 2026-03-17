@@ -44,11 +44,11 @@ public class CreateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         await Context.Applications.AddAsync(application, TestContext.Current.CancellationToken);
         await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
-        var newDelegation = new Delegations
+        var newDelegation = new CountyParishHoldingDelegations
         {
-            ApplicationId = application.Id,
-            UserId = adminUser.Id,
+            DelegatingUserId = adminUser.Id,
             CreatedById = adminUser.Id,
+            DelegatedUserEmail = AdminEmailAddress,
         };
 
         // Act
@@ -56,9 +56,9 @@ public class CreateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 
         // Assert
         createdDelegation.ShouldSatisfyAllConditions(
-            x => x.ApplicationId.ShouldBe(application.Id),
-            x => x.UserId.ShouldBe(adminUser.Id),
-            x => x.CreatedById.ShouldBe(adminUser.Id));
+            x => x.DelegatingUserId.ShouldBe(adminUser.Id),
+            x => x.CreatedById.ShouldBe(adminUser.Id),
+            x => x.DelegatedUserEmail.ShouldBe(AdminEmailAddress));
 
         logger.ReceivedWithAnyArgs().Log(
             LogLevel.Information,

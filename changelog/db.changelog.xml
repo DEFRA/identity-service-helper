@@ -11,6 +11,9 @@
     <include file="schema/02/seed_animal_species.postgresql.sql" />
     <include file="schema/02/validate_animal_species.postgresql.sql" />
     <include file="schema/03/add_application_columns.sql" />
+    <include file="schema/03/pre_add_delegation.postgresql.postgresql.sql" />
+    <include file="schema/03/add_delegation.postgresql.postgresql.sql" />
+
     <!-- must be last -->
     <include file="schema/testcontainer.postgresql.sql" />
 </databaseChangeLog>
