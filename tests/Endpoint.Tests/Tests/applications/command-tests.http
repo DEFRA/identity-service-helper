@@ -36,7 +36,7 @@ X-Operator-Id: {{Operator-Id}}
 
 {
   "name": "App_{{$random.alphanumeric(8)}}",
-  "client_id": "{{$random.internet.uuid}}",
+  "id": "{{$random.internet.uuid}}",
   "tenant_name": "Tenant_{{$random.alphanumeric(5)}}",
   "description": "Description_{{$random.alphanumeric(20)}}",
    "scopes": ["scope1", "scope2"],
@@ -55,10 +55,9 @@ X-Operator-Id: {{Operator-Id}}
 
 {
   "name": "UpdatedApp_{{$random.alphanumeric(8)}}",
-  "client_id": "{{$random.internet.uuid}}",
   "tenant_name": "UpdatedTenant",
   "description": "Updated Description",
-   "scopes": ["scope1", "scope2"],
+  "scopes": ["scope1", "scope2"],
   "secret": "{{$random.alphabetic(16)}}",
   "redirect_uris" :["https://localhost1.com", "https://localhost2.com", "https://localhost3.com"]
 }
