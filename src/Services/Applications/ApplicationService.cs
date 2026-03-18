@@ -33,9 +33,8 @@ public class ApplicationService : IApplicationService
 
         var applications = applicationEntities.Select(app => new Application()
         {
-            Id = app.Id,
+            Id = app.ClientId,
             Name = app.Name,
-            ClientId = app.ClientId,
             TenantName = app.TenantName,
             Description = app.Description,
             Scopes = app.Scopes.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
@@ -48,7 +47,7 @@ public class ApplicationService : IApplicationService
     public async Task<Application> Get(GetApplicationById request, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Getting application by id {Id}", request.Id);
-        Expression<Func<Applications, bool>> filter = x => x.Id == request.Id;
+        Expression<Func<Applications, bool>> filter = x => x.ClientId == request.Id;
 
         var application = await repository.GetSingle(filter, cancellationToken);
 
@@ -60,9 +59,8 @@ public class ApplicationService : IApplicationService
 
         return new Application()
         {
-            Id = application.Id,
+            Id = application.ClientId,
             Name = application.Name,
-            ClientId = application.ClientId,
             TenantName = application.TenantName,
             Description = application.Description,
             Scopes = application.Scopes.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
@@ -73,7 +71,7 @@ public class ApplicationService : IApplicationService
     public async Task<Application> Update(UpdateApplication application, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Updating application with id {Id}", application.Id);
-        var existingApplication = await repository.GetSingle(x => x.Id.Equals(application.Id), cancellationToken);
+        var existingApplication = await repository.GetSingle(x => x.ClientId.Equals(application.Id), cancellationToken);
 
         if (existingApplication == null)
         {
@@ -82,7 +80,6 @@ public class ApplicationService : IApplicationService
         }
 
         existingApplication.Name = application.Name;
-        existingApplication.ClientId = application.ClientId;
         existingApplication.TenantName = application.TenantName;
         existingApplication.Description = application.Description;
         existingApplication.Scopes = string.Join(Separator, application.Scopes);
@@ -93,9 +90,8 @@ public class ApplicationService : IApplicationService
 
         return new Application
         {
-            Id = updated.Id,
+            Id = updated.ClientId,
             Name = updated.Name,
-            ClientId = updated.ClientId,
             TenantName = updated.TenantName,
             Description = updated.Description,
             Scopes = updated.Scopes.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
@@ -110,7 +106,7 @@ public class ApplicationService : IApplicationService
         var newApplication = new Applications
         {
             Name = application.Name,
-            ClientId = application.ClientId,
+            ClientId = application.Id,
             TenantName = application.TenantName,
             Description = application.Description,
             CreatedById = application.OperatorId,
@@ -120,11 +116,10 @@ public class ApplicationService : IApplicationService
         };
 
         var createdApplication = await repository.Create(newApplication, cancellationToken);
-        return new Application()
+        return new Application
         {
-            Id = createdApplication.Id,
+            Id = createdApplication.ClientId,
             Name = createdApplication.Name,
-            ClientId = createdApplication.ClientId,
             TenantName = createdApplication.TenantName,
             Description = createdApplication.Description,
             Scopes = createdApplication.Scopes.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
@@ -135,6 +130,6 @@ public class ApplicationService : IApplicationService
     public async Task<bool> Delete(Guid id, Guid operatorId, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Deleting application with id {Id} by operator {OperatorId}", id, operatorId);
-        return await repository.Delete(x => x.Id == id, operatorId, cancellationToken);
+        return await repository.Delete(x => x.ClientId.Equals(id), operatorId, cancellationToken);
     }
 }

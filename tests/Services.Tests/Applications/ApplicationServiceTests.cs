@@ -96,7 +96,7 @@ public class ApplicationServiceTests
 
         // Assert
         result.ShouldNotBeNull();
-        result.Id.ShouldBe(appId);
+        result.Id.ShouldBe(applicationEntity.ClientId);
         result.Name.ShouldBe("Test App");
         result.Scopes.ShouldBe(["scope1", "scope2"]);
         result.RedirectUri.ShouldBe(["https://callback"]);
@@ -123,8 +123,8 @@ public class ApplicationServiceTests
         // Arrange
         var request = new CreateApplication
         {
+            Id = Guid.NewGuid(),
             Name = "New App",
-            ClientId = Guid.NewGuid(),
             TenantName = "New Tenant",
             Description = "New Description",
             OperatorId = Guid.NewGuid(),
@@ -135,9 +135,9 @@ public class ApplicationServiceTests
 
         var createdEntity = new Applications
         {
-            Id = Guid.NewGuid(),
+            Id = request.Id,
             Name = request.Name,
-            ClientId = request.ClientId,
+            ClientId = request.Id,
             TenantName = request.TenantName,
             Description = request.Description,
             Scopes = "scope1;scope2",
@@ -174,7 +174,6 @@ public class ApplicationServiceTests
         {
             Id = appId,
             Name = "Updated App",
-            ClientId = Guid.NewGuid(),
             TenantName = "Updated Tenant",
             Description = "Updated Description",
             Scopes = ["scope1", "scope2"],

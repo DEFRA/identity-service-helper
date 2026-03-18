@@ -6,9 +6,9 @@ namespace Defra.Identity.Requests.Applications;
 
 public abstract class Application
 {
-    public string Name { get; set; } = string.Empty;
+    public Guid Id { get; set; } = Guid.Empty;
 
-    public Guid ClientId { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     public string TenantName { get; set; } = string.Empty;
 
