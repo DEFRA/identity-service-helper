@@ -96,7 +96,7 @@ public class ApplicationServiceTests
 
         // Assert
         result.ShouldNotBeNull();
-        result.Id.ShouldBe(appId);
+        result.Id.ShouldBe(applicationEntity.ClientId);
         result.Name.ShouldBe("Test App");
         result.Scopes.ShouldBe(["scope1", "scope2"]);
         result.RedirectUri.ShouldBe(["https://callback"]);
