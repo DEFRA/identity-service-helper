@@ -37,6 +37,7 @@ public class ApplicationService : IApplicationService
             Name = app.Name,
             TenantName = app.TenantName,
             Description = app.Description,
+            Secret = app.Secret,
             Scopes = app.Scopes.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
             RedirectUri = app.RedirectUris.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
         }).ToList();
@@ -62,6 +63,7 @@ public class ApplicationService : IApplicationService
             Id = application.ClientId,
             Name = application.Name,
             TenantName = application.TenantName,
+            Secret = application.Secret,
             Description = application.Description,
             Scopes = application.Scopes.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
             RedirectUri = application.RedirectUris.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
@@ -94,6 +96,7 @@ public class ApplicationService : IApplicationService
             Name = updated.Name,
             TenantName = updated.TenantName,
             Description = updated.Description,
+            Secret = updated.Secret,
             Scopes = updated.Scopes.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
             RedirectUri = updated.RedirectUris.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
         };
