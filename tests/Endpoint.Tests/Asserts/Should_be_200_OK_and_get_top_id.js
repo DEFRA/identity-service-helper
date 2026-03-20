@@ -24,7 +24,7 @@ client.test("Extract top item id", function () {
 
     // Store for the next request:
     client.global.set("id", String(top.id));
-    client.global.set("Operator-Id", top.id);
+    client.global.set("operator-id", top.id);
 });
 
 

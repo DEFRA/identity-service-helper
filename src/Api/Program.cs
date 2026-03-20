@@ -9,6 +9,7 @@ using System.Text.Json;
 using Defra.Identity.Api.Endpoints.Applications;
 using Defra.Identity.Api.Endpoints.Cphs;
 using Defra.Identity.Api.Endpoints.Delegations;
+using Defra.Identity.Api.Endpoints.Health;
 using Defra.Identity.Api.Endpoints.Species;
 using Defra.Identity.Api.Endpoints.Users;
 using Defra.Identity.Api.Exceptions;
@@ -21,6 +22,7 @@ using Defra.Identity.Requests;
 using Defra.Identity.Scheduling;
 using Defra.Identity.Services;
 using FluentValidation;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
 
 public class Program
@@ -115,7 +117,8 @@ public class Program
         app.UseExceptionHandler();
         app.UseRouting();
         app.UseRequests();
-        app.MapHealthChecks("/healthz");
+
+        app.UseHealthEndpoints();
         app.UseUsersEndpoints();
         app.UseApplicationEndpoints();
         app.UseDelegationEndpoints();

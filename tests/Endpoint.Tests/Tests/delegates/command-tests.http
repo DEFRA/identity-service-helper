@@ -1,29 +1,32 @@
+### Reset the local database
+< ../../Asserts/data-scaffold.js
+GET {{host}}/health
 
 ### GET request to delegations to get top user 
 GET {{host}}/users
-X-Correlation-ID: {{Correlation-ID}}
+x-correlation-id: {{correlation-id}}
 x-api-key: {{api-key}}
-X-Operator-Id: {{Operator-Id}}
+x-operator-id: {{operator-id}}
 
 > ../../Asserts/Should_be_200_OK_and_get_top_id.js
 
 ### GET request to applications to get top user 
 GET {{host}}/applications
-X-Correlation-ID: {{Correlation-ID}}
+x-correlation-id: {{correlation-id}}
 x-api-key: {{api-key}}
-X-Operator-Id: {{Operator-Id}}
+x-operator-id: {{operator-id}}
 
 > ../../Asserts/Should_be_ok_and_get_top_application_id.js
 
 ### Create new Delegation
 POST {{host}}/delegations
 Content-Type:application/json
-X-Correlation-ID: {{Correlation-ID}}
+x-correlation-id: {{correlation-id}}
 x-api-key: {{api-key}}
-X-Operator-Id: {{Operator-Id}}
+x-operator-id: {{operator-id}}
 
 {
-  "application_id": {{Application-Id}},
+  "application_id": {{application-id}},
   "user_id": {{id}}
 }
 
@@ -32,12 +35,12 @@ X-Operator-Id: {{Operator-Id}}
 ### Create new Delegation
 POST {{host}}/delegations
 Content-Type: application/json
-X-Correlation-ID: {{Correlation-ID}}
+x-correlation-id: {{correlation-id}}
 x-api-key: {{api-key}}
-X-Operator-Id: {{Operator-Id}}
+x-operator-id: {{operator-id}}
 
 {
-  "application_id": "{{Application-Id}}",
+  "application_id": "{{application-id}}",
   "user_id": "{{id}}"
 }
 
@@ -46,9 +49,9 @@ X-Operator-Id: {{Operator-Id}}
 ### PUT request to update an existing Delegation
 PUT {{host}}/delegations/{{id}}
 Content-Type:application/json
-X-Correlation-ID: {{Correlation-ID}}
+x-correlation-id: {{correlation-id}}
 x-api-key: {{api-key}}
-X-Operator-Id: {{Operator-Id}}
+x-operator-id: {{operator-id}}
 
 {
   "name": "UpdatedApp_{{$random.alphanumeric(8)}}",
@@ -63,9 +66,9 @@ X-Operator-Id: {{Operator-Id}}
 ### DELETE the Delegation 
 DELETE {{host}}/delegations/{{id}}
 Content-Type:application/json
-X-Correlation-ID: {{Correlation-ID}}
+x-correlation-id: {{correlation-id}}
 x-api-key: {{api-key}}
-X-Operator-Id: {{Operator-Id}}
+x-operator-id: {{operator-id}}
 
 
 > ../../Asserts/Should_be_204_no_content.js

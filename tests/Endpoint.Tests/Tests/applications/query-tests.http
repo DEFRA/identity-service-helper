@@ -1,6 +1,11 @@
+### Reset the local database
+< ../../Asserts/data-scaffold.js
+GET {{host}}/health
+
+
 ### GET request to applications (Defaults to all applications)
 GET {{host}}/applications
-X-Correlation-ID: {{Correlation-ID}}
+x-correlation-id: {{correlation-id}}
 x-api-key: {{api-key}}
 
 
@@ -8,7 +13,7 @@ x-api-key: {{api-key}}
 
 ### Get application By Id
 GET {{host}}/applications/{{id}}
-X-Correlation-ID: {{Correlation-ID}}
+x-correlation-id: {{correlation-id}}
 x-api-key: {{api-key}}
 
 
@@ -16,7 +21,7 @@ x-api-key: {{api-key}}
 
 ### Should return 404 application does not exist
 GET {{host}}/applications/{{$random.internet.uuid}}
-X-Correlation-ID: {{Correlation-ID}}
+x-correlation-id: {{correlation-id}}
 x-api-key: {{api-key}}
 
 

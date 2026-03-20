@@ -1,4 +1,4 @@
-// <copyright file="CorrellationIdMiddlewareTests.cs" company="Defra">
+// <copyright file="CorrelationIdMiddlewareTests.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
@@ -12,7 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 
-public class CorrellationIdMiddlewareTests
+public class CorrelationIdMiddlewareTests
 {
     [Fact]
     public void AddRequests_RegistersMiddleware_CanBeResolved()
@@ -32,7 +32,7 @@ public class CorrellationIdMiddlewareTests
         var serviceProvider = services.BuildServiceProvider();
 
         // Assert
-        var middleware = serviceProvider.GetService<CorrellationIdMiddleware>();
+        var middleware = serviceProvider.GetService<CorrelationIdMiddleware>();
         middleware.ShouldNotBeNull();
     }
 
@@ -52,7 +52,7 @@ public class CorrellationIdMiddlewareTests
     public async Task InvokeAsync_WithCorrelationIdHeader_CallsNext()
     {
         // Arrange
-        var middleware = new CorrellationIdMiddleware(Substitute.For<ILogger<CorrellationIdMiddleware>>());
+        var middleware = new CorrelationIdMiddleware(Substitute.For<ILogger<CorrelationIdMiddleware>>());
         var context = new DefaultHttpContext();
         context.Request.Headers[RequestHeaderNames.CorrelationId] = "test-correlation-id";
 
@@ -75,7 +75,7 @@ public class CorrellationIdMiddlewareTests
     public async Task InvokeAsync_MissingCorrelationIdHeader_ReturnsBadRequest()
     {
         // Arrange
-        var middleware = new CorrellationIdMiddleware(Substitute.For<ILogger<CorrellationIdMiddleware>>());
+        var middleware = new CorrelationIdMiddleware(Substitute.For<ILogger<CorrelationIdMiddleware>>());
         var context = new DefaultHttpContext();
         context.Response.Body = new MemoryStream();
 
@@ -105,7 +105,7 @@ public class CorrellationIdMiddlewareTests
     public async Task InvokeAsync_WhitespaceCorrelationIdHeader_ReturnsBadRequest()
     {
         // Arrange
-        var middleware = new CorrellationIdMiddleware(Substitute.For<ILogger<CorrellationIdMiddleware>>());
+        var middleware = new CorrelationIdMiddleware(Substitute.For<ILogger<CorrelationIdMiddleware>>());
         var context = new DefaultHttpContext();
         context.Request.Headers[RequestHeaderNames.CorrelationId] = "   ";
         context.Response.Body = new MemoryStream();
@@ -136,8 +136,8 @@ public class CorrellationIdMiddlewareTests
     public async Task InvokeAsync_WhenExceptionThrown_LogsErrorAndReThrows()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<CorrellationIdMiddleware>>();
-        var middleware = new CorrellationIdMiddleware(logger);
+        var logger = Substitute.For<ILogger<CorrelationIdMiddleware>>();
+        var middleware = new CorrelationIdMiddleware(logger);
         var context = new DefaultHttpContext();
         context.Request.Headers[RequestHeaderNames.CorrelationId] = "test-correlation-id";
         var exception = new Exception("Test exception");
