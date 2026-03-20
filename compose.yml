@@ -45,7 +45,7 @@ services:
       - postgres-data:/data
     restart: always
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres -d identity_service_helper" ]
+      test: [ "CMD-SHELL", "pg_isready -U identity_service_helper_ddl -d identity_service_helper" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -60,7 +60,7 @@ services:
     volumes:
       - ./changelog:/liquibase/changelog
     command: >
-      "/liquibase/liquibase lpm add postgresql && 
+      "/liquibase/liquibase lpm add postgresql || true &&
       /liquibase/liquibase --url=jdbc:postgresql://postgres:5432/identity_service_helper --username=identity_service_helper_ddl --password=postgres --searchPath=/liquibase/changelog --changeLogFile=db.changelog.xml --liquibaseSchemaName=public update"
     networks:
       - cdp-tenant
@@ -83,8 +83,10 @@ services:
       - 'compose/aws.env'
     environment:
       PORT: 8080
+      ASPNETCORE_ENVIRONMENT: Development
       LOCALSTACK_ENDPOINT: http://localstack:4566
       POSTGRES_URI: http://localhost:5432
+      ConnectionStrings__PostgresConnection: "User ID=identity_service_helper_ddl;Password=postgres;Host=postgres;Database=identity_service_helper;"
     networks:
       - cdp-tenant
 

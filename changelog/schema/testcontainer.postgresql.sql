@@ -71,7 +71,8 @@ insert into county_parish_holdings (id, identifier, created_at, created_by_id, e
 
 insert into applications (id, name, client_id, tenant_name, description, created_at, created_by_id, scopes, secret , redirect_uris) values
     ('112788f5-4cb5-4acc-a3f5-d8b2b0e20945', 'Test Livestock Service 1', 'df9ab2b8-1f01-4eda-bbdf-13814d91ebb6', 'Test Tenant 1', 'Test Description 1', '2026-03-01 00:00:00.000000 +00:00', ADMIN_USER_ID, 'scope1;scope2', 'secret123', 'https://localhost:5001/signin-oidc;https://localhost:5001/signout-callback-oidc'),
-    ('5466ef9b-aa6b-4b7d-9aac-6c6e55a66ab9', 'Test Livestock Service 2', '543ebe7b-e4cd-4969-9cba-ca8223b0b3c4', 'Test Tenant 2', 'Test Description 2', '2026-03-02 00:00:00.000000 +00:00', ADMIN_USER_ID, 'scope1;scope2','secret123', 'https://localhost:5001/signin-oidc;https://localhost:5001/signout-callback-oidc');
+    ('5466ef9b-aa6b-4b7d-9aac-6c6e55a66ab9', 'Test Livestock Service 2', '543ebe7b-e4cd-4969-9cba-ca8223b0b3c4', 'Test Tenant 2', 'Test Description 2', '2026-03-02 00:00:00.000000 +00:00', ADMIN_USER_ID, 'scope1;scope2', 'secret123', 'https://localhost:5001/signin-oidc;https://localhost:5001/signout-callback-oidc'),
+    ('de961c53-eb4f-4c99-9166-baf7c2776ad0', 'Local Dev Client', 'a3d4e5f6-7890-4b1c-a2d3-e4f567890abc', 'Local Tenant', 'Local development client', '2026-03-18 00:00:00.000000 +00:00', ADMIN_USER_ID, 'openid;profile;email', 'secret123', 'https://localhost:3005/callback');
 
 insert into application_roles (application_id, role_id) values
     ('112788f5-4cb5-4acc-a3f5-d8b2b0e20945', '0c15ba2f-b4ba-406a-a0ae-213de64600a9'),
