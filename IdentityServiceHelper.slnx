@@ -3,6 +3,7 @@
     <Project Path="src/Api/Api.csproj" />
   </Folder>
   <Folder Name="/src/Database/">
+    <Project Path="src/Database/DataSeeder/DataSeeder.csproj" />
     <Project Path="src/Database/Postgres.Database/Postgres.Database.csproj" />
   </Folder>
   <Folder Name="/src/Integrations/" />
