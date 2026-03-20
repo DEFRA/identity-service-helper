@@ -10,20 +10,23 @@ using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Exceptions;
 using Microsoft.Extensions.Logging;
 
-public class UsersRepository(PostgresDbContext context, ILogger<UsersRepository> logger)
+public class UsersRepository(
+    PostgresDbContext context,
+    ReadOnlyPostgresDbContext readOnlyContext,
+    ILogger<UsersRepository> logger)
     : IUsersRepository
 {
     public async Task<List<UserAccounts>> GetAll()
     {
         logger.LogInformation("Getting all user accounts");
-        var query = context.UserAccounts.AsQueryable();
+        var query = readOnlyContext.UserAccounts.AsQueryable();
         return await query.ToListAsync();
     }
 
     public async Task<UserAccounts?> GetSingle(Expression<Func<UserAccounts, bool>> predicate, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Getting single user account");
-        var query = await context.UserAccounts
+        var query = await readOnlyContext.UserAccounts
             .SingleOrDefaultAsync(predicate, cancellationToken);
 
         return query;
@@ -32,7 +35,7 @@ public class UsersRepository(PostgresDbContext context, ILogger<UsersRepository>
     public async Task<List<UserAccounts>> GetList(Expression<Func<UserAccounts, bool>> predicate, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Getting list of user accounts");
-        var query = await context.UserAccounts
+        var query = await readOnlyContext.UserAccounts
             .Where(predicate).ToListAsync<UserAccounts>(cancellationToken);
 
         return query;

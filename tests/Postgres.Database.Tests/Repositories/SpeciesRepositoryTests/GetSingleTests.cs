@@ -21,7 +21,7 @@ public class GetSingleTests(PostgreContainerFixture fixture) : BaseTests(fixture
     {
         // Arrange
         var logger = Substitute.For<ILogger<AnimalSpeciesRepository>>();
-        var repository = new AnimalSpeciesRepository(Context, logger);
+        var repository = new AnimalSpeciesRepository(Context, ReadOnlyContext, logger);
 
         Expression<Func<AnimalSpecies, bool>> filter = species => species.Id == "CTT";
 
@@ -44,7 +44,7 @@ public class GetSingleTests(PostgreContainerFixture fixture) : BaseTests(fixture
     {
         // Arrange
         var logger = Substitute.For<ILogger<AnimalSpeciesRepository>>();
-        var repository = new AnimalSpeciesRepository(Context, logger);
+        var repository = new AnimalSpeciesRepository(Context, ReadOnlyContext, logger);
 
         var noneExistingSpecoesId = "FAKE";
 

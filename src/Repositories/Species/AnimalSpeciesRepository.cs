@@ -9,14 +9,17 @@ using Defra.Identity.Postgres.Database;
 using Defra.Identity.Postgres.Database.Entities;
 using Microsoft.Extensions.Logging;
 
-public class AnimalSpeciesRepository(PostgresDbContext context, ILogger<AnimalSpeciesRepository> logger)
+public class AnimalSpeciesRepository(
+    PostgresDbContext context,
+    ReadOnlyPostgresDbContext readOnlyContext,
+    ILogger<AnimalSpeciesRepository> logger)
     : IAnimalSpeciesRepository
 {
     public async Task<AnimalSpecies?> GetSingle(Expression<Func<AnimalSpecies, bool>> predicate,
         CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Getting single animal species");
-        var query = await context.AnimalSpecies
+        var query = await readOnlyContext.AnimalSpecies
             .SingleOrDefaultAsync(predicate, cancellationToken);
 
         return query;
@@ -26,7 +29,7 @@ public class AnimalSpeciesRepository(PostgresDbContext context, ILogger<AnimalSp
         CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Getting list of animal species");
-        var query = await context.AnimalSpecies
+        var query = await readOnlyContext.AnimalSpecies
             .Where(predicate)
             .ToListAsync(cancellationToken);
 

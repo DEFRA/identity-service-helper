@@ -9,12 +9,15 @@ using Defra.Identity.Postgres.Database;
 using Defra.Identity.Postgres.Database.Entities;
 using Microsoft.Extensions.Logging;
 
-public class ApplicationsRepository(PostgresDbContext context, ILogger<ApplicationsRepository> logger) : IApplicationsRepository
+public class ApplicationsRepository(
+    PostgresDbContext context,
+    ReadOnlyPostgresDbContext readOnlyContext,
+    ILogger<ApplicationsRepository> logger) : IApplicationsRepository
 {
     public async Task<Applications?> GetSingle(Expression<Func<Applications, bool>> predicate, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Getting single application");
-        var query = await context.Applications
+        var query = await readOnlyContext.Applications
             .SingleOrDefaultAsync(predicate, cancellationToken);
 
         return query;
@@ -23,7 +26,7 @@ public class ApplicationsRepository(PostgresDbContext context, ILogger<Applicati
     public async Task<List<Applications>> GetList(Expression<Func<Applications, bool>> predicate, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Getting list of applications");
-        var query = await context.Applications
+        var query = await readOnlyContext.Applications
             .Where(predicate).ToListAsync<Applications>(cancellationToken);
 
         return query;

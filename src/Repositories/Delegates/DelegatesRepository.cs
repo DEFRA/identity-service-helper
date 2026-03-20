@@ -10,12 +10,15 @@ using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Exceptions;
 using Microsoft.Extensions.Logging;
 
-public class DelegatesRepository(PostgresDbContext context, ILogger<DelegatesRepository> logger) : IDelegatesRepository
+public class DelegatesRepository(
+    PostgresDbContext context,
+    ReadOnlyPostgresDbContext readOnlyContext,
+    ILogger<DelegatesRepository> logger) : IDelegatesRepository
 {
     public async Task<Delegations?> GetSingle(Expression<Func<Delegations, bool>> predicate, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Getting single delegation");
-        var query = await context.Delegations
+        var query = await readOnlyContext.Delegations
             .SingleOrDefaultAsync(predicate, cancellationToken);
 
         return query;
@@ -24,7 +27,7 @@ public class DelegatesRepository(PostgresDbContext context, ILogger<DelegatesRep
     public async Task<List<Delegations>> GetList(Expression<Func<Delegations, bool>> predicate, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Getting list of delegations");
-        var query = await context.Delegations
+        var query = await readOnlyContext.Delegations
             .Where(predicate).ToListAsync<Delegations>(cancellationToken);
 
         return query;

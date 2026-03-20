@@ -20,7 +20,7 @@ public class ToggleTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     {
         // Arrange
         var logger = Substitute.For<ILogger<AnimalSpeciesRepository>>();
-        var repository = new AnimalSpeciesRepository(Context, logger);
+        var repository = new AnimalSpeciesRepository(Context, ReadOnlyContext, logger);
         const string id = "CTT";
 
         var speciesToUpdate = await repository.GetSingle(x => x.Id == id, TestContext.Current.CancellationToken);
@@ -50,7 +50,7 @@ public class ToggleTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     {
         // Arrange
         var logger = Substitute.For<ILogger<AnimalSpeciesRepository>>();
-        var repository = new AnimalSpeciesRepository(Context, logger);
+        var repository = new AnimalSpeciesRepository(Context, ReadOnlyContext, logger);
         const string id = "FAKE";
 
         var speciesToUpdate = new AnimalSpecies() { Id = id, Name = "Not Real", IsActive = false, };

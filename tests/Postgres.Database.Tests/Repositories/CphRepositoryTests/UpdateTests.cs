@@ -19,7 +19,7 @@ public class UpdateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     {
         // Arrange
         var logger = Substitute.For<ILogger<CphRepository>>();
-        var repository = new CphRepository(Context, logger);
+        var repository = new CphRepository(Context, ReadOnlyContext, logger);
         var id = Guid.NewGuid();
         const string identifier = "44/001/0001";
         var createAtDate = DateTime.Parse("2026-02-20").ToUniversalTime();
@@ -32,6 +32,7 @@ public class UpdateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 
         await Context.CountyParishHoldings.AddAsync(newEntity, TestContext.Current.CancellationToken);
         await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
+        Context.ChangeTracker.Clear();
 
         var entityToUpdate = await repository.GetSingle(x => x.Identifier == identifier, TestContext.Current.CancellationToken);
 

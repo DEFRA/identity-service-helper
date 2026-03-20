@@ -20,7 +20,7 @@ public class GetAllTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     {
         // Arrange
         var logger = Substitute.For<ILogger<AnimalSpeciesRepository>>();
-        var repository = new AnimalSpeciesRepository(Context, logger);
+        var repository = new AnimalSpeciesRepository(Context, ReadOnlyContext, logger);
 
         Expression<Func<AnimalSpecies, bool>> filter = species => species.IsActive;
 
@@ -44,7 +44,7 @@ public class GetAllTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     {
         // Arrange
         var logger = Substitute.For<ILogger<AnimalSpeciesRepository>>();
-        var repository = new AnimalSpeciesRepository(Context, logger);
+        var repository = new AnimalSpeciesRepository(Context, ReadOnlyContext, logger);
 
         Expression<Func<AnimalSpecies, bool>> filter = species => true;
 

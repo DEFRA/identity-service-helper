@@ -20,7 +20,7 @@ public class UpdateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     {
         // Arrange
         var logger = Substitute.For<ILogger<ApplicationsRepository>>();
-        var repository = new ApplicationsRepository(Context, logger);
+        var repository = new ApplicationsRepository(Context, ReadOnlyContext, logger);
 
         var adminUser = Context.UserAccounts.First();
 

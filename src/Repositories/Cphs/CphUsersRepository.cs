@@ -11,7 +11,10 @@ using Defra.Identity.Repositories.Common;
 using Defra.Identity.Repositories.Exceptions;
 using Microsoft.Extensions.Logging;
 
-public class CphUsersRepository(PostgresDbContext context, ILogger<CphUsersRepository> logger) : ICphUsersRepository
+public class CphUsersRepository(
+    PostgresDbContext context,
+    ReadOnlyPostgresDbContext readOnlyContext,
+    ILogger<CphUsersRepository> logger) : ICphUsersRepository
 {
     public async Task<PagedEntities<ApplicationUserAccountHoldingAssignments>> GetPaged<TOrderBy>(
         Expression<Func<CountyParishHoldings, bool>> primaryPredicate,
@@ -24,7 +27,7 @@ public class CphUsersRepository(PostgresDbContext context, ILogger<CphUsersRepos
     {
         logger.LogInformation("Getting list of users for county parish holding");
 
-        var primaryEntity = await context.CountyParishHoldings
+        var primaryEntity = await readOnlyContext.CountyParishHoldings
             .FirstOrDefaultAsync(primaryPredicate, cancellationToken);
 
         if (primaryEntity == null)
@@ -32,7 +35,7 @@ public class CphUsersRepository(PostgresDbContext context, ILogger<CphUsersRepos
             throw new NotFoundException("County parish holding not found.");
         }
 
-        var pagedResult = await context
+        var pagedResult = await readOnlyContext
             .Entry(primaryEntity)
             .Collection(p => p.ApplicationUserAccountHoldingAssignments)
             .Query()
