@@ -1,18 +1,21 @@
+### Reset the local database
+< ../../Asserts/data-scaffold.js
+GET {{host}}/health
 
 ### GET request to applications to get top user 
 GET {{host}}/users
-X-Correlation-ID: {{Correlation-ID}}
+x-correlation-id: {{correlation-id}}
 x-api-key: {{api-key}}
-X-Operator-Id: {{Operator-Id}}
+x-operator-id: {{operator-id}}
 
 > ../../Asserts/Should_be_200_OK_and_get_top_id.js
 
 ### Create new Application should fail validation error missing name
 POST {{host}}/applications
 Content-Type: application/json
-X-Correlation-ID: {{Correlation-ID}}
+x-correlation-id: {{correlation-id}}
 x-api-key: {{api-key}}
-X-Operator-Id: {{Operator-Id}}
+x-operator-id: {{operator-id}}
 
 {
   "name": "",
@@ -30,9 +33,9 @@ X-Operator-Id: {{Operator-Id}}
 ### Create new Application
 POST {{host}}/applications
 Content-Type: application/json
-X-Correlation-ID: {{Correlation-ID}}
+x-correlation-id: {{correlation-id}}
 x-api-key: {{api-key}}
-X-Operator-Id: {{Operator-Id}}
+x-operator-id: {{operator-id}}
 
 {
   "name": "App_{{$random.alphanumeric(8)}}",
@@ -49,9 +52,9 @@ X-Operator-Id: {{Operator-Id}}
 ### PUT request to update an existing application
 PUT {{host}}/applications/{{id}}
 Content-Type: application/json
-X-Correlation-ID: {{Correlation-ID}}
+x-correlation-id: {{correlation-id}}
 x-api-key: {{api-key}}
-X-Operator-Id: {{Operator-Id}}
+x-operator-id: {{operator-id}}
 
 {
   "name": "UpdatedApp_{{$random.alphanumeric(8)}}",
@@ -68,9 +71,9 @@ X-Operator-Id: {{Operator-Id}}
 ### DELETE the application 
 DELETE {{host}}/applications/{{id}}
 Content-Type: application/json
-X-Correlation-ID: {{Correlation-ID}}
+x-correlation-id: {{correlation-id}}
 x-api-key: {{api-key}}
-X-Operator-Id: {{Operator-Id}}
+x-operator-id: {{operator-id}}
 
 
 > ../../Asserts/Should_be_204_no_content.js

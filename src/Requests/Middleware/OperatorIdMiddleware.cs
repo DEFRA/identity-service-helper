@@ -12,13 +12,18 @@ public class OperatorIdMiddleware(ILogger<OperatorIdMiddleware> logger) : JsonEr
 {
     public override async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
+        // check if this maps to an endpoint. If not, just call the next middleware.
+        var endpoint = context.GetEndpoint();
+        if (endpoint == null)
+        {
+            await next(context);
+            return;
+        }
+
         try
         {
-            var endpoint = context.GetEndpoint();
-
             // Minimal APIs won't have ControllerActionDescriptor metadata we use an explicit endpoint marker instead.
-            var requiresOperatorId =
-                endpoint?.Metadata.GetMetadata<RequiresOperatorId>() is not null;
+            var requiresOperatorId = endpoint.Metadata.GetMetadata<RequiresOperatorId>() is not null;
             if (requiresOperatorId)
             {
                 var headers = context.Request.Headers;

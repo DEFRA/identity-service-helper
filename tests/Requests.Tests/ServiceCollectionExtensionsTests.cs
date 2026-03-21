@@ -33,7 +33,7 @@ public class ServiceCollectionExtensionsTests
         // Assert
         Defra.Identity.Requests.ServiceCollectionExtensions.ApiKey.ShouldBe("test-api-key");
         serviceProvider.GetService<ApiKeyValidationMiddleware>().ShouldNotBeNull();
-        serviceProvider.GetService<CorrellationIdMiddleware>().ShouldNotBeNull();
+        serviceProvider.GetService<CorrelationIdMiddleware>().ShouldNotBeNull();
         serviceProvider.GetService<OperatorIdMiddleware>().ShouldNotBeNull();
 
         // Check if validators are registered

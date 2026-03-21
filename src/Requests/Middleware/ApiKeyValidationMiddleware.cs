@@ -4,6 +4,7 @@
 
 namespace Defra.Identity.Requests.Middleware;
 
+using Defra.Identity.Requests.MetaData;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
@@ -13,6 +14,22 @@ public class ApiKeyValidationMiddleware(string apiKey, ILogger<ApiKeyValidationM
 
     public override async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
+        // check if this maps to an endpoint. If not, just call the next middleware.
+        var endpoint = context.GetEndpoint();
+        if (endpoint == null)
+        {
+            await next(context);
+            return;
+        }
+
+        // check if the endpoint has the IgnoreApiKeyCheck metadata. If so, skip the API key check.
+        var ignoreApiKeyCheck = endpoint.Metadata.GetMetadata<IgnoreApiKeyCheck>() is not null;
+        if (ignoreApiKeyCheck)
+        {
+            await next(context);
+            return;
+        }
+
         try
         {
             var headers = context.Request.Headers;

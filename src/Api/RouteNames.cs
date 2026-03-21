@@ -14,4 +14,5 @@ public static class RouteNames
     public const string Permissions = "permissions";
     public const string Roles = "roles";
     public const string Users = "users";
+    public const string Health = "health";
 }
