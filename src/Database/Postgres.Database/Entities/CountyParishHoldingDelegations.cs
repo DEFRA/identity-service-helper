@@ -8,6 +8,8 @@ using Defra.Identity.Postgres.Database.Entities.Base;
 
 public class CountyParishHoldingDelegations : BaseAuditEntity
 {
+    public Guid CountyParishHoldingId { get; set; }
+
     public CountyParishHoldings CountyParishHolding { get; set; } = null!;
 
     public UserAccounts DelegatingUser { get; set; } = null!;
@@ -28,17 +30,17 @@ public class CountyParishHoldingDelegations : BaseAuditEntity
 
     public DateTime InvitationExpiresAt { get; set; }
 
-    public DateTime InvitationAcceptedAt { get; set; }
+    public DateTime? InvitationAcceptedAt { get; set; }
 
-    public DateTime InvitationRejectedAt { get; set; }
+    public DateTime? InvitationRejectedAt { get; set; }
 
-    public DateTime RevokedAt { get; set; }
-
-    public UserAccounts? RevokedByUser { get; set; }
+    public DateTime? RevokedAt { get; set; }
 
     public Guid? RevokedById { get; set; }
 
-    public DateTime ExpiresAt { get; set; }
+    public UserAccounts? RevokedByUser { get; set; }
+
+    public DateTime? ExpiresAt { get; set; }
 
     public UserAccounts CreatedByUser { get; set; } = null!;
 

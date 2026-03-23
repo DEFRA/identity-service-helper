@@ -42,6 +42,10 @@ public class UserAccounts : BaseAuditEntity
 
     public ICollection<ApplicationUserAccountHoldingAssignments> ApplicationUserAccountHoldingAssignmentsDeletedByUsers { get; set; } = new List<ApplicationUserAccountHoldingAssignments>();
 
+    public ICollection<CountyParishHoldingDelegations> CountyParishHoldingDelegationsDelegatingUsers { get; set; } = new List<CountyParishHoldingDelegations>();
+
+    public ICollection<CountyParishHoldingDelegations> CountyParishHoldingDelegationsDelegatedUsers { get; set; } = new List<CountyParishHoldingDelegations>();
+
     public ICollection<CountyParishHoldingDelegations> CountyParishHoldingDelegationsCreatedByUsers { get; set; } = new List<CountyParishHoldingDelegations>();
 
     public ICollection<CountyParishHoldingDelegations> CountyParishHoldingDelegationsDeletedByUsers { get; set; } = new List<CountyParishHoldingDelegations>();

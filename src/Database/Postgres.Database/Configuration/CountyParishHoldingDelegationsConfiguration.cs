@@ -11,24 +11,42 @@ internal class CountyParishHoldingDelegationsConfiguration : BaseAuditEntityConf
 {
     public override void Configure(EntityTypeBuilder<CountyParishHoldingDelegations> builder)
     {
+        builder.Property(x => x.CountyParishHoldingId)
+            .HasColumnName(nameof(CountyParishHoldingDelegations.CountyParishHoldingId).ToSnakeCase())
+            .HasColumnType(ColumnTypes.UniqueIdentifier)
+            .IsRequired();
+
         builder.HasOne(x => x.CountyParishHolding)
             .WithMany(x => x.DelegationsCountyParishHoldings)
-            .HasForeignKey(x => x.CountyParishHolding);
+            .HasForeignKey(x => x.CountyParishHoldingId);
 
         builder.Property(x => x.DelegatingUserId)
             .HasColumnName(nameof(CountyParishHoldingDelegations.DelegatingUserId).ToSnakeCase())
             .HasColumnType(ColumnTypes.UniqueIdentifier)
             .IsRequired();
 
+        builder.HasOne(x => x.DelegatingUser)
+            .WithMany(x => x.CountyParishHoldingDelegationsDelegatingUsers)
+            .HasForeignKey(x => x.DelegatingUserId);
+
         builder.Property(x => x.DelegatedUserId)
             .HasColumnName(nameof(CountyParishHoldingDelegations.DelegatedUserId).ToSnakeCase())
             .HasColumnType(ColumnTypes.UniqueIdentifier)
-            .IsRequired();
+            .IsRequired(false);
+
+        builder.HasOne(x => x.DelegatedUser)
+            .WithMany(x => x.CountyParishHoldingDelegationsDelegatedUsers)
+            .HasForeignKey(x => x.DelegatedUserId);
+
+        builder.HasOne(x => x.DelegatedUserRole)
+            .WithMany(x => x.CountyParishHoldingDelegationsUserRoles)
+            .HasForeignKey(x => x.DelegatedUserRoleId);
 
         builder.Property(x => x.DelegatedUserEmail)
             .HasColumnName(nameof(CountyParishHoldingDelegations.DelegatedUserEmail).ToSnakeCase())
             .HasColumnType(ColumnTypes.Varchar)
-            .HasMaxLength(256);
+            .HasMaxLength(256)
+            .IsRequired();
 
         builder.Property(x => x.DelegatedUserRoleId)
             .HasColumnName(nameof(CountyParishHoldingDelegations.DelegatedUserRoleId).ToSnakeCase())

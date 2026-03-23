@@ -1,4 +1,4 @@
-﻿// <copyright file="IPageableAssociation.cs" company="Defra">
+﻿// <copyright file="IPageableAssociations.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 

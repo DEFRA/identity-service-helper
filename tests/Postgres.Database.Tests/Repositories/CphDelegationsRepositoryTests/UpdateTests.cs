@@ -2,12 +2,12 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Postgres.Database.Tests.Repositories.DelegatesRepositoryTests;
+namespace Defra.Identity.Postgres.Database.Tests.Repositories.CphDelegationsRepositoryTests;
 
 using System.ComponentModel;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
-using Defra.Identity.Repositories.Delegates;
+using Defra.Identity.Repositories.Delegations;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Shouldly;
@@ -19,8 +19,8 @@ public class UpdateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     public async Task ShouldUpdateDelegation()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<DelegatesRepository>>();
-        var repository = new DelegatesRepository(Context, ReadOnlyContext, logger);
+        var logger = Substitute.For<ILogger<CphDelegationsRepository>>();
+        var repository = new CphDelegationsRepository(Context, ReadOnlyContext, logger);
 
         var adminUser = Context.UserAccounts.First();
         var application = new Applications

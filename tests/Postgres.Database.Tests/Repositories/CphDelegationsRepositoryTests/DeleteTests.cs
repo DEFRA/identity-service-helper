@@ -2,12 +2,12 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Postgres.Database.Tests.Repositories.DelegatesRepositoryTests;
+namespace Defra.Identity.Postgres.Database.Tests.Repositories.CphDelegationsRepositoryTests;
 
 using System.ComponentModel;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
-using Defra.Identity.Repositories.Delegates;
+using Defra.Identity.Repositories.Delegations;
 using Defra.Identity.Repositories.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -21,8 +21,8 @@ public class DeleteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     public async Task ShouldDeleteDelegation()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<DelegatesRepository>>();
-        var repository = new DelegatesRepository(Context, ReadOnlyContext, logger);
+        var logger = Substitute.For<ILogger<CphDelegationsRepository>>();
+        var repository = new CphDelegationsRepository(Context, ReadOnlyContext, logger);
 
         var adminUser = Context.UserAccounts.First();
         var application = new Applications
@@ -39,6 +39,7 @@ public class DeleteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         {
             CreatedById = adminUser.Id,
             DelegatedUserEmail = AdminEmailAddress,
+            InvitationToken = string.Empty,
         };
         await Context.CountyParishHoldingDelegations.AddAsync(delegation, TestContext.Current.CancellationToken);
         await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
@@ -61,8 +62,9 @@ public class DeleteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     public async Task ShouldThrowNotFoundExceptionWhenDelegationDoesNotExist()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<DelegatesRepository>>();
-        var repository = new DelegatesRepository(Context, ReadOnlyContext, logger);
+        var logger = Substitute.For<ILogger<CphDelegationsRepository>>();
+        var repository = new CphDelegationsRepository(Context, ReadOnlyContext, logger);
+
         var adminUser = Context.UserAccounts.First();
         var operatorId = adminUser.Id;
 

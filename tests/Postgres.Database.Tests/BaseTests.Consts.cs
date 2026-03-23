@@ -24,5 +24,5 @@ public abstract partial class BaseTests
     /// <summary>
     /// The admin user id as defined in the changelog/schema/testcontainer.postgresql.sql script.
     /// </summary>
-    protected readonly Guid DelegatedUserId = Guid.Parse("DABCA904-5843-4739-AAF6-EC61E07BE78");
+    protected readonly Guid DelegatedUserId = Guid.Parse("cefcc537-1b7b-48bb-9f40-546087e29712");
 }

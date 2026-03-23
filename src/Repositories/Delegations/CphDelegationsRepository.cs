@@ -1,8 +1,8 @@
-// <copyright file="DelegatesRepository.cs" company="Defra">
+// <copyright file="CphDelegationsRepository.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Repositories.Delegates;
+namespace Defra.Identity.Repositories.Delegations;
 
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database;
@@ -10,29 +10,34 @@ using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Exceptions;
 using Microsoft.Extensions.Logging;
 
-public class DelegatesRepository(
-    PostgresDbContext context,
-    ReadOnlyPostgresDbContext readOnlyContext,
-    ILogger<DelegatesRepository> logger) : IDelegatesRepository
+public class CphDelegationsRepository(PostgresDbContext context, ReadOnlyPostgresDbContext readOnlyContext, ILogger<CphDelegationsRepository> logger) : ICphDelegationsRepository
 {
     public async Task<CountyParishHoldingDelegations?> GetSingle(Expression<Func<CountyParishHoldingDelegations, bool>> predicate, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Getting single delegation");
 
-        var query = await readOnlyContext.CountyParishHoldingDelegations
+        var result = await readOnlyContext.CountyParishHoldingDelegations
+            .Include(p => p.CountyParishHolding)
+            .Include(p => p.DelegatingUser)
+            .Include(p => p.DelegatedUser)
+            .Include(p => p.DelegatedUserRole)
             .SingleOrDefaultAsync(predicate, cancellationToken);
 
-        return query;
+        return result;
     }
 
     public async Task<List<CountyParishHoldingDelegations>> GetList(Expression<Func<CountyParishHoldingDelegations, bool>> predicate, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Getting list of CountyParishHoldingDelegations");
         
-        var query = await readOnlyContext.CountyParishHoldingDelegations
-            .Where(predicate).ToListAsync<CountyParishHoldingDelegations>(cancellationToken);
+        var results = await readOnlyContext.CountyParishHoldingDelegations
+            .Include(p => p.CountyParishHolding)
+            .Include(p => p.DelegatingUser)
+            .Include(p => p.DelegatedUser)
+            .Include(p => p.DelegatedUserRole)
+            .Where(predicate).ToListAsync(cancellationToken);
 
-        return query;
+        return results;
     }
 
     public async Task<CountyParishHoldingDelegations> Create(CountyParishHoldingDelegations entity, CancellationToken cancellationToken = default)
@@ -59,6 +64,7 @@ public class DelegatesRepository(
     public async Task<bool> Delete(Expression<Func<CountyParishHoldingDelegations, bool>> predicate, Guid operatorId, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Deleting delegation with operator id {OperatorId}", operatorId);
+
         var delegation = await context.CountyParishHoldingDelegations
             .SingleOrDefaultAsync(predicate, cancellationToken);
 

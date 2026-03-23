@@ -5,24 +5,16 @@ DO $$
 DECLARE
     ADMIN_EMAIL_ADDRESS CONSTANT text := 'system.admin@defra.gov.uk';
     ADMIN_USER_ID CONSTANT uuid := 'df6990d6-e61a-4e14-aa79-5479dc7b3569';
-    DELEGATED_EMAIL_ADDRESS CONSTANT text := 'delegated@defra.gov.uk';
-    DELEGATED_USER_ID CONSTANT uuid := 'dabca904-5843-4739-aaf6-ec61e07be78';
 BEGIN
     
 -- clear down
 TRUNCATE TABLE
     animal_species,
     roles,
-
     application_roles,
     application_user_account_holding_assignments,
-
-    delegation_invitations,
-    delegations_county_parish_holdings,
-    delegations,
-
+    county_parish_holding_delegations,
     user_accounts,
-
     krds_sync_logs,
     animal_species,
     roles,

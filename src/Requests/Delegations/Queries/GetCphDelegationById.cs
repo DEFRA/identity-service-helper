@@ -1,10 +1,10 @@
-// <copyright file="GetDelegationById.cs" company="Defra">
+// <copyright file="GetCphDelegationById.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
 namespace Defra.Identity.Requests.Delegations.Queries;
 
-public class GetDelegationById
+public class GetCphDelegationById
 {
     public Guid Id { get; set; }
 }

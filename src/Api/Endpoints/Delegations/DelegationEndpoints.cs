@@ -22,20 +22,20 @@ public static class DelegationEndpoints
 
         app.MapGet(RouteNames.Delegations + "/{id:guid}", Get)
             .WithName(RouteNames.Delegations)
-            .Produces<Responses.Delegations.Delegation>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
+            .Produces<Responses.Delegations.CphDelegation>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
             .Produces(StatusCodes.Status404NotFound);
 
         app.MapPut(RouteNames.Delegations + "/{id:guid}", Put)
-            .AddEndpointFilter<ValidationFilter<UpdateDelegation>>()
+            .AddEndpointFilter<ValidationFilter<UpdateCphDelegationById>>()
             .WithMetadata(new RequiresOperatorId())
             .Produces(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status422UnprocessableEntity)
             .ProducesProblem(StatusCodes.Status404NotFound);
 
         app.MapPost(RouteNames.Delegations, Post)
-            .AddEndpointFilter<ValidationFilter<CreateDelegation>>()
+            .AddEndpointFilter<ValidationFilter<CreateCphDelegation>>()
             .WithMetadata(new RequiresOperatorId())
-            .Produces<Responses.Delegations.Delegation>(StatusCodes.Status201Created, "application/json")
+            .Produces<Responses.Delegations.CphDelegation>(StatusCodes.Status201Created, "application/json")
             .ProducesProblem(StatusCodes.Status422UnprocessableEntity);
 
         app.MapDelete(RouteNames.Delegations + "/{id:guid}", Delete)
@@ -46,30 +46,33 @@ public static class DelegationEndpoints
 
     private static async Task<IResult> Post(
         CommandRequestHeaders headers,
-        [FromBody] CreateDelegation delegation,
-        IDelegationsService service)
+        [FromBody] CreateCphDelegation cphDelegation,
+        ICphDelegationsService service)
     {
-        delegation.OperatorId = headers.OperatorId;
-        var result = await service.Create(delegation);
+        cphDelegation.OperatorId = headers.OperatorId;
+        var result = await service.Create(cphDelegation);
 
         return Results.CreatedAtRoute(
             routeName: RouteNames.Delegations,
-            routeValues: new { id = result.Id },
+            routeValues: new
+            {
+                id = result.Id,
+            },
             value: result);
     }
 
     private static async Task<IResult> Put(
         CommandRequestHeaders headers,
         [FromRoute] Guid id,
-        [FromBody] UpdateDelegation delegation,
-        IDelegationsService service)
+        [FromBody] UpdateCphDelegationById cphDelegation,
+        ICphDelegationsService service)
     {
         try
         {
-            delegation.Id = id;
-            delegation.OperatorId = headers.OperatorId;
+            cphDelegation.Id = id;
+            cphDelegation.OperatorId = headers.OperatorId;
 
-            var result = await service.Update(delegation);
+            var result = await service.Update(cphDelegation);
             return Results.Ok(result);
         }
         catch (NullReferenceException nex)
@@ -84,8 +87,8 @@ public static class DelegationEndpoints
 
     private static async Task<IResult> Get(
         QueryRequestHeaders headers,
-        [AsParameters] GetDelegationById request,
-        IDelegationsService service)
+        [AsParameters] GetCphDelegationById request,
+        ICphDelegationsService service)
     {
         var delegation = await service.Get(request);
 
@@ -94,8 +97,8 @@ public static class DelegationEndpoints
 
     private static async Task<IResult> GetAll(
         QueryRequestHeaders headers,
-        [AsParameters] GetDelegations request,
-        IDelegationsService service)
+        [AsParameters] GetCphDelegations request,
+        ICphDelegationsService service)
     {
         var delegations = await service.GetAll(request);
 
@@ -105,7 +108,7 @@ public static class DelegationEndpoints
     private static async Task<IResult> Delete(
         CommandRequestHeaders headers,
         [FromRoute] Guid id,
-        IDelegationsService service)
+        ICphDelegationsService service)
     {
         var deleted = await service.Delete(id, headers.OperatorId);
 
