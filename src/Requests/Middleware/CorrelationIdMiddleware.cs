@@ -1,16 +1,33 @@
-// <copyright file="CorrellationIdMiddleware.cs" company="Defra">
+// <copyright file="CorrelationIdMiddleware.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
 namespace Defra.Identity.Requests.Middleware;
 
+using Defra.Identity.Requests.MetaData;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-public class CorrellationIdMiddleware(ILogger<CorrellationIdMiddleware> logger) : JsonErrorMiddleware
+public class CorrelationIdMiddleware(ILogger<CorrelationIdMiddleware> logger) : JsonErrorMiddleware
 {
     public override async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
+        // check if this maps to an endpoint. If not, just call the next middleware.
+        var endpoint = context.GetEndpoint();
+        if (endpoint == null)
+        {
+            await next(context);
+            return;
+        }
+
+        // check if the endpoint has the IgnoreCorrelationIdCheck metadata. If so, skip the API key check.
+        var ignoreCorrelationIdCheck = endpoint.Metadata.GetMetadata<IgnoreCorrelationIdCheck>() is not null;
+        if (ignoreCorrelationIdCheck)
+        {
+            await next(context);
+            return;
+        }
+
         try
         {
             var headers = context.Request.Headers;
@@ -31,7 +48,7 @@ public class CorrellationIdMiddleware(ILogger<CorrellationIdMiddleware> logger) 
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error in {MiddlewareName}", nameof(CorrellationIdMiddleware));
+            logger.LogError(ex, "Error in {MiddlewareName}", nameof(CorrelationIdMiddleware));
             throw;
         }
     }

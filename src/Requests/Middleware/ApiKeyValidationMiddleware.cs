@@ -4,21 +4,36 @@
 
 namespace Defra.Identity.Requests.Middleware;
 
+using Defra.Identity.Requests.MetaData;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
 public class ApiKeyValidationMiddleware(string apiKey, ILogger<ApiKeyValidationMiddleware> logger) : JsonErrorMiddleware
 {
-    private readonly string apiKey = apiKey ?? throw new ArgumentNullException(nameof(apiKey));
-
     public override async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
+        ArgumentException.ThrowIfNullOrEmpty(apiKey);
+
+        // check if this maps to an endpoint. If not, just call the next middleware.
+        var endpoint = context.GetEndpoint();
+        if (endpoint == null)
+        {
+            await next(context);
+            return;
+        }
+
+        // check if the endpoint has the IgnoreApiKeyCheck metadata. If so, skip the API key check.
+        var ignoreApiKeyCheck = endpoint.Metadata.GetMetadata<IgnoreApiKeyCheck>() is not null;
+        if (ignoreApiKeyCheck)
+        {
+            await next(context);
+            return;
+        }
+
         try
         {
             var headers = context.Request.Headers;
-
-            // 1. Check API Key
-            var headerKey = headers.TryGetValue(RequestHeaderNames.ApiKey, out var key) ? key.ToString() : null;
+            headers.TryGetValue(RequestHeaderNames.ApiKey, out var key);
             if (string.IsNullOrWhiteSpace(key))
             {
                 await WriteJsonErrorAsync(
@@ -30,7 +45,7 @@ public class ApiKeyValidationMiddleware(string apiKey, ILogger<ApiKeyValidationM
                 return;
             }
 
-            if (!string.Equals(key, this.apiKey, StringComparison.Ordinal))
+            if (!string.Equals(key, apiKey, StringComparison.Ordinal))
             {
                 await WriteJsonErrorAsync(
                     context,

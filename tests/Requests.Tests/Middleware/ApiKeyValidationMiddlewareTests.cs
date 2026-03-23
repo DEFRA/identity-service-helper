@@ -4,13 +4,14 @@
 
 namespace Defra.Identity.Requests.Tests.Middleware;
 
+using Defra.Identity.Requests.MetaData;
 using Defra.Identity.Requests.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 
 public class ApiKeyValidationMiddlewareTests
@@ -51,13 +52,80 @@ public class ApiKeyValidationMiddlewareTests
     }
 
     [Fact]
-    public async Task InvokeAsync_WhenExceptionThrown_LogsErrorAndReThrows()
+    public async Task UseRequests_WithNoEndpoint_ReturnsWithoutProcessing()
     {
         // Arrange
         var logger = Substitute.For<ILogger<ApiKeyValidationMiddleware>>();
         var middleware = new ApiKeyValidationMiddleware("test-key", logger);
         var context = new DefaultHttpContext();
         context.Request.Headers[RequestHeaderNames.ApiKey] = "test-key";
+        RequestDelegate next = (ctx) => Task.CompletedTask;
+
+        // Act
+        await middleware.InvokeAsync(context, next);
+
+        // Assert
+        context.Response.StatusCode.ShouldBe(StatusCodes.Status200OK);
+    }
+
+    [Fact]
+    public async Task UseRequests_WithIgnoreKey_ReturnsWithoutProcessing()
+    {
+        // Arrange
+        var logger = Substitute.For<ILogger<ApiKeyValidationMiddleware>>();
+        var middleware = new ApiKeyValidationMiddleware("test-key", logger);
+        var endpoint = Substitute.For<IEndpointFeature>();
+        endpoint.Endpoint = new Endpoint(null, new EndpointMetadataCollection([new IgnoreApiKeyCheck()]), "fake endpoint");
+        var context = new DefaultHttpContext();
+        context.Request.Headers[RequestHeaderNames.ApiKey] = "test-key";
+        context.Features.Set(endpoint);
+
+        RequestDelegate next = (ctx) => Task.CompletedTask;
+
+        // Act
+        await middleware.InvokeAsync(context, next);
+
+        // Assert
+        context.Response.StatusCode.ShouldBe(StatusCodes.Status200OK);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("No-valid-key")]
+    public async Task UseRequests_WithMissingKey_ReturnsErrorJson(string keyValue)
+    {
+        // Arrange
+        var logger = Substitute.For<ILogger<ApiKeyValidationMiddleware>>();
+        var middleware = new ApiKeyValidationMiddleware("test-key", logger);
+        var endpoint = Substitute.For<IEndpointFeature>();
+        endpoint.Endpoint = new Endpoint(null, null, "fake endpoint");
+        var context = new DefaultHttpContext();
+        context.Request.Headers[RequestHeaderNames.ApiKey] = keyValue;
+        context.Features.Set(endpoint);
+
+        RequestDelegate next = (ctx) => Task.CompletedTask;
+
+        // Act
+        await middleware.InvokeAsync(context, next);
+
+        // Assert
+        context.Response.StatusCode.ShouldBe(StatusCodes.Status400BadRequest);
+    }
+
+    [Fact]
+    public async Task InvokeAsync_WhenExceptionThrown_LogsErrorAndReThrows()
+    {
+        // Arrange
+        var logger = Substitute.For<ILogger<ApiKeyValidationMiddleware>>();
+        var middleware = new ApiKeyValidationMiddleware("test-key", logger);
+
+        var endpoint = Substitute.For<IEndpointFeature>();
+        endpoint.Endpoint = new Endpoint(null, new EndpointMetadataCollection([new RequiresOperatorId()]), "fake endpoint");
+
+        var context = new DefaultHttpContext();
+        context.Request.Headers[RequestHeaderNames.ApiKey] = "test-key";
+        context.Features.Set(endpoint);
+
         var exception = new Exception("Test exception");
         RequestDelegate next = (ctx) => throw exception;
 

@@ -20,7 +20,7 @@ public static class ServiceCollectionExtensions
     {
         ApiKey = config.GetValue<string>("DefraIndentityApiKey");
         services.AddTransient<ApiKeyValidationMiddleware>(sp => new ApiKeyValidationMiddleware(ApiKey!, sp.GetRequiredService<ILogger<ApiKeyValidationMiddleware>>()));
-        services.AddTransient<CorrellationIdMiddleware>();
+        services.AddTransient<CorrelationIdMiddleware>();
         services.AddTransient<OperatorIdMiddleware>();
         services.AddValidatorsFromAssemblyContaining<CreateUser>();
 
@@ -30,7 +30,7 @@ public static class ServiceCollectionExtensions
     public static void UseRequests(this WebApplication app)
     {
         app.UseMiddleware<ApiKeyValidationMiddleware>();
-        app.UseMiddleware<CorrellationIdMiddleware>();
+        app.UseMiddleware<CorrelationIdMiddleware>();
         app.UseMiddleware<OperatorIdMiddleware>();
     }
 }

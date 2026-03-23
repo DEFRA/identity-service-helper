@@ -1,18 +1,20 @@
-// <copyright file="CorrellationIdMiddlewareTests.cs" company="Defra">
+// <copyright file="CorrelationIdMiddlewareTests.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
 namespace Defra.Identity.Requests.Tests.Middleware;
 
+using Defra.Identity.Requests.MetaData;
 using Defra.Identity.Requests.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 
-public class CorrellationIdMiddlewareTests
+public class CorrelationIdMiddlewareTests
 {
     [Fact]
     public void AddRequests_RegistersMiddleware_CanBeResolved()
@@ -32,7 +34,7 @@ public class CorrellationIdMiddlewareTests
         var serviceProvider = services.BuildServiceProvider();
 
         // Assert
-        var middleware = serviceProvider.GetService<CorrellationIdMiddleware>();
+        var middleware = serviceProvider.GetService<CorrelationIdMiddleware>();
         middleware.ShouldNotBeNull();
     }
 
@@ -49,12 +51,54 @@ public class CorrellationIdMiddlewareTests
     }
 
     [Fact]
+    public async Task UseRequests_WithNoEndpoint_ReturnsWithoutProcessing()
+    {
+        // Arrange
+        var logger = Substitute.For<ILogger<CorrelationIdMiddleware>>();
+        var middleware = new CorrelationIdMiddleware(logger);
+        var context = new DefaultHttpContext();
+        context.Request.Headers[RequestHeaderNames.ApiKey] = "test-key";
+        RequestDelegate next = (ctx) => Task.CompletedTask;
+
+        // Act
+        await middleware.InvokeAsync(context, next);
+
+        // Assert
+        context.Response.StatusCode.ShouldBe(StatusCodes.Status200OK);
+    }
+
+    [Fact]
+    public async Task UseRequests_WithIgnoreKey_ReturnsWithoutProcessing()
+    {
+        // Arrange
+        var logger = Substitute.For<ILogger<CorrelationIdMiddleware>>();
+        var middleware = new CorrelationIdMiddleware(logger);
+
+        var endpoint = Substitute.For<IEndpointFeature>();
+        endpoint.Endpoint = new Endpoint(null, new EndpointMetadataCollection([new IgnoreCorrelationIdCheck()]), "fake endpoint");
+
+        var context = new DefaultHttpContext();
+        context.Features.Set(endpoint);
+
+        RequestDelegate next = (ctx) => Task.CompletedTask;
+
+        // Act
+        await middleware.InvokeAsync(context, next);
+
+        // Assert
+        context.Response.StatusCode.ShouldBe(StatusCodes.Status200OK);
+    }
+
+    [Fact]
     public async Task InvokeAsync_WithCorrelationIdHeader_CallsNext()
     {
         // Arrange
-        var middleware = new CorrellationIdMiddleware(Substitute.For<ILogger<CorrellationIdMiddleware>>());
+        var middleware = new CorrelationIdMiddleware(Substitute.For<ILogger<CorrelationIdMiddleware>>());
+        var endpoint = Substitute.For<IEndpointFeature>();
+        endpoint.Endpoint = new Endpoint(null, null, "fake endpoint");
         var context = new DefaultHttpContext();
         context.Request.Headers[RequestHeaderNames.CorrelationId] = "test-correlation-id";
+        context.Features.Set(endpoint);
 
         var nextCalled = false;
         RequestDelegate next = (ctx) =>
@@ -75,9 +119,12 @@ public class CorrellationIdMiddlewareTests
     public async Task InvokeAsync_MissingCorrelationIdHeader_ReturnsBadRequest()
     {
         // Arrange
-        var middleware = new CorrellationIdMiddleware(Substitute.For<ILogger<CorrellationIdMiddleware>>());
+        var middleware = new CorrelationIdMiddleware(Substitute.For<ILogger<CorrelationIdMiddleware>>());
+        var endpoint = Substitute.For<IEndpointFeature>();
+        endpoint.Endpoint = new Endpoint(null, null, "fake endpoint");
         var context = new DefaultHttpContext();
         context.Response.Body = new MemoryStream();
+        context.Features.Set(endpoint);
 
         var nextCalled = false;
         RequestDelegate next = (ctx) =>
@@ -105,10 +152,13 @@ public class CorrellationIdMiddlewareTests
     public async Task InvokeAsync_WhitespaceCorrelationIdHeader_ReturnsBadRequest()
     {
         // Arrange
-        var middleware = new CorrellationIdMiddleware(Substitute.For<ILogger<CorrellationIdMiddleware>>());
+        var middleware = new CorrelationIdMiddleware(Substitute.For<ILogger<CorrelationIdMiddleware>>());
+        var endpoint = Substitute.For<IEndpointFeature>();
+        endpoint.Endpoint = new Endpoint(null, null, "fake endpoint");
         var context = new DefaultHttpContext();
         context.Request.Headers[RequestHeaderNames.CorrelationId] = "   ";
         context.Response.Body = new MemoryStream();
+        context.Features.Set(endpoint);
 
         var nextCalled = false;
         RequestDelegate next = (ctx) =>
@@ -136,10 +186,13 @@ public class CorrellationIdMiddlewareTests
     public async Task InvokeAsync_WhenExceptionThrown_LogsErrorAndReThrows()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<CorrellationIdMiddleware>>();
-        var middleware = new CorrellationIdMiddleware(logger);
+        var logger = Substitute.For<ILogger<CorrelationIdMiddleware>>();
+        var middleware = new CorrelationIdMiddleware(logger);
+        var endpoint = Substitute.For<IEndpointFeature>();
+        endpoint.Endpoint = new Endpoint(null, null, "fake endpoint");
         var context = new DefaultHttpContext();
         context.Request.Headers[RequestHeaderNames.CorrelationId] = "test-correlation-id";
+        context.Features.Set(endpoint);
         var exception = new Exception("Test exception");
         RequestDelegate next = (ctx) => throw exception;
 
