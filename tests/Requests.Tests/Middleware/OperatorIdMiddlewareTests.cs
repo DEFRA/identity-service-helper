@@ -50,10 +50,27 @@ public class OperatorIdMiddlewareTests
     }
 
     [Fact]
+    public async Task UseRequests_WithNoEndpoint_ReturnsWithoutProcessing()
+    {
+        // Arrange
+        var logger = Substitute.For<ILogger<OperatorIdMiddleware>>();
+        var middleware = new OperatorIdMiddleware(logger);
+        var context = new DefaultHttpContext();
+        context.Request.Headers[RequestHeaderNames.ApiKey] = "test-key";
+        RequestDelegate next = (ctx) => Task.CompletedTask;
+
+        // Act
+        await middleware.InvokeAsync(context, next);
+
+        // Assert
+        context.Response.StatusCode.ShouldBe(StatusCodes.Status200OK);
+    }
+
+    [Fact]
     public async Task InvokeAsync_WithOperatorIdHeader_CallsNext()
     {
         // Arrange
-        var (middleware, context, next, nextCalled) = CreateContext();
+        var (middleware, context, next, nextCalled, logger) = CreateContext();
         context.Request.Headers[RequestHeaderNames.OperatorId] = Guid.NewGuid().ToString();
         SetupEndpoint(context);
 
@@ -69,7 +86,7 @@ public class OperatorIdMiddlewareTests
     public async Task InvokeAsync_MissingOperatorIdHeader_ReturnsBadRequest()
     {
         // Arrange
-        var (middleware, context, next, nextCalled) = CreateContext();
+        var (middleware, context, next, nextCalled, logger) = CreateContext();
         context.Response.Body = new MemoryStream();
         SetupEndpoint(context);
 
@@ -93,7 +110,7 @@ public class OperatorIdMiddlewareTests
     public async Task InvokeAsync_WhitespaceOperatorIdHeader_ReturnsBadRequest()
     {
         // Arrange
-        var (middleware, context, next, nextCalled) = CreateContext();
+        var (middleware, context, next, nextCalled, logger) = CreateContext();
         context.Request.Headers[RequestHeaderNames.OperatorId] = "   ";
         context.Response.Body = new MemoryStream();
         SetupEndpoint(context);
@@ -118,7 +135,7 @@ public class OperatorIdMiddlewareTests
     public async Task InvokeAsync_InvalidGuidOperatorIdHeader_ReturnsBadRequest()
     {
         // Arrange
-        var (middleware, context, next, nextCalled) = CreateContext();
+        var (middleware, context, next, nextCalled, logger) = CreateContext();
         context.Request.Headers[RequestHeaderNames.OperatorId] = "invalid-guid";
         context.Response.Body = new MemoryStream();
         SetupEndpoint(context);
@@ -143,7 +160,7 @@ public class OperatorIdMiddlewareTests
     public async Task InvokeAsync_NoMetadata_CallsNext()
     {
         // Arrange
-        var (middleware, context, next, nextCalled) = CreateContext();
+        var (middleware, context, next, nextCalled, logger) = CreateContext();
 
         // Act
         await middleware.InvokeAsync(context, next);
@@ -156,11 +173,12 @@ public class OperatorIdMiddlewareTests
     public async Task InvokeAsync_WhenExceptionThrown_LogsErrorAndReThrows()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<OperatorIdMiddleware>>();
-        var middleware = new OperatorIdMiddleware(logger);
-        var context = new DefaultHttpContext();
+        var (middleware, context, next, nextCalled, logger) = CreateContext();
+        context.Request.Headers[RequestHeaderNames.OperatorId] = Guid.NewGuid().ToString("D");
+        context.Response.Body = new MemoryStream();
+        SetupEndpoint(context);
         var exception = new Exception("Test exception");
-        RequestDelegate next = (ctx) => throw exception;
+        next = (ctx) => throw exception;
 
         // Act & Assert
         var ex = await Should.ThrowAsync<Exception>(() => middleware.InvokeAsync(context, next));
@@ -174,9 +192,15 @@ public class OperatorIdMiddlewareTests
             Arg.Any<Func<Arg.AnyType, Exception?, string>>());
     }
 
-    private static (OperatorIdMiddleware Middleware, HttpContext Context, RequestDelegate Next, Func<bool> NextCalled) CreateContext()
+    private static (
+        OperatorIdMiddleware Middleware,
+        HttpContext Context,
+        RequestDelegate Next,
+        Func<bool> NextCalled,
+        ILogger<OperatorIdMiddleware> logger) CreateContext()
     {
-        var middleware = new OperatorIdMiddleware(Substitute.For<ILogger<OperatorIdMiddleware>>());
+        var logger = Substitute.For<ILogger<OperatorIdMiddleware>>();
+        var middleware = new OperatorIdMiddleware(logger);
         var context = new DefaultHttpContext();
         var nextCalled = false;
 
@@ -186,7 +210,7 @@ public class OperatorIdMiddlewareTests
             return Task.CompletedTask;
         }
 
-        return (middleware, context, Next, () => nextCalled);
+        return (middleware, context, Next, () => nextCalled, logger);
     }
 
     private static void SetupEndpoint(HttpContext context)
