@@ -15,8 +15,6 @@ using Shouldly;
 
 public class CreateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 {
-    private const string AdminEmailAddress = "test@test.com";
-
     [Fact]
     [Description("Should create a new delegation")]
     public async Task ShouldCreateDelegation()
@@ -25,31 +23,24 @@ public class CreateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         var logger = Substitute.For<ILogger<CphDelegationsRepository>>();
         var repository = new CphDelegationsRepository(Context, ReadOnlyContext, logger);
 
-        var userLogger = Substitute.For<ILogger<UsersRepository>>();
-        var userRepository = new UsersRepository(Context, ReadOnlyContext, userLogger);
-
-        var adminUser = await userRepository.GetSingle(
-            x => x.EmailAddress == AdminEmailAddress,
-            TestContext.Current.CancellationToken);
-
-        adminUser.ShouldNotBeNull("Seeded admin user was not found; check test data initialization.");
-
-        var application = new Applications
-        {
-            Name = "Create Delegation Test App",
-            ClientId = Guid.NewGuid(),
-            TenantName = "Test Tenant",
-            CreatedById = adminUser.Id,
-        };
-        await Context.Applications.AddAsync(application, TestContext.Current.CancellationToken);
-        await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
+        var adminUser = Context.UserAccounts.First();
+        var cphId = new Guid("4435a146-d0ac-4260-8a27-c550e0ed9563");
+        var delegatingUserId = new Guid("0a629f9f-2d25-4ac5-afbf-e821f5c6e7d1");
+        var delegatedUserId = new Guid("42bde7a0-9efe-402a-a7c3-9161be7b00ba");
+        var delegatedUserRoleId = new Guid("0c15ba2f-b4ba-406a-a0ae-213de64600a9");
+        const string delegatedUserEmail = "test1@test.com";
+        var createdAt = DateTime.Now.ToUniversalTime();
 
         var newDelegation = new CountyParishHoldingDelegations
         {
-            DelegatingUserId = adminUser.Id,
-            CreatedById = adminUser.Id,
-            DelegatedUserEmail = AdminEmailAddress,
+            CountyParishHoldingId = cphId,
+            DelegatingUserId = delegatingUserId,
+            DelegatedUserId = delegatedUserId,
+            DelegatedUserRoleId = delegatedUserRoleId,
+            DelegatedUserEmail = delegatedUserEmail,
             InvitationToken = string.Empty,
+            CreatedById = adminUser.Id,
+            CreatedAt = createdAt,
         };
 
         // Act
@@ -57,9 +48,15 @@ public class CreateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 
         // Assert
         createdDelegation.ShouldSatisfyAllConditions(
-            x => x.DelegatingUserId.ShouldBe(adminUser.Id),
+            x => x.ShouldNotBeNull(),
+            x => x.CountyParishHoldingId.ShouldBe(cphId),
+            x => x.DelegatingUserId.ShouldBe(delegatingUserId),
+            x => x.DelegatedUserId.ShouldBe(delegatedUserId),
+            x => x.DelegatedUserRoleId.ShouldBe(delegatedUserRoleId),
+            x => x.DelegatedUserEmail.ShouldBe(delegatedUserEmail),
+            x => x.InvitationToken.ShouldBeEmpty(),
             x => x.CreatedById.ShouldBe(adminUser.Id),
-            x => x.DelegatedUserEmail.ShouldBe(AdminEmailAddress));
+            x => x.CreatedAt.ShouldBe(createdAt));
 
         logger.ReceivedWithAnyArgs().Log(
             LogLevel.Information,

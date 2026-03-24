@@ -22,24 +22,48 @@ public class GetTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         var logger = Substitute.For<ILogger<CphDelegationsRepository>>();
         var repository = new CphDelegationsRepository(Context, ReadOnlyContext, logger);
 
+        var id = Guid.NewGuid();
         var adminUser = Context.UserAccounts.First();
+        var cphId = new Guid("4435a146-d0ac-4260-8a27-c550e0ed9563");
+        var delegatingUserId = new Guid("0a629f9f-2d25-4ac5-afbf-e821f5c6e7d1");
+        var delegatedUserId = new Guid("42bde7a0-9efe-402a-a7c3-9161be7b00ba");
+        var delegatedUserRoleId = new Guid("0c15ba2f-b4ba-406a-a0ae-213de64600a9");
+        const string delegatedUserEmail = "test1@test.com";
+        var createdAt = DateTime.Parse("2026-03-01 00:00:00").ToUniversalTime();
+
         var delegation = new CountyParishHoldingDelegations
         {
-            DelegatedUserId = adminUser.Id, CreatedById = adminUser.Id, DelegatedUserEmail = AdminEmailAddress, InvitationToken = string.Empty,
+            Id = id,
+            CountyParishHoldingId = cphId,
+            DelegatingUserId = delegatingUserId,
+            DelegatedUserId = delegatedUserId,
+            DelegatedUserRoleId = delegatedUserRoleId,
+            DelegatedUserEmail = delegatedUserEmail,
+            InvitationToken = string.Empty,
+            CreatedById = adminUser.Id,
+            CreatedAt = createdAt,
         };
+
         await Context.CountyParishHoldingDelegations.AddAsync(delegation, TestContext.Current.CancellationToken);
         await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
         var result = await repository.GetSingle(
-            x => x.DelegatedUserId == adminUser.Id,
+            x => x.Id == id,
             TestContext.Current.CancellationToken);
 
         // Assert
         result.ShouldNotBeNull();
-        result.DelegatedUserId.ShouldBe(adminUser.Id);
-        result.DelegatedUserId.ShouldBe(adminUser.Id);
-        result.DelegatedUserEmail.ShouldBe(AdminEmailAddress);
+
+        result.ShouldSatisfyAllConditions(
+            x => x.CountyParishHoldingId.ShouldBe(cphId),
+            x => x.DelegatingUserId.ShouldBe(delegatingUserId),
+            x => x.DelegatedUserId.ShouldBe(delegatedUserId),
+            x => x.DelegatedUserRoleId.ShouldBe(delegatedUserRoleId),
+            x => x.DelegatedUserEmail.ShouldBe(delegatedUserEmail),
+            x => x.InvitationToken.ShouldBeNullOrWhiteSpace(),
+            x => x.CreatedById.ShouldBe(adminUser.Id),
+            x => x.CreatedAt.ShouldBeEquivalentTo(createdAt));
     }
 
     [Fact]
@@ -51,35 +75,71 @@ public class GetTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         var repository = new CphDelegationsRepository(Context, ReadOnlyContext, logger);
 
         var adminUser = Context.UserAccounts.First();
+        var createdAt = DateTime.Parse("2026-03-01 00:00:00").ToUniversalTime();
+
         var delegations = new List<CountyParishHoldingDelegations>
         {
             new()
             {
-                DelegatedUserId = adminUser.Id, CreatedById = adminUser.Id, DelegatedUserEmail = AdminEmailAddress,
+                Id = new Guid("3aaaf35e-4fa5-4e99-9721-7dc3bc1c9d7a"),
+                CountyParishHoldingId = new Guid("4435a146-d0ac-4260-8a27-c550e0ed9563"),
+                DelegatingUserId = new Guid("0a629f9f-2d25-4ac5-afbf-e821f5c6e7d1"),
+                DelegatedUserId = new Guid("42bde7a0-9efe-402a-a7c3-9161be7b00ba"),
+                DelegatedUserRoleId = new Guid("0c15ba2f-b4ba-406a-a0ae-213de64600a9"),
+                DelegatedUserEmail = "test1@test.com",
+                InvitationToken = string.Empty,
+                CreatedById = adminUser.Id,
+                CreatedAt = createdAt,
+            },
+            new()
+            {
+                Id = new Guid("e4410973-af3f-4cbc-a234-69e8653da748"),
+                CountyParishHoldingId = new Guid("204459b1-3a07-4e65-9122-91c1699e3d3f"),
+                DelegatingUserId = new Guid("1e21b685-2247-4d96-bf39-f7dc30f356c2"),
+                DelegatedUserId = new Guid("83bf35f9-fd59-4c8a-b70a-7d95a1aab2b6"),
+                DelegatedUserRoleId = new Guid("817647b3-d5d2-45e9-8833-df36d8264102"),
+                DelegatedUserEmail = "test3@test.com",
+                InvitationToken = string.Empty,
+                CreatedById = adminUser.Id,
+                CreatedAt = createdAt,
             },
         };
-
-        // We need another user for another delegation to the same app, or another app for the same user
-        var anotherUser = new UserAccounts
-        {
-            Id = Guid.NewGuid(), DisplayName = "Another User", EmailAddress = "another@test.com", CreatedById = adminUser.Id
-        };
-        await Context.UserAccounts.AddAsync(anotherUser, TestContext.Current.CancellationToken);
-
-        delegations.Add(
-            new CountyParishHoldingDelegations
-            {
-                DelegatedUserId = DelegatedUserId, CreatedById = adminUser.Id, DelegatedUserEmail = DelegatedEmailAddress, InvitationToken = string.Empty,
-            });
 
         await Context.CountyParishHoldingDelegations.AddRangeAsync(delegations, TestContext.Current.CancellationToken);
         await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
-        var result = await repository.GetList(x => x.CountyParishHolding.Identifier == "11/222/3333", TestContext.Current.CancellationToken);
+        var results = await repository.GetList(x => true, TestContext.Current.CancellationToken);
 
         // Assert
-        result.ShouldNotBeNull();
-        result.Count.ShouldBeGreaterThanOrEqualTo(2);
+        results.ShouldNotBeNull();
+        results.Count.ShouldBe(2);
+
+        var firstDelegation = results.First();
+        var secondDelegation = results.Last();
+
+        firstDelegation.ShouldSatisfyAllConditions(
+            x => x.ShouldNotBeNull(),
+            x => x.Id.ShouldBe(new Guid("3aaaf35e-4fa5-4e99-9721-7dc3bc1c9d7a")),
+            x => x.CountyParishHoldingId.ShouldBe(new Guid("4435a146-d0ac-4260-8a27-c550e0ed9563")),
+            x => x.DelegatingUserId.ShouldBe(new Guid("0a629f9f-2d25-4ac5-afbf-e821f5c6e7d1")),
+            x => x.DelegatedUserId.ShouldBe(new Guid("42bde7a0-9efe-402a-a7c3-9161be7b00ba")),
+            x => x.DelegatedUserRoleId.ShouldBe(new Guid("0c15ba2f-b4ba-406a-a0ae-213de64600a9")),
+            x => x.DelegatedUserEmail.ShouldBe("test1@test.com"),
+            x => x.InvitationToken.ShouldBeNullOrWhiteSpace(),
+            x => x.CreatedById.ShouldBe(adminUser.Id),
+            x => x.CreatedAt.ShouldBe(createdAt));
+
+        secondDelegation.ShouldSatisfyAllConditions(
+            x => x.ShouldNotBeNull(),
+            x => x.Id.ShouldBe(new Guid("e4410973-af3f-4cbc-a234-69e8653da748")),
+            x => x.CountyParishHoldingId.ShouldBe(new Guid("204459b1-3a07-4e65-9122-91c1699e3d3f")),
+            x => x.DelegatingUserId.ShouldBe(new Guid("1e21b685-2247-4d96-bf39-f7dc30f356c2")),
+            x => x.DelegatedUserId.ShouldBe(new Guid("83bf35f9-fd59-4c8a-b70a-7d95a1aab2b6")),
+            x => x.DelegatedUserRoleId.ShouldBe(new Guid("817647b3-d5d2-45e9-8833-df36d8264102")),
+            x => x.DelegatedUserEmail.ShouldBe("test3@test.com"),
+            x => x.InvitationToken.ShouldBeNullOrWhiteSpace(),
+            x => x.CreatedById.ShouldBe(adminUser.Id),
+            x => x.CreatedAt.ShouldBe(createdAt));
     }
 }

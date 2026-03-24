@@ -24,37 +24,47 @@ public class DeleteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         var logger = Substitute.For<ILogger<CphDelegationsRepository>>();
         var repository = new CphDelegationsRepository(Context, ReadOnlyContext, logger);
 
+        var id = Guid.NewGuid();
         var adminUser = Context.UserAccounts.First();
-        var application = new Applications
-        {
-            Name = "Delete Delegation Test App",
-            ClientId = Guid.NewGuid(),
-            TenantName = "Test Tenant",
-            CreatedById = adminUser.Id,
-        };
-        await Context.Applications.AddAsync(application, TestContext.Current.CancellationToken);
-        await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
-
-        var delegation = new CountyParishHoldingDelegations
-        {
-            CreatedById = adminUser.Id,
-            DelegatedUserEmail = AdminEmailAddress,
-            InvitationToken = string.Empty,
-        };
-        await Context.CountyParishHoldingDelegations.AddAsync(delegation, TestContext.Current.CancellationToken);
-        await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
-
+        var cphId = new Guid("4435a146-d0ac-4260-8a27-c550e0ed9563");
+        var delegatingUserId = new Guid("0a629f9f-2d25-4ac5-afbf-e821f5c6e7d1");
+        var delegatedUserId = new Guid("42bde7a0-9efe-402a-a7c3-9161be7b00ba");
+        var delegatedUserRoleId = new Guid("0c15ba2f-b4ba-406a-a0ae-213de64600a9");
+        const string delegatedUserEmail = "test1@test.com";
+        var createdAt = DateTime.Now.ToUniversalTime();
         var operatorId = adminUser.Id;
 
+        var delegationToDelete = new CountyParishHoldingDelegations
+        {
+            Id = id,
+            CountyParishHoldingId = cphId,
+            DelegatingUserId = delegatingUserId,
+            DelegatedUserId = delegatedUserId,
+            DelegatedUserRoleId = delegatedUserRoleId,
+            DelegatedUserEmail = delegatedUserEmail,
+            InvitationToken = string.Empty,
+            CreatedById = adminUser.Id,
+            CreatedAt = createdAt,
+        };
+
+        await Context.CountyParishHoldingDelegations.AddAsync(delegationToDelete, TestContext.Current.CancellationToken);
+        await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
+
         // Act
-        var result = await repository.Delete(x => x.Id == delegation.Id, operatorId, TestContext.Current.CancellationToken);
+        var result = await repository.Delete(x => x.Id == id, operatorId, TestContext.Current.CancellationToken);
 
         // Assert
         result.ShouldBeTrue();
-        var deletedDelegation = await Context.CountyParishHoldingDelegations.IgnoreQueryFilters().SingleOrDefaultAsync(x => x.Id == delegation.Id, TestContext.Current.CancellationToken);
-        deletedDelegation.ShouldNotBeNull();
-        deletedDelegation.DeletedById.ShouldBe(operatorId);
-        deletedDelegation.DeletedAt.ShouldNotBeNull();
+
+        var deletedDelegation = await Context.CountyParishHoldingDelegations.IgnoreQueryFilters().SingleOrDefaultAsync(x => x.Id == delegationToDelete.Id, TestContext.Current.CancellationToken);
+
+        deletedDelegation.ShouldSatisfyAllConditions(
+            x =>
+            {
+                x.ShouldNotBeNull();
+                x.DeletedById.ShouldBe(operatorId);
+                x.DeletedAt.ShouldNotBeNull();
+            });
     }
 
     [Fact]
@@ -69,7 +79,8 @@ public class DeleteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         var operatorId = adminUser.Id;
 
         // Act & Assert
-        await Should.ThrowAsync<NotFoundException>(async () =>
-            await repository.Delete(x => x.Id == Guid.NewGuid(), operatorId, TestContext.Current.CancellationToken));
+        await Should.ThrowAsync<NotFoundException>(
+            async () =>
+                await repository.Delete(x => x.Id == Guid.NewGuid(), operatorId, TestContext.Current.CancellationToken));
     }
 }
