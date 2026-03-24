@@ -4,96 +4,11 @@
 
 namespace Defra.Identity.Services.Tests.Cphs.TestData;
 
-using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database.Entities;
-using Defra.Identity.Repositories.Common;
-using NSubstitute.Core;
 
 public static class CphRepositoryMockingHelper
 {
-    public static CountyParishHoldings? MockGetEntityResultFromCallInfoForSimpleFilterChecks(CallInfo callInfo)
-    {
-        var actualFilter = (Expression<Func<CountyParishHoldings, bool>>)callInfo.Args()[0];
-        var compiledFilter = actualFilter.Compile();
-
-        var filteredEntity = GetCphEntitiesForSimpleFilterChecks().SingleOrDefault(compiledFilter);
-
-        return filteredEntity;
-    }
-
-    public static PagedEntities<CountyParishHoldings> MockGetAllPagedEntitiesResultFromCallInfo(CallInfo callInfo)
-    {
-        var actualFilter = (Expression<Func<CountyParishHoldings, bool>>)callInfo.Args()[0];
-        var actualOrderBy = (Expression<Func<CountyParishHoldings, string>>)callInfo.Args()[3];
-
-        var pageNumber = (int)callInfo.Args()[1];
-        var pageSize = (int)callInfo.Args()[2];
-        var orderByDescending = (bool)callInfo.Args()[4];
-
-        var compiledFilter = actualFilter.Compile();
-        var compiledOrderBy = actualOrderBy.Compile();
-
-        var filteredEntities = GetCphEntities().Where(compiledFilter);
-        var orderedEntities = (orderByDescending ? filteredEntities.OrderByDescending(compiledOrderBy) : filteredEntities.OrderBy(compiledOrderBy)).ToList();
-
-        var totalCount = orderedEntities.Count;
-        var totalPages = (totalCount + pageSize - 1) / pageSize;
-
-        var pagedEntities = orderedEntities
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
-            .ToList();
-
-        return new PagedEntities<CountyParishHoldings>(pagedEntities, totalCount, totalPages, pageNumber, pageSize);
-    }
-
-    public static PagedEntities<ApplicationUserAccountHoldingAssignments> MockGetAllCphUsersPagedEntitiesResultFromCallInfo(CallInfo callInfo)
-    {
-        var actualPrimaryFilter = (Expression<Func<CountyParishHoldings, bool>>)callInfo.Args()[0];
-        var actualAssociationFilter = (Expression<Func<ApplicationUserAccountHoldingAssignments, bool>>)callInfo.Args()[1];
-        var actualOrderBy = (Expression<Func<ApplicationUserAccountHoldingAssignments, string>>)callInfo.Args()[4];
-
-        var pageNumber = (int)callInfo.Args()[2];
-        var pageSize = (int)callInfo.Args()[3];
-        var orderByDescending = (bool)callInfo.Args()[5];
-
-        var compiledPrimaryFilter = actualPrimaryFilter.Compile();
-        var compiledAssociationFilter = actualAssociationFilter.Compile();
-        var compiledOrderBy = actualOrderBy.Compile();
-
-        var filteredPrimaryEntity = GetCphEntities().FirstOrDefault(compiledPrimaryFilter);
-
-        if (filteredPrimaryEntity == null)
-        {
-            return new PagedEntities<ApplicationUserAccountHoldingAssignments>([], 0, 0, pageNumber, pageSize);
-        }
-
-        var queryableAssociations = GetCphUserEntities().Where(entity => entity.CountyParishHoldingId == filteredPrimaryEntity.Id);
-        var filteredAssociations = queryableAssociations.Where(compiledAssociationFilter);
-        var orderedEntities = (orderByDescending ? filteredAssociations.OrderByDescending(compiledOrderBy) : filteredAssociations.OrderBy(compiledOrderBy)).ToList();
-
-        var totalCount = orderedEntities.Count;
-        var totalPages = (totalCount + pageSize - 1) / pageSize;
-
-        var pagedEntities = orderedEntities
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
-            .ToList();
-
-        return new PagedEntities<ApplicationUserAccountHoldingAssignments>(pagedEntities, totalCount, totalPages, pageNumber, pageSize);
-    }
-
-    public static CountyParishHoldings? GetSingleMockEntityResultFromCallInfo(CallInfo callInfo)
-    {
-        var actualFilter = (Expression<Func<CountyParishHoldings, bool>>)callInfo.Args()[0];
-        var compiledFilter = actualFilter.Compile();
-
-        var entity = GetCphEntities().FirstOrDefault(compiledFilter);
-
-        return entity;
-    }
-
-    private static CountyParishHoldings[] GetCphEntitiesForSimpleFilterChecks() =>
+    public static CountyParishHoldings[] GetCphEntitiesForSimpleFilterChecks() =>
     [
         new()
         {
@@ -105,7 +20,7 @@ public static class CphRepositoryMockingHelper
         },
     ];
 
-    private static CountyParishHoldings[] GetCphEntities() =>
+    public static CountyParishHoldings[] GetCphEntities() =>
     [
         new()
         {
@@ -137,7 +52,7 @@ public static class CphRepositoryMockingHelper
         },
     ];
 
-    private static ApplicationUserAccountHoldingAssignments[] GetCphUserEntities() =>
+    public static ApplicationUserAccountHoldingAssignments[] GetCphUserEntities() =>
     [
         new()
         {

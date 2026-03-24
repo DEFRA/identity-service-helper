@@ -20,7 +20,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddTransient<IUserService, UserService>();
         services.AddTransient<IApplicationService, ApplicationService>();
-        services.AddTransient<IDelegationsService, DelegationsService>();
+        services.AddTransient<ICphDelegationsService, CphDelegationsService>();
         services.AddTransient<ICphService, CphService>();
         services.AddTransient<IAnimalSpeciesService, AnimalSpeciesService>();
 

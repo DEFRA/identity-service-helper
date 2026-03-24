@@ -16,7 +16,7 @@ public class CountyParishHoldings : BaseAuditEntity
 
     public UserAccounts CreatedByUser { get; set; } = null!;
 
-    public ICollection<DelegationsCountyParishHoldings> DelegationsCountyParishHoldings { get; set; } = new List<DelegationsCountyParishHoldings>();
+    public ICollection<CountyParishHoldingDelegations> DelegationsCountyParishHoldings { get; set; } = new List<CountyParishHoldingDelegations>();
 
     public ICollection<ApplicationUserAccountHoldingAssignments> ApplicationUserAccountHoldingAssignments { get; set; } = new List<ApplicationUserAccountHoldingAssignments>();
 }

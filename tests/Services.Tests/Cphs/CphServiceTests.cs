@@ -15,6 +15,7 @@ using Defra.Identity.Requests.Cphs.Queries;
 using Defra.Identity.Services.Cphs;
 using Defra.Identity.Services.Exceptions;
 using Defra.Identity.Services.Tests.Cphs.TestData;
+using Defra.Identity.Test.Utilities.Repository;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
@@ -33,7 +34,7 @@ public class CphServiceTests
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(CphRepositoryMockingHelper.MockGetEntityResultFromCallInfoForSimpleFilterChecks);
+            .Returns(callInfo => PredicateInterceptor.MockGetSingleEntityResult(callInfo, CphRepositoryMockingHelper.GetCphEntitiesForSimpleFilterChecks()));
 
         var request = new OperationByCphNumberFake(1, 28, 1);
         const string formattedCphNumber = "01/028/0001";
@@ -59,7 +60,7 @@ public class CphServiceTests
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(CphRepositoryMockingHelper.MockGetEntityResultFromCallInfoForSimpleFilterChecks);
+            .Returns(callInfo => PredicateInterceptor.MockGetSingleEntityResult(callInfo, CphRepositoryMockingHelper.GetCphEntitiesForSimpleFilterChecks()));
 
         var request = new OperationByCphNumberFake(1, 28, 2);
         const string formattedCphNumber = "01/028/0002";
@@ -83,7 +84,7 @@ public class CphServiceTests
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(CphRepositoryMockingHelper.MockGetEntityResultFromCallInfoForSimpleFilterChecks);
+            .Returns(callInfo => PredicateInterceptor.MockGetSingleEntityResult(callInfo, CphRepositoryMockingHelper.GetCphEntitiesForSimpleFilterChecks()));
 
         var requestWithNonExistingCphNumber = new OperationByCphNumberFake(1, 28, 100);
         const string formattedCphNumber = "01/028/0100";
@@ -130,7 +131,7 @@ public class CphServiceTests
                 Arg.Any<Expression<Func<CountyParishHoldings, string>>>(),
                 Arg.Any<bool>(),
                 Arg.Any<CancellationToken>())
-            .Returns(CphRepositoryMockingHelper.MockGetAllPagedEntitiesResultFromCallInfo);
+            .Returns(callInfo => PredicateInterceptor.MockGetAllPagedEntitiesResult(callInfo, CphRepositoryMockingHelper.GetCphEntities()));
 
         var request = new GetCphs
         {
@@ -186,7 +187,7 @@ public class CphServiceTests
                 Arg.Any<Expression<Func<CountyParishHoldings, string>>>(),
                 Arg.Any<bool>(),
                 Arg.Any<CancellationToken>())
-            .Returns(CphRepositoryMockingHelper.MockGetAllPagedEntitiesResultFromCallInfo);
+            .Returns(callInfo => PredicateInterceptor.MockGetAllPagedEntitiesResult(callInfo, CphRepositoryMockingHelper.GetCphEntities()));
 
         var request = new GetCphs
         {
@@ -235,7 +236,7 @@ public class CphServiceTests
                 Arg.Any<Expression<Func<CountyParishHoldings, string>>>(),
                 Arg.Any<bool>(),
                 Arg.Any<CancellationToken>())
-            .Returns(CphRepositoryMockingHelper.MockGetAllPagedEntitiesResultFromCallInfo);
+            .Returns(callInfo => PredicateInterceptor.MockGetAllPagedEntitiesResult(callInfo, CphRepositoryMockingHelper.GetCphEntities()));
 
         var request = new GetCphs
         {
@@ -291,7 +292,7 @@ public class CphServiceTests
                 Arg.Any<Expression<Func<CountyParishHoldings, string>>>(),
                 Arg.Any<bool>(),
                 Arg.Any<CancellationToken>())
-            .Returns(CphRepositoryMockingHelper.MockGetAllPagedEntitiesResultFromCallInfo);
+            .Returns(callInfo => PredicateInterceptor.MockGetAllPagedEntitiesResult(callInfo, CphRepositoryMockingHelper.GetCphEntities()));
 
         var request = new GetCphs
         {
@@ -347,7 +348,7 @@ public class CphServiceTests
                 Arg.Any<Expression<Func<CountyParishHoldings, string>>>(),
                 Arg.Any<bool>(),
                 Arg.Any<CancellationToken>())
-            .Returns(CphRepositoryMockingHelper.MockGetAllPagedEntitiesResultFromCallInfo);
+            .Returns(callInfo => PredicateInterceptor.MockGetAllPagedEntitiesResult(callInfo, CphRepositoryMockingHelper.GetCphEntities()));
 
         var request = new GetCphs
         {
@@ -403,7 +404,7 @@ public class CphServiceTests
                 Arg.Any<Expression<Func<CountyParishHoldings, string>>>(),
                 Arg.Any<bool>(),
                 Arg.Any<CancellationToken>())
-            .Returns(CphRepositoryMockingHelper.MockGetAllPagedEntitiesResultFromCallInfo);
+            .Returns(callInfo => PredicateInterceptor.MockGetAllPagedEntitiesResult(callInfo, CphRepositoryMockingHelper.GetCphEntities()));
 
         var request = new GetCphs
         {
@@ -452,7 +453,7 @@ public class CphServiceTests
                 Arg.Any<Expression<Func<CountyParishHoldings, string>>>(),
                 Arg.Any<bool>(),
                 Arg.Any<CancellationToken>())
-            .Returns(CphRepositoryMockingHelper.MockGetAllPagedEntitiesResultFromCallInfo);
+            .Returns(callInfo => PredicateInterceptor.MockGetAllPagedEntitiesResult(callInfo, CphRepositoryMockingHelper.GetCphEntities()));
 
         var request = new GetCphs
         {
@@ -508,7 +509,7 @@ public class CphServiceTests
                 Arg.Any<Expression<Func<CountyParishHoldings, string>>>(),
                 Arg.Any<bool>(),
                 Arg.Any<CancellationToken>())
-            .Returns(CphRepositoryMockingHelper.MockGetAllPagedEntitiesResultFromCallInfo);
+            .Returns(callInfo => PredicateInterceptor.MockGetAllPagedEntitiesResult(callInfo, CphRepositoryMockingHelper.GetCphEntities()));
 
         var request = new GetCphs
         {
@@ -558,7 +559,7 @@ public class CphServiceTests
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
+            .Returns(callInfo => PredicateInterceptor.MockGetSingleEntityResult(callInfo, CphRepositoryMockingHelper.GetCphEntities()));
 
         var request = new GetCphByCphId
         {
@@ -590,7 +591,7 @@ public class CphServiceTests
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
+            .Returns(callInfo => PredicateInterceptor.MockGetSingleEntityResult(callInfo, CphRepositoryMockingHelper.GetCphEntities()));
 
         var request = new GetCphByCphId
         {
@@ -680,7 +681,7 @@ public class CphServiceTests
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
+            .Returns(callInfo => PredicateInterceptor.MockGetSingleEntityResult(callInfo, CphRepositoryMockingHelper.GetCphEntities()));
 
         var request = new ExpireCphByCphId
         {
@@ -710,7 +711,7 @@ public class CphServiceTests
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
+            .Returns(callInfo => PredicateInterceptor.MockGetSingleEntityResult(callInfo, CphRepositoryMockingHelper.GetCphEntities()));
 
         var request = new ExpireCphByCphId
         {
@@ -806,7 +807,7 @@ public class CphServiceTests
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
+            .Returns(callInfo => PredicateInterceptor.MockGetSingleEntityResult(callInfo, CphRepositoryMockingHelper.GetCphEntities()));
 
         var request = new DeleteCphByCphId
         {
@@ -902,7 +903,7 @@ public class CphServiceTests
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
+            .Returns(callInfo => PredicateInterceptor.MockGetSingleEntityResult(callInfo, CphRepositoryMockingHelper.GetCphEntities()));
 
         cphUsersRepository.GetPaged(
                 Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(),
@@ -912,7 +913,12 @@ public class CphServiceTests
                 Arg.Any<Expression<Func<ApplicationUserAccountHoldingAssignments, string>>>(),
                 Arg.Any<bool>(),
                 Arg.Any<CancellationToken>())
-            .Returns(CphRepositoryMockingHelper.MockGetAllCphUsersPagedEntitiesResultFromCallInfo);
+            .Returns(
+                callInfo => PredicateInterceptor.MockGetAllPagedAssociatedEntitiesResult(
+                    callInfo,
+                    CphRepositoryMockingHelper.GetCphEntities(),
+                    CphRepositoryMockingHelper.GetCphUserEntities(),
+                    (cph, cphUser) => cph.Id == cphUser.CountyParishHoldingId));
 
         var request = new GetCphUsersByCphId()
         {
@@ -966,7 +972,7 @@ public class CphServiceTests
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
+            .Returns(callInfo => PredicateInterceptor.MockGetSingleEntityResult(callInfo, CphRepositoryMockingHelper.GetCphEntities()));
 
         cphUsersRepository.GetPaged(
                 Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(),
@@ -976,7 +982,12 @@ public class CphServiceTests
                 Arg.Any<Expression<Func<ApplicationUserAccountHoldingAssignments, string>>>(),
                 Arg.Any<bool>(),
                 Arg.Any<CancellationToken>())
-            .Returns(CphRepositoryMockingHelper.MockGetAllCphUsersPagedEntitiesResultFromCallInfo);
+            .Returns(
+                callInfo => PredicateInterceptor.MockGetAllPagedAssociatedEntitiesResult(
+                    callInfo,
+                    CphRepositoryMockingHelper.GetCphEntities(),
+                    CphRepositoryMockingHelper.GetCphUserEntities(),
+                    (cph, cphUser) => cph.Id == cphUser.CountyParishHoldingId));
 
         var request = new GetCphUsersByCphId()
         {
@@ -1021,7 +1032,7 @@ public class CphServiceTests
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
+            .Returns(callInfo => PredicateInterceptor.MockGetSingleEntityResult(callInfo, CphRepositoryMockingHelper.GetCphEntities()));
 
         cphUsersRepository.GetPaged(
                 Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(),
@@ -1031,7 +1042,12 @@ public class CphServiceTests
                 Arg.Any<Expression<Func<ApplicationUserAccountHoldingAssignments, string>>>(),
                 Arg.Any<bool>(),
                 Arg.Any<CancellationToken>())
-            .Returns(CphRepositoryMockingHelper.MockGetAllCphUsersPagedEntitiesResultFromCallInfo);
+            .Returns(
+                callInfo => PredicateInterceptor.MockGetAllPagedAssociatedEntitiesResult(
+                    callInfo,
+                    CphRepositoryMockingHelper.GetCphEntities(),
+                    CphRepositoryMockingHelper.GetCphUserEntities(),
+                    (cph, cphUser) => cph.Id == cphUser.CountyParishHoldingId));
 
         var request = new GetCphUsersByCphId()
         {
@@ -1085,7 +1101,7 @@ public class CphServiceTests
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
+            .Returns(callInfo => PredicateInterceptor.MockGetSingleEntityResult(callInfo, CphRepositoryMockingHelper.GetCphEntities()));
 
         cphUsersRepository.GetPaged(
                 Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(),
@@ -1095,7 +1111,12 @@ public class CphServiceTests
                 Arg.Any<Expression<Func<ApplicationUserAccountHoldingAssignments, string>>>(),
                 Arg.Any<bool>(),
                 Arg.Any<CancellationToken>())
-            .Returns(CphRepositoryMockingHelper.MockGetAllCphUsersPagedEntitiesResultFromCallInfo);
+            .Returns(
+                callInfo => PredicateInterceptor.MockGetAllPagedAssociatedEntitiesResult(
+                    callInfo,
+                    CphRepositoryMockingHelper.GetCphEntities(),
+                    CphRepositoryMockingHelper.GetCphUserEntities(),
+                    (cph, cphUser) => cph.Id == cphUser.CountyParishHoldingId));
 
         var request = new GetCphUsersByCphId()
         {
@@ -1140,7 +1161,7 @@ public class CphServiceTests
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
+            .Returns(callInfo => PredicateInterceptor.MockGetSingleEntityResult(callInfo, CphRepositoryMockingHelper.GetCphEntities()));
 
         cphUsersRepository.GetPaged(
                 Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(),
@@ -1150,7 +1171,12 @@ public class CphServiceTests
                 Arg.Any<Expression<Func<ApplicationUserAccountHoldingAssignments, string>>>(),
                 Arg.Any<bool>(),
                 Arg.Any<CancellationToken>())
-            .Returns(CphRepositoryMockingHelper.MockGetAllCphUsersPagedEntitiesResultFromCallInfo);
+            .Returns(
+                callInfo => PredicateInterceptor.MockGetAllPagedAssociatedEntitiesResult(
+                    callInfo,
+                    CphRepositoryMockingHelper.GetCphEntities(),
+                    CphRepositoryMockingHelper.GetCphUserEntities(),
+                    (cph, cphUser) => cph.Id == cphUser.CountyParishHoldingId));
 
         var request = new GetCphUsersByCphId()
         {
@@ -1204,7 +1230,7 @@ public class CphServiceTests
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(CphRepositoryMockingHelper.GetSingleMockEntityResultFromCallInfo);
+            .Returns(callInfo => PredicateInterceptor.MockGetSingleEntityResult(callInfo, CphRepositoryMockingHelper.GetCphEntities()));
 
         cphUsersRepository.GetPaged(
                 Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(),
@@ -1214,7 +1240,12 @@ public class CphServiceTests
                 Arg.Any<Expression<Func<ApplicationUserAccountHoldingAssignments, string>>>(),
                 Arg.Any<bool>(),
                 Arg.Any<CancellationToken>())
-            .Returns(CphRepositoryMockingHelper.MockGetAllCphUsersPagedEntitiesResultFromCallInfo);
+            .Returns(
+                callInfo => PredicateInterceptor.MockGetAllPagedAssociatedEntitiesResult(
+                    callInfo,
+                    CphRepositoryMockingHelper.GetCphEntities(),
+                    CphRepositoryMockingHelper.GetCphUserEntities(),
+                    (cph, cphUser) => cph.Id == cphUser.CountyParishHoldingId));
 
         var request = new GetCphUsersByCphId()
         {

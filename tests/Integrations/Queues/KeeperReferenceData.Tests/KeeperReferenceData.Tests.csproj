@@ -3,9 +3,6 @@
     <Using Include="Xunit" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="../../../../src/Integrations/Queues/KeeperReferenceData/KeeperReferenceData.csproj" />
     <ProjectReference Include="../../../../tests/Test.Utilities/Test.Utilities.csproj" />
   </ItemGroup>

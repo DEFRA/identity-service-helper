@@ -19,13 +19,13 @@ using Xunit;
 
 public class DelegationEndpointsTests
 {
-    private readonly IDelegationsService service;
+    private readonly ICphDelegationsService service;
     private readonly CommandRequestHeaders commandHeaders;
     private readonly QueryRequestHeaders queryHeaders;
 
     public DelegationEndpointsTests()
     {
-        service = Substitute.For<IDelegationsService>();
+        service = Substitute.For<ICphDelegationsService>();
         commandHeaders = new CommandRequestHeaders(Guid.NewGuid(), Guid.NewGuid(), "test-api-key");
         queryHeaders = new QueryRequestHeaders(Guid.NewGuid(), "test-api-key");
     }
@@ -34,8 +34,23 @@ public class DelegationEndpointsTests
     public async Task GetAll_ReturnsOk()
     {
         // Arrange
-        var request = new GetDelegations();
-        var delegations = new List<Delegation> { new() { Id = Guid.NewGuid() } };
+        var request = new GetCphDelegations();
+        var delegations = new List<CphDelegation>
+        {
+            new()
+            {
+                Id = Guid.NewGuid(),
+                CountyParishHoldingId = Guid.NewGuid(),
+                CountyParishHoldingNumber = "22/001/0001",
+                DelegatingUserId = Guid.NewGuid(),
+                DelegatingUserName = "Test User 100",
+                DelegatedUserName = "Test User 200",
+                DelegatedUserEmail = "test200@test.com",
+                DelegatedUserRoleId = Guid.NewGuid(),
+                DelegatedUserRoleName = "Test Role 100",
+            },
+        };
+
         service.GetAll(request, Arg.Any<CancellationToken>()).Returns(delegations);
 
         // Act
@@ -44,8 +59,8 @@ public class DelegationEndpointsTests
             .Invoke(null, [queryHeaders, request, service])!;
 
         // Assert
-        result.ShouldBeOfType<Ok<List<Delegation>>>();
-        ((Ok<List<Delegation>>)result).Value.ShouldBe(delegations);
+        result.ShouldBeOfType<Ok<List<CphDelegation>>>();
+        ((Ok<List<CphDelegation>>)result).Value.ShouldBe(delegations);
     }
 
     [Fact]
@@ -53,8 +68,25 @@ public class DelegationEndpointsTests
     {
         // Arrange
         var id = Guid.NewGuid();
-        var request = new GetDelegationById { Id = id };
-        var delegation = new Delegation { Id = id };
+
+        var request = new GetCphDelegationById
+        {
+            Id = id,
+        };
+
+        var delegation = new CphDelegation()
+        {
+            Id = id,
+            CountyParishHoldingId = Guid.NewGuid(),
+            CountyParishHoldingNumber = "22/001/0001",
+            DelegatingUserId = Guid.NewGuid(),
+            DelegatingUserName = "Test User 100",
+            DelegatedUserName = "Test User 200",
+            DelegatedUserEmail = "test200@test.com",
+            DelegatedUserRoleId = Guid.NewGuid(),
+            DelegatedUserRoleName = "Test Role 100",
+        };
+
         service.Get(request, Arg.Any<CancellationToken>()).Returns(delegation);
 
         // Act
@@ -63,16 +95,32 @@ public class DelegationEndpointsTests
             .Invoke(null, [queryHeaders, request, service])!;
 
         // Assert
-        result.ShouldBeOfType<Ok<Delegation>>();
-        ((Ok<Delegation>)result).Value.ShouldBe(delegation);
+        result.ShouldBeOfType<Ok<CphDelegation>>();
+        ((Ok<CphDelegation>)result).Value.ShouldBe(delegation);
     }
 
     [Fact]
     public async Task Post_ReturnsCreatedAtRoute()
     {
         // Arrange
-        var request = new CreateDelegation { ApplicationId = Guid.NewGuid(), UserId = Guid.NewGuid() };
-        var delegation = new Delegation { Id = Guid.NewGuid() };
+        var request = new CreateCphDelegation
+        {
+            CountyParishHoldingId = Guid.NewGuid(), DelegatingUserId = Guid.NewGuid(), DelegatedUserEmail = "test200@test.com", DelegatedUserRoleId = Guid.NewGuid(),
+        };
+
+        var delegation = new CphDelegation()
+        {
+            Id = Guid.NewGuid(),
+            CountyParishHoldingId = request.CountyParishHoldingId,
+            CountyParishHoldingNumber = "22/001/0001",
+            DelegatingUserId = request.DelegatingUserId,
+            DelegatingUserName = "Test User 100",
+            DelegatedUserName = "Test User 200",
+            DelegatedUserEmail = request.DelegatedUserEmail,
+            DelegatedUserRoleId = request.DelegatedUserRoleId,
+            DelegatedUserRoleName = "Test Role 100",
+        };
+
         service.Create(request, Arg.Any<CancellationToken>()).Returns(delegation);
 
         // Act
@@ -81,11 +129,11 @@ public class DelegationEndpointsTests
             .Invoke(null, [commandHeaders, request, service])!;
 
         // Assert
-        result.ShouldBeOfType<CreatedAtRoute<Delegation>>();
-        var createdResult = (CreatedAtRoute<Delegation>)result;
+        result.ShouldBeOfType<CreatedAtRoute<CphDelegation>>();
+        var createdResult = (CreatedAtRoute<CphDelegation>)result;
         createdResult.Value.ShouldBe(delegation);
         createdResult.RouteName.ShouldBe(RouteNames.Delegations);
-        createdResult.RouteValues!["id"].ShouldBe(delegation.Id);
+        createdResult.RouteValues["id"].ShouldBe(delegation.Id);
         request.OperatorId.ShouldBe(commandHeaders.OperatorId);
     }
 
@@ -93,20 +141,39 @@ public class DelegationEndpointsTests
     public async Task Put_ReturnsOk()
     {
         // Arrange
-        var id = Guid.NewGuid();
-        var request = new UpdateDelegation { ApplicationId = Guid.NewGuid() };
-        var delegation = new Delegation { Id = id };
+        var request = new UpdateCphDelegationById
+        {
+            Id = Guid.NewGuid(),
+            CountyParishHoldingId = Guid.NewGuid(),
+            DelegatingUserId = Guid.NewGuid(),
+            DelegatedUserEmail = "test200@test.com",
+            DelegatedUserRoleId = Guid.NewGuid(),
+        };
+
+        var delegation = new CphDelegation()
+        {
+            Id = request.Id,
+            CountyParishHoldingId = request.CountyParishHoldingId,
+            CountyParishHoldingNumber = "22/001/0001",
+            DelegatingUserId = request.DelegatingUserId,
+            DelegatingUserName = "Test User 100",
+            DelegatedUserName = "Test User 200",
+            DelegatedUserEmail = request.DelegatedUserEmail,
+            DelegatedUserRoleId = request.DelegatedUserRoleId,
+            DelegatedUserRoleName = "Test Role 100",
+        };
+
         service.Update(request, Arg.Any<CancellationToken>()).Returns(delegation);
 
         // Act
         var result = await (Task<IResult>)typeof(DelegationEndpoints)
             .GetMethod("Put", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
-            .Invoke(null, [commandHeaders, id, request, service])!;
+            .Invoke(null, [commandHeaders, request.Id, request, service])!;
 
         // Assert
-        result.ShouldBeOfType<Ok<Delegation>>();
-        ((Ok<Delegation>)result).Value.ShouldBe(delegation);
-        request.Id.ShouldBe(id);
+        result.ShouldBeOfType<Ok<CphDelegation>>();
+        ((Ok<CphDelegation>)result).Value.ShouldBe(delegation);
+        request.Id.ShouldBe(request.Id);
         request.OperatorId.ShouldBe(commandHeaders.OperatorId);
     }
 
@@ -114,14 +181,21 @@ public class DelegationEndpointsTests
     public async Task Put_ReturnsNotFound_WhenNullReferenceException()
     {
         // Arrange
-        var id = Guid.NewGuid();
-        var request = new UpdateDelegation();
-        service.Update(request, Arg.Any<CancellationToken>()).Returns(Task.FromException<Delegation>(new NullReferenceException("Not found")));
+        var request = new UpdateCphDelegationById
+        {
+            Id = Guid.NewGuid(),
+            CountyParishHoldingId = Guid.NewGuid(),
+            DelegatingUserId = Guid.NewGuid(),
+            DelegatedUserEmail = "test200@test.com",
+            DelegatedUserRoleId = Guid.NewGuid(),
+        };
+
+        service.Update(request, Arg.Any<CancellationToken>()).Returns(Task.FromException<CphDelegation>(new NullReferenceException("Not found")));
 
         // Act
         var result = await (Task<IResult>)typeof(DelegationEndpoints)
             .GetMethod("Put", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
-            .Invoke(null, [commandHeaders, id, request, service])!;
+            .Invoke(null, [commandHeaders, request.Id, request, service])!;
 
         // Assert
         result.ShouldBeOfType<NotFound<string>>();
@@ -132,14 +206,21 @@ public class DelegationEndpointsTests
     public async Task Put_ReturnsBadRequest_WhenException()
     {
         // Arrange
-        var id = Guid.NewGuid();
-        var request = new UpdateDelegation();
-        service.Update(request, Arg.Any<CancellationToken>()).Returns(Task.FromException<Delegation>(new Exception("Error")));
+        var request = new UpdateCphDelegationById
+        {
+            Id = Guid.NewGuid(),
+            CountyParishHoldingId = Guid.NewGuid(),
+            DelegatingUserId = Guid.NewGuid(),
+            DelegatedUserEmail = "test200test.com",
+            DelegatedUserRoleId = Guid.NewGuid(),
+        };
+
+        service.Update(request, Arg.Any<CancellationToken>()).Returns(Task.FromException<CphDelegation>(new Exception("Error")));
 
         // Act
         var result = await (Task<IResult>)typeof(DelegationEndpoints)
             .GetMethod("Put", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
-            .Invoke(null, [commandHeaders, id, request, service])!;
+            .Invoke(null, [commandHeaders, request.Id, request, service])!;
 
         // Assert
         result.ShouldBeOfType<BadRequest<string>>();

@@ -11,16 +11,10 @@ BEGIN
 TRUNCATE TABLE
     animal_species,
     roles,
-
     application_roles,
     application_user_account_holding_assignments,
-
-    delegation_invitations,
-    delegations_county_parish_holdings,
-    delegations,
-
+    county_parish_holding_delegations,
     user_accounts,
-
     krds_sync_logs,
     animal_species,
     roles,
