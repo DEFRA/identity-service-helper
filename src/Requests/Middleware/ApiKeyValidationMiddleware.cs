@@ -39,7 +39,7 @@ public class ApiKeyValidationMiddleware(string apiKey, ILogger<ApiKeyValidationM
                 await WriteJsonErrorAsync(
                     context,
                     statusCode: StatusCodes.Status400BadRequest,
-                    code: "Invalid header",
+                    code: "missing_header",
                     message: $"Header {RequestHeaderNames.ApiKey} is required.",
                     details: new { header = $"{RequestHeaderNames.ApiKey}" });
                 return;
@@ -50,7 +50,7 @@ public class ApiKeyValidationMiddleware(string apiKey, ILogger<ApiKeyValidationM
                 await WriteJsonErrorAsync(
                     context,
                     statusCode: StatusCodes.Status400BadRequest,
-                    code: "Invalid Api Key",
+                    code: "invalid_api_key",
                     message: $"Header {RequestHeaderNames.ApiKey} is not valid.",
                     details: new { header = $"{RequestHeaderNames.ApiKey}" });
                 return;

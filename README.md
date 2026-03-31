@@ -212,3 +212,11 @@ Then run the following command from the root of the project.
 ```shell
 ijhttp --env-file ./tests/Endpoint.Tests/Tests/http-client.env.json --env local ./tests/Endpoint.Tests/**/**/**.http
 ```
+
+To include the HTTP client tests in code coverage, install [`dotnet-coverage`](https://learn.microsoft.com/en-us/dotnet/core/additional-tools/dotnet-coverage) and run:
+
+```shell
+bash ./tests/Endpoint.Tests/run-http-tests-with-coverage.sh --configuration Release --env local
+```
+
+This writes `coverage/Api.Http.cobertura.xml`, which can be merged with the existing `dotnet test` Cobertura files. The Cake build now exposes a `TestAll` target to run both the `.csproj` tests and the HTTP tests before generating the combined coverage report.
