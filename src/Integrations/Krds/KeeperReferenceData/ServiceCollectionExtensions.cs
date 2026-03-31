@@ -27,7 +27,7 @@ public static class ServiceCollectionExtensions
         }
 
         services.Configure<KrdsApi>(configuration.GetSection(nameof(KrdsApi)))
-            .AddHttpClient<ISitesProvider, SitesProvider>()
+            .AddHttpClient<IKrdsProvider, KrdsProvider>()
             .ConfigureHttpClient(client =>
             {
                 client.BaseAddress = new Uri(krdsApi.Url);

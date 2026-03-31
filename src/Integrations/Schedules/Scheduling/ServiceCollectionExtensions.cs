@@ -16,7 +16,7 @@ public static class ServiceCollectionExtensions
         IConfigurationRoot configuration)
     {
         // Bind options from configuration
-        var section = configuration.GetSection("Scheduling:KeeperReferenceData");
+        var section = configuration.GetSection("Scheduling:QueueManagement");
         services.Configure<KeeperReferenceDataOptions>(section);
 
         var cron = section["Cron"];

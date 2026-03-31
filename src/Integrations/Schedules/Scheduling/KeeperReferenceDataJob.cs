@@ -11,7 +11,7 @@ using Quartz;
 
 [DisallowConcurrentExecution]
 public class KeeperReferenceDataJob(
-    ISitesProvider sitesService,
+    IKrdsProvider krdsService,
     ILogger<KeeperReferenceDataJob> logger,
     IOptions<KeeperReferenceDataOptions> options)
     : IJob
@@ -27,7 +27,7 @@ public class KeeperReferenceDataJob(
             // We fetch since 24 hours ago as a default, or we could add it to options
             var since = DateTime.UtcNow.AddDays(-1);
             logger.LogInformation("Fetching sites since {Date}", since);
-            var sites = await sitesService.Sites(since, context.CancellationToken);
+            var sites = await krdsService.Sites(since, context.CancellationToken);
 
             logger.LogInformation("{Job} succeeded. Found {Count} sites.", context.JobDetail.Key.Name, sites.Count);
         }

@@ -7,11 +7,14 @@
     <Project Path="src/Database/Postgres.Database/Postgres.Database.csproj" />
   </Folder>
   <Folder Name="/src/Integrations/" />
+  <Folder Name="/src/Integrations/Ingest/">
+    <Project Path="src/Integrations/Ingest/Ingest/Ingest.csproj" />
+  </Folder>
   <Folder Name="/src/Integrations/Krds/">
     <Project Path="src\Integrations\Krds\KeeperReferenceData\KeeperReferenceData.csproj" />
   </Folder>
   <Folder Name="/src/Integrations/Queues/">
-    <Project Path="src/Integrations/Queues/KeeperReferenceData/KeeperReferenceData.csproj" />
+    <Project Path="src\Integrations\Queues\QueueManagement\QueueManagement.csproj" />
   </Folder>
   <Folder Name="/src/Integrations/Schedules/">
     <Project Path="src\Integrations\Schedules\Scheduling\Scheduling.csproj" />
@@ -88,5 +91,8 @@
   </Folder>
   <Folder Name="/tests/Utilities/">
     <Project Path="tests/Test.Utilities/Test.Utilities.csproj" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/SqsMessageSender/SqsMessageSender.csproj" />
   </Folder>
 </Solution>

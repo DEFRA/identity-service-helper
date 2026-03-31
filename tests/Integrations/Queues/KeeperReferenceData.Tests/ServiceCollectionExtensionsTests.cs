@@ -5,8 +5,9 @@
 namespace Defra.Identity.KeeperReferenceData.Tests;
 
 using AWS.Messaging;
-using Defra.Identity.KeeperReferenceData.Handlers;
-using Defra.Identity.KeeperReferenceData.Messages;
+using Defra.Identity.Ingest;
+using Defra.Identity.QueueManagement;
+using Defra.Identity.QueueManagement.Handlers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -26,11 +27,19 @@ public class ServiceCollectionExtensionsTests
                 ["QueueOptions:IntakeQueueOptions:Url"] = "https://sqs.us-east-1.amazonaws.com/123456789012/test-queue",
                 ["QueueOptions:IntakeQueueOptions:WaitTimeSeconds"] = "20",
                 ["QueueOptions:IntakeQueueOptions:MaxNumberOfMessages"] = "1",
+                ["AWS:UseLocalStack"] = "false",
+                ["AWS:Region"] = "eu-west-2",
+                ["AWS:ServiceURL"] = "http://localhost:4566",
+                ["AWS:AccessKey"] = "test",
+                ["AWS:SecretKey"] = "test",
+                ["KrdsApi:Url"] = "http://localhost:5062",
             })
             .Build();
 
         services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
         services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
+        services.AddDataIngestServices(configuration);
+        services.AddKeeperRecordsDataIntegrationService(configuration);
 
         // Act
         services.AddKeeperReferenceDataQueueIntegration(configuration);

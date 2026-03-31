@@ -3,7 +3,7 @@
     <Using Include="Xunit" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="../../../../src/Integrations/Queues/KeeperReferenceData/KeeperReferenceData.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Integrations\Queues\QueueManagement\QueueManagement.csproj" />
     <ProjectReference Include="../../../../tests/Test.Utilities/Test.Utilities.csproj" />
   </ItemGroup>
 </Project>

@@ -15,8 +15,10 @@ using Defra.Identity.Api.Endpoints.Users;
 using Defra.Identity.Api.Exceptions;
 using Defra.Identity.Api.Utility.Http;
 using Defra.Identity.Api.Utility.Logging;
+using Defra.Identity.Ingest;
 using Defra.Identity.KeeperReferenceData;
 using Defra.Identity.Postgres.Database;
+using Defra.Identity.QueueManagement;
 using Defra.Identity.Repositories;
 using Defra.Identity.Requests;
 using Defra.Identity.Scheduling;
@@ -105,8 +107,11 @@ public class Program
         builder.Services.AddRepositories(configuration);
         builder.Services.AddDataServices(configuration);
         builder.Services.AddScheduling(configuration);
+        builder.Services.AddDataIngestServices(configuration);
+        builder.Services.AddKeeperRecordsDataIntegrationService(configuration);
+
         // intentionally commented out until we get a queue to interact with  -- Gary Woodfine
-        //builder.Services.AddKeeperReferenceDataQueueIntegration(configuration);
+        builder.Services.AddKeeperReferenceDataQueueIntegration(configuration);
     }
 
     [ExcludeFromCodeCoverage]
