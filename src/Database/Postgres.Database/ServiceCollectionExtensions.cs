@@ -36,16 +36,17 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddPostgresDatabase(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString(DatabaseConstants.ConnectionStringName);
-        var readOnlyConnectionString = configuration.GetConnectionString(DatabaseConstants.ReadOnlyConnectionStringName) ?? connectionString;
 
         services.AddDbContext<PostgresDbContext>((sp, options) =>
         {
+            var connectionString = configuration.GetConnectionString(DatabaseConstants.ConnectionStringName);
             ConfigureNpgsql(sp, options, connectionString!);
         });
 
         services.AddDbContext<ReadOnlyPostgresDbContext>((sp, options) =>
         {
+            var readOnlyConnectionString = configuration.GetConnectionString(DatabaseConstants.ReadOnlyConnectionStringName) ??
+                                           configuration.GetConnectionString(DatabaseConstants.ConnectionStringName);
             ConfigureNpgsql(sp, options, readOnlyConnectionString!);
             options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         });
