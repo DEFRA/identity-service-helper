@@ -16,6 +16,8 @@ using Testcontainers.PostgreSql;
 public class PostgreContainerFixture
     : IAsyncLifetime
 {
+    private const string LiquibaseClasspath = "/liquibase/changelog/liquibase_libs/postgresql-42.7.8.jar";
+
     private static readonly INetwork Network = new NetworkBuilder()
         .Build();
 
@@ -61,23 +63,13 @@ public class PostgreContainerFixture
     {
         await Db.StartAsync();
         await Liquibase.StartAsync();
-
-        var install = await Liquibase.ExecAsync(
-        [
-            "liquibase", "lpm", "add", "postgresql",
-        ]);
-
-        if (install.ExitCode != 0)
-        {
-            throw new Exception($"lpm failed: {install.Stderr}");
-        }
     }
 
     private static async Task UpdateLiquibase()
     {
         var update = await Liquibase.ExecAsync(
         [
-            "liquibase", "--url=jdbc:postgresql://pg:5432/appdb", "--username=identity_service_helper_ddl", "--password=app", "--search-path=/liquibase/changelog",
+            "liquibase", "--classpath=" + LiquibaseClasspath, "--url=jdbc:postgresql://pg:5432/appdb", "--username=identity_service_helper_ddl", "--password=app", "--search-path=/liquibase/changelog",
             "--changelog-file=db.changelog.xml", "update", "--context-filter=TESTCONTAINER",
         ]);
 

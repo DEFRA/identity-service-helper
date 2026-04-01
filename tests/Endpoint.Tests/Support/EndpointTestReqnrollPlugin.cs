@@ -4,8 +4,6 @@
 
 namespace Defra.Identity.Endpoint.Tests.Support;
 
-using System;
-using System.Linq;
 using Defra.Identity.Endpoint.Tests.Configuration;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
 using Microsoft;
@@ -21,8 +19,6 @@ using Reqnroll.UnitTestProvider;
 /// </summary>
 public class EndpointTestReqnrollPlugin : IRuntimePlugin
 {
-    private string[] testHostFileNames = { "TestHost.dll", "ReSharperTestRunner.dll" };
-
     /// <inheritdoc />
     public void Initialize(
         RuntimePluginEvents runtimePluginEvents,
@@ -36,14 +32,8 @@ public class EndpointTestReqnrollPlugin : IRuntimePlugin
 
     private void RegisterGlobalDependencies(object sender, RegisterGlobalDependenciesEventArgs e)
     {
-        // If the test host is not running, we don't need to register any dependencies.
-        if (!Environment.GetCommandLineArgs().Any(arg =>
-                this.testHostFileNames.Any(name => arg.Contains(name, StringComparison.OrdinalIgnoreCase))))
-        {
-            return;
-        }
-
         var serviceProvider = EndpointTestService.ServiceProvider;
+        serviceProvider.ShouldNotBeNull();
 
         var factory = new EndpointTestApplicationFactory();
         e.ObjectContainer.RegisterInstanceAs(factory);
