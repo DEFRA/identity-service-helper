@@ -4,8 +4,6 @@
 
 namespace Defra.Identity.Requests.Species.Commands;
 
-using Microsoft.AspNetCore.Mvc;
-
 public class ToggleAnimalSpecies
 {
     public string? Id { get; set; }

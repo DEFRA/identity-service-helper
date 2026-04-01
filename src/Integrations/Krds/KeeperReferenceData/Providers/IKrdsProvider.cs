@@ -4,9 +4,8 @@
 
 namespace Defra.Identity.KeeperReferenceData.Providers;
 
-using Defra.Identity.KeeperReferenceData.Models;
-using Defra.Identity.KeeperReferenceData.Models.Locations;
-using Defra.Identity.KeeperReferenceData.Models.Parties;
+using Defra.Identity.Models.Integration.Krds.Locations;
+using Defra.Identity.Models.Integration.Krds.Parties;
 
 public interface IKrdsProvider : IDisposable
 {

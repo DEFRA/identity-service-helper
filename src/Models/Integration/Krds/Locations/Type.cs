@@ -1,21 +1,21 @@
-// <copyright file="Role.cs" company="Defra">
+// <copyright file="Type.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.KeeperReferenceData.Models.Parties;
+namespace Defra.Identity.Models.Integration.Krds.Locations;
 
 using System.Text.Json.Serialization;
 
-public class Role
+public class Type
 {
     [JsonPropertyName("id")]
     public Guid Id { get; set; }
 
     [JsonPropertyName("code")]
-    public string? Code { get; set; }
+    public string Code { get; set; } = string.Empty;
 
     [JsonPropertyName("name")]
-    public string? Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     [JsonPropertyName("lastUpdatedDate")]
     public DateTimeOffset? LastUpdatedDate { get; set; }

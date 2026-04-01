@@ -4,7 +4,6 @@
 
 namespace Defra.Identity.KeeperReferenceData.Tests;
 
-using AWS.Messaging;
 using Defra.Identity.Ingest;
 using Defra.Identity.QueueManagement;
 using Defra.Identity.QueueManagement.Handlers;

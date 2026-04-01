@@ -8,7 +8,6 @@ using System.ComponentModel;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
 using Defra.Identity.Repositories.Delegations;
-using Defra.Identity.Repositories.Users;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Shouldly;

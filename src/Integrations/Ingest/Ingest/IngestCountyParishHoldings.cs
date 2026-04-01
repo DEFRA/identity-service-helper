@@ -4,12 +4,12 @@
 
 namespace Defra.Identity.Ingest;
 
-using Defra.Identity.KeeperReferenceData.Models.Locations;
-using Defra.Identity.KeeperReferenceData.Models.Parties;
 using Defra.Identity.KeeperReferenceData.Providers;
+using Defra.Identity.Models.Integration.Krds.Locations;
+using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Services.Cphs;
 
-public class IngestDataService(IKrdsProvider provider) : IIngestDataService
+public class IngestCountyParishHoldings(IKrdsProvider provider, ICphService service) : IIngestDataService<CountyParishHoldings>
 {
     private const string Cphcode = "CPHN";
 
@@ -17,6 +17,11 @@ public class IngestDataService(IKrdsProvider provider) : IIngestDataService
     {
         var sites = await GetSites(DateTime.UtcNow);
         var cph = sites.Values.SelectMany(x => x.Identifiers).Where(t => t.Type is { Code: Cphcode }).ToList();
+
+        foreach (var cphIdentifier in cph)
+        {
+           await service.Upsert(new CountyParishHoldings() { Identifier = cphIdentifier.Value });
+        }
 
         return true;
     }

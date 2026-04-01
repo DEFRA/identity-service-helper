@@ -4,6 +4,7 @@
 
 namespace Defra.Identity.Services.Cphs;
 
+using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Requests.Cphs.Commands;
 using Defra.Identity.Requests.Cphs.Common;
 using Defra.Identity.Requests.Cphs.Queries;
@@ -23,4 +24,6 @@ public interface ICphService
     Task Delete(DeleteCphByCphId request, Guid operatorId, CancellationToken cancellationToken = default);
 
     Task<PagedResults<CphUser>> GetAllCphUsersPaged(GetCphUsersByCphId request, CancellationToken cancellationToken = default);
+
+    Task<Cph> Upsert(CountyParishHoldings countyParishHolding, CancellationToken cancellationToken = default);
 }

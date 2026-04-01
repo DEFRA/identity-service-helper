@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.KeeperReferenceData.Models.Parties;
+namespace Defra.Identity.Models.Integration.Krds.Locations;
 
 using System.Text.Json.Serialization;
 
@@ -10,9 +10,6 @@ public class PartyRole
 {
     [JsonPropertyName("id")]
     public Guid Id { get; set; }
-
-    [JsonPropertyName("site")]
-    public Site? Site { get; set; }
 
     [JsonPropertyName("role")]
     public Role? Role { get; set; }

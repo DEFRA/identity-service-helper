@@ -15,7 +15,8 @@ public class AnimalSpeciesRepository(
     ILogger<AnimalSpeciesRepository> logger)
     : IAnimalSpeciesRepository
 {
-    public async Task<AnimalSpecies?> GetSingle(Expression<Func<AnimalSpecies, bool>> predicate,
+    public async Task<AnimalSpecies?> GetSingle(
+        Expression<Func<AnimalSpecies, bool>> predicate,
         CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Getting single animal species");
@@ -25,7 +26,8 @@ public class AnimalSpeciesRepository(
         return query;
     }
 
-    public async Task<List<AnimalSpecies>> GetList(Expression<Func<AnimalSpecies, bool>> predicate,
+    public async Task<List<AnimalSpecies>> GetList(
+        Expression<Func<AnimalSpecies, bool>> predicate,
         CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Getting list of animal species");

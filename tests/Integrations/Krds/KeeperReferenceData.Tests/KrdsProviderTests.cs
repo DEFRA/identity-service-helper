@@ -7,12 +7,12 @@ namespace Defra.Identity.KeeperReferenceData.Tests;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
-using Defra.Identity.KeeperReferenceData.Models;
-using Defra.Identity.KeeperReferenceData.Models.Locations;
-using Defra.Identity.KeeperReferenceData.Models.Parties;
 using Defra.Identity.KeeperReferenceData.Providers;
+using Defra.Identity.Models.Integration.Krds.Locations;
+using Defra.Identity.Models.Integration.Krds.Parties;
 using Microsoft.Extensions.Logging.Abstractions;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
@@ -102,7 +102,7 @@ public class KrdsProviderTests
             .Given(Request.Create().WithPath("/sites").UsingGet())
             .RespondWith(Response.Create()
                 .WithStatusCode(200)
-                .WithHeader("Content-Type", "application/json")
+                .WithHeader("Content-Type", MediaTypeNames.Application.Json)
                 .WithBody(string.Empty));
 
         var httpClient = new HttpClient { BaseAddress = new Uri(server.Url + "/") };

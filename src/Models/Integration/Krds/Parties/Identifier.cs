@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.KeeperReferenceData.Models.Locations;
+namespace Defra.Identity.Models.Integration.Krds.Parties;
 
 using System.Text.Json.Serialization;
 
@@ -12,10 +12,10 @@ public class Identifier
     public Guid Id { get; set; }
 
     [JsonPropertyName("identifier")]
-    public string Value { get; set; } = string.Empty;
+    public string? Value { get; set; }
 
     [JsonPropertyName("type")]
-    public Type? Type { get; set; }
+    public IdentifierType? Type { get; set; }
 
     [JsonPropertyName("lastUpdatedDate")]
     public DateTimeOffset? LastUpdatedDate { get; set; }

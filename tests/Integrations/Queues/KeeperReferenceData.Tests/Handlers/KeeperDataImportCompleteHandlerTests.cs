@@ -6,6 +6,7 @@ namespace Defra.Identity.KeeperReferenceData.Tests.Handlers;
 
 using AWS.Messaging;
 using Defra.Identity.Ingest;
+using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.QueueManagement.Handlers;
 using Defra.Identity.QueueManagement.Messages;
 using Microsoft.Extensions.Logging;
@@ -16,13 +17,15 @@ public class KeeperDataImportCompleteHandlerTests
 {
     private readonly ILogger<KeeperDataImportCompleteHandler> logger;
     private readonly KeeperDataImportCompleteHandler handler;
-    private readonly IIngestDataService ingestDataService;
+    private readonly IIngestDataService<CountyParishHoldings> ingestDataService;
+    private readonly IIngestDataService<Roles> roleIngestDataService;
 
     public KeeperDataImportCompleteHandlerTests()
     {
         logger = Substitute.For<ILogger<KeeperDataImportCompleteHandler>>();
-        ingestDataService = Substitute.For<IIngestDataService>();
-        handler = new KeeperDataImportCompleteHandler(logger, ingestDataService);
+        ingestDataService = Substitute.For<IIngestDataService<CountyParishHoldings>>();
+        roleIngestDataService = Substitute.For<IIngestDataService<Roles>>();
+        handler = new KeeperDataImportCompleteHandler(logger, ingestDataService, roleIngestDataService);
     }
 
     [Fact]

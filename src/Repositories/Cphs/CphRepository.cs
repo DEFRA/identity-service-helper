@@ -55,4 +55,11 @@ public class CphRepository(
 
         return entity;
     }
+
+    public async Task<CountyParishHoldings> Create(CountyParishHoldings entity, CancellationToken cancellationToken = default)
+    {
+      var newCph = await context.AddAsync(entity, cancellationToken);
+      await context.SaveChangesAsync(cancellationToken);
+      return newCph.Entity;
+    }
 }

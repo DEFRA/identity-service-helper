@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.KeeperReferenceData.Models.Locations;
+namespace Defra.Identity.Models.Integration.Krds.Parties;
 
 using System.Text.Json.Serialization;
 
@@ -11,29 +11,29 @@ public class Party
     [JsonPropertyName("id")]
     public Guid Id { get; set; }
 
-    [JsonPropertyName("customerNumber")]
-    public string CustomerNumber { get; set; } = string.Empty;
+    [JsonPropertyName("lastUpdatedDate")]
+    public DateTimeOffset? LastUpdatedDate { get; set; }
 
     [JsonPropertyName("title")]
     public string? Title { get; set; }
 
     [JsonPropertyName("firstName")]
-    public string FirstName { get; set; } = string.Empty;
+    public string? FirstName { get; set; }
 
     [JsonPropertyName("lastName")]
-    public string LastName { get; set; } = string.Empty;
+    public string? LastName { get; set; }
 
     [JsonPropertyName("name")]
-    public string Name { get; set; } = string.Empty;
+    public string? Name { get; set; }
+
+    [JsonPropertyName("customerNumber")]
+    public string? CustomerNumber { get; set; }
 
     [JsonPropertyName("partyType")]
-    public string PartyType { get; set; } = string.Empty;
+    public string? PartyType { get; set; }
 
     [JsonPropertyName("state")]
-    public string State { get; set; } = string.Empty;
-
-    [JsonPropertyName("lastUpdatedDate")]
-    public DateTimeOffset? LastUpdatedDate { get; set; }
+    public string? State { get; set; }
 
     [JsonPropertyName("communication")]
     public List<Communication> Communication { get; set; } = new();

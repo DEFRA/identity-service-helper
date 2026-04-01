@@ -20,4 +20,11 @@ public class RoleRepository(PostgresDbContext context, ILogger<RoleRepository> l
 
         return result;
     }
+
+    public async Task<Roles> Create(Roles entity, CancellationToken cancellationToken = default)
+    {
+        var role = await context.AddAsync(entity, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
+        return role.Entity;
+    }
 }

@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.KeeperReferenceData.Models.Parties;
+namespace Defra.Identity.Models.Integration.Krds.Parties;
 
 using System.Text.Json.Serialization;
 

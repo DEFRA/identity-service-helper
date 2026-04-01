@@ -24,7 +24,6 @@ using Defra.Identity.Requests;
 using Defra.Identity.Scheduling;
 using Defra.Identity.Services;
 using FluentValidation;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
 
 public class Program

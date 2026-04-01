@@ -174,6 +174,24 @@ public class CphService : ICphService
         return pagedCphUserResults;
     }
 
+    public async Task<Cph> Upsert(
+        CountyParishHoldings countyParishHolding,
+        CancellationToken cancellationToken = default)
+    {
+        var cph = await cphRepository.GetSingle(x => x.Identifier.Equals(countyParishHolding.Identifier), cancellationToken);
+        if (cph != null)
+        {
+            return MapCphEntityToCph(cph);
+        }
+
+        var newCph = new CountyParishHoldings
+
+        {
+            Identifier = countyParishHolding.Identifier,
+        };
+        return MapCphEntityToCph(await cphRepository.Create(newCph, cancellationToken));
+    }
+
     private static Cph MapCphEntityToCph(CountyParishHoldings cphEntity)
     {
         return new Cph

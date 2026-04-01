@@ -6,10 +6,11 @@ namespace Defra.Identity.KeeperReferenceData.Providers;
 
 using System.Text.Json;
 using System.Web;
-using Defra.Identity.KeeperReferenceData.Models;
-using Defra.Identity.KeeperReferenceData.Models.Locations;
-using Defra.Identity.KeeperReferenceData.Models.Parties;
+using Defra.Identity.Models.Integration.Krds.Locations;
+using Defra.Identity.Models.Integration.Krds.Parties;
 using Microsoft.Extensions.Logging;
+using Party = Defra.Identity.Models.Integration.Krds.Parties.Party;
+using Site = Defra.Identity.Models.Integration.Krds.Locations.Site;
 
 public class KrdsProvider(HttpClient client, ILogger<KrdsProvider> logger) : IKrdsProvider
 {
@@ -32,7 +33,7 @@ public class KrdsProvider(HttpClient client, ILogger<KrdsProvider> logger) : IKr
         {
             if (result.TrimStart().StartsWith('['))
             {
-                var sites = JsonSerializer.Deserialize<List<KeeperReferenceData.Models.Locations.Site>>(result);
+                var sites = JsonSerializer.Deserialize<List<Site>>(result);
                 return new SiteResponse
                 {
                     Values = sites ?? [],
@@ -68,7 +69,7 @@ public class KrdsProvider(HttpClient client, ILogger<KrdsProvider> logger) : IKr
         {
             if (result.TrimStart().StartsWith('['))
             {
-                var parties = JsonSerializer.Deserialize<List<KeeperReferenceData.Models.Parties.Party>>(result);
+                var parties = JsonSerializer.Deserialize<List<Party>>(result);
                 return new PartyResponse
                 {
                     Values = parties ?? [],
