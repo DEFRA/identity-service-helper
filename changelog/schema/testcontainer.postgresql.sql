@@ -61,7 +61,11 @@ insert into county_parish_holdings (id, identifier, created_at, created_by_id, e
     ('204459b1-3a07-4e65-9122-91c1699e3d3f', '44/000/0002', '2026-02-02 00:00:00.000000 +00:00', ADMIN_USER_ID, null, null, null),
     ('82181a8b-7f7f-470c-9263-2b94675599df', '44/000/0006', '2026-02-06 00:00:00.000000 +00:00', ADMIN_USER_ID, null, '2026-02-11 00:00:00.000000 +00:00', ADMIN_USER_ID),
     ('02f8043f-510a-41aa-8012-db316ae7fefa', '44/000/0004', '2026-02-04 00:00:00.000000 +00:00', ADMIN_USER_ID, null, null, null),
-    ('7973060a-d483-4ad4-9716-c70415ed620a', '44/000/0005', '2026-02-05 00:00:00.000000 +00:00', ADMIN_USER_ID, '2026-02-10 00:00:00.000000 +00:00', null, null);
+    ('7973060a-d483-4ad4-9716-c70415ed620a', '44/000/0005', '2026-02-05 00:00:00.000000 +00:00', ADMIN_USER_ID, '2026-02-10 00:00:00.000000 +00:00', null, null),
+    ('d4a7f0d7-39eb-40fe-b68d-547a5f494738', '44/000/0011', '2026-01-01 00:00:00.000000 +00:00', ADMIN_USER_ID, null, null, null),
+    ('ebc992ae-2b95-4549-9fa3-4484c8349b89', '44/000/0023', '2026-01-03 00:00:00.000000 +00:00', ADMIN_USER_ID, null, null, null),
+    ('81e0c45e-8340-4f57-a339-cd52c23372c7', '44/000/0024', '2026-01-03 00:00:00.000000 +00:00', ADMIN_USER_ID, '2026-02-10 00:00:00.000000 +00:00', null, null),
+    ('d9a711ec-722d-49b6-abcc-23f0795e3886', '44/000/0025', '2026-01-03 00:00:00.000000 +00:00', ADMIN_USER_ID, '2026-02-10 00:00:00.000000 +00:00', null, null);
 
 insert into applications (id, name, client_id, tenant_name, description, created_at, created_by_id, scopes, secret , redirect_uris) values
     ('112788f5-4cb5-4acc-a3f5-d8b2b0e20945', 'Test Livestock Service 1', 'df9ab2b8-1f01-4eda-bbdf-13814d91ebb6', 'Test Tenant 1', 'Test Description 1', '2026-03-01 00:00:00.000000 +00:00', ADMIN_USER_ID, 'scope1;scope2', 'secret123', 'https://localhost:5001/signin-oidc;https://localhost:5001/signout-callback-oidc'),

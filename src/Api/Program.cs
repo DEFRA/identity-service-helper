@@ -94,8 +94,7 @@ public class Program
         });
 
         // Add custom services
-        builder.Services
-            .AddPostgresDatabase(configuration);
+        builder.Services.AddPostgresDatabase(configuration);
 
         // Add support services
         builder.Services.AddValidatorsFromAssemblyContaining<Program>();

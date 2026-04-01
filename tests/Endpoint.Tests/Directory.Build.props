@@ -1,0 +1,13 @@
+<Project>
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+  <ItemGroup>
+    <PackageReference Include="Reqnroll" />
+    <PackageReference Include="Reqnroll.xunit.v3" />
+    <PackageReference Include="Testcontainers" />
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="Xunit"/>
+    <Using Include="Xunit.v3"/>
+    <Using Include="Shouldly" />
+  </ItemGroup>
+</Project>

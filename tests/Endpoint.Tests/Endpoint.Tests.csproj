@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="**/*.feature"/>
+  </ItemGroup>
+  <ItemGroup>
+    <ReqnrollFeatureFile Update="Tests\cphs\command-tests.feature">
+      <NormalizedLogicalName>Tests/applications/command-tests.feature</NormalizedLogicalName>
+      <NormalizedRelativeDir>Tests/applications/</NormalizedRelativeDir>
+      <CodeBehindFile>Tests/applications/command-tests.feature.cs</CodeBehindFile>
+      <MessagesFile>obj\Debug/net10.0/Tests/applications/command-tests.feature.ndjson</MessagesFile>
+      <MessagesResourceName>Tests/applications/command-tests.feature.ndjson</MessagesResourceName>
+      <FeatureFileResourceName>Tests/applications/command-tests.feature</FeatureFileResourceName>
+    </ReqnrollFeatureFile>
+    <ReqnrollFeatureFile Update="Tests\cphs\query-tests.feature">
+      <NormalizedLogicalName>Tests/applications/query-tests.feature</NormalizedLogicalName>
+      <NormalizedRelativeDir>Tests/applications/</NormalizedRelativeDir>
+      <CodeBehindFile>Tests/applications/query-tests.feature.cs</CodeBehindFile>
+      <MessagesFile>obj\Debug/net10.0/Tests/applications/query-tests.feature.ndjson</MessagesFile>
+      <MessagesResourceName>Tests/applications/query-tests.feature.ndjson</MessagesResourceName>
+      <FeatureFileResourceName>Tests/applications/query-tests.feature</FeatureFileResourceName>
+    </ReqnrollFeatureFile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Api\Api.csproj" />
+    <ProjectReference Include="..\..\src\Responses\Responses.csproj" />
+    <ProjectReference Include="..\Postgres.Database.Tests\Postgres.Database.Tests.csproj" />
+    <ProjectReference Include="..\Test.Utilities\Test.Utilities.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="testsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>
