@@ -68,7 +68,8 @@ public class CphDelegationsService : ICphDelegationsService
     public async Task<List<CphDelegation>> GetAll(GetCphDelegations request, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Getting all delegations");
-        var entities = await repository.GetList(x => true, cancellationToken);
+
+        var entities = await repository.GetList(entity => entity.DeletedAt == null && (entity.ExpiresAt == null || DateTime.Now.ToUniversalTime() < entity.ExpiresAt), cancellationToken);
 
         return entities.Select(MapToResponse).ToList();
     }
@@ -79,9 +80,11 @@ public class CphDelegationsService : ICphDelegationsService
         Expression<Func<CountyParishHoldingDelegations, bool>> filter = x => x.Id == request.Id;
 
         var entity = await repository.GetSingle(filter, cancellationToken);
-        if (entity == null)
+
+        if (entity is not { DeletedAt: null } || (entity.ExpiresAt != null && DateTime.Now.ToUniversalTime() < entity.ExpiresAt))
         {
             logger.LogWarning("Delegation with id {Id} not found", request.Id);
+
             throw new NotFoundException("Delegation not found.");
         }
 
@@ -262,6 +265,17 @@ public class CphDelegationsService : ICphDelegationsService
             ExpiresAt = entity.ExpiresAt,
             RevokedById = entity.RevokedById,
             RevokedByName = entity.RevokedByUser?.DisplayName,
+            Active = IsActiveDelegation(entity),
         };
+    }
+
+    private static bool IsActiveDelegation(CountyParishHoldingDelegations entity)
+    {
+        var isDeleted = entity.DeletedAt != null;
+        var hasExpired = entity.ExpiresAt != null && DateTime.Now.ToUniversalTime() < entity.ExpiresAt;
+        var rejectedOrRevoked = entity.InvitationRejectedAt != null || entity.RevokedAt != null;
+        var isAccepted = entity.InvitationAcceptedAt != null;
+
+        return !hasExpired && !isDeleted && !rejectedOrRevoked && isAccepted;
     }
 }
