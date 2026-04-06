@@ -10,7 +10,7 @@ public abstract class CphDelegationWriteOperation
 
     public required Guid DelegatingUserId { get; set; }
 
-    public Guid? DelegatedUserId { get; set; }
+    public required Guid DelegatedUserId { get; set; }
 
     public required Guid DelegatedUserRoleId { get; set; }
 

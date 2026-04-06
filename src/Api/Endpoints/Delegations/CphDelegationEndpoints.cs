@@ -37,6 +37,7 @@ public static class CphDelegationEndpoints
             .ProducesProblem(StatusCodes.Status422UnprocessableEntity);
 
         app.MapPut(RouteNames.Delegations + "/{id:guid}", Put)
+            .AddEndpointFilter<OperationByIdMappingFilter<UpdateCphDelegationById>>()
             .AddEndpointFilter<ValidationFilter<UpdateCphDelegationById>>()
             .WithMetadata(new RequiresOperatorId())
             .Produces(StatusCodes.Status200OK)
@@ -111,25 +112,12 @@ public static class CphDelegationEndpoints
 
     private static async Task<IResult> Put(
         CommandRequestHeaders headers,
-        [FromRoute] Guid id,
         [FromBody] UpdateCphDelegationById request,
         ICphDelegationsService service)
     {
-        try
-        {
-            request.Id = id;
+        var result = await service.Update(request);
 
-            var result = await service.Update(request);
-            return Results.Ok(result);
-        }
-        catch (NullReferenceException nex)
-        {
-            return Results.NotFound(nex.Message);
-        }
-        catch (Exception ex)
-        {
-            return Results.BadRequest(ex.Message);
-        }
+        return Results.Ok(result);
     }
 
     private static async Task<IResult> Accept(

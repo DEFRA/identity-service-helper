@@ -8,5 +8,5 @@ using Defra.Identity.Requests.Common;
 
 public class UpdateCphDelegationById : CphDelegationWriteOperation, IOperationById
 {
-    public required Guid Id { get; set; }
+    public Guid Id { get; set; }
 }

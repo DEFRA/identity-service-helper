@@ -4,6 +4,7 @@
 
 namespace Defra.Identity.Services.Common.Builders.Strategy;
 
+using System.Linq.Expressions;
 using Defra.Identity.Repositories.Common.Composites;
 using Defra.Identity.Repositories.Exceptions;
 using Defra.Identity.Requests.Common;
@@ -22,7 +23,7 @@ public class UpdateStrategyBuilder<TService, TRepository, TEntity> : StrategyBui
 
     private IOperationById? Request { get; set; }
 
-    private Func<TEntity, Guid>? EntityIdRetriever { get; set; }
+    private Expression<Func<TEntity, bool>>? EntityFilter { get; set; }
 
     private Action<TEntity>? UpdateAction { get; set; }
 
@@ -38,10 +39,10 @@ public class UpdateStrategyBuilder<TService, TRepository, TEntity> : StrategyBui
         return this;
     }
 
-    public UpdateStrategyBuilder<TService, TRepository, TEntity> WithRequestToEntityMapping(IOperationById request, Func<TEntity, Guid>? entityIdRetriever)
+    public UpdateStrategyBuilder<TService, TRepository, TEntity> WithRequestAndEntityFilter(IOperationById request, Expression<Func<TEntity, bool>> entityFilter)
     {
         Request = request;
-        EntityIdRetriever = entityIdRetriever;
+        EntityFilter = entityFilter;
         return this;
     }
 
@@ -111,9 +112,9 @@ public class UpdateStrategyBuilder<TService, TRepository, TEntity> : StrategyBui
             throw new InvalidOperationException("Action description must be provided for this operation");
         }
 
-        if (Request == null || EntityIdRetriever == null)
+        if (Request == null || EntityFilter == null)
         {
-            throw new InvalidOperationException("Request mapping must be provided for this operation");
+            throw new InvalidOperationException("Request and entity filter must be provided for this operation");
         }
 
         if (UpdateAction == null)
@@ -164,7 +165,7 @@ public class UpdateStrategyBuilder<TService, TRepository, TEntity> : StrategyBui
             }
         }
 
-        var entityToUpdate = await Repository.GetSingle((entity) => Request.Id == EntityIdRetriever(entity), CancellationToken.Value);
+        var entityToUpdate = await Repository.GetSingle(EntityFilter, CancellationToken.Value);
 
         if (entityToUpdate == null)
         {

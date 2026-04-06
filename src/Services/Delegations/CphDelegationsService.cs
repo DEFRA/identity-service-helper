@@ -98,7 +98,7 @@ public class CphDelegationsService : ICphDelegationsService
                 {
                     rules.Add(cphRepository, request.CountyParishHoldingId, RulesLibrary.Reference.Descriptions.CphMustExistNotDeletedOrExpired);
                     rules.Add(usersRepository, request.DelegatingUserId, RulesLibrary.Reference.Descriptions.DelegatingUserMustExistNotDeleted);
-                    rules.Add(usersRepository, request.DelegatedUserId!.Value, RulesLibrary.Reference.Descriptions.DelegatedUserMustExistNotDeleted);
+                    rules.Add(usersRepository, request.DelegatedUserId, RulesLibrary.Reference.Descriptions.DelegatedUserMustExistNotDeleted);
                     rules.Add(roleRepository, request.DelegatedUserRoleId, RulesLibrary.Reference.Descriptions.DelegatedUserRoleMustExistNotDeleted);
                 })
             .WithCreate(
@@ -123,7 +123,7 @@ public class CphDelegationsService : ICphDelegationsService
         return await strategyBuilderFactory.BuildUpdateStrategy(repository, "Update")
             .WithCancellationToken(cancellationToken)
             .WithRequestValidation(() => updateCphDelegationValidator.ValidateAsync(request, cancellationToken))
-            .WithRequestToEntityMapping(request, delegation => delegation.Id)
+            .WithRequestAndEntityFilter(request, delegation => request.Id == delegation.Id)
             .WithExistenceRules(
                 rules =>
                 {
@@ -135,10 +135,17 @@ public class CphDelegationsService : ICphDelegationsService
                 {
                     rules.Add(cphRepository, request.CountyParishHoldingId, RulesLibrary.Reference.Descriptions.CphMustExistNotDeletedOrExpired);
                     rules.Add(usersRepository, request.DelegatingUserId, RulesLibrary.Reference.Descriptions.DelegatingUserMustExistNotDeleted);
-                    rules.Add(usersRepository, request.DelegatedUserId!.Value, RulesLibrary.Reference.Descriptions.DelegatedUserMustExistNotDeleted);
+                    rules.Add(usersRepository, request.DelegatedUserId, RulesLibrary.Reference.Descriptions.DelegatedUserMustExistNotDeleted);
                     rules.Add(roleRepository, request.DelegatedUserRoleId, RulesLibrary.Reference.Descriptions.DelegatedUserRoleMustExistNotDeleted);
                 })
-            .WithBusinessRules(rules => { rules.Add(RulesLibrary.Business.NotRevoked); })
+            .WithBusinessRules(
+                rules =>
+                {
+                    rules.Add(RulesLibrary.Business.InvitationNotExpired);
+                    rules.Add(RulesLibrary.Business.InvitationNotAccepted);
+                    rules.Add(RulesLibrary.Business.InvitationNotRejected);
+                    rules.Add(RulesLibrary.Business.NotRevoked);
+                })
             .WithUpdate(
                 delegation =>
                 {
@@ -155,7 +162,7 @@ public class CphDelegationsService : ICphDelegationsService
     {
         await strategyBuilderFactory.BuildUpdateStrategy(repository, "Accept")
             .WithCancellationToken(cancellationToken)
-            .WithRequestToEntityMapping(request, delegation => delegation.Id)
+            .WithRequestAndEntityFilter(request, delegation => request.Id == delegation.Id)
             .WithExistenceRules(
                 rules =>
                 {
@@ -178,7 +185,7 @@ public class CphDelegationsService : ICphDelegationsService
     {
         await strategyBuilderFactory.BuildUpdateStrategy(repository, "Reject")
             .WithCancellationToken(cancellationToken)
-            .WithRequestToEntityMapping(request, delegation => delegation.Id)
+            .WithRequestAndEntityFilter(request, delegation => request.Id == delegation.Id)
             .WithExistenceRules(
                 rules =>
                 {
@@ -201,7 +208,7 @@ public class CphDelegationsService : ICphDelegationsService
     {
         await strategyBuilderFactory.BuildUpdateStrategy(repository, "Revoke")
             .WithCancellationToken(cancellationToken)
-            .WithRequestToEntityMapping(request, delegation => delegation.Id)
+            .WithRequestAndEntityFilter(request, delegation => request.Id == delegation.Id)
             .WithExistenceRules(rules => { rules.Add(RulesLibrary.Existence.NotSoftDeleted); })
             .WithBusinessRules(rules => { rules.Add(RulesLibrary.Business.NotRevoked); })
             .WithUpdate(
@@ -217,7 +224,7 @@ public class CphDelegationsService : ICphDelegationsService
     {
         await strategyBuilderFactory.BuildUpdateStrategy(repository, "Expire")
             .WithCancellationToken(cancellationToken)
-            .WithRequestToEntityMapping(request, delegation => delegation.Id)
+            .WithRequestAndEntityFilter(request, delegation => request.Id == delegation.Id)
             .WithExistenceRules(
                 rules =>
                 {
