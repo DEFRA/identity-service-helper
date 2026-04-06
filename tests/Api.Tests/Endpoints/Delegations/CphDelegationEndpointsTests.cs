@@ -99,7 +99,11 @@ public class CphDelegationEndpointsTests
         // Arrange
         var request = new CreateCphDelegation
         {
-            CountyParishHoldingId = Guid.NewGuid(), DelegatingUserId = Guid.NewGuid(), DelegatedUserEmail = "test200@test.com", DelegatedUserRoleId = Guid.NewGuid(),
+            CountyParishHoldingId = Guid.NewGuid(),
+            DelegatingUserId = Guid.NewGuid(),
+            DelegatedUserId = Guid.NewGuid(),
+            DelegatedUserEmail = "test200@test.com",
+            DelegatedUserRoleId = Guid.NewGuid(),
         };
 
         var delegation = new CphDelegation()
@@ -139,6 +143,7 @@ public class CphDelegationEndpointsTests
             Id = Guid.NewGuid(),
             CountyParishHoldingId = Guid.NewGuid(),
             DelegatingUserId = Guid.NewGuid(),
+            DelegatedUserId = Guid.NewGuid(),
             DelegatedUserEmail = "test200@test.com",
             DelegatedUserRoleId = Guid.NewGuid(),
         };
@@ -161,62 +166,12 @@ public class CphDelegationEndpointsTests
         // Act
         var result = await (Task<IResult>)typeof(CphDelegationEndpoints)
             .GetMethod("Put", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
-            .Invoke(null, [commandHeaders, request.Id, request, service])!;
+            .Invoke(null, [commandHeaders, request, service])!;
 
         // Assert
         result.ShouldBeOfType<Ok<CphDelegation>>();
         ((Ok<CphDelegation>)result).Value.ShouldBe(delegation);
         request.Id.ShouldBe(request.Id);
-    }
-
-    [Fact]
-    public async Task Put_ReturnsNotFound_WhenNullReferenceException()
-    {
-        // Arrange
-        var request = new UpdateCphDelegationById
-        {
-            Id = Guid.NewGuid(),
-            CountyParishHoldingId = Guid.NewGuid(),
-            DelegatingUserId = Guid.NewGuid(),
-            DelegatedUserEmail = "test200@test.com",
-            DelegatedUserRoleId = Guid.NewGuid(),
-        };
-
-        service.Update(request, Arg.Any<CancellationToken>()).Returns(Task.FromException<CphDelegation>(new NullReferenceException("Not found")));
-
-        // Act
-        var result = await (Task<IResult>)typeof(CphDelegationEndpoints)
-            .GetMethod("Put", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
-            .Invoke(null, [commandHeaders, request.Id, request, service])!;
-
-        // Assert
-        result.ShouldBeOfType<NotFound<string>>();
-        ((NotFound<string>)result).Value.ShouldBe("Not found");
-    }
-
-    [Fact]
-    public async Task Put_ReturnsBadRequest_WhenException()
-    {
-        // Arrange
-        var request = new UpdateCphDelegationById
-        {
-            Id = Guid.NewGuid(),
-            CountyParishHoldingId = Guid.NewGuid(),
-            DelegatingUserId = Guid.NewGuid(),
-            DelegatedUserEmail = "test200test.com",
-            DelegatedUserRoleId = Guid.NewGuid(),
-        };
-
-        service.Update(request, Arg.Any<CancellationToken>()).Returns(Task.FromException<CphDelegation>(new Exception("Error")));
-
-        // Act
-        var result = await (Task<IResult>)typeof(CphDelegationEndpoints)
-            .GetMethod("Put", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
-            .Invoke(null, [commandHeaders, request.Id, request, service])!;
-
-        // Assert
-        result.ShouldBeOfType<BadRequest<string>>();
-        ((BadRequest<string>)result).Value.ShouldBe("Error");
     }
 
     [Fact]

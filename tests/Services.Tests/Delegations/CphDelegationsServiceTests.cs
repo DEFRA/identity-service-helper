@@ -159,11 +159,17 @@ public class CphDelegationsServiceTests
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(callInfo => PredicateInterceptor.MockGetSingleEntityResult(callInfo, mockCphEntity));
 
+        cphRepository.ValidateReferenceById(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(true);
+
         roleRepository.GetSingle(Arg.Any<Expression<Func<Roles, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(callInfo => PredicateInterceptor.MockGetSingleEntityResult(callInfo, mockDelegatedUserRoleEntity));
 
+        roleRepository.ValidateReferenceById(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(true);
+
         userRepository.GetSingle(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(callInfo => PredicateInterceptor.MockGetSingleEntityResult(callInfo, mockDelegatingUserEntity, mockDelegatedUserEntity));
+
+        userRepository.ValidateReferenceById(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(true);
 
         var mockCreatedEntity = new CountyParishHoldingDelegations
         {
@@ -211,9 +217,9 @@ public class CphDelegationsServiceTests
                 x.ExpiresAt.ShouldBe(null);
             });
 
-        await cphRepository.Received(1).GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>());
-        await roleRepository.Received(1).GetSingle(Arg.Any<Expression<Func<Roles, bool>>>(), Arg.Any<CancellationToken>());
-        await userRepository.Received(2).GetSingle(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<CancellationToken>());
+        await cphRepository.Received(1).ValidateReferenceById(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
+        await roleRepository.Received(1).ValidateReferenceById(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
+        await userRepository.Received(2).ValidateReferenceById(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
         await repository.Received(1).Create(Arg.Any<CountyParishHoldingDelegations>(), Arg.Any<CancellationToken>());
     }
 
@@ -480,11 +486,17 @@ public class CphDelegationsServiceTests
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(callInfo => PredicateInterceptor.MockGetSingleEntityResult(callInfo, mockCphEntity));
 
+        cphRepository.ValidateReferenceById(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(true);
+
         roleRepository.GetSingle(Arg.Any<Expression<Func<Roles, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(callInfo => PredicateInterceptor.MockGetSingleEntityResult(callInfo, mockDelegatedUserRoleEntity));
 
+        roleRepository.ValidateReferenceById(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(true);
+
         userRepository.GetSingle(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(callInfo => PredicateInterceptor.MockGetSingleEntityResult(callInfo, mockDelegatingUserEntity, mockDelegatedUserEntity));
+
+        userRepository.ValidateReferenceById(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(true);
 
         repository.Update(Arg.Any<CountyParishHoldingDelegations>(), Arg.Any<CancellationToken>())
             .Returns(mockCphDelegationEntity);
@@ -516,9 +528,9 @@ public class CphDelegationsServiceTests
             });
 
         await repository.Received(1).GetSingle(Arg.Any<Expression<Func<CountyParishHoldingDelegations, bool>>>(), Arg.Any<CancellationToken>());
-        await cphRepository.Received(1).GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>());
-        await roleRepository.Received(1).GetSingle(Arg.Any<Expression<Func<Roles, bool>>>(), Arg.Any<CancellationToken>());
-        await userRepository.Received(2).GetSingle(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<CancellationToken>());
+        await cphRepository.Received(1).ValidateReferenceById(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
+        await roleRepository.Received(1).ValidateReferenceById(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
+        await userRepository.Received(2).ValidateReferenceById(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
         await repository.Received(1).Update(Arg.Any<CountyParishHoldingDelegations>(), Arg.Any<CancellationToken>());
     }
 
