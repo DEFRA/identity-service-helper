@@ -28,7 +28,7 @@ public class CphDelegationsRepository(PostgresDbContext context, ReadOnlyPostgre
 
     public async Task<List<CountyParishHoldingDelegations>> GetList(Expression<Func<CountyParishHoldingDelegations, bool>> predicate, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Getting list of CountyParishHoldingDelegations");
+        logger.LogInformation("Getting list of county parish holding delegations");
 
         var results = await readOnlyContext.CountyParishHoldingDelegations
             .Include(p => p.CountyParishHolding)

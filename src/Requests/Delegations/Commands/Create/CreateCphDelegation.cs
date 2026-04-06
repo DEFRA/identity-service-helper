@@ -4,6 +4,4 @@
 
 namespace Defra.Identity.Requests.Delegations.Commands.Create;
 
-using Defra.Identity.Requests.Delegations.Commands.Common;
-
 public class CreateCphDelegation : CphDelegationWriteOperation;

@@ -4,7 +4,10 @@
 
 namespace Defra.Identity.Services;
 
+using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Services.Applications;
+using Defra.Identity.Services.Common.Builders.Strategy.Factories;
+using Defra.Identity.Services.Common.Context;
 using Defra.Identity.Services.Cphs;
 using Defra.Identity.Services.Delegations;
 using Defra.Identity.Services.Species;
@@ -23,6 +26,22 @@ public static class ServiceCollectionExtensions
         services.AddTransient<ICphDelegationsService, CphDelegationsService>();
         services.AddTransient<ICphService, CphService>();
         services.AddTransient<IAnimalSpeciesService, AnimalSpeciesService>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddContext(this IServiceCollection services, IConfigurationRoot config)
+    {
+        services.AddScoped<IOperatorContext, OperatorContext>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddStrategies(this IServiceCollection services, IConfigurationRoot config)
+    {
+        services
+            .AddTransient<IStrategyBuilderFactory<CphDelegationsService, CountyParishHoldingDelegations>,
+                StrategyBuilderFactory<CphDelegationsService, CountyParishHoldingDelegations>>();
 
         return services;
     }

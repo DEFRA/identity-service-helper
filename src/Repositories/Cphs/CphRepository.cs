@@ -16,6 +16,16 @@ public class CphRepository(
     ILogger<CphRepository> logger)
     : ICphRepository
 {
+    public async Task<bool> ValidateReferenceById(Guid id, CancellationToken cancellationToken = default)
+    {
+        logger.LogInformation("Validating county parish holding reference with id {Id}", id);
+
+        var entity = await readOnlyContext.CountyParishHoldings
+            .SingleOrDefaultAsync((entity) => entity.Id == id, cancellationToken);
+
+        return entity is { DeletedAt: null } && (entity.ExpiredAt == null || DateTime.Now.ToUniversalTime() < entity.ExpiredAt);
+    }
+
     public async Task<CountyParishHoldings?> GetSingle(Expression<Func<CountyParishHoldings, bool>> predicate, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Getting single county parish holding");

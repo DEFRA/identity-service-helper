@@ -12,11 +12,15 @@ using Defra.Identity.Repositories.Exceptions;
 using Defra.Identity.Repositories.Roles;
 using Defra.Identity.Repositories.Users;
 using Defra.Identity.Requests.Delegations.Commands.Create;
+using Defra.Identity.Requests.Delegations.Commands.Delete;
 using Defra.Identity.Requests.Delegations.Commands.Update;
 using Defra.Identity.Requests.Delegations.Queries;
+using Defra.Identity.Services.Common.Builders.Strategy.Factories;
+using Defra.Identity.Services.Common.Context;
 using Defra.Identity.Services.Delegations;
 using Defra.Identity.Services.Tests.Delegations.TestData;
 using Defra.Identity.Test.Utilities.Repository;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Shouldly;
@@ -28,12 +32,34 @@ public class CphDelegationsServiceTests
     private readonly IUsersRepository userRepository = Substitute.For<IUsersRepository>();
     private readonly ICphRepository cphRepository = Substitute.For<ICphRepository>();
     private readonly IRoleRepository roleRepository = Substitute.For<IRoleRepository>();
+    private readonly IOperatorContext operatorContext = Substitute.For<IOperatorContext>();
+
+    private readonly IStrategyBuilderFactory<CphDelegationsService, CountyParishHoldingDelegations> strategyBuilderFactory =
+        new StrategyBuilderFactory<CphDelegationsService, CountyParishHoldingDelegations>();
+
+    private readonly IValidator<CreateCphDelegation> createCphDelegationValidator = new CreateCphDelegationValidator();
+    private readonly IValidator<UpdateCphDelegationById> updateCphDelegationValidator = new UpdateCphDelegationValidator();
+
     private readonly ILogger<CphDelegationsService> logger = Substitute.For<ILogger<CphDelegationsService>>();
+
     private readonly CphDelegationsService service;
+
+    private readonly Guid mockOperatorId = new Guid("d7c98e62-af07-46ae-8b93-4765bfdb81c5");
 
     public CphDelegationsServiceTests()
     {
-        service = new CphDelegationsService(repository, userRepository, cphRepository, roleRepository, logger);
+        service = new CphDelegationsService(
+            repository,
+            userRepository,
+            cphRepository,
+            roleRepository,
+            operatorContext,
+            strategyBuilderFactory,
+            createCphDelegationValidator,
+            updateCphDelegationValidator,
+            logger);
+
+        operatorContext.OperatorId.Returns(mockOperatorId);
     }
 
     [Fact]
@@ -98,7 +124,6 @@ public class CphDelegationsServiceTests
         // Arrange
         var mockCphId = new Guid("c630a7d8-4a75-4324-84de-b2b098617f71");
         var mockDelegatedUserRoleId = new Guid("b5cac49e-e5e4-47ee-bd6e-d8bc09694872");
-        var mockOperatorId = new Guid("d7c98e62-af07-46ae-8b93-4765bfdb81c5");
         var mockInvitationExpiresAt = DateTime.Now.AddDays(2).ToUniversalTime();
         const string mockDelegatedUserEmail = "test200@test.com";
 
@@ -129,7 +154,6 @@ public class CphDelegationsServiceTests
             DelegatedUserId = mockDelegatedUserEntity.Id,
             DelegatedUserEmail = mockDelegatedUserEmail,
             DelegatedUserRoleId = mockDelegatedUserRoleId,
-            OperatorId = mockOperatorId,
         };
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
@@ -219,7 +243,6 @@ public class CphDelegationsServiceTests
             DelegatedUserId = mockDelegatedUserEntity.Id,
             DelegatedUserEmail = mockDelegatedUserEntity.EmailAddress,
             DelegatedUserRoleId = mockDelegatedUserRoleEntity.Id,
-            OperatorId = Guid.NewGuid(),
         };
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
@@ -265,7 +288,6 @@ public class CphDelegationsServiceTests
             DelegatedUserId = mockDelegatedUserEntity.Id,
             DelegatedUserEmail = mockDelegatedUserEntity.EmailAddress,
             DelegatedUserRoleId = mockDelegatedUserRoleEntity.Id,
-            OperatorId = Guid.NewGuid(),
         };
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
@@ -311,7 +333,6 @@ public class CphDelegationsServiceTests
             DelegatedUserId = Guid.NewGuid(),
             DelegatedUserEmail = "test200@test.com",
             DelegatedUserRoleId = mockDelegatedUserRoleEntity.Id,
-            OperatorId = Guid.NewGuid(),
         };
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
@@ -357,7 +378,6 @@ public class CphDelegationsServiceTests
             DelegatedUserId = mockDelegatedUserEntity.Id,
             DelegatedUserEmail = mockDelegatedUserEntity.EmailAddress,
             DelegatedUserRoleId = Guid.NewGuid(),
-            OperatorId = Guid.NewGuid(),
         };
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
@@ -381,14 +401,16 @@ public class CphDelegationsServiceTests
     public async Task Delete_CallsRepository()
     {
         // Arrange
-        var id = Guid.NewGuid();
-        var operatorId = Guid.NewGuid();
+        var request = new DeleteCphDelegationById()
+        {
+            Id = Guid.NewGuid(),
+        };
 
         repository.Delete(Arg.Any<Expression<Func<CountyParishHoldingDelegations, bool>>>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(true);
 
         // Act
-        var result = await service.Delete(id, operatorId, TestContext.Current.CancellationToken);
+        var result = await service.Delete(request, TestContext.Current.CancellationToken);
 
         // Assert
         result.ShouldBeTrue();
@@ -402,7 +424,6 @@ public class CphDelegationsServiceTests
         var mockId = new Guid("044e3f8a-5980-47df-8502-4c0cd0cdf887");
         var mockCphId = new Guid("c630a7d8-4a75-4324-84de-b2b098617f71");
         var mockDelegatedUserRoleId = new Guid("b5cac49e-e5e4-47ee-bd6e-d8bc09694872");
-        var mockOperatorId = new Guid("d7c98e62-af07-46ae-8b93-4765bfdb81c5");
         var mockInvitationExpiresAt = DateTime.Now.AddDays(2).ToUniversalTime();
         const string mockDelegatedUserEmail = "test200@test.com";
 
@@ -434,7 +455,6 @@ public class CphDelegationsServiceTests
             DelegatedUserId = mockDelegatedUserEntity.Id,
             DelegatedUserEmail = mockDelegatedUserEmail,
             DelegatedUserRoleId = mockDelegatedUserRoleId,
-            OperatorId = mockOperatorId,
         };
 
         var mockCphDelegationEntity = new CountyParishHoldingDelegations
@@ -514,7 +534,6 @@ public class CphDelegationsServiceTests
             DelegatedUserId = Guid.NewGuid(),
             DelegatedUserEmail = "test200@test.com",
             DelegatedUserRoleId = Guid.NewGuid(),
-            OperatorId = Guid.NewGuid(),
         };
 
         repository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldingDelegations, bool>>>(), Arg.Any<CancellationToken>())
@@ -560,7 +579,6 @@ public class CphDelegationsServiceTests
             DelegatedUserId = mockDelegatedUserEntity.Id,
             DelegatedUserEmail = mockDelegatedUserEntity.EmailAddress,
             DelegatedUserRoleId = mockDelegatedUserRoleEntity.Id,
-            OperatorId = Guid.NewGuid(),
         };
 
         var mockExistingCphDelegationEntity = new CountyParishHoldingDelegations
@@ -628,7 +646,6 @@ public class CphDelegationsServiceTests
             DelegatedUserId = mockDelegatedUserEntity.Id,
             DelegatedUserEmail = mockDelegatedUserEntity.EmailAddress,
             DelegatedUserRoleId = mockDelegatedUserRoleEntity.Id,
-            OperatorId = Guid.NewGuid(),
         };
 
         var mockExistingCphDelegationEntity = new CountyParishHoldingDelegations
@@ -696,7 +713,6 @@ public class CphDelegationsServiceTests
             DelegatedUserId = Guid.NewGuid(),
             DelegatedUserEmail = "test200@test.com",
             DelegatedUserRoleId = mockDelegatedUserRoleEntity.Id,
-            OperatorId = Guid.NewGuid(),
         };
 
         var mockExistingCphDelegationEntity = new CountyParishHoldingDelegations
@@ -764,7 +780,6 @@ public class CphDelegationsServiceTests
             DelegatedUserId = mockDelegatedUserEntity.Id,
             DelegatedUserEmail = mockDelegatedUserEntity.EmailAddress,
             DelegatedUserRoleId = Guid.NewGuid(),
-            OperatorId = Guid.NewGuid(),
         };
 
         var mockExistingCphDelegationEntity = new CountyParishHoldingDelegations

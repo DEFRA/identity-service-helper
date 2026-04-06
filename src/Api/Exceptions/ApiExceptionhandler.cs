@@ -22,6 +22,7 @@ public sealed class ApiExceptionHandler(ILogger<ApiExceptionHandler> logger) : I
         {
             NotFoundException => (StatusCodes.Status404NotFound, "Not Found", "https://httpstatuses.com/404"),
             ConflictException => (StatusCodes.Status409Conflict, "Conflict", "https://httpstatuses.com/409"),
+            BusinessRuleException => (StatusCodes.Status400BadRequest, "Bad Request", "https://httpstatuses.com/400"),
             ArgumentException => (StatusCodes.Status400BadRequest, "Bad Request", "https://httpstatuses.com/400"),
             UnauthorizedAccessException => (StatusCodes.Status403Forbidden, "Forbidden", "https://httpstatuses.com/403"),
             _ => (StatusCodes.Status500InternalServerError, "Internal Server Error", "https://httpstatuses.com/500"),

@@ -11,11 +11,19 @@ using Defra.Identity.Repositories.Delegations;
 using Defra.Identity.Repositories.Exceptions;
 using Defra.Identity.Repositories.Roles;
 using Defra.Identity.Repositories.Users;
-using Defra.Identity.Requests.Delegations.Commands.Common;
+using Defra.Identity.Requests.Delegations.Commands.Accept;
 using Defra.Identity.Requests.Delegations.Commands.Create;
+using Defra.Identity.Requests.Delegations.Commands.Delete;
+using Defra.Identity.Requests.Delegations.Commands.Expire;
+using Defra.Identity.Requests.Delegations.Commands.Reject;
+using Defra.Identity.Requests.Delegations.Commands.Revoke;
 using Defra.Identity.Requests.Delegations.Commands.Update;
 using Defra.Identity.Requests.Delegations.Queries;
 using Defra.Identity.Responses.Delegations;
+using Defra.Identity.Services.Common.Builders.Strategy.Factories;
+using Defra.Identity.Services.Common.Context;
+using Defra.Identity.Services.Delegations.Rules;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 
 public class CphDelegationsService : ICphDelegationsService
@@ -24,6 +32,10 @@ public class CphDelegationsService : ICphDelegationsService
     private readonly IUsersRepository usersRepository;
     private readonly ICphRepository cphRepository;
     private readonly IRoleRepository roleRepository;
+    private readonly IOperatorContext operatorContext;
+    private readonly IStrategyBuilderFactory<CphDelegationsService, CountyParishHoldingDelegations> strategyBuilderFactory;
+    private readonly IValidator<CreateCphDelegation> createCphDelegationValidator;
+    private readonly IValidator<UpdateCphDelegationById> updateCphDelegationValidator;
     private readonly ILogger<CphDelegationsService> logger;
 
     public CphDelegationsService(
@@ -31,13 +43,26 @@ public class CphDelegationsService : ICphDelegationsService
         IUsersRepository usersRepository,
         ICphRepository cphRepository,
         IRoleRepository roleRepository,
+        IOperatorContext operatorContext,
+        IStrategyBuilderFactory<CphDelegationsService, CountyParishHoldingDelegations> strategyBuilderFactory,
+        IValidator<CreateCphDelegation> createCphDelegationValidator,
+        IValidator<UpdateCphDelegationById> updateCphDelegationValidator,
         ILogger<CphDelegationsService> logger)
     {
         this.repository = repository;
         this.usersRepository = usersRepository;
         this.cphRepository = cphRepository;
         this.roleRepository = roleRepository;
+        this.operatorContext = operatorContext;
+        this.strategyBuilderFactory = strategyBuilderFactory;
+        this.createCphDelegationValidator = createCphDelegationValidator;
+        this.updateCphDelegationValidator = updateCphDelegationValidator;
         this.logger = logger;
+
+        this.strategyBuilderFactory
+            .WithLogger(this.logger)
+            .WithOperatorContext(this.operatorContext)
+            .WithEntityDescription("County parish holding delegation");
     }
 
     public async Task<List<CphDelegation>> GetAll(GetCphDelegations request, CancellationToken cancellationToken = default)
@@ -63,94 +88,150 @@ public class CphDelegationsService : ICphDelegationsService
         return MapToResponse(entity);
     }
 
-    public async Task<CphDelegation> Update(UpdateCphDelegationById request, CancellationToken cancellationToken = default)
-    {
-        logger.LogInformation("Updating delegation with id {Id}", request.Id);
-
-        var existing = await repository.GetSingle(x => x.Id.Equals(request.Id), cancellationToken);
-        if (existing == null)
-        {
-            logger.LogWarning("Delegation with id {Id} not found for update", request.Id);
-            throw new NotFoundException($"Delegation with id {request.Id} not found.");
-        }
-
-        await ValidateReferences(request, cancellationToken);
-
-        existing.CountyParishHoldingId = request.CountyParishHoldingId;
-        existing.DelegatingUserId = request.DelegatingUserId;
-        existing.DelegatedUserId = request.DelegatedUserId;
-        existing.DelegatedUserEmail = request.DelegatedUserEmail;
-        existing.DelegatedUserRoleId = request.DelegatedUserRoleId;
-
-        var updated = await repository.Update(existing, cancellationToken);
-        return MapToResponse(updated);
-    }
-
     public async Task<CphDelegation> Create(CreateCphDelegation request, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Creating new delegation for county parish holding {CountParishHoldingId} and user {UserId}", request.CountyParishHoldingId, request.DelegatedUserId);
-
-        await ValidateReferences(request, cancellationToken);
-
-        var entity = new CountyParishHoldingDelegations
-        {
-            CountyParishHoldingId = request.CountyParishHoldingId,
-            DelegatingUserId = request.DelegatingUserId,
-            DelegatedUserId = request.DelegatedUserId,
-            DelegatedUserEmail = request.DelegatedUserEmail,
-            DelegatedUserRoleId = request.DelegatedUserRoleId,
-            InvitationToken = string.Empty,
-            InvitationExpiresAt = DateTime.Now.AddDays(2).ToUniversalTime(),
-            CreatedById = request.OperatorId,
-        };
-
-        var created = await repository.Create(entity, cancellationToken);
-
-        return MapToResponse(created);
+        return await strategyBuilderFactory.BuildCreateStrategy(repository, "Create")
+            .WithCancellationToken(cancellationToken)
+            .WithRequestValidation(() => createCphDelegationValidator.ValidateAsync(request, cancellationToken))
+            .WithReferenceRules(
+                rules =>
+                {
+                    rules.Add(cphRepository, request.CountyParishHoldingId, RulesLibrary.Reference.Descriptions.CphMustExistNotDeletedOrExpired);
+                    rules.Add(usersRepository, request.DelegatingUserId, RulesLibrary.Reference.Descriptions.DelegatingUserMustExistNotDeleted);
+                    rules.Add(usersRepository, request.DelegatedUserId!.Value, RulesLibrary.Reference.Descriptions.DelegatedUserMustExistNotDeleted);
+                    rules.Add(roleRepository, request.DelegatedUserRoleId, RulesLibrary.Reference.Descriptions.DelegatedUserRoleMustExistNotDeleted);
+                })
+            .WithCreate(
+                () =>
+                    new CountyParishHoldingDelegations
+                    {
+                        CountyParishHoldingId = request.CountyParishHoldingId,
+                        DelegatingUserId = request.DelegatingUserId,
+                        DelegatedUserId = request.DelegatedUserId,
+                        DelegatedUserEmail = request.DelegatedUserEmail,
+                        DelegatedUserRoleId = request.DelegatedUserRoleId,
+                        InvitationToken = string.Empty,
+                        InvitationExpiresAt = DateTime.Now.AddDays(2).ToUniversalTime(),
+                        CreatedAt = DateTime.Now.ToUniversalTime(),
+                        CreatedById = operatorContext.OperatorId,
+                    })
+            .ExecuteAndMap(MapToResponse);
     }
 
-    public async Task<bool> Delete(Guid id, Guid operatorId, CancellationToken cancellationToken = default)
+    public async Task<CphDelegation> Update(UpdateCphDelegationById request, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Deleting delegation with id {Id} by operator {OperatorId}", id, operatorId);
-        return await repository.Delete(x => x.Id == id, operatorId, cancellationToken);
+        return await strategyBuilderFactory.BuildUpdateStrategy(repository, "Update")
+            .WithCancellationToken(cancellationToken)
+            .WithRequestValidation(() => updateCphDelegationValidator.ValidateAsync(request, cancellationToken))
+            .WithRequestToEntityMapping(request, delegation => delegation.Id)
+            .WithExistenceRules(
+                rules =>
+                {
+                    rules.Add(RulesLibrary.Existence.NotSoftDeleted);
+                    rules.Add(RulesLibrary.Existence.NotExpired);
+                })
+            .WithReferenceRules(
+                rules =>
+                {
+                    rules.Add(cphRepository, request.CountyParishHoldingId, RulesLibrary.Reference.Descriptions.CphMustExistNotDeletedOrExpired);
+                    rules.Add(usersRepository, request.DelegatingUserId, RulesLibrary.Reference.Descriptions.DelegatingUserMustExistNotDeleted);
+                    rules.Add(usersRepository, request.DelegatedUserId!.Value, RulesLibrary.Reference.Descriptions.DelegatedUserMustExistNotDeleted);
+                    rules.Add(roleRepository, request.DelegatedUserRoleId, RulesLibrary.Reference.Descriptions.DelegatedUserRoleMustExistNotDeleted);
+                })
+            .WithBusinessRules(rules => { rules.Add(RulesLibrary.Business.NotRevoked); })
+            .WithUpdate(
+                delegation =>
+                {
+                    delegation.CountyParishHoldingId = request.CountyParishHoldingId;
+                    delegation.DelegatingUserId = request.DelegatingUserId;
+                    delegation.DelegatedUserId = request.DelegatedUserId;
+                    delegation.DelegatedUserEmail = request.DelegatedUserEmail;
+                    delegation.DelegatedUserRoleId = request.DelegatedUserRoleId;
+                })
+            .ExecuteAndMap(MapToResponse);
     }
 
-    private async Task ValidateReferences(CphDelegationWriteOperation request, CancellationToken cancellationToken)
+    public async Task Accept(AcceptCphDelegationById request, CancellationToken cancellationToken = default)
     {
-        var countyParishHolding = await cphRepository.GetSingle(x => x.Id == request.CountyParishHoldingId, cancellationToken);
+        await strategyBuilderFactory.BuildUpdateStrategy(repository, "Accept")
+            .WithCancellationToken(cancellationToken)
+            .WithRequestToEntityMapping(request, delegation => delegation.Id)
+            .WithExistenceRules(
+                rules =>
+                {
+                    rules.Add(RulesLibrary.Existence.NotSoftDeleted);
+                    rules.Add(RulesLibrary.Existence.NotExpired);
+                })
+            .WithBusinessRules(
+                rules =>
+                {
+                    rules.Add(RulesLibrary.Business.InvitationNotExpired);
+                    rules.Add(RulesLibrary.Business.InvitationNotAccepted);
+                    rules.Add(RulesLibrary.Business.InvitationNotRejected);
+                    rules.Add(RulesLibrary.Business.NotRevoked);
+                })
+            .WithUpdate(delegation => { delegation.InvitationAcceptedAt = DateTime.Now.ToUniversalTime(); })
+            .Execute();
+    }
 
-        if (countyParishHolding == null)
-        {
-            logger.LogWarning("CountyParishHolding with id {Id} not found", request.CountyParishHoldingId);
-            throw new NotFoundException($"CountyParishHolding with id {request.CountyParishHoldingId} not found.");
-        }
+    public async Task Reject(RejectCphDelegationById request, CancellationToken cancellationToken = default)
+    {
+        await strategyBuilderFactory.BuildUpdateStrategy(repository, "Reject")
+            .WithCancellationToken(cancellationToken)
+            .WithRequestToEntityMapping(request, delegation => delegation.Id)
+            .WithExistenceRules(
+                rules =>
+                {
+                    rules.Add(RulesLibrary.Existence.NotSoftDeleted);
+                    rules.Add(RulesLibrary.Existence.NotExpired);
+                })
+            .WithBusinessRules(
+                rules =>
+                {
+                    rules.Add(RulesLibrary.Business.InvitationNotExpired);
+                    rules.Add(RulesLibrary.Business.InvitationNotAccepted);
+                    rules.Add(RulesLibrary.Business.InvitationNotRejected);
+                    rules.Add(RulesLibrary.Business.NotRevoked);
+                })
+            .WithUpdate(delegation => { delegation.InvitationRejectedAt = DateTime.Now.ToUniversalTime(); })
+            .Execute();
+    }
 
-        var delegatingUser = await usersRepository.GetSingle(x => x.Id == request.DelegatingUserId, cancellationToken);
+    public async Task Revoke(RevokeCphDelegationById request, CancellationToken cancellationToken = default)
+    {
+        await strategyBuilderFactory.BuildUpdateStrategy(repository, "Revoke")
+            .WithCancellationToken(cancellationToken)
+            .WithRequestToEntityMapping(request, delegation => delegation.Id)
+            .WithExistenceRules(rules => { rules.Add(RulesLibrary.Existence.NotSoftDeleted); })
+            .WithBusinessRules(rules => { rules.Add(RulesLibrary.Business.NotRevoked); })
+            .WithUpdate(
+                delegation =>
+                {
+                    delegation.RevokedAt = DateTime.Now.ToUniversalTime();
+                    delegation.RevokedById = operatorContext.OperatorId;
+                })
+            .Execute();
+    }
 
-        if (delegatingUser == null)
-        {
-            logger.LogWarning("User with id {Id} not found", request.DelegatingUserId);
-            throw new NotFoundException($"User with id {request.DelegatingUserId} not found.");
-        }
+    public async Task Expire(ExpireCphDelegationById request, CancellationToken cancellationToken = default)
+    {
+        await strategyBuilderFactory.BuildUpdateStrategy(repository, "Expire")
+            .WithCancellationToken(cancellationToken)
+            .WithRequestToEntityMapping(request, delegation => delegation.Id)
+            .WithExistenceRules(
+                rules =>
+                {
+                    rules.Add(RulesLibrary.Existence.NotSoftDeleted);
+                    rules.Add(RulesLibrary.Existence.NotExpired);
+                })
+            .WithUpdate(delegation => { delegation.ExpiresAt = DateTime.Now.ToUniversalTime(); })
+            .Execute();
+    }
 
-        var delegatedRole = await roleRepository.GetSingle(x => x.Id == request.DelegatedUserRoleId, cancellationToken);
-
-        if (delegatedRole == null)
-        {
-            logger.LogWarning("Role with id {Id} not found", request.DelegatedUserRoleId);
-            throw new NotFoundException($"Role with id {request.DelegatedUserRoleId} not found.");
-        }
-
-        if (request.DelegatedUserId is not null)
-        {
-            delegatingUser = await usersRepository.GetSingle(x => x.Id == request.DelegatedUserId, cancellationToken);
-
-            if (delegatingUser == null)
-            {
-                logger.LogWarning("User with id {Id} not found", request.DelegatedUserId);
-                throw new NotFoundException($"User with id {request.DelegatedUserId} not found.");
-            }
-        }
+    public async Task<bool> Delete(DeleteCphDelegationById request, CancellationToken cancellationToken = default)
+    {
+        logger.LogInformation("Deleting delegation with id {Id} by operator {OperatorId}", request.Id, operatorContext.OperatorId);
+        return await repository.Delete(x => x.Id == request.Id, operatorContext.OperatorId, cancellationToken);
     }
 
     private static CphDelegation MapToResponse(CountyParishHoldingDelegations entity)

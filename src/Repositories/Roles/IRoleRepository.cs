@@ -7,4 +7,4 @@ namespace Defra.Identity.Repositories.Roles;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Common.Composites;
 
-public interface IRoleRepository : IGettable<Roles>;
+public interface IRoleRepository : IReference, IGettable<Roles>;

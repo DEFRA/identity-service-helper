@@ -5,6 +5,7 @@
 namespace Defra.Identity.Requests;
 
 using Defra.Identity.Requests.Middleware;
+using Defra.Identity.Requests.Services;
 using Defra.Identity.Requests.Users.Commands.Create;
 using FluentValidation;
 using Microsoft.AspNetCore.Builder;
@@ -23,6 +24,8 @@ public static class ServiceCollectionExtensions
         services.AddTransient<CorrelationIdMiddleware>();
         services.AddTransient<OperatorIdMiddleware>();
         services.AddValidatorsFromAssemblyContaining<CreateUser>();
+
+        services.AddScoped<IOperatorIdService, OperatorIdService>();
 
         return services;
     }

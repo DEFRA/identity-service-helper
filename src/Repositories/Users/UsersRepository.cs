@@ -16,6 +16,16 @@ public class UsersRepository(
     ILogger<UsersRepository> logger)
     : IUsersRepository
 {
+    public async Task<bool> ValidateReferenceById(Guid id, CancellationToken cancellationToken = default)
+    {
+        logger.LogInformation("Validating user account reference with id {Id}", id);
+
+        var entity = await readOnlyContext.UserAccounts
+            .SingleOrDefaultAsync((entity) => entity.Id == id, cancellationToken);
+
+        return entity is { DeletedAt: null };
+    }
+
     public async Task<List<UserAccounts>> GetAll()
     {
         logger.LogInformation("Getting all user accounts");
@@ -62,7 +72,7 @@ public class UsersRepository(
         return entity;
     }
 
-    public async Task<bool> Delete(Expression<Func<UserAccounts, bool>> predicate,  Guid operatorId, CancellationToken cancellationToken = default)
+    public async Task<bool> Delete(Expression<Func<UserAccounts, bool>> predicate, Guid operatorId, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Deleting user account with operator id {OperatorId}", operatorId);
         var userAccount = await context.UserAccounts

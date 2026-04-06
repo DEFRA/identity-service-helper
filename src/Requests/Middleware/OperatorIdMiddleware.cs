@@ -5,10 +5,11 @@
 namespace Defra.Identity.Requests.Middleware;
 
 using Defra.Identity.Requests.MetaData;
+using Defra.Identity.Requests.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-public class OperatorIdMiddleware(ILogger<OperatorIdMiddleware> logger) : JsonErrorMiddleware
+public class OperatorIdMiddleware(IOperatorIdService operatorIdService, ILogger<OperatorIdMiddleware> logger) : JsonErrorMiddleware
 {
     public override async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
@@ -36,20 +37,28 @@ public class OperatorIdMiddleware(ILogger<OperatorIdMiddleware> logger) : JsonEr
                         statusCode: StatusCodes.Status400BadRequest,
                         code: "missing_header",
                         message: $"Header {RequestHeaderNames.OperatorId} is required.",
-                        details: new { header = $"{RequestHeaderNames.OperatorId}" });
+                        details: new
+                        {
+                            header = $"{RequestHeaderNames.OperatorId}",
+                        });
                     return;
                 }
 
-                if (!Guid.TryParse(operatorId, out _))
+                if (!Guid.TryParse(operatorId, out var parsedOperatorId))
                 {
                     await WriteJsonErrorAsync(
                         context,
                         statusCode: StatusCodes.Status400BadRequest,
                         code: "invalid_header",
                         message: $"Header {RequestHeaderNames.OperatorId} must be a valid GUID.",
-                        details: new { header = $"{RequestHeaderNames.OperatorId}" });
+                        details: new
+                        {
+                            header = $"{RequestHeaderNames.OperatorId}",
+                        });
                     return;
                 }
+
+                operatorIdService.OperatorId = parsedOperatorId;
             }
 
             await next(context);
