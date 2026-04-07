@@ -2,6 +2,10 @@ name: Run SonarCloud coverage scan
 
 on:
   workflow_call:
+    secrets:
+      SONAR_TOKEN:
+        description: "SonarCloud token used for authentication"
+        required: true
 
 permissions:
   id-token: write
@@ -18,23 +22,22 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: 17
-          distribution: "zulu"
-      - name: Check out code
-        uses: actions/checkout@v4
+          distribution: 'zulu' # Alternative distribution options are available.
+      - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - name: Set up .NET 10.0
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: |
             10.0
-      - name: Cache SonarCloud packages
+      - name: Cache SonarQube Cloud packages
         uses: actions/cache@v4
         with:
           path: ~/sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
-      - name: Cache SonarCloud scanner
+      - name: Cache SonarQube Cloud scanner
         id: cache-sonar-scanner
         uses: actions/cache@v4
         with:
@@ -48,7 +51,7 @@ jobs:
           path: ./.sonar/coverage
           key: ${{ runner.os }}-sonar-coverage
           restore-keys: ${{ runner.os }}-sonar-coverage
-      - name: Install SonarCloud scanner
+      - name: Install SonarQube Cloud scanner
         if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
         run: |
           mkdir -p ./.sonar/scanner
@@ -65,7 +68,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           ./.sonar/scanner/dotnet-sonarscanner begin \
-          /k:"DEFRA_cdp-dotnet-backend-template" \
+          /k:"DEFRA_identity-service-helper" \
           /o:"defra" \
           /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
           /d:sonar.host.url="https://sonarcloud.io" \
