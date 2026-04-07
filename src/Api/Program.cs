@@ -103,6 +103,8 @@ public class Program
         // Set up the endpoints and their dependencies
         builder.Services.AddRepositories(configuration);
         builder.Services.AddDataServices(configuration);
+        builder.Services.AddContext(configuration);
+        builder.Services.AddStrategies(configuration);
         builder.Services.AddScheduling(configuration);
         // intentionally commented out until we get a queue to interact with  -- Gary Woodfine
         //builder.Services.AddKeeperReferenceDataQueueIntegration(configuration);
@@ -120,7 +122,7 @@ public class Program
         app.UseHealthEndpoints();
         app.UseUsersEndpoints();
         app.UseApplicationEndpoints();
-        app.UseDelegationEndpoints();
+        app.UseCphDelegationEndpoints();
         app.UseCphEndpoints();
         app.UseAnimalSpeciesEndpoints();
 

@@ -28,7 +28,7 @@ public class CphDelegationsRepository(PostgresDbContext context, ReadOnlyPostgre
 
     public async Task<List<CountyParishHoldingDelegations>> GetList(Expression<Func<CountyParishHoldingDelegations, bool>> predicate, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Getting list of CountyParishHoldingDelegations");
+        logger.LogInformation("Getting list of county parish holding delegations");
 
         var results = await readOnlyContext.CountyParishHoldingDelegations
             .Include(p => p.CountyParishHolding)
@@ -48,7 +48,14 @@ public class CphDelegationsRepository(PostgresDbContext context, ReadOnlyPostgre
         var addedEntry = await context.CountyParishHoldingDelegations.AddAsync(entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
-        return addedEntry.Entity;
+        var result = await readOnlyContext.CountyParishHoldingDelegations
+            .Include(p => p.CountyParishHolding)
+            .Include(p => p.DelegatingUser)
+            .Include(p => p.DelegatedUser)
+            .Include(p => p.DelegatedUserRole)
+            .SingleAsync(c => c.Id == addedEntry.Entity.Id, cancellationToken);
+
+        return result;
     }
 
     public async Task<CountyParishHoldingDelegations> Update(CountyParishHoldingDelegations entity, CancellationToken cancellationToken = default)
@@ -58,7 +65,15 @@ public class CphDelegationsRepository(PostgresDbContext context, ReadOnlyPostgre
         logger.LogInformation("Updating delegation with id {Id}", entity.Id);
         context.Update(entity);
         await context.SaveChangesAsync(cancellationToken);
-        return entity;
+
+        var result = await readOnlyContext.CountyParishHoldingDelegations
+            .Include(p => p.CountyParishHolding)
+            .Include(p => p.DelegatingUser)
+            .Include(p => p.DelegatedUser)
+            .Include(p => p.DelegatedUserRole)
+            .SingleAsync(c => c.Id == entity.Id, cancellationToken);
+
+        return result;
     }
 
     public async Task<bool> Delete(Expression<Func<CountyParishHoldingDelegations, bool>> predicate, Guid operatorId, CancellationToken cancellationToken = default)

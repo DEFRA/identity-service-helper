@@ -12,24 +12,8 @@ using Defra.Identity.Postgres.Database.Entities.Base;
 /// </summary>
 /// <param name="options">options to apply to the context.</param>
 public class PostgresDbContext(DbContextOptions<PostgresDbContext> options)
-    : DbContext(options)
+    : PostgresDbContextBase<PostgresDbContext>(options)
 {
-    public virtual DbSet<AnimalSpecies> AnimalSpecies { get; set; }
-
-    public virtual DbSet<Applications> Applications { get; set; }
-
-    public virtual DbSet<KrdsSyncLogs> KrdsSyncLogs { get; set; }
-
-    public virtual DbSet<UserAccounts> UserAccounts { get; set; }
-
-    public virtual DbSet<Roles> Roles { get; set; }
-
-    public virtual DbSet<ApplicationRoles> ApplicationRoles { get; set; }
-
-    public virtual DbSet<CountyParishHoldings> CountyParishHoldings { get; set; }
-
-    public virtual DbSet<CountyParishHoldingDelegations> CountyParishHoldingDelegations { get; set; }
-
     public override int SaveChanges()
     {
         SetProcessingDateTimes();

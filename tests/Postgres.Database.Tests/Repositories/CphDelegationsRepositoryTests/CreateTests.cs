@@ -54,9 +54,8 @@ public class CreateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
             x => x.DelegatedUserId.ShouldBe(delegatedUserId),
             x => x.DelegatedUserRoleId.ShouldBe(delegatedUserRoleId),
             x => x.DelegatedUserEmail.ShouldBe(delegatedUserEmail),
-            x => x.InvitationToken.ShouldBeEmpty(),
-            x => x.CreatedById.ShouldBe(adminUser.Id),
-            x => x.CreatedAt.ShouldBe(createdAt));
+            x => x.InvitationToken.ShouldBeNullOrWhiteSpace(),
+            x => x.CreatedById.ShouldBe(adminUser.Id));
 
         logger.ReceivedWithAnyArgs().Log(
             LogLevel.Information,

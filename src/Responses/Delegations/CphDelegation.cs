@@ -39,4 +39,6 @@ public class CphDelegation
     public string? RevokedByName { get; set; }
 
     public DateTime? ExpiresAt { get; set; }
+
+    public bool Active { get; set; }
 }
