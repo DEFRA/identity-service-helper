@@ -156,4 +156,18 @@ public class UserService : IUserService
         logger.LogInformation("Deleting user with id {Id} by operator {OperatorId}", id, operatorId);
         return await repository.Delete(x => x.Id == id, operatorId, cancellationToken);
     }
+
+    public async Task<bool> Validate(Guid id, string email, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            throw new ArgumentException("Email cannot be null or whitespace", nameof(email));
+        }
+
+        logger.LogInformation("Validating user with id {Id} and email {Email}", id, email);
+
+        Expression<Func<UserAccounts, bool>> filter = x => x.EmailAddress == email && x.Id == id;
+
+        return await repository.GetSingle(filter, cancellationToken) != null;
+    }
 }

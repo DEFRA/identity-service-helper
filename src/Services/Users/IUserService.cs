@@ -20,4 +20,6 @@ public interface IUserService
     Task<User> Create(Requests.Users.Commands.Create.CreateUser user,  CancellationToken cancellationToken = default);
 
     Task<bool> Delete(Guid id, Guid operatorId, CancellationToken cancellationToken = default);
+
+    Task<bool> Validate(Guid id, string email, CancellationToken cancellationToken = default);
 }

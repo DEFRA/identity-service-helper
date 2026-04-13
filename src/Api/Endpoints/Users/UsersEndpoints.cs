@@ -10,6 +10,7 @@ using Defra.Identity.Requests.Filters;
 using Defra.Identity.Requests.MetaData;
 using Defra.Identity.Requests.Users.Commands.Create;
 using Defra.Identity.Requests.Users.Commands.Update;
+using Defra.Identity.Requests.Users.Commands.Validate;
 using Defra.Identity.Requests.Users.Queries;
 using Defra.Identity.Services.Users;
 using Microsoft.AspNetCore.Mvc;
@@ -36,6 +37,13 @@ public static class UsersEndpoints
             .AddEndpointFilter<ValidationFilter<CreateUser>>()
             .WithMetadata(new RequiresOperatorId())
             .Produces<Responses.Users.User>(StatusCodes.Status201Created, MediaTypeNames.Application.Json)
+            .ProducesProblem(StatusCodes.Status422UnprocessableEntity);
+
+        app.MapPost(string.Concat(RouteNames.Users, ":validate"), ValidateUser)
+            .AddEndpointFilter<ValidationFilter<ValidateUser>>()
+            .WithMetadata(new RequiresOperatorId())
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status422UnprocessableEntity);
 
         app.MapDelete(RouteNames.Users + "/{id:guid}", Delete)
@@ -113,5 +121,15 @@ public static class UsersEndpoints
         var deleted = await service.Delete(id, headers.OperatorId);
 
         return Results.NoContent();
+    }
+
+    private static async Task<IResult> ValidateUser(
+        CommandRequestHeaders headers,
+        [FromBody] ValidateUser user,
+        IUserService service)
+    {
+        var isValid = await service.Validate(headers.OperatorId, user.Email);
+
+        return isValid ? Results.Ok() : Results.NotFound();
     }
 }
