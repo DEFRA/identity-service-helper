@@ -6,9 +6,9 @@ namespace Defra.Identity.Services.Delegations;
 
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database.Entities;
+using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Repositories.Cphs;
 using Defra.Identity.Repositories.Delegations;
-using Defra.Identity.Repositories.Exceptions;
 using Defra.Identity.Repositories.Roles;
 using Defra.Identity.Repositories.Users;
 using Defra.Identity.Requests.Delegations.Commands.Accept;
@@ -22,6 +22,7 @@ using Defra.Identity.Requests.Delegations.Queries;
 using Defra.Identity.Responses.Delegations;
 using Defra.Identity.Services.Common.Builders.Strategy.Factories;
 using Defra.Identity.Services.Common.Context;
+using Defra.Identity.Services.Common.Helpers;
 using Defra.Identity.Services.Delegations.Rules;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
@@ -33,7 +34,7 @@ public class CphDelegationsService : ICphDelegationsService
     private readonly ICphRepository cphRepository;
     private readonly IRoleRepository roleRepository;
     private readonly IOperatorContext operatorContext;
-    private readonly IStrategyBuilderFactory<CphDelegationsService, CountyParishHoldingDelegations> strategyBuilderFactory;
+    private readonly IStrategyBuilderFactory<CphDelegationsService> strategyBuilderFactory;
     private readonly IValidator<CreateCphDelegation> createCphDelegationValidator;
     private readonly IValidator<UpdateCphDelegationById> updateCphDelegationValidator;
     private readonly ILogger<CphDelegationsService> logger;
@@ -44,7 +45,7 @@ public class CphDelegationsService : ICphDelegationsService
         ICphRepository cphRepository,
         IRoleRepository roleRepository,
         IOperatorContext operatorContext,
-        IStrategyBuilderFactory<CphDelegationsService, CountyParishHoldingDelegations> strategyBuilderFactory,
+        IStrategyBuilderFactory<CphDelegationsService> strategyBuilderFactory,
         IValidator<CreateCphDelegation> createCphDelegationValidator,
         IValidator<UpdateCphDelegationById> updateCphDelegationValidator,
         ILogger<CphDelegationsService> logger)
@@ -60,9 +61,9 @@ public class CphDelegationsService : ICphDelegationsService
         this.logger = logger;
 
         this.strategyBuilderFactory
-            .WithLogger(this.logger)
-            .WithOperatorContext(this.operatorContext)
-            .WithEntityDescription("County parish holding delegation");
+            .WithDefaultLogger(this.logger)
+            .WithDefaultOperatorContext(this.operatorContext)
+            .WithDefaultPrimaryEntityDescription("County parish holding delegation");
     }
 
     public async Task<List<CphDelegation>> GetAll(GetCphDelegations request, CancellationToken cancellationToken = default)
@@ -93,7 +94,9 @@ public class CphDelegationsService : ICphDelegationsService
 
     public async Task<CphDelegation> Create(CreateCphDelegation request, CancellationToken cancellationToken = default)
     {
-        return await strategyBuilderFactory.BuildCreateStrategy(repository, "Create")
+        return await strategyBuilderFactory.BuildCreateStrategy<CountyParishHoldingDelegations>()
+            .WithActionDescription("Create")
+            .WithRepository(repository)
             .WithCancellationToken(cancellationToken)
             .WithRequestValidation(() => createCphDelegationValidator.ValidateAsync(request, cancellationToken))
             .WithReferenceRules(
@@ -123,7 +126,9 @@ public class CphDelegationsService : ICphDelegationsService
 
     public async Task<CphDelegation> Update(UpdateCphDelegationById request, CancellationToken cancellationToken = default)
     {
-        return await strategyBuilderFactory.BuildUpdateStrategy(repository, "Update")
+        return await strategyBuilderFactory.BuildUpdateStrategy<CountyParishHoldingDelegations>()
+            .WithActionDescription("Update")
+            .WithRepository(repository)
             .WithCancellationToken(cancellationToken)
             .WithRequestValidation(() => updateCphDelegationValidator.ValidateAsync(request, cancellationToken))
             .WithRequestAndEntityFilter(request, delegation => request.Id == delegation.Id)
@@ -163,7 +168,9 @@ public class CphDelegationsService : ICphDelegationsService
 
     public async Task Accept(AcceptCphDelegationById request, CancellationToken cancellationToken = default)
     {
-        await strategyBuilderFactory.BuildUpdateStrategy(repository, "Accept")
+        await strategyBuilderFactory.BuildUpdateStrategy<CountyParishHoldingDelegations>()
+            .WithActionDescription("Accept")
+            .WithRepository(repository)
             .WithCancellationToken(cancellationToken)
             .WithRequestAndEntityFilter(request, delegation => request.Id == delegation.Id)
             .WithExistenceRules(
@@ -186,7 +193,9 @@ public class CphDelegationsService : ICphDelegationsService
 
     public async Task Reject(RejectCphDelegationById request, CancellationToken cancellationToken = default)
     {
-        await strategyBuilderFactory.BuildUpdateStrategy(repository, "Reject")
+        await strategyBuilderFactory.BuildUpdateStrategy<CountyParishHoldingDelegations>()
+            .WithActionDescription("Reject")
+            .WithRepository(repository)
             .WithCancellationToken(cancellationToken)
             .WithRequestAndEntityFilter(request, delegation => request.Id == delegation.Id)
             .WithExistenceRules(
@@ -209,7 +218,9 @@ public class CphDelegationsService : ICphDelegationsService
 
     public async Task Revoke(RevokeCphDelegationById request, CancellationToken cancellationToken = default)
     {
-        await strategyBuilderFactory.BuildUpdateStrategy(repository, "Revoke")
+        await strategyBuilderFactory.BuildUpdateStrategy<CountyParishHoldingDelegations>()
+            .WithActionDescription("Revoke")
+            .WithRepository(repository)
             .WithCancellationToken(cancellationToken)
             .WithRequestAndEntityFilter(request, delegation => request.Id == delegation.Id)
             .WithExistenceRules(rules => { rules.Add(RulesLibrary.Existence.NotSoftDeleted); })
@@ -225,7 +236,9 @@ public class CphDelegationsService : ICphDelegationsService
 
     public async Task Expire(ExpireCphDelegationById request, CancellationToken cancellationToken = default)
     {
-        await strategyBuilderFactory.BuildUpdateStrategy(repository, "Expire")
+        await strategyBuilderFactory.BuildUpdateStrategy<CountyParishHoldingDelegations>()
+            .WithActionDescription("Expire")
+            .WithRepository(repository)
             .WithCancellationToken(cancellationToken)
             .WithRequestAndEntityFilter(request, delegation => request.Id == delegation.Id)
             .WithExistenceRules(
@@ -265,17 +278,7 @@ public class CphDelegationsService : ICphDelegationsService
             ExpiresAt = entity.ExpiresAt,
             RevokedById = entity.RevokedById,
             RevokedByName = entity.RevokedByUser?.DisplayName,
-            Active = IsActiveDelegation(entity),
+            Active = DelegationHelper.IsActiveDelegation(entity),
         };
-    }
-
-    private static bool IsActiveDelegation(CountyParishHoldingDelegations entity)
-    {
-        var isDeleted = entity.DeletedAt != null;
-        var hasExpired = entity.ExpiresAt != null && DateTime.Now.ToUniversalTime() < entity.ExpiresAt;
-        var rejectedOrRevoked = entity.InvitationRejectedAt != null || entity.RevokedAt != null;
-        var isAccepted = entity.InvitationAcceptedAt != null;
-
-        return !hasExpired && !isDeleted && !rejectedOrRevoked && isAccepted;
     }
 }

@@ -9,6 +9,7 @@ using Defra.Identity.Requests.Cphs.Common;
 using Defra.Identity.Requests.Cphs.Queries;
 using Defra.Identity.Responses.Common;
 using Defra.Identity.Responses.Cphs;
+using Defra.Identity.Responses.Cphs.Users;
 
 public interface ICphService
 {
@@ -22,5 +23,5 @@ public interface ICphService
 
     Task Delete(DeleteCphByCphId request, Guid operatorId, CancellationToken cancellationToken = default);
 
-    Task<PagedResults<CphUser>> GetAllCphUsersPaged(GetCphUsersByCphId request, CancellationToken cancellationToken = default);
+    Task<PagedResults<CphAssociatedUser>> GetAllCphUsersPaged(GetCphUsersByCphId request, CancellationToken cancellationToken = default);
 }

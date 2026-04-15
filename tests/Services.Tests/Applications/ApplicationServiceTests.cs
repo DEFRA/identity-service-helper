@@ -7,7 +7,7 @@ namespace Defra.Identity.Services.Tests.Applications;
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Applications;
-using Defra.Identity.Repositories.Exceptions;
+using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Requests.Applications.Commands.Create;
 using Defra.Identity.Requests.Applications.Commands.Update;
 using Defra.Identity.Requests.Applications.Queries;

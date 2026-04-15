@@ -15,6 +15,7 @@ using Defra.Identity.Requests.Filters;
 using Defra.Identity.Requests.MetaData;
 using Defra.Identity.Responses.Common;
 using Defra.Identity.Responses.Cphs;
+using Defra.Identity.Responses.Cphs.Users;
 using Defra.Identity.Services.Cphs;
 
 public static class CphEndpoints
@@ -66,7 +67,7 @@ public static class CphEndpoints
 
         app.MapGet(RouteNames.CountyParishHoldings + "/{id:guid}/users", GetAllCphUsersPaged)
             .AddEndpointFilter<ValidationFilter<PagedQuery>>()
-            .Produces<PagedResults<CphUser>>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
+            .Produces<PagedResults<CphAssociatedUser>>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
             .Produces(StatusCodes.Status404NotFound);
 
         app.MapGet(
@@ -74,7 +75,7 @@ public static class CphEndpoints
                 CphHandlerFactory.CreateCphNumberRerouteHandler<GetCphUsersByCphId, GetCphUsersByCphNumber>(GetAllCphUsersPaged))
             .AddEndpointFilter<ValidationFilter<IOperationByCphNumber>>()
             .AddEndpointFilter<ValidationFilter<PagedQuery>>()
-            .Produces<PagedResults<CphUser>>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
+            .Produces<PagedResults<CphAssociatedUser>>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
             .Produces(StatusCodes.Status404NotFound);
     }
 

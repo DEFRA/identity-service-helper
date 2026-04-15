@@ -6,39 +6,39 @@ namespace Defra.Identity.Responses.Delegations;
 
 public class CphDelegation
 {
-    public required Guid Id { get; set; }
+    public required Guid Id { get; init; }
 
-    public required Guid CountyParishHoldingId { get; set; }
+    public required Guid CountyParishHoldingId { get; init; }
 
-    public required string CountyParishHoldingNumber { get; set; } = null!;
+    public required string CountyParishHoldingNumber { get; set; }
 
-    public required Guid DelegatingUserId { get; set; }
+    public required Guid DelegatingUserId { get; init; }
 
-    public required string DelegatingUserName { get; set; }
+    public required string DelegatingUserName { get; init; }
 
-    public Guid? DelegatedUserId { get; set; }
+    public required Guid? DelegatedUserId { get; init; }
 
-    public required string? DelegatedUserName { get; set; }
+    public required string? DelegatedUserName { get; init; }
 
-    public required Guid DelegatedUserRoleId { get; set; }
+    public required Guid DelegatedUserRoleId { get; init; }
 
-    public required string DelegatedUserRoleName { get; set; }
+    public required string DelegatedUserRoleName { get; init; }
 
-    public required string DelegatedUserEmail { get; set; }
+    public required string DelegatedUserEmail { get; init; }
 
-    public DateTime? InvitationExpiresAt { get; set; }
+    public DateTime? InvitationExpiresAt { get; init; }
 
-    public DateTime? InvitationAcceptedAt { get; set; }
+    public DateTime? InvitationAcceptedAt { get; init; }
 
-    public DateTime? InvitationRejectedAt { get; set; }
+    public DateTime? InvitationRejectedAt { get; init; }
 
-    public DateTime? RevokedAt { get; set; }
+    public DateTime? RevokedAt { get; init; }
 
-    public Guid? RevokedById { get; set; }
+    public Guid? RevokedById { get; init; }
 
-    public string? RevokedByName { get; set; }
+    public string? RevokedByName { get; init; }
 
-    public DateTime? ExpiresAt { get; set; }
+    public DateTime? ExpiresAt { get; init; }
 
     public bool Active { get; set; }
 }

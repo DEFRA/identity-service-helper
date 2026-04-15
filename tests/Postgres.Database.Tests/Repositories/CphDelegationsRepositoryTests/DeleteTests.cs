@@ -7,8 +7,8 @@ namespace Defra.Identity.Postgres.Database.Tests.Repositories.CphDelegationsRepo
 using System.ComponentModel;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
+using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Repositories.Delegations;
-using Defra.Identity.Repositories.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NSubstitute;

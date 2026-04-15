@@ -7,7 +7,7 @@ namespace Defra.Identity.Postgres.Database.Tests.Repositories;
 using System.ComponentModel;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
-using Defra.Identity.Repositories.Exceptions;
+using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Repositories.Users;
 using Microsoft.Extensions.Logging;
 using NSubstitute;

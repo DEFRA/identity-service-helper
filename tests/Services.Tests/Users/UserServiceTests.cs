@@ -10,10 +10,12 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Defra.Identity.Postgres.Database.Entities;
-using Defra.Identity.Repositories.Exceptions;
+using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Repositories.Users;
+using Defra.Identity.Repositories.Users.Cphs;
 using Defra.Identity.Requests.Users.Commands.Update;
 using Defra.Identity.Requests.Users.Queries;
+using Defra.Identity.Services.Common.Builders.Strategy.Factories;
 using Defra.Identity.Services.Users;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
@@ -23,12 +25,15 @@ using Xunit;
 public class UserServiceTests
 {
     private readonly IUsersRepository repository = Substitute.For<IUsersRepository>();
+    private readonly IUserAssociatedCphsRepository userAssociatedCphsRepository = Substitute.For<IUserAssociatedCphsRepository>();
+    private readonly IUserDelegatedCphsRepository userDelegatedCphsRepository = Substitute.For<IUserDelegatedCphsRepository>();
+    private readonly IStrategyBuilderFactory<UserService> strategyBuilderFactory = Substitute.For<IStrategyBuilderFactory<UserService>>();
     private readonly ILogger<UserService> logger = Substitute.For<ILogger<UserService>>();
     private readonly UserService userService;
 
     public UserServiceTests()
     {
-        userService = new UserService(repository, logger);
+        userService = new UserService(repository, userAssociatedCphsRepository, userDelegatedCphsRepository, strategyBuilderFactory, logger);
     }
 
     [Fact]
@@ -38,8 +43,14 @@ public class UserServiceTests
         var request = new GetUsers();
         var userAccounts = new List<UserAccounts>
         {
-            new UserAccounts { Id = Guid.NewGuid(), EmailAddress = "user1@example.com", FirstName = "User", LastName = "One" },
-            new UserAccounts { Id = Guid.NewGuid(), EmailAddress = "user2@example.com", FirstName = "User", LastName = "Two" },
+            new UserAccounts
+            {
+                Id = Guid.NewGuid(), EmailAddress = "user1@example.com", FirstName = "User", LastName = "One"
+            },
+            new UserAccounts
+            {
+                Id = Guid.NewGuid(), EmailAddress = "user2@example.com", FirstName = "User", LastName = "Two"
+            },
         };
 
         repository.GetList(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<CancellationToken>())
@@ -67,13 +78,13 @@ public class UserServiceTests
     {
         // Arrange
         var userId = Guid.NewGuid();
-        var request = new GetUserById { Id = userId };
+        var request = new GetUserById
+        {
+            Id = userId
+        };
         var userAccount = new UserAccounts
         {
-            Id = userId,
-            EmailAddress = "test@example.com",
-            FirstName = "John",
-            LastName = "Doe",
+            Id = userId, EmailAddress = "test@example.com", FirstName = "John", LastName = "Doe",
         };
 
         repository.GetSingle(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<CancellationToken>())
@@ -125,7 +136,10 @@ public class UserServiceTests
     public async Task Get_UserDoesNotExist_ReturnsNull()
     {
         // Arrange
-        var request = new GetUserById { Id = Guid.NewGuid() };
+        var request = new GetUserById
+        {
+            Id = Guid.NewGuid()
+        };
         repository.GetSingle(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<CancellationToken>())
             .Returns((UserAccounts)null!);
 
@@ -149,17 +163,12 @@ public class UserServiceTests
         // Arrange
         var updateUser = new UpdateUser
         {
-            Email = "test@example.com",
-            FirstName = "UpdatedFirstName",
-            LastName = "UpdatedLastName",
+            Email = "test@example.com", FirstName = "UpdatedFirstName", LastName = "UpdatedLastName",
         };
 
         var existingUser = new UserAccounts
         {
-            Id = Guid.NewGuid(),
-            EmailAddress = "test@example.com",
-            FirstName = "OldFirstName",
-            LastName = "OldLastName",
+            Id = Guid.NewGuid(), EmailAddress = "test@example.com", FirstName = "OldFirstName", LastName = "OldLastName",
         };
 
         repository.GetSingle(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<CancellationToken>())
@@ -180,10 +189,11 @@ public class UserServiceTests
             x => x.LastName.ShouldBe(updateUser.LastName));
 
         await repository.Received(1).Update(
-            Arg.Is<UserAccounts>(ua =>
-            ua.EmailAddress == updateUser.Email &&
-            ua.FirstName == updateUser.FirstName &&
-            ua.LastName == updateUser.LastName),
+            Arg.Is<UserAccounts>(
+                ua =>
+                    ua.EmailAddress == updateUser.Email &&
+                    ua.FirstName == updateUser.FirstName &&
+                    ua.LastName == updateUser.LastName),
             Arg.Any<CancellationToken>());
 
         logger.ReceivedWithAnyArgs().Log(
@@ -200,22 +210,18 @@ public class UserServiceTests
         // Arrange
         var updateUser = new UpdateUser
         {
-            Email = "new@example.com",
-            FirstName = "NewFirstName",
-            LastName = "NewLastName",
+            Email = "new@example.com", FirstName = "NewFirstName", LastName = "NewLastName",
         };
 
         repository.GetSingle(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<CancellationToken>())
             .Returns((UserAccounts)null!);
 
         repository.Create(Arg.Any<UserAccounts>(), Arg.Any<CancellationToken>())
-            .Returns(new UserAccounts
-            {
-                Id = Guid.NewGuid(),
-                EmailAddress = updateUser.Email,
-                FirstName = updateUser.FirstName,
-                LastName = updateUser.LastName,
-            });
+            .Returns(
+                new UserAccounts
+                {
+                    Id = Guid.NewGuid(), EmailAddress = updateUser.Email, FirstName = updateUser.FirstName, LastName = updateUser.LastName,
+                });
 
         // Act
         var result = await userService.Upsert(updateUser, TestContext.Current.CancellationToken);
@@ -229,10 +235,11 @@ public class UserServiceTests
             x => x.DisplayName.ShouldBe(updateUser.DisplayName));
 
         await repository.Received(1).Create(
-            Arg.Is<UserAccounts>(ua =>
-            ua.EmailAddress == updateUser.Email &&
-            ua.FirstName == updateUser.FirstName &&
-            ua.LastName == updateUser.LastName),
+            Arg.Is<UserAccounts>(
+                ua =>
+                    ua.EmailAddress == updateUser.Email &&
+                    ua.FirstName == updateUser.FirstName &&
+                    ua.LastName == updateUser.LastName),
             Arg.Any<CancellationToken>());
 
         logger.ReceivedWithAnyArgs().Log(
@@ -287,12 +294,13 @@ public class UserServiceTests
             x => x.DisplayName.ShouldBe(updateUser.DisplayName));
 
         await repository.Received(1).Update(
-            Arg.Is<UserAccounts>(ua =>
-            ua.Id == userId &&
-            ua.EmailAddress == updateUser.Email &&
-            ua.FirstName == updateUser.FirstName &&
-            ua.LastName == updateUser.LastName &&
-            ua.DisplayName == updateUser.DisplayName),
+            Arg.Is<UserAccounts>(
+                ua =>
+                    ua.Id == userId &&
+                    ua.EmailAddress == updateUser.Email &&
+                    ua.FirstName == updateUser.FirstName &&
+                    ua.LastName == updateUser.LastName &&
+                    ua.DisplayName == updateUser.DisplayName),
             Arg.Any<CancellationToken>());
 
         logger.ReceivedWithAnyArgs().Log(
@@ -309,18 +317,16 @@ public class UserServiceTests
         // Arrange
         var updateUser = new UpdateUser
         {
-            Id = Guid.NewGuid(),
-            Email = "new@example.com",
-            FirstName = "NewFirstName",
-            LastName = "NewLastName",
+            Id = Guid.NewGuid(), Email = "new@example.com", FirstName = "NewFirstName", LastName = "NewLastName",
         };
 
         repository.GetSingle(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<CancellationToken>())
             .Returns((UserAccounts)null!);
 
         // Act & Assert
-        await Should.ThrowAsync<NullReferenceException>(async () =>
-            await userService.Update(updateUser, TestContext.Current.CancellationToken));
+        await Should.ThrowAsync<NullReferenceException>(
+            async () =>
+                await userService.Update(updateUser, TestContext.Current.CancellationToken));
 
         await repository.DidNotReceiveWithAnyArgs().Update(null!, CancellationToken.None);
 

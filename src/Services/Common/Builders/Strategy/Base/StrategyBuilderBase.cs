@@ -18,7 +18,7 @@ public abstract class StrategyBuilderBase<TService, TBuilder>
 
     protected IOperatorContext? OperatorContext { get; private set; }
 
-    protected string? EntityDescription { get; private set; }
+    protected string? PrimaryEntityDescription { get; private set; }
 
     protected string? ActionDescription { get; private set; }
 
@@ -42,9 +42,9 @@ public abstract class StrategyBuilderBase<TService, TBuilder>
         return (TBuilder)this;
     }
 
-    public TBuilder WithEntityDescription(string entityDescription)
+    public TBuilder WithPrimaryEntityDescription(string primaryEntityDescription)
     {
-        EntityDescription = entityDescription;
+        PrimaryEntityDescription = primaryEntityDescription;
         return (TBuilder)this;
     }
 

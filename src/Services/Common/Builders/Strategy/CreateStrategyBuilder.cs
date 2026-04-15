@@ -5,30 +5,30 @@
 namespace Defra.Identity.Services.Common.Builders.Strategy;
 
 using Defra.Identity.Repositories.Common.Composites;
-using Defra.Identity.Repositories.Exceptions;
+using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Services.Common.Builders.Rules;
 using Defra.Identity.Services.Common.Builders.Strategy.Base;
+using Defra.Identity.Services.Common.Builders.Strategy.Constants;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
 
-public class CreateStrategyBuilder<TService, TRepository, TEntity> : StrategyBuilderBase<TService, CreateStrategyBuilder<TService, TRepository, TEntity>>
+public class CreateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TService, CreateStrategyBuilder<TService, TEntity>>
     where TService : class
-    where TRepository : ICreatable<TEntity>
     where TEntity : class
 {
-    private TRepository? Repository { get; set; }
+    private ICreatable<TEntity>? CreatableRepository { get; set; }
 
     private Func<TEntity>? CreateAction { get; set; }
 
     private ReferenceRulesBuilder? ReferenceRulesBuilder { get; set; }
 
-    public CreateStrategyBuilder<TService, TRepository, TEntity> WithRepository(TRepository repository)
+    public CreateStrategyBuilder<TService, TEntity> WithRepository(ICreatable<TEntity> repository)
     {
-        Repository = repository;
+        CreatableRepository = repository;
         return this;
     }
 
-    public CreateStrategyBuilder<TService, TRepository, TEntity> WithReferenceRules(Action<ReferenceRulesBuilder> builder)
+    public CreateStrategyBuilder<TService, TEntity> WithReferenceRules(Action<ReferenceRulesBuilder> builder)
     {
         ReferenceRulesBuilder = new ReferenceRulesBuilder();
 
@@ -37,7 +37,7 @@ public class CreateStrategyBuilder<TService, TRepository, TEntity> : StrategyBui
         return this;
     }
 
-    public CreateStrategyBuilder<TService, TRepository, TEntity> WithCreate(Func<TEntity> createAction)
+    public CreateStrategyBuilder<TService, TEntity> WithCreate(Func<TEntity> createAction)
     {
         CreateAction = createAction;
 
@@ -48,43 +48,43 @@ public class CreateStrategyBuilder<TService, TRepository, TEntity> : StrategyBui
     {
         if (Logger == null)
         {
-            throw new InvalidOperationException("Logger must be provided for this operation");
+            throw new InvalidOperationException(StrategyBuilderConstants.Errors.LoggerRequired);
         }
 
         if (CancellationToken == null)
         {
-            throw new InvalidOperationException("Cancellation token must be provided for this operation");
+            throw new InvalidOperationException(StrategyBuilderConstants.Errors.CancellationTokenRequired);
         }
 
         if (OperatorContext == null)
         {
-            throw new InvalidOperationException("Operator context must be provided for this operation");
+            throw new InvalidOperationException(StrategyBuilderConstants.Errors.OperatorContextRequired);
         }
 
-        if (Repository == null)
+        if (CreatableRepository == null)
         {
-            throw new InvalidOperationException("Repository must be provided for this operation");
+            throw new InvalidOperationException(StrategyBuilderConstants.Errors.CreatableRepositoryRequired);
         }
 
-        if (EntityDescription == null)
+        if (PrimaryEntityDescription == null)
         {
-            throw new InvalidOperationException("Entity description must be provided for this operation");
+            throw new InvalidOperationException(StrategyBuilderConstants.Errors.PrimaryEntityDescriptionRequired);
         }
 
         if (ActionDescription == null)
         {
-            throw new InvalidOperationException("Action description must be provided for this operation");
+            throw new InvalidOperationException(StrategyBuilderConstants.Errors.ActionDescriptionRequired);
         }
 
         if (CreateAction == null)
         {
-            throw new InvalidOperationException("Create action must be provided for this operation");
+            throw new InvalidOperationException(StrategyBuilderConstants.Errors.CreateActionRequired);
         }
 
         Logger.LogInformation(
             "Executing {ActionDescription} {EntityDescription} with by operator {OperatorId}",
             ActionDescription.ToLowerInvariant(),
-            EntityDescription.ToLowerInvariant(),
+            PrimaryEntityDescription.ToLowerInvariant(),
             OperatorContext.OperatorId);
 
         if (ValidateAction != null)
@@ -96,7 +96,7 @@ public class CreateStrategyBuilder<TService, TRepository, TEntity> : StrategyBui
                 Logger.LogWarning(
                     "Execute {ActionDescription} {EntityDescription} failed basic validation",
                     ActionDescription.ToLowerInvariant(),
-                    EntityDescription.ToLowerInvariant());
+                    PrimaryEntityDescription.ToLowerInvariant());
 
                 throw new ValidationException(validationResult.Errors);
             }
@@ -113,7 +113,7 @@ public class CreateStrategyBuilder<TService, TRepository, TEntity> : StrategyBui
                     Logger.LogWarning(
                         "Execute {ActionDescription} {EntityDescription} failed reference rule '{Description}'",
                         ActionDescription.ToLowerInvariant(),
-                        EntityDescription.ToLowerInvariant(),
+                        PrimaryEntityDescription.ToLowerInvariant(),
                         rule.Description);
 
                     throw new NotFoundException(rule.Description);
@@ -123,12 +123,12 @@ public class CreateStrategyBuilder<TService, TRepository, TEntity> : StrategyBui
 
         var entityToCreate = CreateAction();
 
-        var createdEntity = await Repository.Create(entityToCreate, CancellationToken.Value);
+        var createdEntity = await CreatableRepository.Create(entityToCreate, CancellationToken.Value);
 
         Logger.LogInformation(
             "Successfully executed {ActionDescription} {EntityDescription} by operator {OperatorId}",
             ActionDescription.ToLowerInvariant(),
-            EntityDescription.ToLowerInvariant(),
+            PrimaryEntityDescription.ToLowerInvariant(),
             OperatorContext.OperatorId);
 
         return createdEntity;

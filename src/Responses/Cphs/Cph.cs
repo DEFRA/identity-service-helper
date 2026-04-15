@@ -8,7 +8,7 @@ public class Cph
 {
     public Guid Id { get; set; }
 
-    public required string CphNumber { get; set; }
+    public required string CountyParishHoldingNumber { get; set; }
 
     public bool Expired { get; set; }
 

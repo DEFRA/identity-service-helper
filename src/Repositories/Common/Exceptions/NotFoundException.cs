@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Repositories.Exceptions;
+namespace Defra.Identity.Repositories.Common.Exceptions;
 
 public sealed class NotFoundException : Exception
 {

@@ -37,7 +37,7 @@ public class PagedEntitiesExtensionTests
             (entity) =>
                 new Cph()
                 {
-                    Id = entity.Id, CphNumber = entity.Identifier, Expired = entity.ExpiredAt != null, ExpiredAt = entity.ExpiredAt,
+                    Id = entity.Id, CountyParishHoldingNumber = entity.Identifier, Expired = entity.ExpiredAt != null, ExpiredAt = entity.ExpiredAt,
                 });
 
         // Assert
@@ -55,13 +55,13 @@ public class PagedEntitiesExtensionTests
 
         firstItem.ShouldSatisfyAllConditions(
             (x) => x.Id.ShouldBe(new Guid("34b4e480-8bd4-438e-b279-d0398a65a3a5")),
-            (x) => x.CphNumber.ShouldBe("44/100/0001"),
+            (x) => x.CountyParishHoldingNumber.ShouldBe("44/100/0001"),
             (x) => x.Expired.ShouldBe(true),
             (x) => x.ExpiredAt.ShouldBe(DateTime.Parse("2026-02-12").ToUniversalTime()));
 
         secondItem.ShouldSatisfyAllConditions(
             (x) => x.Id.ShouldBe(new Guid("9928bbc3-ddd4-488a-a620-7850bcc653d7")),
-            (x) => x.CphNumber.ShouldBe("44/100/0002"),
+            (x) => x.CountyParishHoldingNumber.ShouldBe("44/100/0002"),
             (x) => x.Expired.ShouldBe(false),
             (x) => x.ExpiredAt.ShouldBeNull());
     }

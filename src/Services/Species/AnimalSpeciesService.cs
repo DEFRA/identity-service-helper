@@ -5,7 +5,7 @@
 namespace Defra.Identity.Services.Species;
 
 using System.Linq.Expressions;
-using Defra.Identity.Repositories.Exceptions;
+using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Repositories.Species;
 using Defra.Identity.Requests.Species.Commands;
 using Defra.Identity.Requests.Species.Queries;
