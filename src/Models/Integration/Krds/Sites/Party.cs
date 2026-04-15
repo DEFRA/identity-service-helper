@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Models.Integration.Krds.Locations;
+namespace Defra.Identity.Models.Integration.Krds.Sites;
 
 using System.Text.Json.Serialization;
 
@@ -18,10 +18,10 @@ public class Party
     public string? Title { get; set; }
 
     [JsonPropertyName("firstName")]
-    public string FirstName { get; set; } = string.Empty;
+    public string? FirstName { get; set; } = string.Empty;
 
     [JsonPropertyName("lastName")]
-    public string LastName { get; set; } = string.Empty;
+    public string? LastName { get; set; } = string.Empty;
 
     [JsonPropertyName("name")]
     public string Name { get; set; } = string.Empty;

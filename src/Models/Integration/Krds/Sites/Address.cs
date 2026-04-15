@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Models.Integration.Krds.Locations;
+namespace Defra.Identity.Models.Integration.Krds.Sites;
 
 using System.Text.Json.Serialization;
 
@@ -30,7 +30,7 @@ public class Address
     public string? Postcode { get; set; }
 
     [JsonPropertyName("country")]
-    public string? Country { get; set; }
+    public object? Country { get; set; }
 
     [JsonPropertyName("lastUpdatedDate")]
     public DateTimeOffset? LastUpdatedDate { get; set; }

@@ -1,4 +1,4 @@
-// <copyright file="RunScriptDatabase.cs" company="Defra">
+// <copyright file="RunScriptCommand.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 

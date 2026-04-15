@@ -1,11 +1,11 @@
-﻿// <copyright file="Class1.cs" company="Defra">
+﻿// <copyright file="IngestCountyParishHoldings.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
 namespace Defra.Identity.Ingest;
 
 using Defra.Identity.KeeperReferenceData.Providers;
-using Defra.Identity.Models.Integration.Krds.Locations;
+using Defra.Identity.Models.Integration.Krds.Sites;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Services.Cphs;
 

@@ -43,6 +43,6 @@ public static class ServiceCollectionExtensions
             .HandleTransientHttpError()
             .OrResult(msg => msg.StatusCode == HttpStatusCode.NotFound)
             .OrResult(msg => (int)msg.StatusCode == 429)
-            .WaitAndRetryAsync(6, retryAttempt => TimeSpan.FromMilliseconds(150 * retryAttempt));
+            .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
     }
 }

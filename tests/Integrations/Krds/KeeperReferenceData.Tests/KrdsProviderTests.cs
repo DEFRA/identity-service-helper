@@ -1,4 +1,4 @@
-// <copyright file="SitesProviderTests.cs" company="Defra">
+// <copyright file="KrdsProviderTests.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
@@ -11,9 +11,11 @@ using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
 using Defra.Identity.KeeperReferenceData.Providers;
-using Defra.Identity.Models.Integration.Krds.Locations;
 using Defra.Identity.Models.Integration.Krds.Parties;
+using Defra.Identity.Models.Integration.Krds.Sites;
 using Microsoft.Extensions.Logging.Abstractions;
+using Polly;
+using Polly.Extensions.Http;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
@@ -67,6 +69,41 @@ public class KrdsProviderTests
         Assert.IsType<SiteResponse>(result);
         Assert.Equal(2, result.Count);
         Assert.Equal(2, result.Values.Count);
+    }
+
+    [Fact]
+    public async Task Sites_Logs_Error_When_Validation_Fails()
+    {
+        using var server = WireMockServer.Start();
+        server
+            .Given(Request.Create().WithPath("/sites").UsingGet())
+            .RespondWith(Response.Create()
+                .WithStatusCode(200)
+                .WithHeader("Content-Type", "application/json")
+                .WithBody("{\"invalid\": \"schema\"}"));
+
+        var httpClient = new HttpClient { BaseAddress = new Uri(server.Url + "/") };
+        var logger = new TestLogger<KrdsProvider>();
+        using var sut = new KrdsProvider(httpClient, logger);
+
+        await sut.Sites(DateTime.UtcNow, CancellationToken.None);
+
+        Assert.Contains(logger.Logs, l => l.Contains("JSON Schema validation failed"));
+    }
+
+    private class TestLogger<T> : Microsoft.Extensions.Logging.ILogger<T>
+    {
+        public List<string> Logs { get; } = new();
+
+        public IDisposable? BeginScope<TState>(TState state)
+            where TState : notnull => null;
+
+        public bool IsEnabled(Microsoft.Extensions.Logging.LogLevel logLevel) => true;
+
+        public void Log<TState>(Microsoft.Extensions.Logging.LogLevel logLevel, Microsoft.Extensions.Logging.EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+        {
+            this.Logs.Add(formatter(state, exception));
+        }
     }
 
     [Fact]
@@ -131,5 +168,41 @@ public class KrdsProviderTests
 
         await Assert.ThrowsAsync<HttpRequestException>(() => sut.Sites(DateTime.UtcNow, CancellationToken.None));
         Assert.True(server.LogEntries.Count(le => le.RequestMessage.Path == "/sites" && le.RequestMessage.Method == "GET") >= 1);
+    }
+
+    [Fact]
+    public async Task Sites_Retries_On_Transient_Error()
+    {
+        using var server = WireMockServer.Start();
+        server
+            .Given(Request.Create().WithPath("/sites").UsingGet())
+            .InScenario("Retry")
+            .WillSetStateTo("Failed Once")
+            .RespondWith(Response.Create()
+                .WithStatusCode((int)HttpStatusCode.InternalServerError));
+
+        server
+            .Given(Request.Create().WithPath("/sites").UsingGet())
+            .InScenario("Retry")
+            .WhenStateIs("Failed Once")
+            .RespondWith(Response.Create()
+                .WithStatusCode(200)
+                .WithHeader("Content-Type", "application/json")
+                .WithBody("[]"));
+
+        var httpClient = new HttpClient { BaseAddress = new Uri(server.Url + "/") };
+        var logger = NullLogger<KrdsProvider>.Instance;
+
+        // We need to use Polly here manually as we are not using IHttpClientFactory in this test
+        var retryPolicy = Policy
+            .Handle<HttpRequestException>()
+            .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromMilliseconds(1));
+
+        using var sut = new KrdsProvider(httpClient, logger);
+
+        var result = await retryPolicy.ExecuteAsync(() => sut.Sites(DateTime.UtcNow, CancellationToken.None));
+
+        Assert.NotNull(result);
+        Assert.Equal(2, server.LogEntries.Count(le => le.RequestMessage.Path == "/sites" && le.RequestMessage.Method == "GET"));
     }
 }

@@ -1,0 +1,179 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "SiteResponse",
+  "type": "object",
+  "properties": {
+    "count": { "type": "integer" },
+    "totalCount": { "type": "integer" },
+    "values": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/Site" }
+    }
+  },
+  "required": ["count", "values"],
+  "definitions": {
+    "Site": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "lastUpdatedDate": { "type": ["string", "null"], "format": "date-time" },
+        "type": { "type": ["object", "null"] },
+        "name": { "type": ["string", "null"] },
+        "state": { "type": ["string", "null"] },
+        "startDate": { "type": ["string", "null"], "format": "date-time" },
+        "endDate": { "type": ["string", "null"], "format": "date-time" },
+        "source": { "type": ["string", "null"] },
+        "destroyIdentityDocumentsFlag": { "type": ["boolean", "null"] },
+        "location": { "$ref": "#/definitions/Location" },
+        "identifiers": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Identifier" }
+        },
+        "parties": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Party" }
+        },
+        "species": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Species" }
+        },
+        "marks": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Mark" }
+        },
+        "activities": {
+          "type": "array",
+          "items": { "type": "object" }
+        }
+      }
+    },
+    "Location": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "osMapReference": { "type": ["string", "null"] },
+        "easting": { "type": ["number", "null"] },
+        "northing": { "type": ["number", "null"] },
+        "address": { "$ref": "#/definitions/Address" },
+        "communication": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Communication" }
+        },
+        "lastUpdatedDate": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "Address": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "uprn": { "type": ["string", "null"] },
+        "addressLine1": { "type": ["string", "null"] },
+        "addressLine2": { "type": ["string", "null"] },
+        "postTown": { "type": ["string", "null"] },
+        "county": { "type": ["string", "null"] },
+        "postcode": { "type": ["string", "null"] },
+        "country": { "type": ["object", "null"] },
+        "lastUpdatedDate": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "Communication": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "email": { "type": ["string", "null"] },
+        "mobile": { "type": ["string", "null"] },
+        "landline": { "type": ["string", "null"] },
+        "primaryContactFlag": { "type": "boolean" },
+        "lastUpdatedDate": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "Identifier": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "identifier": { "type": "string" },
+        "type": { "$ref": "#/definitions/IdentifierType" },
+        "lastUpdatedDate": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "IdentifierType": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "code": { "type": "string" },
+        "name": { "type": "string" },
+        "lastUpdatedDate": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "Party": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "customerNumber": { "type": "string" },
+        "title": { "type": ["string", "null"] },
+        "firstName": { "type": ["string", "null"] },
+        "lastName": { "type": ["string", "null"] },
+        "name": { "type": "string" },
+        "partyType": { "type": "string" },
+        "state": { "type": "string" },
+        "lastUpdatedDate": { "type": ["string", "null"], "format": "date-time" },
+        "communication": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Communication" }
+        },
+        "correspondanceAddress": { "$ref": "#/definitions/Address" },
+        "partyRoles": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/PartyRole" }
+        }
+      }
+    },
+    "PartyRole": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "role": { "$ref": "#/definitions/Role" },
+        "speciesManagedByRole": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Species" }
+        },
+        "lastUpdatedDate": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "Role": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "code": { "type": "string" },
+        "name": { "type": "string" },
+        "lastUpdatedDate": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "Species": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "code": { "type": "string" },
+        "name": { "type": "string" },
+        "lastModifiedDate": { "type": ["string", "null"], "format": "date-time" },
+        "startDate": { "type": ["string", "null"], "format": "date-time" },
+        "endDate": { "type": ["string", "null"], "format": "date-time" },
+        "lastUpdatedDate": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "Mark": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "mark": { "type": "string" },
+        "startDate": { "type": ["string", "null"], "format": "date-time" },
+        "endDate": { "type": ["string", "null"], "format": "date-time" },
+        "species": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Species" }
+        },
+        "lastUpdatedDate": { "type": ["string", "null"], "format": "date-time" }
+      }
+    }
+  }
+}

@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Models.Integration.Krds.Locations;
+namespace Defra.Identity.Models.Integration.Krds.Sites;
 
 using System.Text.Json.Serialization;
 
