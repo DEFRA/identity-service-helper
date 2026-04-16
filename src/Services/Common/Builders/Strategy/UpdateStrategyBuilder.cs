@@ -12,7 +12,6 @@ using Defra.Identity.Services.Common.Builders.Rules;
 using Defra.Identity.Services.Common.Builders.Strategy.Base;
 using Defra.Identity.Services.Common.Builders.Strategy.Constants;
 using Defra.Identity.Services.Common.Exceptions;
-using FluentValidation;
 using Microsoft.Extensions.Logging;
 
 public class UpdateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TService, UpdateStrategyBuilder<TService, TEntity>>

@@ -15,4 +15,6 @@ public class UserAssociatedCph
     public required Guid ApplicationId { get; set; }
 
     public required Guid RoleId { get; set; }
+
+    public required string RoleName { get; init; }
 }

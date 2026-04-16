@@ -9,7 +9,6 @@ using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Services.Common.Builders.Rules;
 using Defra.Identity.Services.Common.Builders.Strategy.Base;
 using Defra.Identity.Services.Common.Builders.Strategy.Constants;
-using FluentValidation;
 using Microsoft.Extensions.Logging;
 
 public class CreateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TService, CreateStrategyBuilder<TService, TEntity>>

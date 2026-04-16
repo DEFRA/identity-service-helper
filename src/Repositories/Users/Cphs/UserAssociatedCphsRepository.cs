@@ -33,6 +33,7 @@ public class UserAssociatedCphsRepository(
             .Collection(p => p.ApplicationUserAccountHoldingAssignments)
             .Query()
             .Include(p => p.CountyParishHolding)
+            .Include(p => p.Role)
             .Where(associationsPredicate)
             .ToListAsync(cancellationToken);
 

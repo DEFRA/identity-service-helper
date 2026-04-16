@@ -14,6 +14,8 @@ public class CphAssociatedUser
 
     public Guid RoleId { get; set; }
 
+    public required string RoleName { get; init; }
+
     public required string Email { get; set; }
 
     public required string DisplayName { get; set; }

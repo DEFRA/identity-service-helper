@@ -191,6 +191,7 @@ public class UserService : IUserService
                     CountyParishHoldingNumber = entity.CountyParishHolding.Identifier,
                     ApplicationId = entity.ApplicationId,
                     RoleId = entity.RoleId,
+                    RoleName = entity.Role.Name,
                 });
 
         var userDelegatedCphs = await strategyBuilderFactory.BuildGetAssociationsListStrategy<UserAccounts, CountyParishHoldingDelegations>()
