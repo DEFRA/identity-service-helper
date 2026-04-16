@@ -87,20 +87,7 @@ public class CreateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
             PrimaryEntityDescription.ToLowerInvariant(),
             OperatorContext.OperatorId);
 
-        if (ValidateAction != null)
-        {
-            var validationResult = await ValidateAction();
-
-            if (!validationResult.IsValid)
-            {
-                Logger.LogWarning(
-                    "Execute {ActionDescription} {EntityDescription} failed basic validation",
-                    ActionDescription.ToLowerInvariant(),
-                    PrimaryEntityDescription.ToLowerInvariant());
-
-                throw new ValidationException(validationResult.Errors);
-            }
-        }
+        await ExecuteRequestValidation();
 
         if (ReferenceRulesBuilder != null)
         {

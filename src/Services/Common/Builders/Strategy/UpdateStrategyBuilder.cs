@@ -138,21 +138,7 @@ public class UpdateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
             Request.Id,
             OperatorContext.OperatorId);
 
-        if (ValidateAction != null)
-        {
-            var validationResult = await ValidateAction();
-
-            if (!validationResult.IsValid)
-            {
-                Logger.LogWarning(
-                    "Execute {ActionDescription} {EntityDescription} with id {Id} failed basic validation",
-                    ActionDescription.ToLowerInvariant(),
-                    PrimaryEntityDescription.ToLowerInvariant(),
-                    Request.Id);
-
-                throw new ValidationException(validationResult.Errors);
-            }
-        }
+        await ExecuteRequestValidation();
 
         if (ReferenceRulesBuilder != null)
         {

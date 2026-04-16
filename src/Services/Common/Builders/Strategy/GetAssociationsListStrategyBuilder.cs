@@ -119,6 +119,8 @@ public class GetAssociationsListStrategyBuilder<TService, TPrimary, TAssociation
             PrimaryEntityDescription.ToLowerInvariant(),
             Request.Id);
 
+        await ExecuteRequestValidation();
+
         var primaryEntity = await GettablePrimaryRepository.GetSingle(PrimaryEntityFilter, CancellationToken.Value);
 
         if (primaryEntity == null)

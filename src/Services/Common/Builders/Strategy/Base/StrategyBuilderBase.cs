@@ -4,9 +4,11 @@
 
 namespace Defra.Identity.Services.Common.Builders.Strategy.Base;
 
+using Defra.Identity.Services.Common.Builders.Strategy.Constants;
 using Defra.Identity.Services.Common.Context;
-using FluentValidation.Results;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
+using ValidationResult = FluentValidation.Results.ValidationResult;
 
 public abstract class StrategyBuilderBase<TService, TBuilder>
     where TService : class
@@ -58,5 +60,38 @@ public abstract class StrategyBuilderBase<TService, TBuilder>
     {
         ValidateAction = validateAction;
         return (TBuilder)this;
+    }
+
+    protected async Task ExecuteRequestValidation()
+    {
+        if (Logger == null)
+        {
+            throw new InvalidOperationException(StrategyBuilderConstants.Errors.LoggerRequired);
+        }
+
+        if (PrimaryEntityDescription == null)
+        {
+            throw new InvalidOperationException(StrategyBuilderConstants.Errors.PrimaryEntityDescriptionRequired);
+        }
+
+        if (ActionDescription == null)
+        {
+            throw new InvalidOperationException(StrategyBuilderConstants.Errors.ActionDescriptionRequired);
+        }
+
+        if (ValidateAction != null)
+        {
+            var validationResult = await ValidateAction();
+
+            if (!validationResult.IsValid)
+            {
+                Logger.LogWarning(
+                    "Execute {ActionDescription} {EntityDescription} failed basic validation",
+                    ActionDescription.ToLowerInvariant(),
+                    PrimaryEntityDescription.ToLowerInvariant());
+
+                throw new ValidationException(validationResult.Errors);
+            }
+        }
     }
 }

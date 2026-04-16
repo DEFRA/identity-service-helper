@@ -100,6 +100,8 @@ public class DeleteStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
             Request.Id,
             OperatorContext.OperatorId);
 
+        await ExecuteRequestValidation();
+
         var entityToDelete = await GettableRepository.GetSingle(EntityFilter, CancellationToken.Value);
 
         if (entityToDelete == null)

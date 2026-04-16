@@ -80,6 +80,8 @@ public class GetPagedStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TS
             ActionDescription.ToLowerInvariant(),
             PrimaryEntityDescription.ToLowerInvariant());
 
+        await ExecuteRequestValidation();
+
         var pagedEntities = await PageableRepository.GetPaged(
             EntityFilter,
             Request.PageNumber,
