@@ -4,7 +4,6 @@
 
 namespace Defra.Identity.Services;
 
-using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Services.Applications;
 using Defra.Identity.Services.Common.Builders.Strategy.Factories;
 using Defra.Identity.Services.Common.Context;
@@ -19,30 +18,32 @@ public static class ServiceCollectionExtensions
 {
     public static string? GlobalConfigValue { get; private set; }
 
-    public static IServiceCollection AddDataServices(this IServiceCollection services, IConfigurationRoot config)
+    extension(IServiceCollection services)
     {
-        services.AddTransient<IUserService, UserService>();
-        services.AddTransient<IApplicationService, ApplicationService>();
-        services.AddTransient<ICphDelegationsService, CphDelegationsService>();
-        services.AddTransient<ICphService, CphService>();
-        services.AddTransient<IAnimalSpeciesService, AnimalSpeciesService>();
+        public IServiceCollection AddDataServices(IConfigurationRoot config)
+        {
+            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IApplicationService, ApplicationService>();
+            services.AddTransient<ICphDelegationsService, CphDelegationsService>();
+            services.AddTransient<ICphService, CphService>();
+            services.AddTransient<IAnimalSpeciesService, AnimalSpeciesService>();
 
-        return services;
-    }
+            return services;
+        }
 
-    public static IServiceCollection AddContext(this IServiceCollection services, IConfigurationRoot config)
-    {
-        services.AddScoped<IOperatorContext, OperatorContext>();
+        public IServiceCollection AddContext(IConfigurationRoot config)
+        {
+            services.AddScoped<IOperatorContext, OperatorContext>();
 
-        return services;
-    }
+            return services;
+        }
 
-    public static IServiceCollection AddStrategies(this IServiceCollection services, IConfigurationRoot config)
-    {
-        services
-            .AddTransient<IStrategyBuilderFactory<CphDelegationsService, CountyParishHoldingDelegations>,
-                StrategyBuilderFactory<CphDelegationsService, CountyParishHoldingDelegations>>();
+        public IServiceCollection AddStrategies(IConfigurationRoot config)
+        {
+            services.AddTransient<IStrategyBuilderFactory<UserService>, StrategyBuilderFactory<UserService>>();
+            services.AddTransient<IStrategyBuilderFactory<CphDelegationsService>, StrategyBuilderFactory<CphDelegationsService>>();
 
-        return services;
+            return services;
+        }
     }
 }

@@ -11,6 +11,7 @@ using Defra.Identity.Requests.MetaData;
 using Defra.Identity.Requests.Users.Commands.Create;
 using Defra.Identity.Requests.Users.Commands.Update;
 using Defra.Identity.Requests.Users.Queries;
+using Defra.Identity.Responses.Users.Cphs.Aggregates;
 using Defra.Identity.Services.Users;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,6 +25,10 @@ public static class UsersEndpoints
             .WithName(RouteNames.Users)
             .Produces<Responses.Users.User>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
             .Produces(StatusCodes.Status404NotFound);
+
+        app.MapGet(RouteNames.Users + "/{id:guid}/cphs", GetUserCphs)
+            .Produces<UserCphs>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
+            .ProducesProblem(StatusCodes.Status404NotFound);
 
         app.MapPut(RouteNames.Users + "/{id:guid}", Put)
             .AddEndpointFilter<ValidationFilter<UpdateUser>>()
@@ -110,8 +115,18 @@ public static class UsersEndpoints
         [FromRoute] Guid id,
         IUserService service)
     {
-        var deleted = await service.Delete(id, headers.OperatorId);
+        await service.Delete(id, headers.OperatorId);
 
         return Results.NoContent();
+    }
+
+    private static async Task<IResult> GetUserCphs(
+        QueryRequestHeaders headers,
+        [AsParameters] GetUserCphsByUserId request,
+        IUserService service)
+    {
+        var user = await service.GetUserCphs(request);
+
+        return Results.Ok(user);
     }
 }

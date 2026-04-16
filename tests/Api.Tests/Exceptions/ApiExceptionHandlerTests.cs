@@ -6,7 +6,7 @@ namespace Defra.Identity.Api.Tests.Exceptions;
 
 using System.Text.Json;
 using Defra.Identity.Api.Exceptions;
-using Defra.Identity.Repositories.Exceptions;
+using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Requests;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

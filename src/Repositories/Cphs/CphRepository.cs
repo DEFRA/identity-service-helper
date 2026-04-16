@@ -23,7 +23,7 @@ public class CphRepository(
         var entity = await readOnlyContext.CountyParishHoldings
             .SingleOrDefaultAsync((entity) => entity.Id == id, cancellationToken);
 
-        return entity is { DeletedAt: null } && (entity.ExpiredAt == null || DateTime.Now.ToUniversalTime() < entity.ExpiredAt);
+        return entity is { DeletedAt: null } && (entity.ExpiredAt == null || DateTime.UtcNow < entity.ExpiredAt);
     }
 
     public async Task<CountyParishHoldings?> GetSingle(Expression<Func<CountyParishHoldings, bool>> predicate, CancellationToken cancellationToken = default)

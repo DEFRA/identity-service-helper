@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Services.Exceptions;
+namespace Defra.Identity.Services.Common.Exceptions;
 
 public sealed class BusinessRuleException : Exception
 {

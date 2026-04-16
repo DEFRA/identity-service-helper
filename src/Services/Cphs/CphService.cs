@@ -7,28 +7,30 @@ namespace Defra.Identity.Services.Cphs;
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Common;
+using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Repositories.Cphs;
-using Defra.Identity.Repositories.Exceptions;
+using Defra.Identity.Repositories.Cphs.Users;
 using Defra.Identity.Requests.Cphs.Commands;
 using Defra.Identity.Requests.Cphs.Common;
 using Defra.Identity.Requests.Cphs.Queries;
 using Defra.Identity.Responses.Common;
 using Defra.Identity.Responses.Cphs;
-using Defra.Identity.Services.Exceptions;
+using Defra.Identity.Responses.Cphs.Users;
+using Defra.Identity.Services.Common.Exceptions;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
 
 public class CphService : ICphService
 {
     private readonly ICphRepository cphRepository;
-    private readonly ICphUsersRepository cphUsersRepository;
+    private readonly ICphAssociatedUsersRepository cphAssociatedUsersRepository;
     private readonly IValidator<IOperationByCphNumber> cphNumberValidator;
     private readonly ILogger<CphService> logger;
 
-    public CphService(ICphRepository cphRepository, ICphUsersRepository cphUsersRepository, IValidator<IOperationByCphNumber> cphNumberValidator, ILogger<CphService> logger)
+    public CphService(ICphRepository cphRepository, ICphAssociatedUsersRepository cphAssociatedUsersRepository, IValidator<IOperationByCphNumber> cphNumberValidator, ILogger<CphService> logger)
     {
         this.cphRepository = cphRepository;
-        this.cphUsersRepository = cphUsersRepository;
+        this.cphAssociatedUsersRepository = cphAssociatedUsersRepository;
         this.cphNumberValidator = cphNumberValidator;
         this.logger = logger;
     }
@@ -143,7 +145,7 @@ public class CphService : ICphService
         await cphRepository.Update(cphEntity, cancellationToken);
     }
 
-    public async Task<PagedResults<CphUser>> GetAllCphUsersPaged(GetCphUsersByCphId request, CancellationToken cancellationToken = default)
+    public async Task<PagedResults<CphAssociatedUser>> GetAllCphUsersPaged(GetCphUsersByCphId request, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Getting all county parish holding users for id {Id} by page", request.Id);
 
@@ -160,7 +162,7 @@ public class CphService : ICphService
             throw new NotFoundException("County parish holding not found.");
         }
 
-        var pageCphUserEntities = await cphUsersRepository.GetPaged(
+        var pageCphUserEntities = await cphAssociatedUsersRepository.GetPaged(
             primaryFilter,
             associationFilter,
             request.PageNumber,
@@ -178,18 +180,19 @@ public class CphService : ICphService
     {
         return new Cph
         {
-            Id = cphEntity.Id, CphNumber = cphEntity.Identifier, Expired = cphEntity.ExpiredAt != null, ExpiredAt = cphEntity.ExpiredAt,
+            Id = cphEntity.Id, CountyParishHoldingNumber = cphEntity.Identifier, Expired = cphEntity.ExpiredAt != null, ExpiredAt = cphEntity.ExpiredAt,
         };
     }
 
-    private static CphUser MapCphUserEntityToCphUser(ApplicationUserAccountHoldingAssignments cphUserEntity)
+    private static CphAssociatedUser MapCphUserEntityToCphUser(ApplicationUserAccountHoldingAssignments cphUserEntity)
     {
-        return new CphUser
+        return new CphAssociatedUser
         {
-            Id = cphUserEntity.Id,
+            AssociationId = cphUserEntity.Id,
             UserId = cphUserEntity.UserAccountId,
             ApplicationId = cphUserEntity.ApplicationId,
             RoleId = cphUserEntity.RoleId,
+            RoleName = cphUserEntity.Role.Name,
             Email = cphUserEntity.UserAccount.EmailAddress,
             DisplayName = cphUserEntity.UserAccount.DisplayName,
         };

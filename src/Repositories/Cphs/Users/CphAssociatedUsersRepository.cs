@@ -1,20 +1,19 @@
-﻿// <copyright file="CphUsersRepository.cs" company="Defra">
+﻿// <copyright file="CphAssociatedUsersRepository.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Repositories.Cphs;
+namespace Defra.Identity.Repositories.Cphs.Users;
 
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Common;
-using Defra.Identity.Repositories.Exceptions;
+using Defra.Identity.Repositories.Common.Exceptions;
 using Microsoft.Extensions.Logging;
 
-public class CphUsersRepository(
-    PostgresDbContext context,
+public class CphAssociatedUsersRepository(
     ReadOnlyPostgresDbContext readOnlyContext,
-    ILogger<CphUsersRepository> logger) : ICphUsersRepository
+    ILogger<CphAssociatedUsersRepository> logger) : ICphAssociatedUsersRepository
 {
     public async Task<PagedEntities<ApplicationUserAccountHoldingAssignments>> GetPaged<TOrderBy>(
         Expression<Func<CountyParishHoldings, bool>> primaryPredicate,
@@ -35,14 +34,15 @@ public class CphUsersRepository(
             throw new NotFoundException("County parish holding not found.");
         }
 
-        var pagedResult = await readOnlyContext
+        var pagedResults = await readOnlyContext
             .Entry(primaryEntity)
             .Collection(p => p.ApplicationUserAccountHoldingAssignments)
             .Query()
             .Include(p => p.UserAccount)
+            .Include(p => p.Role)
             .Where(associationsPredicate)
             .ToPaged(pageNumber, pageSize, orderBy, orderByDescending, cancellationToken);
 
-        return pagedResult;
+        return pagedResults;
     }
 }

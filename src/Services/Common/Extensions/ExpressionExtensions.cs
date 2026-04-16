@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Services.Extensions;
+namespace Defra.Identity.Services.Common.Extensions;
 
 using System.Linq.Expressions;
 

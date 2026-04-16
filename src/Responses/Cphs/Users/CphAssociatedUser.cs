@@ -2,17 +2,19 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Responses.Cphs;
+namespace Defra.Identity.Responses.Cphs.Users;
 
-public class CphUser
+public class CphAssociatedUser
 {
-    public Guid Id { get; set; }
+    public Guid AssociationId { get; set; }
 
     public Guid UserId { get; set; }
 
     public Guid ApplicationId { get; set; }
 
     public Guid RoleId { get; set; }
+
+    public required string RoleName { get; init; }
 
     public required string Email { get; set; }
 

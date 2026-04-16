@@ -6,7 +6,7 @@ namespace Defra.Identity.Services.Tests.Extensions;
 
 using System;
 using System.Linq.Expressions;
-using Defra.Identity.Services.Extensions;
+using Defra.Identity.Services.Common.Extensions;
 using Shouldly;
 using Xunit;
 

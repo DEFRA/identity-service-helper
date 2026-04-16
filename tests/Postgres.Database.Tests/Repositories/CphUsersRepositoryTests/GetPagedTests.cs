@@ -9,6 +9,7 @@ using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
 using Defra.Identity.Repositories.Cphs;
+using Defra.Identity.Repositories.Cphs.Users;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 
@@ -19,8 +20,8 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     public async Task ShouldGetPageOneCphUsersInAscendingOrderWithOrderingAndFiltersApplied()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<CphUsersRepository>>();
-        var repository = new CphUsersRepository(Context, ReadOnlyContext, logger);
+        var logger = Substitute.For<ILogger<CphAssociatedUsersRepository>>();
+        var repository = new CphAssociatedUsersRepository(ReadOnlyContext, logger);
 
         var cphId = new Guid("4435a146-d0ac-4260-8a27-c550e0ed9563");
         const int pageNumber = 1;
@@ -71,8 +72,8 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     public async Task ShouldGetPageTwoCphUsersInAscendingOrderWithOrderingAndFiltersApplied()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<CphUsersRepository>>();
-        var repository = new CphUsersRepository(Context, ReadOnlyContext, logger);
+        var logger = Substitute.For<ILogger<CphAssociatedUsersRepository>>();
+        var repository = new CphAssociatedUsersRepository(ReadOnlyContext, logger);
 
         var cphId = new Guid("4435a146-d0ac-4260-8a27-c550e0ed9563");
         const int pageNumber = 2;
@@ -113,8 +114,8 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     public async Task ShouldGetPageOneCphUsersInDescendingOrderWithOrderingAndFiltersApplied()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<CphUsersRepository>>();
-        var repository = new CphUsersRepository(Context, ReadOnlyContext, logger);
+        var logger = Substitute.For<ILogger<CphAssociatedUsersRepository>>();
+        var repository = new CphAssociatedUsersRepository(ReadOnlyContext, logger);
 
         var cphId = new Guid("4435a146-d0ac-4260-8a27-c550e0ed9563");
         const int pageNumber = 1;
@@ -165,8 +166,8 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     public async Task ShouldGetPageTwoCphUsersInDescendingOrderWithOrderingAndFiltersApplied()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<CphUsersRepository>>();
-        var repository = new CphUsersRepository(Context, ReadOnlyContext, logger);
+        var logger = Substitute.For<ILogger<CphAssociatedUsersRepository>>();
+        var repository = new CphAssociatedUsersRepository(ReadOnlyContext, logger);
 
         var cphId = new Guid("4435a146-d0ac-4260-8a27-c550e0ed9563");
         const int pageNumber = 2;
@@ -207,8 +208,8 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     public async Task ShouldGetPageOneCphUsersInDifferentCphInAscendingOrderWithOrderingAndFiltersApplied()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<CphUsersRepository>>();
-        var repository = new CphUsersRepository(Context, ReadOnlyContext, logger);
+        var logger = Substitute.For<ILogger<CphAssociatedUsersRepository>>();
+        var repository = new CphAssociatedUsersRepository(ReadOnlyContext, logger);
 
         var cphId = new Guid("204459b1-3a07-4e65-9122-91c1699e3d3f");
         const int pageNumber = 1;
@@ -259,8 +260,8 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     public async Task ShouldGetPageOneCphUsersInDifferentCphInDescendingOrderWithOrderingAndFiltersApplied()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<CphUsersRepository>>();
-        var repository = new CphUsersRepository(Context, ReadOnlyContext, logger);
+        var logger = Substitute.For<ILogger<CphAssociatedUsersRepository>>();
+        var repository = new CphAssociatedUsersRepository(ReadOnlyContext, logger);
 
         var cphId = new Guid("204459b1-3a07-4e65-9122-91c1699e3d3f");
         const int pageNumber = 1;

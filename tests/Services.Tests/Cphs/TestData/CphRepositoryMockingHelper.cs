@@ -65,6 +65,10 @@ public static class CphRepositoryMockingHelper
             },
             ApplicationId = new Guid("0bcd7934-4e18-414a-a6a8-d94d6a45c148"),
             RoleId = new Guid("81b11eb8-2ac7-468f-a80a-cfeb24f70585"),
+            Role = new Roles()
+            {
+                Name = "Role 1",
+            },
             DeletedAt = null,
         },
         new()
@@ -78,6 +82,10 @@ public static class CphRepositoryMockingHelper
             },
             ApplicationId = new Guid("0bcd7934-4e18-414a-a6a8-d94d6a45c148"),
             RoleId = new Guid("81b11eb8-2ac7-468f-a80a-cfeb24f70585"),
+            Role = new Roles()
+            {
+                Name = "Role 1",
+            },
             DeletedAt = null,
         },
         new()
@@ -91,6 +99,10 @@ public static class CphRepositoryMockingHelper
             },
             ApplicationId = new Guid("0bcd7934-4e18-414a-a6a8-d94d6a45c148"),
             RoleId = new Guid("81b11eb8-2ac7-468f-a80a-cfeb24f70585"),
+            Role = new Roles()
+            {
+                Name = "Role 1",
+            },
             DeletedAt = DateTime.Parse("2026-03-03").ToUniversalTime(),
         },
         new()
@@ -104,6 +116,10 @@ public static class CphRepositoryMockingHelper
             },
             ApplicationId = new Guid("f81bbbe9-8eba-4a86-8e65-a08348219f06"),
             RoleId = new Guid("42452ec5-8393-4674-8968-f4929be60099"),
+            Role = new Roles()
+            {
+                Name = "Role 2",
+            },
             DeletedAt = null,
         },
         new()
@@ -117,6 +133,10 @@ public static class CphRepositoryMockingHelper
             },
             ApplicationId = new Guid("97193f21-877d-4806-9f1b-7ba0730245e4"),
             RoleId = new Guid("b49960ce-5c27-451b-b0f0-bdd297a933ef"),
+            Role = new Roles()
+            {
+                Name = "Role 3",
+            },
             DeletedAt = null,
         },
         new()
@@ -130,6 +150,10 @@ public static class CphRepositoryMockingHelper
             },
             ApplicationId = new Guid("97193f21-877d-4806-9f1b-7ba0730245e4"),
             RoleId = new Guid("b49960ce-5c27-451b-b0f0-bdd297a933ef"),
+            Role = new Roles()
+            {
+                Name = "Role 3",
+            },
             DeletedAt = null,
         },
     ];
