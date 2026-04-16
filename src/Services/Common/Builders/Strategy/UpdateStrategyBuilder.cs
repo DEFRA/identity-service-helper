@@ -30,7 +30,7 @@ public class UpdateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
 
     private ExistenceRulesBuilder<TEntity>? ExistenceRulesBuilder { get; set; }
 
-    private ReferenceRulesBuilder? ReferenceRulesBuilder { get; set; }
+    private ReferenceRulesBuilder<TService>? ReferenceRulesBuilder { get; set; }
 
     private BusinessRulesBuilder<TEntity>? BusinessRulesBuilder { get; set; }
 
@@ -58,9 +58,9 @@ public class UpdateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
         return this;
     }
 
-    public UpdateStrategyBuilder<TService, TEntity> WithReferenceRules(Action<ReferenceRulesBuilder> builder)
+    public UpdateStrategyBuilder<TService, TEntity> WithReferenceRules(Action<ReferenceRulesBuilder<TService>> builder)
     {
-        ReferenceRulesBuilder = new ReferenceRulesBuilder();
+        ReferenceRulesBuilder = new ReferenceRulesBuilder<TService>();
 
         builder(ReferenceRulesBuilder);
 
@@ -141,22 +141,7 @@ public class UpdateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
 
         if (ReferenceRulesBuilder != null)
         {
-            foreach (var rule in ReferenceRulesBuilder.ReferenceRules)
-            {
-                var validAgainstReferenceRule = await rule.Repository.ValidateReferenceById(rule.Id);
-
-                if (!validAgainstReferenceRule)
-                {
-                    Logger.LogWarning(
-                        "Execute {ActionDescription} {EntityDescription} with id {Id} failed reference rule '{Description}'",
-                        ActionDescription.ToLowerInvariant(),
-                        PrimaryEntityDescription.ToLowerInvariant(),
-                        Request.Id,
-                        rule.Description);
-
-                    throw new NotFoundException(rule.Description);
-                }
-            }
+            await ReferenceRulesBuilder.Validate(ActionDescription, PrimaryEntityDescription, CancellationToken.Value, Logger);
         }
 
         var entityToUpdate = await GettableRepository.GetSingle(EntityFilter, CancellationToken.Value);

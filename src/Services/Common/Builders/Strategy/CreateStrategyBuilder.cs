@@ -5,7 +5,6 @@
 namespace Defra.Identity.Services.Common.Builders.Strategy;
 
 using Defra.Identity.Repositories.Common.Composites;
-using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Services.Common.Builders.Rules;
 using Defra.Identity.Services.Common.Builders.Strategy.Base;
 using Defra.Identity.Services.Common.Builders.Strategy.Constants;
@@ -19,7 +18,7 @@ public class CreateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
 
     private Func<TEntity>? CreateAction { get; set; }
 
-    private ReferenceRulesBuilder? ReferenceRulesBuilder { get; set; }
+    private ReferenceRulesBuilder<TService>? ReferenceRulesBuilder { get; set; }
 
     public CreateStrategyBuilder<TService, TEntity> WithRepository(ICreatable<TEntity> repository)
     {
@@ -27,9 +26,9 @@ public class CreateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
         return this;
     }
 
-    public CreateStrategyBuilder<TService, TEntity> WithReferenceRules(Action<ReferenceRulesBuilder> builder)
+    public CreateStrategyBuilder<TService, TEntity> WithReferenceRules(Action<ReferenceRulesBuilder<TService>> builder)
     {
-        ReferenceRulesBuilder = new ReferenceRulesBuilder();
+        ReferenceRulesBuilder = new ReferenceRulesBuilder<TService>();
 
         builder(ReferenceRulesBuilder);
 
@@ -90,21 +89,7 @@ public class CreateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
 
         if (ReferenceRulesBuilder != null)
         {
-            foreach (var rule in ReferenceRulesBuilder.ReferenceRules)
-            {
-                var validAgainstReferenceRule = await rule.Repository.ValidateReferenceById(rule.Id);
-
-                if (!validAgainstReferenceRule)
-                {
-                    Logger.LogWarning(
-                        "Execute {ActionDescription} {EntityDescription} failed reference rule '{Description}'",
-                        ActionDescription.ToLowerInvariant(),
-                        PrimaryEntityDescription.ToLowerInvariant(),
-                        rule.Description);
-
-                    throw new NotFoundException(rule.Description);
-                }
-            }
+            await ReferenceRulesBuilder.Validate(ActionDescription, PrimaryEntityDescription, CancellationToken.Value, Logger);
         }
 
         var entityToCreate = CreateAction();
