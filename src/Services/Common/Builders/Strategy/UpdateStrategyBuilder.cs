@@ -31,6 +31,8 @@ public class UpdateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
 
     private ReferenceRulesBuilder<TService>? ReferenceRulesBuilder { get; set; }
 
+    private ConflictRulesBuilder<TService, TEntity>? ConflictRulesBuilder { get; set; }
+
     private BusinessRulesBuilder<TService, TEntity>? BusinessRulesBuilder { get; set; }
 
     public UpdateStrategyBuilder<TService, TEntity> WithRepository<TRepository>(TRepository repository)
@@ -62,6 +64,15 @@ public class UpdateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
         ReferenceRulesBuilder = new ReferenceRulesBuilder<TService>();
 
         builder(ReferenceRulesBuilder);
+
+        return this;
+    }
+
+    public UpdateStrategyBuilder<TService, TEntity> WithConflictRules(Action<ConflictRulesBuilder<TService, TEntity>> builder)
+    {
+        ConflictRulesBuilder = new ConflictRulesBuilder<TService, TEntity>();
+
+        builder(ConflictRulesBuilder);
 
         return this;
     }
@@ -153,6 +164,7 @@ public class UpdateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
         }
 
         ExistenceRulesBuilder?.Validate(Request, entityToUpdate, PrimaryEntityDescription, Logger);
+        ConflictRulesBuilder?.Validate(Request, entityToUpdate, ActionDescription, PrimaryEntityDescription, Logger);
         BusinessRulesBuilder?.Validate(Request, entityToUpdate, ActionDescription, PrimaryEntityDescription, Logger);
 
         UpdateAction(entityToUpdate);
