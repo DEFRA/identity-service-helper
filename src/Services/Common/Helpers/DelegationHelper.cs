@@ -11,7 +11,7 @@ public static class DelegationHelper
     public static bool IsActiveDelegation(CountyParishHoldingDelegations entity)
     {
         var isDeleted = entity.DeletedAt != null;
-        var hasExpired = entity.ExpiresAt != null && DateTime.Now.ToUniversalTime() < entity.ExpiresAt;
+        var hasExpired = entity.ExpiresAt != null && DateTime.UtcNow < entity.ExpiresAt;
         var rejectedOrRevoked = entity.InvitationRejectedAt != null || entity.RevokedAt != null;
         var isAccepted = entity.InvitationAcceptedAt != null;
 

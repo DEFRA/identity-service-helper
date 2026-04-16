@@ -201,7 +201,7 @@ public class UserService : IUserService
             .WithAssociationsRepository(userDelegatedCphsRepository)
             .WithCancellationToken(cancellationToken)
             .WithRequestAndPrimaryEntityFilter(request, userAccount => userAccount.Id == request.Id)
-            .WithAssociatedEntityFilter(delegation => delegation.DeletedAt == null && (delegation.ExpiresAt == null || DateTime.Now.ToUniversalTime() < delegation.ExpiresAt))
+            .WithAssociatedEntityFilter(delegation => delegation.DeletedAt == null && (delegation.ExpiresAt == null || DateTime.UtcNow < delegation.ExpiresAt))
             .WithPrimaryEntityExistenceRules(rules => { rules.Add(RulesLibrary.Existence.NotSoftDeleted); })
             .ExecuteAndMap(
                 entity => new UserDelegatedCph()

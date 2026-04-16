@@ -15,7 +15,7 @@ public static class RulesLibrary
             new(delegation => delegation.DeletedAt == null, "Delegation must not be deleted");
 
         public static readonly EntityPredicate<CountyParishHoldingDelegations> NotExpired =
-            new(delegation => delegation.ExpiresAt == null || DateTime.Now.ToUniversalTime() < delegation.ExpiresAt, "Delegation must not have expired");
+            new(delegation => delegation.ExpiresAt == null || DateTime.UtcNow < delegation.ExpiresAt, "Delegation must not have expired");
     }
 
     public static class Reference
@@ -32,7 +32,7 @@ public static class RulesLibrary
     public static class Business
     {
         public static readonly EntityPredicate<CountyParishHoldingDelegations> InvitationNotExpired =
-            new(delegation => DateTime.Now.ToUniversalTime() < delegation.InvitationExpiresAt, "Invitation must not have expired");
+            new(delegation => DateTime.UtcNow < delegation.InvitationExpiresAt, "Invitation must not have expired");
 
         public static readonly EntityPredicate<CountyParishHoldingDelegations> InvitationNotAccepted =
             new(delegation => delegation.InvitationAcceptedAt == null, "Invitation must not have been accepted");

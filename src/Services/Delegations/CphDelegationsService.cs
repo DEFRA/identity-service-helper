@@ -70,7 +70,7 @@ public class CphDelegationsService : ICphDelegationsService
     {
         logger.LogInformation("Getting all delegations");
 
-        var entities = await repository.GetList(entity => entity.DeletedAt == null && (entity.ExpiresAt == null || DateTime.Now.ToUniversalTime() < entity.ExpiresAt), cancellationToken);
+        var entities = await repository.GetList(entity => entity.DeletedAt == null && (entity.ExpiresAt == null || DateTime.UtcNow < entity.ExpiresAt), cancellationToken);
 
         return entities.Select(MapToResponse).ToList();
     }
@@ -82,7 +82,7 @@ public class CphDelegationsService : ICphDelegationsService
 
         var entity = await repository.GetSingle(filter, cancellationToken);
 
-        if (entity is not { DeletedAt: null } || (entity.ExpiresAt != null && DateTime.Now.ToUniversalTime() < entity.ExpiresAt))
+        if (entity is not { DeletedAt: null } || (entity.ExpiresAt != null && DateTime.UtcNow < entity.ExpiresAt))
         {
             logger.LogWarning("Delegation with id {Id} not found", request.Id);
 
@@ -118,7 +118,7 @@ public class CphDelegationsService : ICphDelegationsService
                         DelegatedUserRoleId = request.DelegatedUserRoleId,
                         InvitationToken = string.Empty,
                         InvitationExpiresAt = DateTime.Now.AddDays(2).ToUniversalTime(),
-                        CreatedAt = DateTime.Now.ToUniversalTime(),
+                        CreatedAt = DateTime.UtcNow,
                         CreatedById = operatorContext.OperatorId,
                     })
             .ExecuteAndMap(MapToResponse);
@@ -187,7 +187,7 @@ public class CphDelegationsService : ICphDelegationsService
                     rules.Add(RulesLibrary.Business.InvitationNotRejected);
                     rules.Add(RulesLibrary.Business.NotRevoked);
                 })
-            .WithUpdate(delegation => { delegation.InvitationAcceptedAt = DateTime.Now.ToUniversalTime(); })
+            .WithUpdate(delegation => { delegation.InvitationAcceptedAt = DateTime.UtcNow; })
             .Execute();
     }
 
@@ -212,7 +212,7 @@ public class CphDelegationsService : ICphDelegationsService
                     rules.Add(RulesLibrary.Business.InvitationNotRejected);
                     rules.Add(RulesLibrary.Business.NotRevoked);
                 })
-            .WithUpdate(delegation => { delegation.InvitationRejectedAt = DateTime.Now.ToUniversalTime(); })
+            .WithUpdate(delegation => { delegation.InvitationRejectedAt = DateTime.UtcNow; })
             .Execute();
     }
 
@@ -228,7 +228,7 @@ public class CphDelegationsService : ICphDelegationsService
             .WithUpdate(
                 delegation =>
                 {
-                    delegation.RevokedAt = DateTime.Now.ToUniversalTime();
+                    delegation.RevokedAt = DateTime.UtcNow;
                     delegation.RevokedById = operatorContext.OperatorId;
                 })
             .Execute();
@@ -247,7 +247,7 @@ public class CphDelegationsService : ICphDelegationsService
                     rules.Add(RulesLibrary.Existence.NotSoftDeleted);
                     rules.Add(RulesLibrary.Existence.NotExpired);
                 })
-            .WithUpdate(delegation => { delegation.ExpiresAt = DateTime.Now.ToUniversalTime(); })
+            .WithUpdate(delegation => { delegation.ExpiresAt = DateTime.UtcNow; })
             .Execute();
     }
 
