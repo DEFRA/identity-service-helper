@@ -23,7 +23,7 @@ public class GetStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TServic
 
     private Expression<Func<TEntity, bool>>? EntityFilter { get; set; }
 
-    private ExistenceRulesBuilder<TEntity>? ExistenceRulesBuilder { get; set; }
+    private ExistenceRulesBuilder<TService, TEntity>? ExistenceRulesBuilder { get; set; }
 
     public GetStrategyBuilder<TService, TEntity> WithRepository<TRepository>(TRepository repository)
         where TRepository : IGettable<TEntity>, IUpdatable<TEntity>
@@ -39,9 +39,9 @@ public class GetStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TServic
         return this;
     }
 
-    public GetStrategyBuilder<TService, TEntity> WithExistenceRules(Action<ExistenceRulesBuilder<TEntity>> builder)
+    public GetStrategyBuilder<TService, TEntity> WithExistenceRules(Action<ExistenceRulesBuilder<TService, TEntity>> builder)
     {
-        ExistenceRulesBuilder = new ExistenceRulesBuilder<TEntity>();
+        ExistenceRulesBuilder = new ExistenceRulesBuilder<TService, TEntity>();
 
         builder(ExistenceRulesBuilder);
 
@@ -98,20 +98,7 @@ public class GetStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TServic
             throw new NotFoundException($"{PrimaryEntityDescription} not found.");
         }
 
-        if (ExistenceRulesBuilder != null)
-        {
-            foreach (var rule in ExistenceRulesBuilder.ExistenceRules)
-            {
-                var validAgainstExistenceRule = rule.Predicate(entity);
-
-                if (!validAgainstExistenceRule)
-                {
-                    Logger.LogWarning("{EntityDescription} with id {Id} not found", PrimaryEntityDescription, Request.Id);
-
-                    throw new NotFoundException($"{PrimaryEntityDescription} not found.");
-                }
-            }
-        }
+        ExistenceRulesBuilder?.Validate(Request, entity, PrimaryEntityDescription, Logger);
 
         var mappedEntity = map(entity);
 

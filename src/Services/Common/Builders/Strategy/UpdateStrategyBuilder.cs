@@ -28,7 +28,7 @@ public class UpdateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
 
     private Action<TEntity>? UpdateAction { get; set; }
 
-    private ExistenceRulesBuilder<TEntity>? ExistenceRulesBuilder { get; set; }
+    private ExistenceRulesBuilder<TService, TEntity>? ExistenceRulesBuilder { get; set; }
 
     private ReferenceRulesBuilder<TService>? ReferenceRulesBuilder { get; set; }
 
@@ -49,9 +49,9 @@ public class UpdateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
         return this;
     }
 
-    public UpdateStrategyBuilder<TService, TEntity> WithExistenceRules(Action<ExistenceRulesBuilder<TEntity>> builder)
+    public UpdateStrategyBuilder<TService, TEntity> WithExistenceRules(Action<ExistenceRulesBuilder<TService, TEntity>> builder)
     {
-        ExistenceRulesBuilder = new ExistenceRulesBuilder<TEntity>();
+        ExistenceRulesBuilder = new ExistenceRulesBuilder<TService, TEntity>();
 
         builder(ExistenceRulesBuilder);
 
@@ -153,20 +153,7 @@ public class UpdateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
             throw new NotFoundException($"{PrimaryEntityDescription} not found.");
         }
 
-        if (ExistenceRulesBuilder != null)
-        {
-            foreach (var rule in ExistenceRulesBuilder.ExistenceRules)
-            {
-                var validAgainstExistenceRule = rule.Predicate(entityToUpdate);
-
-                if (!validAgainstExistenceRule)
-                {
-                    Logger.LogWarning("{EntityDescription} with id {Id} not found", PrimaryEntityDescription, Request.Id);
-
-                    throw new NotFoundException($"{PrimaryEntityDescription} not found.");
-                }
-            }
-        }
+        ExistenceRulesBuilder?.Validate(Request, entityToUpdate, PrimaryEntityDescription, Logger);
 
         if (BusinessRulesBuilder != null)
         {

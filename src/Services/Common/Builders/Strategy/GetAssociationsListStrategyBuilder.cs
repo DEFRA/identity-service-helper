@@ -30,7 +30,7 @@ public class GetAssociationsListStrategyBuilder<TService, TPrimary, TAssociation
 
     private Expression<Func<TAssociation, bool>>? AssociatedEntityFilter { get; set; }
 
-    private ExistenceRulesBuilder<TPrimary>? ExistenceRulesBuilder { get; set; }
+    private ExistenceRulesBuilder<TService, TPrimary>? ExistenceRulesBuilder { get; set; }
 
     public GetAssociationsListStrategyBuilder<TService, TPrimary, TAssociation> WithPrimaryRepository<TRepository>(TRepository primaryRepository)
         where TRepository : IGettable<TPrimary>
@@ -61,9 +61,9 @@ public class GetAssociationsListStrategyBuilder<TService, TPrimary, TAssociation
         return this;
     }
 
-    public GetAssociationsListStrategyBuilder<TService, TPrimary, TAssociation> WithPrimaryEntityExistenceRules(Action<ExistenceRulesBuilder<TPrimary>> builder)
+    public GetAssociationsListStrategyBuilder<TService, TPrimary, TAssociation> WithPrimaryEntityExistenceRules(Action<ExistenceRulesBuilder<TService, TPrimary>> builder)
     {
-        ExistenceRulesBuilder = new ExistenceRulesBuilder<TPrimary>();
+        ExistenceRulesBuilder = new ExistenceRulesBuilder<TService, TPrimary>();
 
         builder(ExistenceRulesBuilder);
 
@@ -130,20 +130,7 @@ public class GetAssociationsListStrategyBuilder<TService, TPrimary, TAssociation
             throw new NotFoundException($"{PrimaryEntityDescription} not found.");
         }
 
-        if (ExistenceRulesBuilder != null)
-        {
-            foreach (var rule in ExistenceRulesBuilder.ExistenceRules)
-            {
-                var validAgainstExistenceRule = rule.Predicate(primaryEntity);
-
-                if (!validAgainstExistenceRule)
-                {
-                    Logger.LogWarning("{EntityDescription} with id {Id} not found", PrimaryEntityDescription, Request.Id);
-
-                    throw new NotFoundException($"{PrimaryEntityDescription} not found.");
-                }
-            }
-        }
+        ExistenceRulesBuilder?.Validate(Request, primaryEntity, PrimaryEntityDescription, Logger);
 
         var associatedEntities = await ListableAssociationsRepository.GetList(PrimaryEntityFilter, AssociatedEntityFilter, CancellationToken.Value);
 

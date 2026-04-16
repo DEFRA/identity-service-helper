@@ -25,7 +25,7 @@ public class DeleteStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
 
     private Expression<Func<TEntity, bool>>? EntityFilter { get; set; }
 
-    private ExistenceRulesBuilder<TEntity>? ExistenceRulesBuilder { get; set; }
+    private ExistenceRulesBuilder<TService, TEntity>? ExistenceRulesBuilder { get; set; }
 
     public DeleteStrategyBuilder<TService, TEntity> WithRepository<TRepository>(TRepository repository)
         where TRepository : IGettable<TEntity>, IDeletable<TEntity>
@@ -42,9 +42,9 @@ public class DeleteStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
         return this;
     }
 
-    public DeleteStrategyBuilder<TService, TEntity> WithExistenceRules(Action<ExistenceRulesBuilder<TEntity>> builder)
+    public DeleteStrategyBuilder<TService, TEntity> WithExistenceRules(Action<ExistenceRulesBuilder<TService, TEntity>> builder)
     {
-        ExistenceRulesBuilder = new ExistenceRulesBuilder<TEntity>();
+        ExistenceRulesBuilder = new ExistenceRulesBuilder<TService, TEntity>();
 
         builder(ExistenceRulesBuilder);
 
@@ -111,20 +111,7 @@ public class DeleteStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
             throw new NotFoundException($"{PrimaryEntityDescription} not found.");
         }
 
-        if (ExistenceRulesBuilder != null)
-        {
-            foreach (var rule in ExistenceRulesBuilder.ExistenceRules)
-            {
-                var validAgainstExistenceRule = rule.Predicate(entityToDelete);
-
-                if (!validAgainstExistenceRule)
-                {
-                    Logger.LogWarning("{EntityDescription} with id {Id} not found", PrimaryEntityDescription, Request.Id);
-
-                    throw new NotFoundException($"{PrimaryEntityDescription} not found.");
-                }
-            }
-        }
+        ExistenceRulesBuilder?.Validate(Request, entityToDelete, PrimaryEntityDescription, Logger);
 
         var successfullyDeleted = await DeletableRepository.Delete(EntityFilter, OperatorContext.OperatorId, CancellationToken.Value);
 

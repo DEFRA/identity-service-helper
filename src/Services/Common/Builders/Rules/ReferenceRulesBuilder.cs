@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 public class ReferenceRulesBuilder<TService>
     where TService : class
 {
-    public List<ReferenceRule> ReferenceRules { get; } = [];
+    private List<ReferenceRule> ReferenceRules { get; } = [];
 
     public ReferenceRulesBuilder<TService> Add(IReference repository, Guid id, string description)
     {
