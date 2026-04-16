@@ -5,21 +5,15 @@
 namespace Defra.Identity.Services.Delegations;
 
 using System.Linq.Expressions;
+using Defra.Identity.Models.Requests.Delegations.Commands;
+using Defra.Identity.Models.Requests.Delegations.Queries;
+using Defra.Identity.Models.Responses.Delegations;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Repositories.Cphs;
 using Defra.Identity.Repositories.Delegations;
 using Defra.Identity.Repositories.Roles;
 using Defra.Identity.Repositories.Users;
-using Defra.Identity.Requests.Delegations.Commands.Accept;
-using Defra.Identity.Requests.Delegations.Commands.Create;
-using Defra.Identity.Requests.Delegations.Commands.Delete;
-using Defra.Identity.Requests.Delegations.Commands.Expire;
-using Defra.Identity.Requests.Delegations.Commands.Reject;
-using Defra.Identity.Requests.Delegations.Commands.Revoke;
-using Defra.Identity.Requests.Delegations.Commands.Update;
-using Defra.Identity.Requests.Delegations.Queries;
-using Defra.Identity.Responses.Delegations;
 using Defra.Identity.Services.Common.Builders.Strategy.Factories;
 using Defra.Identity.Services.Common.Context;
 using Defra.Identity.Services.Common.Helpers;

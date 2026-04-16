@@ -4,10 +4,14 @@
 
 namespace Defra.Identity.Api.Endpoints.Species;
 
-using Defra.Identity.Requests;
-using Defra.Identity.Requests.MetaData;
-using Defra.Identity.Requests.Species.Commands;
-using Defra.Identity.Requests.Species.Queries;
+using System.ComponentModel;
+using Defra.Identity.Models.Requests;
+using Defra.Identity.Models.Requests.Delegations.Commands;
+using Defra.Identity.Models.Requests.Filters;
+using Defra.Identity.Models.Requests.MetaData;
+using Defra.Identity.Models.Requests.Species;
+using Defra.Identity.Models.Requests.Species.Commands;
+using Defra.Identity.Models.Requests.Species.Queries;
 using Defra.Identity.Services.Species;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,32 +19,43 @@ public static class AnimalSpeciesEndpoints
 {
     public static void UseAnimalSpeciesEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapGet(RouteNames.AnimalSpecies, GetAll);
+        app.MapGet(RouteNames.AnimalSpecies, GetAllRoute)
+            .WithName(OpenApiMetadata.GetAllRoute.Name)
+            .WithTags(OpenApiMetadata.Tag)
+            .WithSummary(OpenApiMetadata.GetAllRoute.Summary)
+            .WithDescription(OpenApiMetadata.GetAllRoute.Description)
+            .Produces<IEnumerable<Models.Responses.Species.AnimalSpecies>>(StatusCodes.Status200OK, "application/json");
 
-        app.MapGet(RouteNames.AnimalSpecies + "/{id}", Get)
-            .WithName(RouteNames.AnimalSpecies)
-            .Produces<Responses.Species.AnimalSpecies>(StatusCodes.Status200OK, "application/json")
+        app.MapGet(RouteNames.AnimalSpecies + "/{id}", GetByIdRoute)
+            .WithName(OpenApiMetadata.GetByIdRoute.Name)
+            .WithTags(OpenApiMetadata.Tag)
+            .WithSummary(OpenApiMetadata.GetByIdRoute.Summary)
+            .WithDescription(OpenApiMetadata.GetByIdRoute.Description)
+            .Produces<Models.Responses.Species.AnimalSpecies>(StatusCodes.Status200OK, "application/json")
             .Produces(StatusCodes.Status404NotFound);
 
-        app.MapPost(RouteNames.AnimalSpecies + "/{id}:toggle", Toggle)
+        app.MapPost(RouteNames.AnimalSpecies + "/{id}:toggle", ToggleByIdRoute)
+            .WithName(OpenApiMetadata.ToggleByIdRoute.Name)
+            .WithTags(OpenApiMetadata.Tag)
+            .WithSummary(OpenApiMetadata.ToggleByIdRoute.Summary)
+            .WithDescription(OpenApiMetadata.ToggleByIdRoute.Description)
             .WithMetadata(new RequiresOperatorId())
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status409Conflict);
     }
 
-    private static async Task<IResult> Toggle(
-        CommandRequestHeaders headers,
-        [FromRoute] string id,
-        [FromBody] ToggleAnimalSpecies request,
+    private static async Task<IResult> GetAllRoute(
+        QueryRequestHeaders headers,
+        [AsParameters] GetAllAnimalSpecies request,
         IAnimalSpeciesService service)
     {
-        await service.Toggle(request.WithId(id), headers.OperatorId);
+        var applications = await service.GetAll(request);
 
-        return Results.NoContent();
+        return Results.Ok(applications);
     }
 
-    private static async Task<IResult> Get(
+    private static async Task<IResult> GetByIdRoute(
         QueryRequestHeaders headers,
         [AsParameters] GetAnimalSpecies request,
         IAnimalSpeciesService service)
@@ -50,13 +65,17 @@ public static class AnimalSpeciesEndpoints
         return Results.Ok(application);
     }
 
-    private static async Task<IResult> GetAll(
-        QueryRequestHeaders headers,
-        [AsParameters] GetAllAnimalSpecies request,
+    private static async Task<IResult> ToggleByIdRoute(
+        CommandRequestHeaders headers,
+        [AsParameters] ToggleAnimalSpeciesById request,
+        [FromBody] ToggleAnimalSpecies payload,
         IAnimalSpeciesService service)
     {
-        var applications = await service.GetAll(request);
+        payload.Id = request.Id;
+        payload.OperatorId = headers.OperatorId;
 
-        return Results.Ok(applications);
+        await service.Toggle(payload, headers.OperatorId);
+
+        return Results.NoContent();
     }
 }

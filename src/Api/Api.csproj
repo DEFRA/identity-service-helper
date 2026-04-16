@@ -6,11 +6,7 @@
     <ProjectReference Include="..\Integrations\Schedules\Scheduling\Scheduling.csproj" />
     <ProjectReference Include="..\Repositories\Repositories.csproj" />
     <ProjectReference Include="..\Requests\Requests.csproj" />
-    <ProjectReference Include="..\Responses\Responses.csproj" />
     <ProjectReference Include="..\Services\Services.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Remove="MongoDB.Driver" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Remove="MongoDB.Driver" />

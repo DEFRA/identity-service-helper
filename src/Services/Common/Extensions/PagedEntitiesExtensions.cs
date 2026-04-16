@@ -5,7 +5,7 @@
 // ReSharper disable CheckNamespace
 namespace Defra.Identity.Repositories.Common;
 
-using Defra.Identity.Responses.Common;
+using Defra.Identity.Models.Responses.Common;
 
 public static class PagedEntitiesExtensions
 {

@@ -4,9 +4,9 @@
 
 namespace Defra.Identity.Api.Exceptions;
 
-using Defra.Identity.Repositories.Common.Exceptions;
-using Defra.Identity.Requests;
-using Defra.Identity.Services.Common.Exceptions;
+using Defra.Identity.Models.Requests;
+using Defra.Identity.Repositories.Exceptions;
+using Defra.Identity.Services.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Serilog.Context;

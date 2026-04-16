@@ -5,8 +5,7 @@
 namespace Defra.Identity.Endpoint.Tests.Bindings;
 
 using Defra.Identity.Endpoint.Tests.Contexts;
-using Defra.Identity.Endpoint.Tests.Support;
-using Defra.Identity.Responses.Common;
+using Defra.Identity.Models.Responses.Common;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;

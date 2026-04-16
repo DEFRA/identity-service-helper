@@ -5,7 +5,7 @@
 namespace Defra.Identity.Requests.Tests.Middleware;
 
 using System.Text.Json;
-using Defra.Identity.Requests.Middleware;
+using Defra.Identity.Models.Requests.Middleware;
 using Microsoft.AspNetCore.Http;
 
 public class JsonErrorMiddlewareTests

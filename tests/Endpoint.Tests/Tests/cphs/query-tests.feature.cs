@@ -10,15 +10,12 @@
 // ------------------------------------------------------------------------------
 #region Designer generated code
 #pragma warning disable
-using Reqnroll;
-namespace Defra.Identity.Endpoint.Tests.Tests.Cphs
+namespace Defra.Identity.Endpoint.Tests.Tests.cphs
 {
-    
-    
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Reqnroll", "3.0.0.0")]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::Xunit.TraitAttribute("Category", "cph")]
-    [global::Xunit.TraitAttribute("Category", "query")]
+    [Trait("Category", "cph")]
+    [Trait("Category", "query")]
     public partial class CPHQueryTestsFeature : object, Xunit.IClassFixture<CPHQueryTestsFeature.FixtureData>, Xunit.IAsyncLifetime
     {
         
@@ -137,12 +134,12 @@ namespace Defra.Identity.Endpoint.Tests.Tests.Cphs
             await this.TestTearDownAsync();
         }
         
-        [global::Xunit.FactAttribute(DisplayName="Get a maximum of 5 cphs from the first page excluding expired")]
-        [global::Xunit.TraitAttribute("FeatureTitle", "CPH query tests")]
-        [global::Xunit.TraitAttribute("Description", "Get a maximum of 5 cphs from the first page excluding expired")]
-        [global::Xunit.TraitAttribute("Category", "paged-result")]
-        [global::Xunit.TraitAttribute("Category", "success")]
-        [global::Xunit.TraitAttribute("Category", "data-live-only")]
+        [Fact(DisplayName="Get a maximum of 5 cphs from the first page excluding expired")]
+        [Trait("FeatureTitle", "CPH query tests")]
+        [Trait("Description", "Get a maximum of 5 cphs from the first page excluding expired")]
+        [Trait("Category", "paged-result")]
+        [Trait("Category", "success")]
+        [Trait("Category", "data-live-only")]
         public async global::System.Threading.Tasks.Task GetAMaximumOf5CphsFromTheFirstPageExcludingExpired()
         {
             string[] tagsOfScenario = new string[] {
@@ -210,12 +207,12 @@ namespace Defra.Identity.Endpoint.Tests.Tests.Cphs
             await this.ScenarioCleanupAsync();
         }
         
-        [global::Xunit.FactAttribute(DisplayName="Get a maximum of 5 cphs from the second page excluding expired")]
-        [global::Xunit.TraitAttribute("FeatureTitle", "CPH query tests")]
-        [global::Xunit.TraitAttribute("Description", "Get a maximum of 5 cphs from the second page excluding expired")]
-        [global::Xunit.TraitAttribute("Category", "paged-result")]
-        [global::Xunit.TraitAttribute("Category", "success")]
-        [global::Xunit.TraitAttribute("Category", "data-live-only")]
+        [Fact(DisplayName="Get a maximum of 5 cphs from the second page excluding expired")]
+        [Trait("FeatureTitle", "CPH query tests")]
+        [Trait("Description", "Get a maximum of 5 cphs from the second page excluding expired")]
+        [Trait("Category", "paged-result")]
+        [Trait("Category", "success")]
+        [Trait("Category", "data-live-only")]
         public async global::System.Threading.Tasks.Task GetAMaximumOf5CphsFromTheSecondPageExcludingExpired()
         {
             string[] tagsOfScenario = new string[] {
@@ -271,12 +268,12 @@ namespace Defra.Identity.Endpoint.Tests.Tests.Cphs
             await this.ScenarioCleanupAsync();
         }
         
-        [global::Xunit.FactAttribute(DisplayName="Get a maximum of 5 cphs from the first page including expired")]
-        [global::Xunit.TraitAttribute("FeatureTitle", "CPH query tests")]
-        [global::Xunit.TraitAttribute("Description", "Get a maximum of 5 cphs from the first page including expired")]
-        [global::Xunit.TraitAttribute("Category", "paged-result")]
-        [global::Xunit.TraitAttribute("Category", "success")]
-        [global::Xunit.TraitAttribute("Category", "data-all")]
+        [Fact(DisplayName="Get a maximum of 5 cphs from the first page including expired")]
+        [Trait("FeatureTitle", "CPH query tests")]
+        [Trait("Description", "Get a maximum of 5 cphs from the first page including expired")]
+        [Trait("Category", "paged-result")]
+        [Trait("Category", "success")]
+        [Trait("Category", "data-all")]
         public async global::System.Threading.Tasks.Task GetAMaximumOf5CphsFromTheFirstPageIncludingExpired()
         {
             string[] tagsOfScenario = new string[] {
@@ -344,12 +341,12 @@ namespace Defra.Identity.Endpoint.Tests.Tests.Cphs
             await this.ScenarioCleanupAsync();
         }
         
-        [global::Xunit.FactAttribute(DisplayName="Get a maximum of 5 cphs from the second page including expired")]
-        [global::Xunit.TraitAttribute("FeatureTitle", "CPH query tests")]
-        [global::Xunit.TraitAttribute("Description", "Get a maximum of 5 cphs from the second page including expired")]
-        [global::Xunit.TraitAttribute("Category", "paged-result")]
-        [global::Xunit.TraitAttribute("Category", "success")]
-        [global::Xunit.TraitAttribute("Category", "data-all")]
+        [Fact(DisplayName="Get a maximum of 5 cphs from the second page including expired")]
+        [Trait("FeatureTitle", "CPH query tests")]
+        [Trait("Description", "Get a maximum of 5 cphs from the second page including expired")]
+        [Trait("Category", "paged-result")]
+        [Trait("Category", "success")]
+        [Trait("Category", "data-all")]
         public async global::System.Threading.Tasks.Task GetAMaximumOf5CphsFromTheSecondPageIncludingExpired()
         {
             string[] tagsOfScenario = new string[] {
@@ -414,14 +411,14 @@ namespace Defra.Identity.Endpoint.Tests.Tests.Cphs
             await this.ScenarioCleanupAsync();
         }
         
-        [global::Xunit.TheoryAttribute(DisplayName="Getting a CPH by an id returns a CPH")]
-        [global::Xunit.TraitAttribute("FeatureTitle", "CPH query tests")]
-        [global::Xunit.TraitAttribute("Description", "Getting a CPH by an id returns a CPH")]
-        [global::Xunit.TraitAttribute("Category", "single-result")]
-        [global::Xunit.TraitAttribute("Category", "success")]
-        [global::Xunit.TraitAttribute("Category", "data-live-only")]
-        [global::Xunit.InlineDataAttribute("internal id", "4435a146-d0ac-4260-8a27-c550e0ed9563", "cph_number", "44/000/0001", "4", new string[0])]
-        [global::Xunit.InlineDataAttribute("cph number", "44/000/0001", "id", "4435a146-d0ac-4260-8a27-c550e0ed9563", "5", new string[0])]
+        [Theory(DisplayName="Getting a CPH by an id returns a CPH")]
+        [Trait("FeatureTitle", "CPH query tests")]
+        [Trait("Description", "Getting a CPH by an id returns a CPH")]
+        [Trait("Category", "single-result")]
+        [Trait("Category", "success")]
+        [Trait("Category", "data-live-only")]
+        [InlineData("internal id", "4435a146-d0ac-4260-8a27-c550e0ed9563", "cph_number", "44/000/0001", "4", new string[0])]
+        [InlineData("cph number", "44/000/0001", "id", "4435a146-d0ac-4260-8a27-c550e0ed9563", "5", new string[0])]
         public async global::System.Threading.Tasks.Task GettingACPHByAnIdReturnsACPH(string id, string uri_Value, string property_Name, string check_Value, string @__pickleIndex, string[] exampleTags)
         {
             string[] @__tags = new string[] {
@@ -477,13 +474,13 @@ namespace Defra.Identity.Endpoint.Tests.Tests.Cphs
             await this.ScenarioCleanupAsync();
         }
         
-        [global::Xunit.TheoryAttribute(DisplayName="Getting a CPH by an unkown id returns a 404")]
-        [global::Xunit.TraitAttribute("FeatureTitle", "CPH query tests")]
-        [global::Xunit.TraitAttribute("Description", "Getting a CPH by an unkown id returns a 404")]
-        [global::Xunit.TraitAttribute("Category", "error")]
-        [global::Xunit.TraitAttribute("Category", "error-not-found")]
-        [global::Xunit.InlineDataAttribute("internal id", "4435a146-9999-9999-8a27-c550e0ed9563", "6", new string[0])]
-        [global::Xunit.InlineDataAttribute("cph number", "99/999/9999", "7", new string[0])]
+        [Theory(DisplayName="Getting a CPH by an unkown id returns a 404")]
+        [Trait("FeatureTitle", "CPH query tests")]
+        [Trait("Description", "Getting a CPH by an unkown id returns a 404")]
+        [Trait("Category", "error")]
+        [Trait("Category", "error-not-found")]
+        [InlineData("internal id", "4435a146-9999-9999-8a27-c550e0ed9563", "6", new string[0])]
+        [InlineData("cph number", "99/999/9999", "7", new string[0])]
         public async global::System.Threading.Tasks.Task GettingACPHByAnUnkownIdReturnsA404(string id, string uri_Value, string @__pickleIndex, string[] exampleTags)
         {
             string[] @__tags = new string[] {
@@ -533,15 +530,15 @@ namespace Defra.Identity.Endpoint.Tests.Tests.Cphs
             await this.ScenarioCleanupAsync();
         }
         
-        [global::Xunit.FactAttribute(DisplayName="Get a maximum of 5 cphs from the first page excluding expired and order by descen" +
-            "ding on cph_number")]
-        [global::Xunit.TraitAttribute("FeatureTitle", "CPH query tests")]
-        [global::Xunit.TraitAttribute("Description", "Get a maximum of 5 cphs from the first page excluding expired and order by descen" +
-            "ding on cph_number")]
-        [global::Xunit.TraitAttribute("Category", "paged-result")]
-        [global::Xunit.TraitAttribute("Category", "sorted")]
-        [global::Xunit.TraitAttribute("Category", "success")]
-        [global::Xunit.TraitAttribute("Category", "data-live-only")]
+        [Fact(DisplayName="Get a maximum of 5 cphs from the first page excluding expired and order by descen" +
+                          "ding on cph_number")]
+        [Trait("FeatureTitle", "CPH query tests")]
+        [Trait("Description", "Get a maximum of 5 cphs from the first page excluding expired and order by descen" +
+                              "ding on cph_number")]
+        [Trait("Category", "paged-result")]
+        [Trait("Category", "sorted")]
+        [Trait("Category", "success")]
+        [Trait("Category", "data-live-only")]
         public async global::System.Threading.Tasks.Task GetAMaximumOf5CphsFromTheFirstPageExcludingExpiredAndOrderByDescendingOnCph_Number()
         {
             string[] tagsOfScenario = new string[] {
@@ -611,15 +608,15 @@ namespace Defra.Identity.Endpoint.Tests.Tests.Cphs
             await this.ScenarioCleanupAsync();
         }
         
-        [global::Xunit.FactAttribute(DisplayName="Get a maximum of 5 cphs from the first page including expired and order by descen" +
-            "ding on cph_number")]
-        [global::Xunit.TraitAttribute("FeatureTitle", "CPH query tests")]
-        [global::Xunit.TraitAttribute("Description", "Get a maximum of 5 cphs from the first page including expired and order by descen" +
-            "ding on cph_number")]
-        [global::Xunit.TraitAttribute("Category", "paged-result")]
-        [global::Xunit.TraitAttribute("Category", "sorted")]
-        [global::Xunit.TraitAttribute("Category", "success")]
-        [global::Xunit.TraitAttribute("Category", "data-all")]
+        [Fact(DisplayName="Get a maximum of 5 cphs from the first page including expired and order by descen" +
+                          "ding on cph_number")]
+        [Trait("FeatureTitle", "CPH query tests")]
+        [Trait("Description", "Get a maximum of 5 cphs from the first page including expired and order by descen" +
+                              "ding on cph_number")]
+        [Trait("Category", "paged-result")]
+        [Trait("Category", "sorted")]
+        [Trait("Category", "success")]
+        [Trait("Category", "data-all")]
         public async global::System.Threading.Tasks.Task GetAMaximumOf5CphsFromTheFirstPageIncludingExpiredAndOrderByDescendingOnCph_Number()
         {
             string[] tagsOfScenario = new string[] {

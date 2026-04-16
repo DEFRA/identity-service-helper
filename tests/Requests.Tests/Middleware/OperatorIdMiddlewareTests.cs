@@ -4,9 +4,10 @@
 
 namespace Defra.Identity.Requests.Tests.Middleware;
 
-using Defra.Identity.Requests.MetaData;
-using Defra.Identity.Requests.Middleware;
-using Defra.Identity.Requests.Services;
+using Defra.Identity.Models.Requests;
+using Defra.Identity.Models.Requests.MetaData;
+using Defra.Identity.Models.Requests.Middleware;
+using Defra.Identity.Models.Requests.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;

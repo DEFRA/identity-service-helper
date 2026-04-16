@@ -4,7 +4,7 @@
 
 namespace Defra.Identity.Requests.Tests.Users.Queries;
 
-using Defra.Identity.Requests.Users.Queries;
+using Defra.Identity.Models.Requests.Users.Queries;
 
 public class GetUserByIdTests
 {

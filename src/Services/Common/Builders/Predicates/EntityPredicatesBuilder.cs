@@ -4,7 +4,6 @@
 
 namespace Defra.Identity.Services.Common.Builders.Predicates;
 
-using System.Linq.Expressions;
 using Defra.Identity.Services.Common.Builders.Predicates.Models;
 
 public class EntityPredicatesBuilder<TEntity>

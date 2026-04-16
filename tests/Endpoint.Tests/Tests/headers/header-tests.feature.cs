@@ -10,15 +10,12 @@
 // ------------------------------------------------------------------------------
 #region Designer generated code
 #pragma warning disable
-using Reqnroll;
-namespace Defra.Identity.Endpoint.Tests.Tests.Headers
+namespace Defra.Identity.Endpoint.Tests.Tests.headers
 {
-    
-    
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Reqnroll", "3.0.0.0")]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::Xunit.TraitAttribute("Category", "system")]
-    [global::Xunit.TraitAttribute("Category", "header")]
+    [Trait("Category", "system")]
+    [Trait("Category", "header")]
     public partial class CPFeatureHeaderTestsFeature : object, Xunit.IClassFixture<CPFeatureHeaderTestsFeature.FixtureData>, Xunit.IAsyncLifetime
     {
         
@@ -137,11 +134,11 @@ namespace Defra.Identity.Endpoint.Tests.Tests.Headers
             await this.TestTearDownAsync();
         }
         
-        [global::Xunit.FactAttribute(DisplayName="Make sure that a missing x-api-key header returns an error")]
-        [global::Xunit.TraitAttribute("FeatureTitle", "CPFeature: Header tests")]
-        [global::Xunit.TraitAttribute("Description", "Make sure that a missing x-api-key header returns an error")]
-        [global::Xunit.TraitAttribute("Category", "error")]
-        [global::Xunit.TraitAttribute("Category", "error-bad-request")]
+        [Fact(DisplayName="Make sure that a missing x-api-key header returns an error")]
+        [Trait("FeatureTitle", "CPFeature: Header tests")]
+        [Trait("Description", "Make sure that a missing x-api-key header returns an error")]
+        [Trait("Category", "error")]
+        [Trait("Category", "error-bad-request")]
         public async global::System.Threading.Tasks.Task MakeSureThatAMissingX_Api_KeyHeaderReturnsAnError()
         {
             string[] tagsOfScenario = new string[] {
@@ -196,11 +193,11 @@ namespace Defra.Identity.Endpoint.Tests.Tests.Headers
             await this.ScenarioCleanupAsync();
         }
         
-        [global::Xunit.FactAttribute(DisplayName="Make sure that an invalid x-api-key header returns an error")]
-        [global::Xunit.TraitAttribute("FeatureTitle", "CPFeature: Header tests")]
-        [global::Xunit.TraitAttribute("Description", "Make sure that an invalid x-api-key header returns an error")]
-        [global::Xunit.TraitAttribute("Category", "error")]
-        [global::Xunit.TraitAttribute("Category", "error-bad-request")]
+        [Fact(DisplayName="Make sure that an invalid x-api-key header returns an error")]
+        [Trait("FeatureTitle", "CPFeature: Header tests")]
+        [Trait("Description", "Make sure that an invalid x-api-key header returns an error")]
+        [Trait("Category", "error")]
+        [Trait("Category", "error-bad-request")]
         public async global::System.Threading.Tasks.Task MakeSureThatAnInvalidX_Api_KeyHeaderReturnsAnError()
         {
             string[] tagsOfScenario = new string[] {
@@ -264,11 +261,11 @@ namespace Defra.Identity.Endpoint.Tests.Tests.Headers
             await this.ScenarioCleanupAsync();
         }
         
-        [global::Xunit.FactAttribute(DisplayName="Make sure that a missing x-correlation-id returns an error")]
-        [global::Xunit.TraitAttribute("FeatureTitle", "CPFeature: Header tests")]
-        [global::Xunit.TraitAttribute("Description", "Make sure that a missing x-correlation-id returns an error")]
-        [global::Xunit.TraitAttribute("Category", "error")]
-        [global::Xunit.TraitAttribute("Category", "error-bad-request")]
+        [Fact(DisplayName="Make sure that a missing x-correlation-id returns an error")]
+        [Trait("FeatureTitle", "CPFeature: Header tests")]
+        [Trait("Description", "Make sure that a missing x-correlation-id returns an error")]
+        [Trait("Category", "error")]
+        [Trait("Category", "error-bad-request")]
         public async global::System.Threading.Tasks.Task MakeSureThatAMissingX_Correlation_IdReturnsAnError()
         {
             string[] tagsOfScenario = new string[] {
@@ -332,12 +329,12 @@ namespace Defra.Identity.Endpoint.Tests.Tests.Headers
             await this.ScenarioCleanupAsync();
         }
         
-        [global::Xunit.FactAttribute(DisplayName="When i try to get a cph list with an x-api-key and x-correlation-id header then t" +
-            "his should pass.")]
-        [global::Xunit.TraitAttribute("FeatureTitle", "CPFeature: Header tests")]
-        [global::Xunit.TraitAttribute("Description", "When i try to get a cph list with an x-api-key and x-correlation-id header then t" +
-            "his should pass.")]
-        [global::Xunit.TraitAttribute("Category", "success")]
+        [Fact(DisplayName="When i try to get a cph list with an x-api-key and x-correlation-id header then t" +
+                          "his should pass.")]
+        [Trait("FeatureTitle", "CPFeature: Header tests")]
+        [Trait("Description", "When i try to get a cph list with an x-api-key and x-correlation-id header then t" +
+                              "his should pass.")]
+        [Trait("Category", "success")]
         public async global::System.Threading.Tasks.Task WhenITryToGetACphListWithAnX_Api_KeyAndX_Correlation_IdHeaderThenThisShouldPass_()
         {
             string[] tagsOfScenario = new string[] {

@@ -4,9 +4,7 @@
 
 namespace Defra.Identity.KeeperReferenceData.Tests;
 
-using AWS.Messaging;
 using Defra.Identity.KeeperReferenceData.Handlers;
-using Defra.Identity.KeeperReferenceData.Messages;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

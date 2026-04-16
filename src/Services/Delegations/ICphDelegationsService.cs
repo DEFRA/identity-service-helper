@@ -4,15 +4,9 @@
 
 namespace Defra.Identity.Services.Delegations;
 
-using Defra.Identity.Requests.Delegations.Commands.Accept;
-using Defra.Identity.Requests.Delegations.Commands.Create;
-using Defra.Identity.Requests.Delegations.Commands.Delete;
-using Defra.Identity.Requests.Delegations.Commands.Expire;
-using Defra.Identity.Requests.Delegations.Commands.Reject;
-using Defra.Identity.Requests.Delegations.Commands.Revoke;
-using Defra.Identity.Requests.Delegations.Commands.Update;
-using Defra.Identity.Requests.Delegations.Queries;
-using Defra.Identity.Responses.Delegations;
+using Defra.Identity.Models.Requests.Delegations.Commands;
+using Defra.Identity.Models.Requests.Delegations.Queries;
+using Defra.Identity.Models.Responses.Delegations;
 
 public interface ICphDelegationsService
 {

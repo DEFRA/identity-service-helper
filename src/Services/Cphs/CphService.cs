@@ -5,6 +5,11 @@
 namespace Defra.Identity.Services.Cphs;
 
 using System.Linq.Expressions;
+using Defra.Identity.Models.Requests.Cphs.Commands;
+using Defra.Identity.Models.Requests.Cphs.Common;
+using Defra.Identity.Models.Requests.Cphs.Queries;
+using Defra.Identity.Models.Responses.Common;
+using Defra.Identity.Models.Responses.Cphs;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Common;
 using Defra.Identity.Repositories.Common.Exceptions;

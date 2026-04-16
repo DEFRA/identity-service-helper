@@ -4,7 +4,7 @@
 
 namespace Defra.Identity.Requests.Tests.Common.Queries;
 
-using Defra.Identity.Requests.Common.Queries;
+using Defra.Identity.Models.Requests.Common.Queries;
 using FluentValidation.TestHelper;
 
 public class PagedQueryValidatorTests

@@ -14,7 +14,7 @@ using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Shouldly;
 
-public class DeleteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
+public class DeleteByIdRouteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 {
     [Fact]
     [Description("Should soft delete a delegation")]

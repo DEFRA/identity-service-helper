@@ -4,7 +4,7 @@
 
 namespace Defra.Identity.Requests.Tests.Cphs.Common;
 
-using Defra.Identity.Requests.Cphs.Common;
+using Defra.Identity.Models.Requests.Cphs.Common;
 using Defra.Identity.Requests.Tests.Cphs.Common.TestData;
 using FluentValidation.TestHelper;
 

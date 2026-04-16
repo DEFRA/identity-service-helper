@@ -10,15 +10,12 @@
 // ------------------------------------------------------------------------------
 #region Designer generated code
 #pragma warning disable
-using Reqnroll;
-namespace Defra.Identity.Endpoint.Tests.Tests.Cphs
+namespace Defra.Identity.Endpoint.Tests.Tests.cphs
 {
-    
-    
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Reqnroll", "3.0.0.0")]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::Xunit.TraitAttribute("Category", "cph")]
-    [global::Xunit.TraitAttribute("Category", "command")]
+    [Trait("Category", "cph")]
+    [Trait("Category", "command")]
     public partial class CPHCommandTestsFeature : object, Xunit.IClassFixture<CPHCommandTestsFeature.FixtureData>, Xunit.IAsyncLifetime
     {
         
@@ -137,31 +134,31 @@ namespace Defra.Identity.Endpoint.Tests.Tests.Cphs
             await this.TestTearDownAsync();
         }
         
-        [global::Xunit.TheoryAttribute(DisplayName="Expire a cph using the <scenario> results in a <http_result> result")]
-        [global::Xunit.TraitAttribute("FeatureTitle", "CPH command tests")]
-        [global::Xunit.TraitAttribute("Description", "Expire a cph using the <scenario> results in a <http_result> result")]
-        [global::Xunit.TraitAttribute("Category", "single-result")]
-        [global::Xunit.TraitAttribute("Category", "command-expire")]
-        [global::Xunit.InlineDataAttribute("available internal id", "204459b1-3a07-4e65-9122-91c1699e3d3f", "NoContent", "0", new string[] {
+        [Theory(DisplayName="Expire a cph using the <scenario> results in a <http_result> result")]
+        [Trait("FeatureTitle", "CPH command tests")]
+        [Trait("Description", "Expire a cph using the <scenario> results in a <http_result> result")]
+        [Trait("Category", "single-result")]
+        [Trait("Category", "command-expire")]
+        [InlineData("available internal id", "204459b1-3a07-4e65-9122-91c1699e3d3f", "NoContent", "0", new string[] {
                 "success"})]
-        [global::Xunit.InlineDataAttribute("available cph number", "44/000/0004", "NoContent", "1", new string[] {
+        [InlineData("available cph number", "44/000/0004", "NoContent", "1", new string[] {
                 "success"})]
-        [global::Xunit.InlineDataAttribute("deleted internal id", "82181a8b-7f7f-470c-9263-2b94675599df", "NotFound", "2", new string[] {
+        [InlineData("deleted internal id", "82181a8b-7f7f-470c-9263-2b94675599df", "NotFound", "2", new string[] {
                 "error",
                 "error-not-found"})]
-        [global::Xunit.InlineDataAttribute("deleted cph number", "44/000/0006", "NotFound", "3", new string[] {
+        [InlineData("deleted cph number", "44/000/0006", "NotFound", "3", new string[] {
                 "error",
                 "error-not-found"})]
-        [global::Xunit.InlineDataAttribute("unknown internal id", "d4a7f0d7-9999-9999-9999-547a5f494738", "NotFound", "4", new string[] {
+        [InlineData("unknown internal id", "d4a7f0d7-9999-9999-9999-547a5f494738", "NotFound", "4", new string[] {
                 "error",
                 "error-not-found"})]
-        [global::Xunit.InlineDataAttribute("unknown cph number", "99/999/9876", "NotFound", "5", new string[] {
+        [InlineData("unknown cph number", "99/999/9876", "NotFound", "5", new string[] {
                 "error",
                 "error-not-found"})]
-        [global::Xunit.InlineDataAttribute("expired internal id", "7973060a-d483-4ad4-9716-c70415ed620a", "Conflict", "6", new string[] {
+        [InlineData("expired internal id", "7973060a-d483-4ad4-9716-c70415ed620a", "Conflict", "6", new string[] {
                 "error",
                 "error-conflict"})]
-        [global::Xunit.InlineDataAttribute("expired cph number", "44/000/0005", "Conflict", "7", new string[] {
+        [InlineData("expired cph number", "44/000/0005", "Conflict", "7", new string[] {
                 "error",
                 "error-conflict"})]
         public async global::System.Threading.Tasks.Task ExpireACphUsingTheScenarioResultsInAHttp_ResultResult(string scenario, string uri_Value, string http_Result, string @__pickleIndex, string[] exampleTags)
@@ -211,29 +208,29 @@ namespace Defra.Identity.Endpoint.Tests.Tests.Cphs
             await this.ScenarioCleanupAsync();
         }
         
-        [global::Xunit.TheoryAttribute(DisplayName="Delete a cph using the <scenario> results in a <http_result> result")]
-        [global::Xunit.TraitAttribute("FeatureTitle", "CPH command tests")]
-        [global::Xunit.TraitAttribute("Description", "Delete a cph using the <scenario> results in a <http_result> result")]
-        [global::Xunit.TraitAttribute("Category", "single-result")]
-        [global::Xunit.TraitAttribute("Category", "command-delete")]
-        [global::Xunit.InlineDataAttribute("available internal id", "4435a146-d0ac-4260-8a27-c550e0ed9563", "NoContent", "8", new string[] {
+        [Theory(DisplayName="Delete a cph using the <scenario> results in a <http_result> result")]
+        [Trait("FeatureTitle", "CPH command tests")]
+        [Trait("Description", "Delete a cph using the <scenario> results in a <http_result> result")]
+        [Trait("Category", "single-result")]
+        [Trait("Category", "command-delete")]
+        [InlineData("available internal id", "4435a146-d0ac-4260-8a27-c550e0ed9563", "NoContent", "8", new string[] {
                 "success"})]
-        [global::Xunit.InlineDataAttribute("available cph number", "44/000/0003", "NoContent", "9", new string[] {
+        [InlineData("available cph number", "44/000/0003", "NoContent", "9", new string[] {
                 "success"})]
-        [global::Xunit.InlineDataAttribute("expired internal id", "d9a711ec-722d-49b6-abcc-23f0795e3886", "NoContent", "10", new string[] {
+        [InlineData("expired internal id", "d9a711ec-722d-49b6-abcc-23f0795e3886", "NoContent", "10", new string[] {
                 "success"})]
-        [global::Xunit.InlineDataAttribute("expired cph number", "44/000/0024", "NoContent", "11", new string[] {
+        [InlineData("expired cph number", "44/000/0024", "NoContent", "11", new string[] {
                 "success"})]
-        [global::Xunit.InlineDataAttribute("deleted internal id", "82181a8b-7f7f-470c-9263-2b94675599df", "NotFound", "12", new string[] {
+        [InlineData("deleted internal id", "82181a8b-7f7f-470c-9263-2b94675599df", "NotFound", "12", new string[] {
                 "error",
                 "error-not-found"})]
-        [global::Xunit.InlineDataAttribute("deleted cph number", "44/000/0006", "NotFound", "13", new string[] {
+        [InlineData("deleted cph number", "44/000/0006", "NotFound", "13", new string[] {
                 "error",
                 "error-not-found"})]
-        [global::Xunit.InlineDataAttribute("unknown internal id", "d4a7f0d7-9999-9999-9999-547a5f494738", "NotFound", "14", new string[] {
+        [InlineData("unknown internal id", "d4a7f0d7-9999-9999-9999-547a5f494738", "NotFound", "14", new string[] {
                 "error",
                 "error-not-found"})]
-        [global::Xunit.InlineDataAttribute("unknown cph number", "99/999/9876", "NotFound", "15", new string[] {
+        [InlineData("unknown cph number", "99/999/9876", "NotFound", "15", new string[] {
                 "error",
                 "error-not-found"})]
         public async global::System.Threading.Tasks.Task DeleteACphUsingTheScenarioResultsInAHttp_ResultResult(string scenario, string uri_Value, string http_Result, string @__pickleIndex, string[] exampleTags)

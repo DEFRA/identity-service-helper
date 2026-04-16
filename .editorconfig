@@ -116,6 +116,9 @@ dotnet_naming_symbols.private_internal_fields.applicable_accessibilities = priva
 dotnet_naming_style.camel_case_underscore_style.required_prefix =
 dotnet_naming_style.camel_case_underscore_style.capitalization = camel_case
 
+# other file formating rules
+resharper_csharp_place_attribute_on_same_line = false
+
 # Xml config files
 [*.{xml,config,*proj,nuspec,props,resx,targets,yml,tasks,ruleset,vsixmanifest,vsct,slnx}]
 indent_size = 2

@@ -2,7 +2,9 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace System.Net.Http.Headers;
+namespace Defra.Identity.Endpoint.Tests.Extensions;
+
+using System.Net.Http.Headers;
 
 public static class HttpRequestHeadersExtensions
 {

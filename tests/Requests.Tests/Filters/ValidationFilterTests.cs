@@ -4,7 +4,7 @@
 
 namespace Defra.Identity.Requests.Tests.Filters;
 
-using Defra.Identity.Requests.Filters;
+using Defra.Identity.Models.Requests.Filters;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;

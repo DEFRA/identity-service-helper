@@ -5,6 +5,7 @@
 namespace Defra.Identity.Services.Common.Builders.Strategy;
 
 using System.Linq.Expressions;
+using Defra.Identity.Models.Requests.Common;
 using Defra.Identity.Repositories.Common.Composites;
 using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Requests.Common;
