@@ -20,7 +20,7 @@ public class ReferenceRulesBuilder<TService>
         return this;
     }
 
-    public async Task Validate(string actionDescription, string primaryEntityDescription, CancellationToken cancellationToken, ILogger<TService> logger)
+    public async Task Validate(string actionDescription, string primaryEntityDescription, ILogger<TService> logger, CancellationToken cancellationToken)
     {
         foreach (var rule in ReferenceRules)
         {

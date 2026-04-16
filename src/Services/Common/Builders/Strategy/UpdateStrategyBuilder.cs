@@ -11,7 +11,6 @@ using Defra.Identity.Requests.Common;
 using Defra.Identity.Services.Common.Builders.Rules;
 using Defra.Identity.Services.Common.Builders.Strategy.Base;
 using Defra.Identity.Services.Common.Builders.Strategy.Constants;
-using Defra.Identity.Services.Common.Exceptions;
 using Microsoft.Extensions.Logging;
 
 public class UpdateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TService, UpdateStrategyBuilder<TService, TEntity>>
@@ -32,7 +31,7 @@ public class UpdateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
 
     private ReferenceRulesBuilder<TService>? ReferenceRulesBuilder { get; set; }
 
-    private BusinessRulesBuilder<TEntity>? BusinessRulesBuilder { get; set; }
+    private BusinessRulesBuilder<TService, TEntity>? BusinessRulesBuilder { get; set; }
 
     public UpdateStrategyBuilder<TService, TEntity> WithRepository<TRepository>(TRepository repository)
         where TRepository : IGettable<TEntity>, IUpdatable<TEntity>
@@ -67,9 +66,9 @@ public class UpdateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
         return this;
     }
 
-    public UpdateStrategyBuilder<TService, TEntity> WithBusinessRules(Action<BusinessRulesBuilder<TEntity>> builder)
+    public UpdateStrategyBuilder<TService, TEntity> WithBusinessRules(Action<BusinessRulesBuilder<TService, TEntity>> builder)
     {
-        BusinessRulesBuilder = new BusinessRulesBuilder<TEntity>();
+        BusinessRulesBuilder = new BusinessRulesBuilder<TService, TEntity>();
 
         builder(BusinessRulesBuilder);
 
@@ -141,7 +140,7 @@ public class UpdateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
 
         if (ReferenceRulesBuilder != null)
         {
-            await ReferenceRulesBuilder.Validate(ActionDescription, PrimaryEntityDescription, CancellationToken.Value, Logger);
+            await ReferenceRulesBuilder.Validate(ActionDescription, PrimaryEntityDescription, Logger, CancellationToken.Value);
         }
 
         var entityToUpdate = await GettableRepository.GetSingle(EntityFilter, CancellationToken.Value);
@@ -154,26 +153,7 @@ public class UpdateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
         }
 
         ExistenceRulesBuilder?.Validate(Request, entityToUpdate, PrimaryEntityDescription, Logger);
-
-        if (BusinessRulesBuilder != null)
-        {
-            foreach (var rule in BusinessRulesBuilder.BusinessRules)
-            {
-                var validAgainstBusinessRule = rule.Predicate(entityToUpdate);
-
-                if (!validAgainstBusinessRule)
-                {
-                    Logger.LogWarning(
-                        "Execute {ActionDescription} {EntityDescription} with id {Id} failed business rule '{Description}'",
-                        ActionDescription.ToLowerInvariant(),
-                        PrimaryEntityDescription.ToLowerInvariant(),
-                        Request.Id,
-                        rule.Description);
-
-                    throw new BusinessRuleException(rule.Description);
-                }
-            }
-        }
+        BusinessRulesBuilder?.Validate(Request, entityToUpdate, ActionDescription, PrimaryEntityDescription, Logger);
 
         UpdateAction(entityToUpdate);
 

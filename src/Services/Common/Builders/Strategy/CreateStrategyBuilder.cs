@@ -89,7 +89,7 @@ public class CreateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
 
         if (ReferenceRulesBuilder != null)
         {
-            await ReferenceRulesBuilder.Validate(ActionDescription, PrimaryEntityDescription, CancellationToken.Value, Logger);
+            await ReferenceRulesBuilder.Validate(ActionDescription, PrimaryEntityDescription, Logger, CancellationToken.Value);
         }
 
         var entityToCreate = CreateAction();
