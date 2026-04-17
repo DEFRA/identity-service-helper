@@ -13,6 +13,7 @@ using Defra.Identity.Api.Endpoints.Health;
 using Defra.Identity.Api.Endpoints.Species;
 using Defra.Identity.Api.Endpoints.Users;
 using Defra.Identity.Api.Exceptions;
+using Defra.Identity.Api.Extensions;
 using Defra.Identity.Api.Utility.Http;
 using Defra.Identity.Api.Utility.Logging;
 using Defra.Identity.Api.Utility.OpenApi;

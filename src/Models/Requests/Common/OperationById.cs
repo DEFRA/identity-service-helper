@@ -8,6 +8,6 @@ using System.ComponentModel;
 
 public class OperationById : IOperationById
 {
-    [Description(OpenApiMetadata.Id)]
+    [Description(OpenApiMetadata.Users.Id)]
     public Guid Id { get; set; }
 }

@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Models.Requests.Middleware;
+namespace Defra.Identity.Api.Middleware;
 
 using System.Text.Json;
 using Microsoft.AspNetCore.Http;

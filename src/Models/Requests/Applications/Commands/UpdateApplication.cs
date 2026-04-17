@@ -9,6 +9,6 @@ using Defra.Identity.Models.Responses.Applications;
 
 public class UpdateApplication : Application
 {
-    [Description(OpenApiMetadata.Id)]
+    [Description(OpenApiMetadata.Users.Id)]
     public Guid OperatorId { get; set; } = Guid.Empty;
 }

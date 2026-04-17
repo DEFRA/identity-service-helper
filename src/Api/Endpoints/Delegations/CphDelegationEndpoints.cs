@@ -6,6 +6,7 @@ namespace Defra.Identity.Api.Endpoints.Delegations;
 
 using System.ComponentModel;
 using System.Net.Mime;
+using Defra.Identity.Api.Middleware.Headers;
 using Defra.Identity.Models.Requests;
 using Defra.Identity.Models.Requests.Delegations;
 using Defra.Identity.Models.Requests.Delegations.Commands;

@@ -8,6 +8,6 @@ using System.ComponentModel;
 
 public class ToggleAnimalSpeciesById
 {
-    [Description(OpenApiMetadata.Id)]
+    [Description(OpenApiMetadata.AnimalSpecies.Id)]
     public string? Id { get; set; }
 }

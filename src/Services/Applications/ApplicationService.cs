@@ -10,7 +10,7 @@ using Defra.Identity.Models.Requests.Applications.Queries;
 using Defra.Identity.Models.Responses.Applications;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Applications;
-using Defra.Identity.Repositories.Exceptions;
+using Defra.Identity.Repositories.Common.Exceptions;
 using Microsoft.Extensions.Logging;
 
 public class ApplicationService : IApplicationService

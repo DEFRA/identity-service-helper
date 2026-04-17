@@ -8,6 +8,6 @@ using System.ComponentModel;
 
 public class UpdateApplicationById
 {
-    [Description(OpenApiMetadata.Id)]
+    [Description(OpenApiMetadata.Applications.Id)]
     public Guid Id { get; set; }
 }

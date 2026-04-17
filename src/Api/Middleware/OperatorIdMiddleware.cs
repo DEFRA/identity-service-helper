@@ -2,8 +2,10 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Models.Requests.Middleware;
+namespace Defra.Identity.Api.Middleware;
 
+using Defra.Identity.Api.Middleware.Headers;
+using Defra.Identity.Models.Requests;
 using Defra.Identity.Models.Requests.MetaData;
 using Defra.Identity.Models.Requests.Services;
 using Microsoft.AspNetCore.Http;

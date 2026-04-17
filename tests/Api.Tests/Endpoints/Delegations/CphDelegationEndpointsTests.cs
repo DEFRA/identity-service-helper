@@ -5,6 +5,7 @@
 namespace Defra.Identity.Api.Tests.Endpoints.Delegations;
 
 using Defra.Identity.Api.Endpoints.Delegations;
+using Defra.Identity.Api.Middleware.Headers;
 using Defra.Identity.Models.Requests;
 using Defra.Identity.Models.Requests.Delegations.Commands;
 using Defra.Identity.Models.Requests.Delegations.Queries;
@@ -86,7 +87,7 @@ public class CphDelegationEndpointsTests
         // Act
         var result = await (Task<IResult>)typeof(CphDelegationEndpoints)
             .GetMethod("GetByIdRoute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
-            .Invoke(null, [queryHeaders, request.Id, service])!;
+            .Invoke(null, [queryHeaders, request, service])!;
 
         // Assert
         result.ShouldBeOfType<Ok<CphDelegation>>();
@@ -168,7 +169,7 @@ public class CphDelegationEndpointsTests
         // Act
         var result = await (Task<IResult>)typeof(CphDelegationEndpoints)
             .GetMethod("PutByIdRoute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
-            .Invoke(null, [commandHeaders, request.Id, request, service])!;
+            .Invoke(null, [commandHeaders, request, service])!;
 
         // Assert
         result.ShouldBeOfType<Ok<CphDelegation>>();
@@ -190,7 +191,7 @@ public class CphDelegationEndpointsTests
         // Act
         var result = await (Task<IResult>)typeof(CphDelegationEndpoints)
             .GetMethod("DeleteByIdRoute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
-            .Invoke(null, [commandHeaders, request.Id, service])!;
+            .Invoke(null, [commandHeaders, request, service])!;
 
         // Assert
         result.ShouldBeOfType<NoContent>();

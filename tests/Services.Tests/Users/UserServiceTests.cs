@@ -15,8 +15,6 @@ using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Repositories.Users;
 using Defra.Identity.Repositories.Users.Cphs;
-using Defra.Identity.Requests.Users.Commands.Update;
-using Defra.Identity.Requests.Users.Queries;
 using Defra.Identity.Services.Common.Builders.Strategy.Factories;
 using Defra.Identity.Services.Users;
 using Microsoft.Extensions.Logging;

@@ -7,6 +7,7 @@ namespace Defra.Identity.Api.Tests.Endpoints.Cphs.Factories;
 
 using System.ComponentModel;
 using Defra.Identity.Api.Endpoints.Cphs.Factories;
+using Defra.Identity.Api.Middleware.Headers;
 using Defra.Identity.Api.Tests.Endpoints.Cphs.TestData;
 using Defra.Identity.Models.Requests;
 using Defra.Identity.Services.Cphs;

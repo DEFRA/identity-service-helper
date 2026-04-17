@@ -10,6 +10,6 @@ using Defra.Identity.Models.Requests.Common.Queries;
 
 public class GetCphUsersByCphId : PagedQuery, IOperationById
 {
-    [Description(OpenApiMetadata.Id)]
+    [Description(OpenApiMetadata.Cphs.Id)]
     public Guid Id { get; set; }
 }

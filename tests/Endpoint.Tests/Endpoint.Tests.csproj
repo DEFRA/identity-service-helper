@@ -8,24 +8,9 @@
   <ItemGroup>
     <Content Include="**/*.feature"/>
   </ItemGroup>
-  <ItemGroup>
-    <ReqnrollFeatureFile Update="Tests\cphs\command-tests.feature">
-      <NormalizedLogicalName>Tests/applications/command-tests.feature</NormalizedLogicalName>
-      <NormalizedRelativeDir>Tests/applications/</NormalizedRelativeDir>
-      <CodeBehindFile>Tests/applications/command-tests.feature.cs</CodeBehindFile>
-      <MessagesFile>obj\Debug/net10.0/Tests/applications/command-tests.feature.ndjson</MessagesFile>
-      <MessagesResourceName>Tests/applications/command-tests.feature.ndjson</MessagesResourceName>
-      <FeatureFileResourceName>Tests/applications/command-tests.feature</FeatureFileResourceName>
-    </ReqnrollFeatureFile>
-    <ReqnrollFeatureFile Update="Tests\cphs\query-tests.feature">
-      <NormalizedLogicalName>Tests/applications/query-tests.feature</NormalizedLogicalName>
-      <NormalizedRelativeDir>Tests/applications/</NormalizedRelativeDir>
-      <CodeBehindFile>Tests/applications/query-tests.feature.cs</CodeBehindFile>
-      <MessagesFile>obj\Debug/net10.0/Tests/applications/query-tests.feature.ndjson</MessagesFile>
-      <MessagesResourceName>Tests/applications/query-tests.feature.ndjson</MessagesResourceName>
-      <FeatureFileResourceName>Tests/applications/query-tests.feature</FeatureFileResourceName>
-    </ReqnrollFeatureFile>
-  </ItemGroup>
+  <PropertyGroup>
+    <ReqnrollUseIntermediateOutputPathForCodeBehind>true</ReqnrollUseIntermediateOutputPathForCodeBehind>
+  </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Api\Api.csproj" />
     <ProjectReference Include="..\Postgres.Database.Tests\Postgres.Database.Tests.csproj" />

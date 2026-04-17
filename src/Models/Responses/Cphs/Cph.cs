@@ -8,10 +8,10 @@ using System.ComponentModel;
 
 public class Cph
 {
-    [Description(OpenApiMetadata.Id)]
+    [Description(OpenApiMetadata.Cphs.Id)]
     public Guid Id { get; set; }
 
-    [Description(OpenApiMetadata.CphId)]
+    [Description(OpenApiMetadata.Cphs.CphNumber)]
     public required string CountyParishHoldingNumber { get; set; }
 
     [Description(OpenApiMetadata.Expired)]

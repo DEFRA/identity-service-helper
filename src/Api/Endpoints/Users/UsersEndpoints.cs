@@ -6,12 +6,14 @@ namespace Defra.Identity.Api.Endpoints.Users;
 
 using System.ComponentModel;
 using System.Net.Mime;
+using Defra.Identity.Api.Middleware.Headers;
 using Defra.Identity.Models.Requests;
 using Defra.Identity.Models.Requests.Filters;
 using Defra.Identity.Models.Requests.MetaData;
 using Defra.Identity.Models.Requests.Users;
 using Defra.Identity.Models.Requests.Users.Commands;
 using Defra.Identity.Models.Requests.Users.Queries;
+using Defra.Identity.Responses.Users.Cphs.Aggregates;
 using Defra.Identity.Services.Users;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,7 +36,7 @@ public static class UsersEndpoints
             .Produces<Models.Responses.Users.User>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
             .Produces(StatusCodes.Status404NotFound);
 
-        app.MapGet(RouteNames.Users + "/{id:guid}/cphs", GetUserCphs)
+        app.MapGet(RouteNames.Users + "/{id:guid}/cphs", GetUserCphsRoute)
             .Produces<UserCphs>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
             .ProducesProblem(StatusCodes.Status404NotFound);
 
@@ -146,7 +148,7 @@ public static class UsersEndpoints
         return Results.NoContent();
     }
 
-    private static async Task<IResult> GetUserCphs(
+    private static async Task<IResult> GetUserCphsRoute(
         QueryRequestHeaders headers,
         [AsParameters] GetUserCphsByUserId request,
         IUserService service)

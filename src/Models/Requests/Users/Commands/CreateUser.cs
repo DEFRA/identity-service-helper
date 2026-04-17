@@ -8,7 +8,7 @@ using System.ComponentModel;
 
 public class CreateUser : User
 {
-    [Description(OpenApiMetadata.OperatorId)]
+    [Description(OpenApiMetadata.Users.Id)]
     public Guid OperatorId { get; set; } = Guid.Empty;
 
     [Description(OpenApiMetadata.Users.Email)]

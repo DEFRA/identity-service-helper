@@ -2,9 +2,9 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Models.Requests;
+namespace Defra.Identity.Api.Extensions;
 
-using Defra.Identity.Models.Requests.Middleware;
+using Defra.Identity.Api.Middleware;
 using Defra.Identity.Models.Requests.Services;
 using Defra.Identity.Models.Requests.Users.Commands;
 using FluentValidation;

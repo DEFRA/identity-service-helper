@@ -8,7 +8,7 @@ using System.ComponentModel;
 
 public class User
 {
-    [Description(OpenApiMetadata.Id)]
+    [Description(OpenApiMetadata.Users.Id)]
     public Guid Id { get; set; }
 
     [Description(OpenApiMetadata.Users.Email)]

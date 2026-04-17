@@ -6,6 +6,7 @@ namespace Defra.Identity.Api.Endpoints.Cphs;
 
 using System.Net.Mime;
 using Defra.Identity.Api.Endpoints.Cphs.Factories;
+using Defra.Identity.Api.Middleware.Headers;
 using Defra.Identity.Models.Requests;
 using Defra.Identity.Models.Requests.Common.Queries;
 using Defra.Identity.Models.Requests.Cphs.Commands;

@@ -4,7 +4,7 @@
 
 namespace Defra.Identity.Services.Common.Builders.Rules;
 
-using Defra.Identity.Requests.Common;
+using Defra.Identity.Models.Requests.Common;
 using Defra.Identity.Services.Common.Builders.Predicates;
 using Defra.Identity.Services.Common.Builders.Predicates.Models;
 using Defra.Identity.Services.Common.Exceptions;

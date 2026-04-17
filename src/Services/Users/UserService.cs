@@ -12,10 +12,6 @@ using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Repositories.Users;
 using Defra.Identity.Repositories.Users.Cphs;
-using Defra.Identity.Requests.Users.Commands.Create;
-using Defra.Identity.Requests.Users.Commands.Update;
-using Defra.Identity.Requests.Users.Queries;
-using Defra.Identity.Responses.Users;
 using Defra.Identity.Responses.Users.Cphs;
 using Defra.Identity.Responses.Users.Cphs.Aggregates;
 using Defra.Identity.Services.Common.Builders.Strategy.Factories;
@@ -89,7 +85,7 @@ public class UserService : IUserService
         return user;
     }
 
-    public async Task<User> Upsert(UpdateUser user, CancellationToken cancellationToken = default)
+    public async Task<User> Upsert(UpdateUser request, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Upserting user with id {Id}", request.Id);
         var existingUser = await repository.GetSingle(x => x.Id.Equals(request.Id), cancellationToken);
@@ -108,10 +104,10 @@ public class UserService : IUserService
             };
         }
 
-        logger.LogInformation("User with id {Id} not found, creating", user.Id);
+        logger.LogInformation("User with id {Id} not found, creating", request.Id);
         var userAccount = new UserAccounts()
         {
-            Id = user.Id, EmailAddress = user.Email, FirstName = user.FirstName, LastName = user.LastName,
+            Id = request.Id, EmailAddress = request.Email, FirstName = request.FirstName, LastName = request.LastName,
         };
         var result = await repository.Create(userAccount, cancellationToken);
         return new User()

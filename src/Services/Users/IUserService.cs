@@ -7,6 +7,7 @@ namespace Defra.Identity.Services.Users;
 using Defra.Identity.Models.Requests.Users.Commands;
 using Defra.Identity.Models.Requests.Users.Queries;
 using Defra.Identity.Models.Responses.Users;
+using Defra.Identity.Responses.Users.Cphs.Aggregates;
 
 public interface IUserService
 {

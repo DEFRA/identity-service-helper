@@ -5,6 +5,7 @@
 namespace Defra.Identity.Api.Endpoints.Cphs.Factories;
 
 using Defra.Identity.Api.Endpoints.Cphs.Handlers;
+using Defra.Identity.Api.Middleware.Headers;
 using Defra.Identity.Models.Requests;
 using Defra.Identity.Models.Requests.Common;
 using Defra.Identity.Models.Requests.Cphs.Common;

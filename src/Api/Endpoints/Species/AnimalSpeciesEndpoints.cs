@@ -5,6 +5,7 @@
 namespace Defra.Identity.Api.Endpoints.Species;
 
 using System.ComponentModel;
+using Defra.Identity.Api.Middleware.Headers;
 using Defra.Identity.Models.Requests;
 using Defra.Identity.Models.Requests.Delegations.Commands;
 using Defra.Identity.Models.Requests.Filters;

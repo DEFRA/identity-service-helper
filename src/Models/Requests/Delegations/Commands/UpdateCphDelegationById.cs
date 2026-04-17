@@ -9,6 +9,6 @@ using Defra.Identity.Models.Requests.Common;
 
 public class UpdateCphDelegationById : CphDelegationWriteOperation, IOperationById
 {
-    [Description(OpenApiMetadata.Id)]
+    [Description(OpenApiMetadata.Cphs.Id)]
     public Guid Id { get; set; }
 }

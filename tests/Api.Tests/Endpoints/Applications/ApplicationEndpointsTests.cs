@@ -5,6 +5,7 @@
 namespace Defra.Identity.Api.Tests.Endpoints.Applications;
 
 using Defra.Identity.Api.Endpoints.Applications;
+using Defra.Identity.Api.Middleware.Headers;
 using Defra.Identity.Models.Requests;
 using Defra.Identity.Models.Requests.Applications.Commands;
 using Defra.Identity.Models.Requests.Applications.Queries;
@@ -58,7 +59,7 @@ public class ApplicationEndpointsTests
         // Act
         var result = await (Task<IResult>)typeof(ApplicationEndpoints)
             .GetMethod("GetByIdRoute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
-            .Invoke(null, [queryHeaders, request.Id, service])!;
+            .Invoke(null, [queryHeaders, request, service])!;
 
         // Assert
         result.ShouldBeOfType<Ok<Application>>();
@@ -92,20 +93,21 @@ public class ApplicationEndpointsTests
     {
         // Arrange
         var id = Guid.NewGuid();
-        var request = new UpdateApplication { Name = "Updated App" };
+        var request = new UpdateApplicationById { Id = id };
+        var payload = new UpdateApplication { Name = "Updated App" };
         var application = new Application { Id = id, Name = "Updated App" };
-        service.Update(request, Arg.Any<CancellationToken>()).Returns(application);
+        service.Update(payload, Arg.Any<CancellationToken>()).Returns(application);
 
         // Act
         var result = await (Task<IResult>)typeof(ApplicationEndpoints)
             .GetMethod("PutByIdRoute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
-            .Invoke(null, [commandHeaders, id, request, service])!;
+            .Invoke(null, [commandHeaders, request, payload, service])!;
 
         // Assert
         result.ShouldBeOfType<Ok<Application>>();
         ((Ok<Application>)result).Value.ShouldBe(application);
-        request.Id.ShouldBe(id);
-        request.OperatorId.ShouldBe(commandHeaders.OperatorId);
+        payload.Id.ShouldBe(id);
+        payload.OperatorId.ShouldBe(commandHeaders.OperatorId);
     }
 
     [Fact]
@@ -113,13 +115,14 @@ public class ApplicationEndpointsTests
     {
         // Arrange
         var id = Guid.NewGuid();
-        var request = new UpdateApplication();
-        service.Update(request, Arg.Any<CancellationToken>()).Returns(Task.FromException<Application>(new NullReferenceException("Not found")));
+        var request = new UpdateApplicationById { Id = id };
+        var payload = new UpdateApplication();
+        service.Update(payload, Arg.Any<CancellationToken>()).Returns(Task.FromException<Application>(new NullReferenceException("Not found")));
 
         // Act
         var result = await (Task<IResult>)typeof(ApplicationEndpoints)
             .GetMethod("PutByIdRoute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
-            .Invoke(null, [commandHeaders, id, request, service])!;
+            .Invoke(null, [commandHeaders, request, payload, service])!;
 
         // Assert
         result.ShouldBeOfType<NotFound<string>>();
@@ -131,13 +134,14 @@ public class ApplicationEndpointsTests
     {
         // Arrange
         var id = Guid.NewGuid();
-        var request = new UpdateApplication();
-        service.Update(request, Arg.Any<CancellationToken>()).Returns(Task.FromException<Application>(new Exception("Error")));
+        var request = new UpdateApplicationById() { Id = id };
+        var payload = new UpdateApplication();
+        service.Update(payload, Arg.Any<CancellationToken>()).Returns(Task.FromException<Application>(new Exception("Error")));
 
         // Act
         var result = await (Task<IResult>)typeof(ApplicationEndpoints)
             .GetMethod("PutByIdRoute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
-            .Invoke(null, [commandHeaders, id, request, service])!;
+            .Invoke(null, [commandHeaders, request, payload, service])!;
 
         // Assert
         result.ShouldBeOfType<BadRequest<string>>();
@@ -149,12 +153,13 @@ public class ApplicationEndpointsTests
     {
         // Arrange
         var id = Guid.NewGuid();
+        var request = new DeleteApplicationById { Id = id };
         service.Delete(id, commandHeaders.OperatorId, Arg.Any<CancellationToken>()).Returns(true);
 
         // Act
         var result = await (Task<IResult>)typeof(ApplicationEndpoints)
             .GetMethod("DeleteByIdRoute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
-            .Invoke(null, [commandHeaders, id, service])!;
+            .Invoke(null, [commandHeaders, request, service])!;
 
         // Assert
         result.ShouldBeOfType<NoContent>();

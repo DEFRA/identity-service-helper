@@ -9,6 +9,6 @@ using Defra.Identity.Models.Requests.Common;
 
 public class DeleteUser : OperationById
 {
-    [Description(OpenApiMetadata.OperatorId)]
+    [Description(OpenApiMetadata.Users.Id)]
     public Guid OperatorId { get; set; } = Guid.Empty;
 }

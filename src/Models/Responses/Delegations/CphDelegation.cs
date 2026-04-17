@@ -8,31 +8,31 @@ using System.ComponentModel;
 
 public class CphDelegation
 {
-    [Description(OpenApiMetadata.Id)]
+    [Description(OpenApiMetadata.Delegations.Id)]
     public required Guid Id { get; set; }
 
-    [Description(OpenApiMetadata.Id)]
+    [Description(OpenApiMetadata.Cphs.Id)]
     public required Guid CountyParishHoldingId { get; set; }
 
-    [Description(OpenApiMetadata.CphId)]
+    [Description(OpenApiMetadata.Cphs.CphNumber)]
     public required string CountyParishHoldingNumber { get; set; } = null!;
 
-    [Description(OpenApiMetadata.Id)]
+    [Description(OpenApiMetadata.Users.Id)]
     public required Guid DelegatingUserId { get; set; }
 
     [Description(OpenApiMetadata.Delegations.DelegatingUserName)]
     public required string DelegatingUserName { get; set; }
 
-    [Description(OpenApiMetadata.Id)]
+    [Description(OpenApiMetadata.Users.Id)]
     public Guid? DelegatedUserId { get; set; }
 
     [Description(OpenApiMetadata.Delegations.DelegatedUserName)]
     public required string? DelegatedUserName { get; set; }
 
-    [Description(OpenApiMetadata.Id)]
+    [Description(OpenApiMetadata.Roles.Id)]
     public required Guid DelegatedUserRoleId { get; set; }
 
-    [Description(OpenApiMetadata.Delegations.DelegatedUserRoleName)]
+    [Description(OpenApiMetadata.Roles.Name)]
     public required string DelegatedUserRoleName { get; set; }
 
     [Description(OpenApiMetadata.Delegations.DelegatedUserEmail)]
@@ -50,7 +50,7 @@ public class CphDelegation
     [Description(OpenApiMetadata.Delegations.RevokedAt)]
     public DateTime? RevokedAt { get; set; }
 
-    [Description(OpenApiMetadata.Id)]
+    [Description(OpenApiMetadata.Users.Id)]
     public Guid? RevokedById { get; set; }
 
     [Description(OpenApiMetadata.Delegations.RevokedByName)]

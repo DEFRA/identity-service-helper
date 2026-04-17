@@ -8,6 +8,6 @@ using System.ComponentModel;
 
 public class DeleteApplicationById
 {
-    [Description(OpenApiMetadata.Id)]
+    [Description(OpenApiMetadata.Applications.Id)]
     public Guid Id { get; set; }
 }

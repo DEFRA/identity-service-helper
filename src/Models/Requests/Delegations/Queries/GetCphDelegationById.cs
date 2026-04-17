@@ -8,6 +8,6 @@ using System.ComponentModel;
 
 public class GetCphDelegationById
 {
-    [Description(OpenApiMetadata.Id)]
+    [Description(OpenApiMetadata.Delegations.Id)]
     public Guid Id { get; set; }
 }

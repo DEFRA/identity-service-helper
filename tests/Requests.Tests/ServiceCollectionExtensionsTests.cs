@@ -4,13 +4,15 @@
 
 namespace Defra.Identity.Requests.Tests;
 
+using Defra.Identity.Api.Extensions;
+using Defra.Identity.Api.Middleware;
 using Defra.Identity.Models.Requests;
-using Defra.Identity.Models.Requests.Middleware;
 using Defra.Identity.Models.Requests.Users.Commands;
 using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ServiceCollectionExtensions = Defra.Identity.Api.Extensions.ServiceCollectionExtensions;
 
 public class ServiceCollectionExtensionsTests
 {
@@ -32,7 +34,7 @@ public class ServiceCollectionExtensionsTests
         var serviceProvider = services.BuildServiceProvider();
 
         // Assert
-        Defra.Identity.Models.Requests.ServiceCollectionExtensions.ApiKey.ShouldBe("test-api-key");
+        ServiceCollectionExtensions.ApiKey.ShouldBe("test-api-key");
         serviceProvider.GetService<ApiKeyValidationMiddleware>().ShouldNotBeNull();
         serviceProvider.GetService<CorrelationIdMiddleware>().ShouldNotBeNull();
         serviceProvider.GetService<OperatorIdMiddleware>().ShouldNotBeNull();

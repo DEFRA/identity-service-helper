@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Models.Requests;
+namespace Defra.Identity.Api.Middleware.Headers;
 
 public static class RequestHeaderNames
 {

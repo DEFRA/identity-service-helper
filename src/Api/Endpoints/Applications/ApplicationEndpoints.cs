@@ -5,6 +5,7 @@
 namespace Defra.Identity.Api.Endpoints.Applications;
 
 using System.Net.Mime;
+using Defra.Identity.Api.Middleware.Headers;
 using Defra.Identity.Models.Requests;
 using Defra.Identity.Models.Requests.Applications.Commands;
 using Defra.Identity.Models.Requests.Applications.Queries;

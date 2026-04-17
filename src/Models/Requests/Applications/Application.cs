@@ -8,7 +8,7 @@ using System.ComponentModel;
 
 public class Application
 {
-    [Description(OpenApiMetadata.Id)]
+    [Description(OpenApiMetadata.Applications.Id)]
     public Guid Id { get; set; } = Guid.Empty;
 
     [Description(OpenApiMetadata.Applications.Name)]

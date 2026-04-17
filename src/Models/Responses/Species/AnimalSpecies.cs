@@ -8,7 +8,7 @@ using System.ComponentModel;
 
 public class AnimalSpecies
 {
-    [Description(OpenApiMetadata.Id)]
+    [Description(OpenApiMetadata.AnimalSpecies.Id)]
     public string Id { get; set; }
 
     [Description(OpenApiMetadata.AnimalSpecies.Name)]
