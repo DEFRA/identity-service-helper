@@ -17,6 +17,6 @@ public class Cph
     [Description(OpenApiMetadata.Expired)]
     public bool Expired { get; set; }
 
-    [Description(OpenApiMetadata.ExpiredAt)]
+    [Description(OpenApiMetadata.ExpiresAt)]
     public DateTime? ExpiredAt { get; set; }
 }

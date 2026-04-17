@@ -15,7 +15,7 @@ public static class OpenApiMetadata
     public const string IncludeInactive = "Whether to include inactive objects in the response";
     public const string CphId = "The County/Parish/Holding identifier";
     public const string Expired = "Is the object expired";
-    public const string ExpiredAt = "When the object expires at";
+    public const string ExpiresAt = "When the object expires at";
 
     public static class Applications
     {
@@ -26,6 +26,12 @@ public static class OpenApiMetadata
         public const string RedirectUris = "The redirect URIs of the application";
         public const string Secret = "The secret of the application";
         public const string Status = "The status of the application";
+    }
+
+    public static class AnimalSpecies
+    {
+        public const string Name = "The name of the animal species";
+        public const string IsActive = "Is the animal species enabled";
     }
 
     public static class Cphs

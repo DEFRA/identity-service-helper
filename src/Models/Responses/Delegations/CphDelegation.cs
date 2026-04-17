@@ -4,41 +4,61 @@
 
 namespace Defra.Identity.Models.Responses.Delegations;
 
+using System.ComponentModel;
+
 public class CphDelegation
 {
-    public required Guid Id { get; init; }
+    [Description(OpenApiMetadata.Id)]
+    public required Guid Id { get; set; }
 
-    public required Guid CountyParishHoldingId { get; init; }
+    [Description(OpenApiMetadata.Id)]
+    public required Guid CountyParishHoldingId { get; set; }
 
-    public required string CountyParishHoldingNumber { get; set; }
+    [Description(OpenApiMetadata.CphId)]
+    public required string CountyParishHoldingNumber { get; set; } = null!;
 
-    public required Guid DelegatingUserId { get; init; }
+    [Description(OpenApiMetadata.Id)]
+    public required Guid DelegatingUserId { get; set; }
 
-    public required string DelegatingUserName { get; init; }
+    [Description(OpenApiMetadata.Delegations.DelegatingUserName)]
+    public required string DelegatingUserName { get; set; }
 
-    public required Guid? DelegatedUserId { get; init; }
+    [Description(OpenApiMetadata.Id)]
+    public Guid? DelegatedUserId { get; set; }
 
-    public required string? DelegatedUserName { get; init; }
+    [Description(OpenApiMetadata.Delegations.DelegatedUserName)]
+    public required string? DelegatedUserName { get; set; }
 
-    public required Guid DelegatedUserRoleId { get; init; }
+    [Description(OpenApiMetadata.Id)]
+    public required Guid DelegatedUserRoleId { get; set; }
 
-    public required string DelegatedUserRoleName { get; init; }
+    [Description(OpenApiMetadata.Delegations.DelegatedUserRoleName)]
+    public required string DelegatedUserRoleName { get; set; }
 
-    public required string DelegatedUserEmail { get; init; }
+    [Description(OpenApiMetadata.Delegations.DelegatedUserEmail)]
+    public required string DelegatedUserEmail { get; set; }
 
-    public DateTime? InvitationExpiresAt { get; init; }
+    [Description(OpenApiMetadata.Delegations.InvitationExpiresAt)]
+    public DateTime? InvitationExpiresAt { get; set; }
 
-    public DateTime? InvitationAcceptedAt { get; init; }
+    [Description(OpenApiMetadata.Delegations.InvitationAcceptedAt)]
+    public DateTime? InvitationAcceptedAt { get; set; }
 
-    public DateTime? InvitationRejectedAt { get; init; }
+    [Description(OpenApiMetadata.Delegations.InvitationRejectedAt)]
+    public DateTime? InvitationRejectedAt { get; set; }
 
-    public DateTime? RevokedAt { get; init; }
+    [Description(OpenApiMetadata.Delegations.RevokedAt)]
+    public DateTime? RevokedAt { get; set; }
 
-    public Guid? RevokedById { get; init; }
+    [Description(OpenApiMetadata.Id)]
+    public Guid? RevokedById { get; set; }
 
-    public string? RevokedByName { get; init; }
+    [Description(OpenApiMetadata.Delegations.RevokedByName)]
+    public string? RevokedByName { get; set; }
 
-    public DateTime? ExpiresAt { get; init; }
+    [Description(OpenApiMetadata.ExpiresAt)]
+    public DateTime? ExpiresAt { get; set; }
 
+    [Description(OpenApiMetadata.Delegations.DelegatingUserName)]
     public bool Active { get; set; }
 }

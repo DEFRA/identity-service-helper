@@ -4,11 +4,16 @@
 
 namespace Defra.Identity.Models.Responses.Species;
 
+using System.ComponentModel;
+
 public class AnimalSpecies
 {
+    [Description(OpenApiMetadata.Id)]
     public string Id { get; set; }
 
+    [Description(OpenApiMetadata.AnimalSpecies.Name)]
     public string Name { get; set; }
 
+    [Description(OpenApiMetadata.AnimalSpecies.IsActive)]
     public bool IsActive { get; set; }
 }
