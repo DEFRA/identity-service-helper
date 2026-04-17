@@ -5,13 +5,13 @@
 namespace Defra.Identity.Services.Common.Builders.Strategy;
 
 using System.Linq.Expressions;
+using Defra.Identity.Models.Requests.Common;
+using Defra.Identity.Models.Requests.Common.Queries;
+using Defra.Identity.Models.Responses.Common;
 using Defra.Identity.Repositories.Common;
 using Defra.Identity.Repositories.Common.Composites;
 using Defra.Identity.Repositories.Common.Composites.Associations;
 using Defra.Identity.Repositories.Common.Exceptions;
-using Defra.Identity.Requests.Common;
-using Defra.Identity.Requests.Common.Queries;
-using Defra.Identity.Responses.Common;
 using Defra.Identity.Services.Common.Builders.Rules;
 using Defra.Identity.Services.Common.Builders.Strategy.Base;
 using Defra.Identity.Services.Common.Builders.Strategy.Constants;

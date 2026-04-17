@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Shouldly;
 
-public class DeleteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
+public class DeleteByIdRouteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 {
     private const string AdminEmailAddress = "test@test.com";
 

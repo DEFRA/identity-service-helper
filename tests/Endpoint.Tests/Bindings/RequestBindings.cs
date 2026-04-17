@@ -5,12 +5,12 @@
 namespace Defra.Identity.Endpoint.Tests.Bindings;
 
 using System;
-using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Net.Mime;
 using System.Threading.Tasks;
 using Defra.Identity.Endpoint.Tests.Configuration;
 using Defra.Identity.Endpoint.Tests.Contexts;
+using Defra.Identity.Endpoint.Tests.Extensions;
 using Defra.Identity.Endpoint.Tests.Support;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;

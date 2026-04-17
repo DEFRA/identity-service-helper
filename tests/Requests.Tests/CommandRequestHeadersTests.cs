@@ -4,6 +4,8 @@
 
 namespace Defra.Identity.Requests.Tests;
 
+using Defra.Identity.Api.Middleware.Headers;
+using Defra.Identity.Models.Requests;
 using Microsoft.AspNetCore.Http;
 
 public class CommandRequestHeadersTests

@@ -4,7 +4,7 @@
 
 namespace Defra.Identity.Api.Tests.Endpoints.Cphs.TestData;
 
-using Defra.Identity.Requests.Common;
+using Defra.Identity.Models.Requests.Common;
 
 public class OperationByIdFake : IOperationById
 {

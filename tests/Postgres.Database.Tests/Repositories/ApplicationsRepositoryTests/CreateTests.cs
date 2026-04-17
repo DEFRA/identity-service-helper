@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Shouldly;
 
-public class CreateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
+public class PostRouteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 {
     private const string AdminEmailAddress = "test@test.com";
 

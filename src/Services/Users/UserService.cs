@@ -5,14 +5,13 @@
 namespace Defra.Identity.Services.Users;
 
 using System.Linq.Expressions;
+using Defra.Identity.Models.Requests.Users.Commands;
+using Defra.Identity.Models.Requests.Users.Queries;
+using Defra.Identity.Models.Responses.Users;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Repositories.Users;
 using Defra.Identity.Repositories.Users.Cphs;
-using Defra.Identity.Requests.Users.Commands.Create;
-using Defra.Identity.Requests.Users.Commands.Update;
-using Defra.Identity.Requests.Users.Queries;
-using Defra.Identity.Responses.Users;
 using Defra.Identity.Responses.Users.Cphs;
 using Defra.Identity.Responses.Users.Cphs.Aggregates;
 using Defra.Identity.Services.Common.Builders.Strategy.Factories;
@@ -45,10 +44,12 @@ public class UserService : IUserService
             .WithDefaultLogger(this.logger);
     }
 
-    public async Task<List<User>> GetAll(GetUsers request, CancellationToken cancellationToken = default)
+    public async Task<List<User>> GetAll(GetAllUsers request, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Getting all users");
-        var userAccounts = await repository.GetList(x => true, cancellationToken);
+        logger.LogInformation("Getting all animal users, includeHidden: {IncludeHidden}", request.IncludeInactive);
+        Expression<Func<UserAccounts, bool>> filter = x => IncludeInactiveInferred(request) || x.DeletedBy == null;
+
+        var userAccounts = await repository.GetList(filter, cancellationToken);
 
         var users = userAccounts.Select(
             userAccount => new User()
@@ -84,17 +85,17 @@ public class UserService : IUserService
         return user;
     }
 
-    public async Task<User> Upsert(UpdateUser user, CancellationToken cancellationToken = default)
+    public async Task<User> Upsert(UpdateUser request, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Upserting user with id {Id}", user.Id);
-        var existingUser = await repository.GetSingle(x => x.Id.Equals(user.Id), cancellationToken);
+        logger.LogInformation("Upserting user with id {Id}", request.Id);
+        var existingUser = await repository.GetSingle(x => x.Id.Equals(request.Id), cancellationToken);
 
         if (existingUser != null)
         {
-            logger.LogInformation("User with id {Id} found, updating", user.Id);
-            existingUser.FirstName = user.FirstName;
-            existingUser.LastName = user.LastName;
-            existingUser.EmailAddress = user.Email;
+            logger.LogInformation("User with id {Id} found, updating", request.Id);
+            existingUser.FirstName = request.FirstName;
+            existingUser.LastName = request.LastName;
+            existingUser.EmailAddress = request.Email;
             var updated = await repository.Update(existingUser, cancellationToken);
 
             return new User()
@@ -103,10 +104,10 @@ public class UserService : IUserService
             };
         }
 
-        logger.LogInformation("User with id {Id} not found, creating", user.Id);
+        logger.LogInformation("User with id {Id} not found, creating", request.Id);
         var userAccount = new UserAccounts()
         {
-            Id = user.Id, EmailAddress = user.Email, FirstName = user.FirstName, LastName = user.LastName,
+            Id = request.Id, EmailAddress = request.Email, FirstName = request.FirstName, LastName = request.LastName,
         };
         var result = await repository.Create(userAccount, cancellationToken);
         return new User()
@@ -115,21 +116,21 @@ public class UserService : IUserService
         };
     }
 
-    public async Task<User> Update(UpdateUser user, CancellationToken cancellationToken = default)
+    public async Task<User> Update(UpdateUser request, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Updating user with id {Id}", user.Id);
-        var existingUser = await repository.GetSingle(x => x.Id.Equals(user.Id), cancellationToken);
+        logger.LogInformation("Updating user with id {Id}", request.Id);
+        var existingUser = await repository.GetSingle(x => x.Id.Equals(request.Id), cancellationToken);
 
         if (existingUser == null)
         {
-            logger.LogWarning("User with id {Id} not found for update", user.Id);
-            throw new NullReferenceException($"User with id {user.Id} not found.");
+            logger.LogWarning("User with id {Id} not found for update", request.Id);
+            throw new NullReferenceException($"User with id {request.Id} not found.");
         }
 
-        existingUser.FirstName = user.FirstName;
-        existingUser.LastName = user.LastName;
-        existingUser.EmailAddress = user.Email;
-        existingUser.DisplayName = user.DisplayName;
+        existingUser.FirstName = request.FirstName;
+        existingUser.LastName = request.LastName;
+        existingUser.EmailAddress = request.Email;
+        existingUser.DisplayName = request.DisplayName;
 
         var updated = await repository.Update(existingUser, cancellationToken);
 
@@ -143,16 +144,16 @@ public class UserService : IUserService
         };
     }
 
-    public async Task<User> Create(CreateUser user, CancellationToken cancellationToken = default)
+    public async Task<User> Create(CreateUser request, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Creating new user with email {Email}", user.Email);
+        logger.LogInformation("Creating new user with email {Email}", request.Email);
         var newUser = new UserAccounts
         {
-            EmailAddress = user.Email,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            DisplayName = user.DisplayName,
-            CreatedById = user.OperatorId,
+            EmailAddress = request.Email,
+            FirstName = request.FirstName,
+            LastName = request.LastName,
+            DisplayName = request.DisplayName,
+            CreatedById = request.OperatorId,
         };
 
         var createdUser = await repository.Create(newUser, cancellationToken);
@@ -166,10 +167,17 @@ public class UserService : IUserService
         };
     }
 
-    public async Task<bool> Delete(Guid id, Guid operatorId, CancellationToken cancellationToken = default)
+    public async Task<bool> Delete(DeleteUser request, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Deleting user with id {Id} by operator {OperatorId}", id, operatorId);
-        return await repository.Delete(x => x.Id == id, operatorId, cancellationToken);
+        logger.LogInformation("Deleting user with id {Id} by operator {OperatorId}", request.Id, request.OperatorId);
+        return await repository.Delete(x => x.Id == request.Id, request.OperatorId, cancellationToken);
+    }
+
+    private static bool IncludeInactiveInferred(GetAllUsers request)
+    {
+        return request.IncludeInactive != null &&
+               (request.IncludeInactive == string.Empty ||
+                request.IncludeInactive.Equals("true", StringComparison.InvariantCultureIgnoreCase));
     }
 
     public async Task<UserCphs> GetUserCphs(GetUserCphsByUserId request, CancellationToken cancellationToken = default)

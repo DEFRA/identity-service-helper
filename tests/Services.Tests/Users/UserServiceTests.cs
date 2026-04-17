@@ -9,12 +9,12 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Defra.Identity.Models.Requests.Users.Commands;
+using Defra.Identity.Models.Requests.Users.Queries;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Repositories.Users;
 using Defra.Identity.Repositories.Users.Cphs;
-using Defra.Identity.Requests.Users.Commands.Update;
-using Defra.Identity.Requests.Users.Queries;
 using Defra.Identity.Services.Common.Builders.Strategy.Factories;
 using Defra.Identity.Services.Users;
 using Microsoft.Extensions.Logging;
@@ -40,7 +40,7 @@ public class UserServiceTests
     public async Task GetAll_ReturnsUsers()
     {
         // Arrange
-        var request = new GetUsers();
+        var request = new GetAllUsers();
         var userAccounts = new List<UserAccounts>
         {
             new UserAccounts
@@ -118,7 +118,9 @@ public class UserServiceTests
             .Returns(true);
 
         // Act
-        var result = await userService.Delete(userId, operatorId, TestContext.Current.CancellationToken);
+        var result = await userService.Delete(
+            new DeleteUser() { Id = userId, OperatorId = operatorId, },
+            TestContext.Current.CancellationToken);
 
         // Assert
         result.ShouldBeTrue();

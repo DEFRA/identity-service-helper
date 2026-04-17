@@ -13,16 +13,17 @@ using Defra.Identity.Api.Endpoints.Health;
 using Defra.Identity.Api.Endpoints.Species;
 using Defra.Identity.Api.Endpoints.Users;
 using Defra.Identity.Api.Exceptions;
+using Defra.Identity.Api.Extensions;
 using Defra.Identity.Api.Utility.Http;
 using Defra.Identity.Api.Utility.Logging;
-using Defra.Identity.KeeperReferenceData;
+using Defra.Identity.Api.Utility.OpenApi;
+using Defra.Identity.Models.Requests;
+using Defra.Identity.Models.Requests.MetaData;
 using Defra.Identity.Postgres.Database;
 using Defra.Identity.Repositories;
-using Defra.Identity.Requests;
 using Defra.Identity.Scheduling;
 using Defra.Identity.Services;
 using FluentValidation;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
 
 public class Program
@@ -93,6 +94,11 @@ public class Program
             }
         });
 
+        builder.Services.AddOpenApi(options =>
+        {
+            options.AddSchemaTransformer<SchemaTransformer>();
+        });
+
         // Add custom services
         builder.Services.AddPostgresDatabase(configuration);
 
@@ -106,8 +112,9 @@ public class Program
         builder.Services.AddContext(configuration);
         builder.Services.AddStrategies(configuration);
         builder.Services.AddScheduling(configuration);
+
         // intentionally commented out until we get a queue to interact with  -- Gary Woodfine
-        //builder.Services.AddKeeperReferenceDataQueueIntegration(configuration);
+        // builder.Services.AddKeeperReferenceDataQueueIntegration(configuration);
     }
 
     [ExcludeFromCodeCoverage]
@@ -118,6 +125,10 @@ public class Program
         app.UseExceptionHandler();
         app.UseRouting();
         app.UseRequests();
+
+        app.MapOpenApi()
+            .WithMetadata(new IgnoreCorrelationIdCheck())
+            .WithMetadata(new IgnoreApiKeyCheck());
 
         app.UseHealthEndpoints();
         app.UseUsersEndpoints();

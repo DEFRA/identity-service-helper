@@ -4,8 +4,8 @@
 
 namespace Defra.Identity.Api.Tests.Endpoints.Cphs.TestData;
 
-using Defra.Identity.Requests.Common;
-using Defra.Identity.Requests.Common.Queries;
+using Defra.Identity.Models.Requests.Common;
+using Defra.Identity.Models.Requests.Common.Queries;
 
 public class OperationByIdWithPagingFake : PagedQuery, IOperationById
 {

@@ -4,8 +4,6 @@
 
 namespace Defra.Identity.Services.Common.Builders.Predicates.Models;
 
-using System.Linq.Expressions;
-
 public class EntityPredicate<TEntity>
     where TEntity : class
 {

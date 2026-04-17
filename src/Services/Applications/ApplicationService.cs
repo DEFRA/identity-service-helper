@@ -5,13 +5,12 @@
 namespace Defra.Identity.Services.Applications;
 
 using System.Linq.Expressions;
+using Defra.Identity.Models.Requests.Applications.Commands;
+using Defra.Identity.Models.Requests.Applications.Queries;
+using Defra.Identity.Models.Responses.Applications;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Applications;
 using Defra.Identity.Repositories.Common.Exceptions;
-using Defra.Identity.Requests.Applications.Commands.Create;
-using Defra.Identity.Requests.Applications.Commands.Update;
-using Defra.Identity.Requests.Applications.Queries;
-using Defra.Identity.Responses.Applications;
 using Microsoft.Extensions.Logging;
 
 public class ApplicationService : IApplicationService
@@ -39,7 +38,7 @@ public class ApplicationService : IApplicationService
             Description = app.Description,
             Secret = app.Secret,
             Scopes = app.Scopes.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
-            RedirectUri = app.RedirectUris.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
+            RedirectUris = app.RedirectUris.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
         }).ToList();
 
         return applications;
@@ -66,7 +65,7 @@ public class ApplicationService : IApplicationService
             Secret = application.Secret,
             Description = application.Description,
             Scopes = application.Scopes.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
-            RedirectUri = application.RedirectUris.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
+            RedirectUris = application.RedirectUris.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
         };
     }
 
@@ -98,7 +97,7 @@ public class ApplicationService : IApplicationService
             Description = updated.Description,
             Secret = updated.Secret,
             Scopes = updated.Scopes.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
-            RedirectUri = updated.RedirectUris.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
+            RedirectUris = updated.RedirectUris.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
         };
     }
 
@@ -126,7 +125,7 @@ public class ApplicationService : IApplicationService
             TenantName = createdApplication.TenantName,
             Description = createdApplication.Description,
             Scopes = createdApplication.Scopes.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
-            RedirectUri = createdApplication.RedirectUris.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
+            RedirectUris = createdApplication.RedirectUris.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
         };
     }
 
