@@ -5,7 +5,6 @@
     <ProjectReference Include="..\Integrations\Queues\KeeperReferenceData\KeeperReferenceData.csproj" />
     <ProjectReference Include="..\Integrations\Schedules\Scheduling\Scheduling.csproj" />
     <ProjectReference Include="..\Repositories\Repositories.csproj" />
-    <ProjectReference Include="..\Requests\Requests.csproj" />
     <ProjectReference Include="..\Services\Services.csproj" />
   </ItemGroup>
   <ItemGroup>

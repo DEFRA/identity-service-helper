@@ -5,6 +5,7 @@
 namespace Defra.Identity.Postgres.Database.Tests.Repositories.CphDelegationsRepositoryTests;
 
 using System.ComponentModel;
+using System.Globalization;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
 using Defra.Identity.Repositories.Delegations;
@@ -29,7 +30,7 @@ public class GetTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         var delegatedUserId = new Guid("42bde7a0-9efe-402a-a7c3-9161be7b00ba");
         var delegatedUserRoleId = new Guid("0c15ba2f-b4ba-406a-a0ae-213de64600a9");
         const string delegatedUserEmail = "test1@test.com";
-        var createdAt = DateTime.Parse("2026-03-01 00:00:00").ToUniversalTime();
+        var createdAt = new DateTime(2026, 3, 1, 0, 0, 0, DateTimeKind.Utc);
 
         var delegation = new CountyParishHoldingDelegations
         {
@@ -75,7 +76,7 @@ public class GetTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         var repository = new CphDelegationsRepository(Context, ReadOnlyContext, logger);
 
         var adminUser = Context.UserAccounts.First(x => x.Id == new Guid("cd91b1e0-bae4-4cee-becf-3529cc557311"));
-        var createdAt = DateTime.Parse("2026-04-14 00:00:00.000").ToUniversalTime();
+        var createdAt = new DateTime(2026, 4, 16, 0, 0, 0, DateTimeKind.Utc);
 
         var delegations = new List<CountyParishHoldingDelegations>
         {
@@ -128,7 +129,7 @@ public class GetTests(PostgreContainerFixture fixture) : BaseTests(fixture)
             x => x.DelegatedUserEmail.ShouldBe("max.bladen-clark@esynergy.co.uk"),
             x => x.InvitationToken.ShouldBe("0000000000000000000000000000000000000000000000000000000000000004"),
             x => x.CreatedById.ShouldBe(adminUser.Id),
-            x => x.CreatedAt.ShouldBe(DateTime.Parse("2026-04-16 00:00:00.000")));
+            x => x.CreatedAt.ShouldBe(createdAt));
 
         secondDelegation.ShouldSatisfyAllConditions(
             x => x.ShouldNotBeNull(),
@@ -140,6 +141,6 @@ public class GetTests(PostgreContainerFixture fixture) : BaseTests(fixture)
             x => x.DelegatedUserEmail.ShouldBe("test3@test.com"),
             x => x.InvitationToken.ShouldBeNullOrWhiteSpace(),
             x => x.CreatedById.ShouldBe(adminUser.Id),
-            x => x.CreatedAt.ShouldBe(DateTime.Parse("2026-04-13 23:00:00.000")));
+            x => x.CreatedAt.ShouldBe(createdAt));
     }
 }
