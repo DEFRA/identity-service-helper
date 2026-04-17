@@ -74,8 +74,8 @@ public class GetTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         var logger = Substitute.For<ILogger<CphDelegationsRepository>>();
         var repository = new CphDelegationsRepository(Context, ReadOnlyContext, logger);
 
-        var adminUser = Context.UserAccounts.First();
-        var createdAt = DateTime.Parse("2026-03-01 00:00:00").ToUniversalTime();
+        var adminUser = Context.UserAccounts.First(x => x.Id == new Guid("cd91b1e0-bae4-4cee-becf-3529cc557311"));
+        var createdAt = DateTime.Parse("2026-04-14 00:00:00.000").ToUniversalTime();
 
         var delegations = new List<CountyParishHoldingDelegations>
         {
@@ -113,22 +113,22 @@ public class GetTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 
         // Assert
         results.ShouldNotBeNull();
-        results.Count.ShouldBe(2);
+        results.Count.ShouldBe(6);
 
         var firstDelegation = results.First();
         var secondDelegation = results.Last();
 
         firstDelegation.ShouldSatisfyAllConditions(
             x => x.ShouldNotBeNull(),
-            x => x.Id.ShouldBe(new Guid("3aaaf35e-4fa5-4e99-9721-7dc3bc1c9d7a")),
-            x => x.CountyParishHoldingId.ShouldBe(new Guid("4435a146-d0ac-4260-8a27-c550e0ed9563")),
-            x => x.DelegatingUserId.ShouldBe(new Guid("0a629f9f-2d25-4ac5-afbf-e821f5c6e7d1")),
-            x => x.DelegatedUserId.ShouldBe(new Guid("42bde7a0-9efe-402a-a7c3-9161be7b00ba")),
+            x => x.Id.ShouldBe(new Guid("dd000004-0000-4000-8000-000000000004")),
+            x => x.CountyParishHoldingId.ShouldBe(new Guid("ab820005-0000-4000-8000-000000000005")),
+            x => x.DelegatingUserId.ShouldBe(new Guid("cd91b1e0-bae4-4cee-becf-3529cc557311")),
+            x => x.DelegatedUserId.ShouldBe(new Guid("a17a772c-604e-495d-950e-3dbee2ba6e98")),
             x => x.DelegatedUserRoleId.ShouldBe(new Guid("0c15ba2f-b4ba-406a-a0ae-213de64600a9")),
-            x => x.DelegatedUserEmail.ShouldBe("test1@test.com"),
-            x => x.InvitationToken.ShouldBeNullOrWhiteSpace(),
+            x => x.DelegatedUserEmail.ShouldBe("max.bladen-clark@esynergy.co.uk"),
+            x => x.InvitationToken.ShouldBe("0000000000000000000000000000000000000000000000000000000000000004"),
             x => x.CreatedById.ShouldBe(adminUser.Id),
-            x => x.CreatedAt.ShouldBe(createdAt));
+            x => x.CreatedAt.ShouldBe(DateTime.Parse("2026-04-16 00:00:00.000")));
 
         secondDelegation.ShouldSatisfyAllConditions(
             x => x.ShouldNotBeNull(),
@@ -140,6 +140,6 @@ public class GetTests(PostgreContainerFixture fixture) : BaseTests(fixture)
             x => x.DelegatedUserEmail.ShouldBe("test3@test.com"),
             x => x.InvitationToken.ShouldBeNullOrWhiteSpace(),
             x => x.CreatedById.ShouldBe(adminUser.Id),
-            x => x.CreatedAt.ShouldBe(createdAt));
+            x => x.CreatedAt.ShouldBe(DateTime.Parse("2026-04-13 23:00:00.000")));
     }
 }
