@@ -5,6 +5,7 @@
 namespace Defra.Identity.KeeperReferenceData;
 
 using System.Net;
+using System.Net.Http.Headers;
 using Defra.Identity.KeeperReferenceData.Configuration;
 using Defra.Identity.KeeperReferenceData.Exceptions;
 using Defra.Identity.KeeperReferenceData.Providers;
@@ -31,6 +32,7 @@ public static class ServiceCollectionExtensions
             .ConfigureHttpClient(client =>
             {
                 client.BaseAddress = new Uri(krdsApi.Url);
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", krdsApi.Key);
             }).SetHandlerLifetime(TimeSpan.FromMinutes(5))
             .AddPolicyHandler(GetRetryPolicy());
 

@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Net.Http.Headers;
 using Defra.Identity.KeeperReferenceData.Providers;
 using Defra.Identity.Models.Integration.Krds.Parties;
 using Defra.Identity.Models.Integration.Krds.Sites;
@@ -46,6 +47,33 @@ public class KrdsProviderTests
 
         // Verify the request path was called at least once
         Assert.True(server.LogEntries.Count(le => le.RequestMessage.Path == "/sites" && le.RequestMessage.Method == "GET") >= 1);
+    }
+
+    [Fact]
+    public async Task Sites_Includes_Authorization_Header()
+    {
+        using var server = WireMockServer.Start();
+        server
+            .Given(Request.Create()
+                .WithPath("/sites")
+                .WithHeader("Authorization", "Bearer test-key")
+                .UsingGet())
+            .RespondWith(Response.Create()
+                .WithStatusCode(200)
+                .WithHeader("Content-Type", "application/json")
+                .WithBody("[]"));
+
+        var httpClient = new HttpClient { BaseAddress = new Uri(server.Url + "/") };
+        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "test-key");
+        var logger = NullLogger<KrdsProvider>.Instance;
+        using var sut = new KrdsProvider(httpClient, logger);
+
+        await sut.Sites(DateTime.UtcNow, CancellationToken.None);
+
+        Assert.True(server.LogEntries.Count(le =>
+            le.RequestMessage.Path == "/sites" &&
+            le.RequestMessage.Method == "GET" &&
+            le.RequestMessage.Headers?["Authorization"].ToString() == "Bearer test-key") >= 1);
     }
 
     [Fact]
