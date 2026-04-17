@@ -9,7 +9,7 @@ Feature: CPH query tests
     When I 'GET' this request
     Then I receive the HTTP status code 'OK'
     And I have received JSON data in the response
-    And the paged response is on page 1 has a total count of 6 and contains 5 objects
+    And the paged response is on page 1 has a total count of 18 and contains 5 objects
     And the response contains the following values:
       | path                                  | value       |
       | items[0].county_parish_holding_number | 44/000/0001 |
@@ -26,7 +26,7 @@ Feature: CPH query tests
     When I 'GET' this request
     Then I receive the HTTP status code 'OK'
     And I have received JSON data in the response
-    And the paged response is on page 2 has a total count of 6 and contains 1 objects
+    And the paged response is on page 2 has a total count of 18 and contains 5 objects
 
   @paged-result @success @data-all
   Scenario: Get a maximum of 5 cphs from the first page including expired
@@ -36,7 +36,7 @@ Feature: CPH query tests
     When I 'GET' this request
     Then I receive the HTTP status code 'OK'
     And I have received JSON data in the response
-    And the paged response is on page 1 has a total count of 9 and contains 5 objects
+    And the paged response is on page 1 has a total count of 21 and contains 5 objects
     And the response contains the following values:
       | path                                  | value       |
       | items[0].county_parish_holding_number | 44/000/0001 |
@@ -53,7 +53,7 @@ Feature: CPH query tests
     When I 'GET' this request
     Then I receive the HTTP status code 'OK'
     And I have received JSON data in the response
-    And the paged response is on page 2 has a total count of 9 and contains 4 objects
+    And the paged response is on page 2 has a total count of 21 and contains 5 objects
     And the response contains the following values:
       | path                                  | value       |
       | items[0].county_parish_holding_number | 44/000/0011 |
@@ -96,14 +96,14 @@ Feature: CPH query tests
     When I 'GET' this request
     Then I receive the HTTP status code 'OK'
     And I have received JSON data in the response
-    And the paged response is on page 1 has a total count of 6 and contains 5 objects
+    And the paged response is on page 1 has a total count of 18 and contains 5 objects
     And the response contains the following values:
       | path                                  | value       |
-      | items[0].county_parish_holding_number | 44/000/0023 |
-      | items[1].county_parish_holding_number | 44/000/0011 |
-      | items[2].county_parish_holding_number | 44/000/0004 |
-      | items[3].county_parish_holding_number | 44/000/0003 |
-      | items[4].county_parish_holding_number | 44/000/0002 |
+      | items[0].county_parish_holding_number | 44/082/0006 |
+      | items[1].county_parish_holding_number | 44/082/0005 |
+      | items[2].county_parish_holding_number | 44/082/0004 |
+      | items[3].county_parish_holding_number | 44/082/0003 |
+      | items[4].county_parish_holding_number | 44/082/0002 |
     
   @paged-result @sorted @success @data-all
   Scenario: Get a maximum of 5 cphs from the first page including expired and order by descending on cph_number
@@ -113,11 +113,11 @@ Feature: CPH query tests
     When I 'GET' this request
     Then I receive the HTTP status code 'OK'
     And I have received JSON data in the response
-    And the paged response is on page 1 has a total count of 9 and contains 5 objects
+    And the paged response is on page 1 has a total count of 21 and contains 5 objects
     And the response contains the following values:
       | path                                  | value       |
-      | items[0].county_parish_holding_number | 44/000/0025 |
-      | items[1].county_parish_holding_number | 44/000/0024 |
-      | items[2].county_parish_holding_number | 44/000/0023 |
-      | items[3].county_parish_holding_number | 44/000/0011 |
-      | items[4].county_parish_holding_number | 44/000/0005 |
+      | items[0].county_parish_holding_number | 44/082/0006 |
+      | items[1].county_parish_holding_number | 44/082/0005 |
+      | items[2].county_parish_holding_number | 44/082/0004 |
+      | items[3].county_parish_holding_number | 44/082/0003 |
+      | items[4].county_parish_holding_number | 44/082/0002 |

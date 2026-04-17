@@ -65,7 +65,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           ./.sonar/scanner/dotnet-sonarscanner begin \
-          /k:"DEFRA_cdp-dotnet-backend-template" \
+          /k:"DEFRA_identity-service-handler" \
           /o:"defra" \
           /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
           /d:sonar.host.url="https://sonarcloud.io" \

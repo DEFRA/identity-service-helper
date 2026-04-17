@@ -5,7 +5,6 @@
       <ProjectReference Include="..\Database\Postgres.Database\Postgres.Database.csproj" />
       <ProjectReference Include="..\Models\Models.csproj" />
       <ProjectReference Include="..\Repositories\Repositories.csproj" />
-      <ProjectReference Include="..\Requests\Requests.csproj" />
     </ItemGroup>
 
 </Project>
