@@ -4,7 +4,7 @@
 
 namespace Defra.Identity.Requests.Tests.Users.Commands.Create;
 
-using Defra.Identity.Requests.Users.Commands.Create;
+using Defra.Identity.Models.Requests.Users.Commands;
 using FluentValidation.TestHelper;
 
 public class CreateUserValidatorTests

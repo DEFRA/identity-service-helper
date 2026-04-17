@@ -39,8 +39,8 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
             (x) => x.Items.Count.ShouldBe(3),
             (x) => x.PageSize.ShouldBe(pageSize),
             (x) => x.PageNumber.ShouldBe(pageNumber),
-            (x) => x.TotalCount.ShouldBe(11),
-            (x) => x.TotalPages.ShouldBe(4));
+            (x) => x.TotalCount.ShouldBe(23),
+            (x) => x.TotalPages.ShouldBe(8));
 
         var firstItem = pagedEntities.Items[0];
         var secondItem = pagedEntities.Items[1];
@@ -99,35 +99,35 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
             (x) => x.Items.Count.ShouldBe(3),
             (x) => x.PageSize.ShouldBe(pageSize),
             (x) => x.PageNumber.ShouldBe(pageNumber),
-            (x) => x.TotalCount.ShouldBe(11),
-            (x) => x.TotalPages.ShouldBe(4));
+            (x) => x.TotalCount.ShouldBe(23),
+            (x) => x.TotalPages.ShouldBe(8));
 
         var firstItem = pagedEntities.Items[0];
         var secondItem = pagedEntities.Items[1];
         var thirdItem = pagedEntities.Items[2];
 
         firstItem.ShouldSatisfyAllConditions(
-            (x) => x.Id.ShouldBe(new Guid("d9a711ec-722d-49b6-abcc-23f0795e3886")),
-            (x) => x.Identifier.ShouldBe("44/000/0025"),
-            (x) => x.CreatedAt.ShouldBe(DateTime.Parse("2026-01-03").ToUniversalTime()),
+            (x) => x.Id.ShouldBe(new Guid("ab820006-0000-4000-8000-000000000006")),
+            (x) => x.Identifier.ShouldBe("44/082/0006"),
+            (x) => x.CreatedAt.ShouldBe(DateTime.Parse("2026-04-16")),
             (x) => x.CreatedById.ShouldBe(AdminUserId),
-            (x) => x.ExpiredAt.ShouldBe(DateTime.Parse("2026-02-10").ToUniversalTime()),
+            (x) => x.ExpiredAt.ShouldBeNull(),
             (x) => x.DeletedAt.ShouldBeNull(),
             (x) => x.DeletedById.ShouldBeNull());
 
         secondItem.ShouldSatisfyAllConditions(
-            (x) => x.Id.ShouldBe(new Guid("81e0c45e-8340-4f57-a339-cd52c23372c7")),
-            (x) => x.Identifier.ShouldBe("44/000/0024"),
-            (x) => x.CreatedAt.ShouldBe(DateTime.Parse("2026-01-03").ToUniversalTime()),
+            (x) => x.Id.ShouldBe(new Guid("ab820005-0000-4000-8000-000000000005")),
+            (x) => x.Identifier.ShouldBe("44/082/0005"),
+            (x) => x.CreatedAt.ShouldBe(DateTime.Parse("2026-04-16")),
             (x) => x.CreatedById.ShouldBe(AdminUserId),
-            (x) => x.ExpiredAt.ShouldBe(DateTime.Parse("2026-02-10").ToUniversalTime()),
+            (x) => x.ExpiredAt.ShouldBeNull(),
             (x) => x.DeletedAt.ShouldBeNull(),
             (x) => x.DeletedById.ShouldBeNull());
 
         thirdItem.ShouldSatisfyAllConditions(
-            (x) => x.Id.ShouldBe(new Guid("ebc992ae-2b95-4549-9fa3-4484c8349b89")),
-            (x) => x.Identifier.ShouldBe("44/000/0023"),
-            (x) => x.CreatedAt.ShouldBe(DateTime.Parse("2026-01-03").ToUniversalTime()),
+            (x) => x.Id.ShouldBe(new Guid("ab820004-0000-4000-8000-000000000004")),
+            (x) => x.Identifier.ShouldBe("44/082/0004"),
+            (x) => x.CreatedAt.ShouldBe(DateTime.Parse("2026-04-16")),
             (x) => x.CreatedById.ShouldBe(AdminUserId),
             (x) => x.ExpiredAt.ShouldBeNull(),
             (x) => x.DeletedAt.ShouldBeNull(),

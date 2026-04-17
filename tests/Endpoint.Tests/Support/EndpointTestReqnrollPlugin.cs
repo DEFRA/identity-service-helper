@@ -5,12 +5,12 @@
 namespace Defra.Identity.Endpoint.Tests.Support;
 
 using Defra.Identity.Endpoint.Tests.Configuration;
+using Defra.Identity.Endpoint.Tests.Extensions;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
 using Microsoft;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Reqnroll.BoDi;
 using Reqnroll.Plugins;
 using Reqnroll.UnitTestProvider;
 

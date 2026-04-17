@@ -5,7 +5,6 @@
 namespace Defra.Identity.Postgres.Database;
 
 using System.Reflection;
-using Defra.Identity.Postgres.Database.Entities.Base;
 
 /// <summary>
 /// The Read-Only Authorisation DbContext.

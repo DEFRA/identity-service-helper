@@ -4,7 +4,7 @@
 
 namespace Defra.Identity.Services.Common.Context;
 
-using Defra.Identity.Requests.Services;
+using Defra.Identity.Models.Requests.Services;
 
 public class OperatorContext(IOperatorIdService operatorIdService) : IOperatorContext
 {

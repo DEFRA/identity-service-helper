@@ -2,11 +2,12 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Reqnroll.BoDi;
+namespace Defra.Identity.Endpoint.Tests.Extensions;
 
 using System.Linq;
 using System.Reflection;
 using Microsoft;
+using Reqnroll.BoDi;
 
 /// <summary>
 /// Collection of functions that extend the Reqnroll object collection.

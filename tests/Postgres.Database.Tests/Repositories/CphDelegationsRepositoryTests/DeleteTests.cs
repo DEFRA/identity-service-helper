@@ -7,14 +7,14 @@ namespace Defra.Identity.Postgres.Database.Tests.Repositories.CphDelegationsRepo
 using System.ComponentModel;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
+using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Repositories.Delegations;
-using Defra.Identity.Repositories.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Shouldly;
 
-public class DeleteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
+public class DeleteByIdRouteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 {
     [Fact]
     [Description("Should soft delete a delegation")]
@@ -31,7 +31,7 @@ public class DeleteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         var delegatedUserId = new Guid("42bde7a0-9efe-402a-a7c3-9161be7b00ba");
         var delegatedUserRoleId = new Guid("0c15ba2f-b4ba-406a-a0ae-213de64600a9");
         const string delegatedUserEmail = "test1@test.com";
-        var createdAt = DateTime.Now.ToUniversalTime();
+        var createdAt = DateTime.UtcNow;
         var operatorId = adminUser.Id;
 
         var delegationToDelete = new CountyParishHoldingDelegations

@@ -5,12 +5,11 @@
 namespace Defra.Identity.Api.Tests.Endpoints.Delegations;
 
 using Defra.Identity.Api.Endpoints.Delegations;
-using Defra.Identity.Requests;
-using Defra.Identity.Requests.Delegations.Commands.Create;
-using Defra.Identity.Requests.Delegations.Commands.Delete;
-using Defra.Identity.Requests.Delegations.Commands.Update;
-using Defra.Identity.Requests.Delegations.Queries;
-using Defra.Identity.Responses.Delegations;
+using Defra.Identity.Api.Middleware.Headers;
+using Defra.Identity.Models.Requests;
+using Defra.Identity.Models.Requests.Delegations.Commands;
+using Defra.Identity.Models.Requests.Delegations.Queries;
+using Defra.Identity.Models.Responses.Delegations;
 using Defra.Identity.Services.Delegations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -38,6 +37,7 @@ public class CphDelegationEndpointsTests
                 CountyParishHoldingNumber = "22/001/0001",
                 DelegatingUserId = Guid.NewGuid(),
                 DelegatingUserName = "Test User 100",
+                DelegatedUserId = Guid.NewGuid(),
                 DelegatedUserName = "Test User 200",
                 DelegatedUserEmail = "test200@test.com",
                 DelegatedUserRoleId = Guid.NewGuid(),
@@ -49,7 +49,7 @@ public class CphDelegationEndpointsTests
 
         // Act
         var result = await (Task<IResult>)typeof(CphDelegationEndpoints)
-            .GetMethod("GetAll", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
+            .GetMethod("GetAllRoute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
             .Invoke(null, [queryHeaders, request, service])!;
 
         // Assert
@@ -75,17 +75,18 @@ public class CphDelegationEndpointsTests
             CountyParishHoldingNumber = "22/001/0001",
             DelegatingUserId = Guid.NewGuid(),
             DelegatingUserName = "Test User 100",
+            DelegatedUserId = Guid.NewGuid(),
             DelegatedUserName = "Test User 200",
             DelegatedUserEmail = "test200@test.com",
             DelegatedUserRoleId = Guid.NewGuid(),
             DelegatedUserRoleName = "Test Role 100",
         };
 
-        service.Get(request, Arg.Any<CancellationToken>()).Returns(delegation);
+        service.Get(Arg.Any<GetCphDelegationById>(), Arg.Any<CancellationToken>()).Returns(delegation);
 
         // Act
         var result = await (Task<IResult>)typeof(CphDelegationEndpoints)
-            .GetMethod("Get", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
+            .GetMethod("GetByIdRoute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
             .Invoke(null, [queryHeaders, request, service])!;
 
         // Assert
@@ -113,6 +114,7 @@ public class CphDelegationEndpointsTests
             CountyParishHoldingNumber = "22/001/0001",
             DelegatingUserId = request.DelegatingUserId,
             DelegatingUserName = "Test User 100",
+            DelegatedUserId = Guid.NewGuid(),
             DelegatedUserName = "Test User 200",
             DelegatedUserEmail = request.DelegatedUserEmail,
             DelegatedUserRoleId = request.DelegatedUserRoleId,
@@ -123,7 +125,7 @@ public class CphDelegationEndpointsTests
 
         // Act
         var result = await (Task<IResult>)typeof(CphDelegationEndpoints)
-            .GetMethod("Post", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
+            .GetMethod("PostRoute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
             .Invoke(null, [commandHeaders, request, service])!;
 
         // Assert
@@ -155,6 +157,7 @@ public class CphDelegationEndpointsTests
             CountyParishHoldingNumber = "22/001/0001",
             DelegatingUserId = request.DelegatingUserId,
             DelegatingUserName = "Test User 100",
+            DelegatedUserId = Guid.NewGuid(),
             DelegatedUserName = "Test User 200",
             DelegatedUserEmail = request.DelegatedUserEmail,
             DelegatedUserRoleId = request.DelegatedUserRoleId,
@@ -165,7 +168,7 @@ public class CphDelegationEndpointsTests
 
         // Act
         var result = await (Task<IResult>)typeof(CphDelegationEndpoints)
-            .GetMethod("Put", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
+            .GetMethod("PutByIdRoute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
             .Invoke(null, [commandHeaders, request, service])!;
 
         // Assert
@@ -183,15 +186,15 @@ public class CphDelegationEndpointsTests
             Id = Guid.NewGuid(),
         };
 
-        service.Delete(request, Arg.Any<CancellationToken>()).Returns(true);
+        service.Delete(Arg.Any<DeleteCphDelegationById>(), Arg.Any<CancellationToken>()).Returns(true);
 
         // Act
         var result = await (Task<IResult>)typeof(CphDelegationEndpoints)
-            .GetMethod("Delete", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
+            .GetMethod("DeleteByIdRoute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
             .Invoke(null, [commandHeaders, request, service])!;
 
         // Assert
         result.ShouldBeOfType<NoContent>();
-        await service.Received(1).Delete(request, Arg.Any<CancellationToken>());
+        await service.Received(1).Delete(Arg.Any<DeleteCphDelegationById>(), Arg.Any<CancellationToken>());
     }
 }

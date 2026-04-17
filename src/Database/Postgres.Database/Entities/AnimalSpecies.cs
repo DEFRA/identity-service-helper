@@ -4,8 +4,6 @@
 
 namespace Defra.Identity.Postgres.Database.Entities;
 
-using Defra.Identity.Postgres.Database.Configuration;
-
 public class AnimalSpecies
 {
     public required string Id { get; set; }

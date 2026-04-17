@@ -4,7 +4,7 @@
 
 namespace Defra.Identity.Requests.Tests.Users.Commands.Update;
 
-using Defra.Identity.Requests.Users.Commands.Update;
+using Defra.Identity.Models.Requests.Users.Commands;
 using FluentValidation.TestHelper;
 
 public class UpdateUserValidatorTests

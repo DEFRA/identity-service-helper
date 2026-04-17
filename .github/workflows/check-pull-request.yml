@@ -12,8 +12,14 @@ on:
       - ready_for_review
 
 jobs:
+  sonar-cloud:
+    name: CDP SonarCloud Scan
+    uses: ./.github/workflows/sonarcloud.yml
+    secrets: inherit
+
   pr-validator:
     name: Run Pull Request Checks
+    needs: sonar-cloud
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
@@ -28,8 +34,3 @@ jobs:
 
       - name: Run the Cake script
         uses: cake-build/cake-action@v3
-
-      - name: CDP SonarCloud Scan
-        uses: ./.github/workflows/sonarcloud.yml
-        needs: pr-validator
-        secrets: inherit

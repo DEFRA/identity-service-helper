@@ -7,7 +7,7 @@ namespace Defra.Identity.Api.Tests.Endpoints.Cphs.Handlers;
 using System.ComponentModel;
 using Defra.Identity.Api.Endpoints.Cphs.Handlers;
 using Defra.Identity.Api.Tests.Endpoints.Cphs.TestData;
-using Defra.Identity.Requests.Cphs.Common;
+using Defra.Identity.Models.Requests.Cphs.Common;
 using Defra.Identity.Services.Cphs;
 using Microsoft.AspNetCore.Http;
 using NSubstitute;
