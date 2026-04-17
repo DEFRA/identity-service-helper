@@ -3,20 +3,22 @@ services:
   localstack:
     image: localstack/localstack:4.10.0
     ports:
-      - '4566:4566' # LocalStack Gateway
-      - '4510-4559:4510-4559' # external services port range
+      - '4567:4567' # LocalStack Gateway
+      - '4610-4659:4610-4659' # external services port range
     env_file:
       - 'compose/aws.env'
     environment:
       DEBUG: ${DEBUG:-1}
       LS_LOG: WARN # Localstack DEBUG Level
       SERVICES: s3,sqs,sns,firehose
-      LOCALSTACK_HOST: 127.0.0.1
+      GATEWAY_LISTEN: 0.0.0.0:4567
+      EXTERNAL_SERVICE_PORTS_START: 4610
+      EXTERNAL_SERVICE_PORTS_END: 4659
     volumes:
       - '${TMPDIR:-/tmp}/localstack:/var/lib/localstack'
       - ./compose/start-localstack.sh:/etc/localstack/init/ready.d/start-localstack.sh
     healthcheck:
-      test: ['CMD', 'curl', 'localhost:4566']
+      test: ['CMD', 'curl', 'localhost:4567/_localstack/health']
       interval: 5s
       start_period: 5s
       retries: 3
@@ -26,7 +28,7 @@ services:
   redis:
     image: redis:7.2.3-alpine3.18
     ports:
-      - '6379:6379'
+      - '6380:6380'
     restart: always
     networks:
       - cdp-tenant
@@ -70,7 +72,7 @@ services:
     platform: linux
     build: ./
     ports:
-      - '8080:8080'
+      - '3001:8080'
     links:
       - 'localstack:localstack'
       - 'postgres:postgres'
@@ -84,7 +86,7 @@ services:
     environment:
       PORT: 8080
       ASPNETCORE_ENVIRONMENT: Development
-      LOCALSTACK_ENDPOINT: http://localstack:4566
+      LOCALSTACK_ENDPOINT: http://localstack:4567
       POSTGRES_URI: http://localhost:5432
       ConnectionStrings__PostgresConnection: "User ID=identity_service_helper_ddl;Password=postgres;Host=postgres;Database=identity_service_helper;"
     networks:
