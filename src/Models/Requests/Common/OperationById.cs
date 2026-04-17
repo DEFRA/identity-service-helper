@@ -6,7 +6,7 @@ namespace Defra.Identity.Models.Requests.Common;
 
 using System.ComponentModel;
 
-public class OperationById : IOperationById
+public abstract class OperationById : IOperationById
 {
     [Description(OpenApiMetadata.Users.Id)]
     public Guid Id { get; set; }
