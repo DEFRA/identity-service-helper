@@ -52,7 +52,9 @@ insert into user_accounts (id, display_name, email_address, first_name, last_nam
     ('7e9e5585-7b59-4d10-b330-1c95d83a4670', 'Test User 9', 'test9@test.com', 'test 9', 'user 9', '2026-03-09 00:00:00.000000 +00:00', ADMIN_USER_ID),
     ('4852c883-6dc2-4880-aaa8-c20110955c90', 'Test User 10', 'test10@test.com', 'test 10', 'user 10', '2026-03-10 00:00:00.000000 +00:00', ADMIN_USER_ID),
     ('6d0d343b-cbba-4cb7-bd3f-d7a9407f248d', 'Test User 11', 'test11@test.com', 'test 11', 'user 11', '2026-03-11 00:00:00.000000 +00:00', ADMIN_USER_ID),
-    ('74bbb0da-5a57-48f9-abcb-7bedbfe87ede', 'Test User 12', 'test12@test.com', 'test 12', 'user 12', '2026-03-12 00:00:00.000000 +00:00', ADMIN_USER_ID);
+    ('74bbb0da-5a57-48f9-abcb-7bedbfe87ede', 'Test User 12', 'test12@test.com', 'test 12', 'user 12', '2026-03-12 00:00:00.000000 +00:00', ADMIN_USER_ID),
+    ('a17a772c-604e-495d-950e-3dbee2ba6e98', 'Max Bladen-Clark', 'max.bladen-clark@esynergy.co.uk', 'Max', 'Bladen-Clark', '2026-04-16 00:00:00.000000 +00:00', ADMIN_USER_ID),
+    ('cd91b1e0-bae4-4cee-becf-3529cc557311', 'Cedric Brasey', 'cedric.brasey@planet-side.co.uk', 'Cedric', 'Brasey', '2026-04-16 00:00:00.000000 +00:00', ADMIN_USER_ID);
 
 insert into county_parish_holdings (id, identifier, created_at, created_by_id, expired_at, deleted_at, deleted_by_id) values
     ('088967e7-71b8-457a-9001-5b71f24798fd', '44/000/0007', '2026-02-07 00:00:00.000000 +00:00', ADMIN_USER_ID, '2026-02-12 00:00:00.000000 +00:00', '2026-02-13 00:00:00.000000 +00:00', ADMIN_USER_ID),
@@ -65,7 +67,21 @@ insert into county_parish_holdings (id, identifier, created_at, created_by_id, e
     ('d4a7f0d7-39eb-40fe-b68d-547a5f494738', '44/000/0011', '2026-01-01 00:00:00.000000 +00:00', ADMIN_USER_ID, null, null, null),
     ('ebc992ae-2b95-4549-9fa3-4484c8349b89', '44/000/0023', '2026-01-03 00:00:00.000000 +00:00', ADMIN_USER_ID, null, null, null),
     ('81e0c45e-8340-4f57-a339-cd52c23372c7', '44/000/0024', '2026-01-03 00:00:00.000000 +00:00', ADMIN_USER_ID, '2026-02-10 00:00:00.000000 +00:00', null, null),
-    ('d9a711ec-722d-49b6-abcc-23f0795e3886', '44/000/0025', '2026-01-03 00:00:00.000000 +00:00', ADMIN_USER_ID, '2026-02-10 00:00:00.000000 +00:00', null, null);
+    ('d9a711ec-722d-49b6-abcc-23f0795e3886', '44/000/0025', '2026-01-03 00:00:00.000000 +00:00', ADMIN_USER_ID, '2026-02-10 00:00:00.000000 +00:00', null, null),
+    -- Max's CPHs (44/081/)
+    ('aa810001-0000-4000-8000-000000000001', '44/081/0001', '2026-04-16 00:00:00.000000 +00:00', ADMIN_USER_ID, null, null, null),
+    ('aa810002-0000-4000-8000-000000000002', '44/081/0002', '2026-04-16 00:00:00.000000 +00:00', ADMIN_USER_ID, null, null, null),
+    ('aa810003-0000-4000-8000-000000000003', '44/081/0003', '2026-04-16 00:00:00.000000 +00:00', ADMIN_USER_ID, null, null, null),
+    ('aa810004-0000-4000-8000-000000000004', '44/081/0004', '2026-04-16 00:00:00.000000 +00:00', ADMIN_USER_ID, null, null, null),
+    ('aa810005-0000-4000-8000-000000000005', '44/081/0005', '2026-04-16 00:00:00.000000 +00:00', ADMIN_USER_ID, null, null, null),
+    ('aa810006-0000-4000-8000-000000000006', '44/081/0006', '2026-04-16 00:00:00.000000 +00:00', ADMIN_USER_ID, null, null, null),
+    -- Cedric's CPHs (44/082/)
+    ('ab820001-0000-4000-8000-000000000001', '44/082/0001', '2026-04-16 00:00:00.000000 +00:00', ADMIN_USER_ID, null, null, null),
+    ('ab820002-0000-4000-8000-000000000002', '44/082/0002', '2026-04-16 00:00:00.000000 +00:00', ADMIN_USER_ID, null, null, null),
+    ('ab820003-0000-4000-8000-000000000003', '44/082/0003', '2026-04-16 00:00:00.000000 +00:00', ADMIN_USER_ID, null, null, null),
+    ('ab820004-0000-4000-8000-000000000004', '44/082/0004', '2026-04-16 00:00:00.000000 +00:00', ADMIN_USER_ID, null, null, null),
+    ('ab820005-0000-4000-8000-000000000005', '44/082/0005', '2026-04-16 00:00:00.000000 +00:00', ADMIN_USER_ID, null, null, null),
+    ('ab820006-0000-4000-8000-000000000006', '44/082/0006', '2026-04-16 00:00:00.000000 +00:00', ADMIN_USER_ID, null, null, null);
 
 insert into applications (id, name, client_id, tenant_name, description, created_at, created_by_id, scopes, secret , redirect_uris) values
     ('112788f5-4cb5-4acc-a3f5-d8b2b0e20945', 'Test Livestock Service 1', 'df9ab2b8-1f01-4eda-bbdf-13814d91ebb6', 'Test Tenant 1', 'Test Description 1', '2026-03-01 00:00:00.000000 +00:00', ADMIN_USER_ID, 'scope1;scope2', 'secret123', 'https://localhost:5001/signin-oidc;https://localhost:5001/signout-callback-oidc'),
@@ -84,7 +100,25 @@ insert into application_user_account_holding_assignments (county_parish_holding_
   ('4435a146-d0ac-4260-8a27-c550e0ed9563', 'CTT', '83bf35f9-fd59-4c8a-b70a-7d95a1aab2b6', '5466ef9b-aa6b-4b7d-9aac-6c6e55a66ab9', 'c63207ab-68f7-4613-b94a-492939eb6116', ADMIN_USER_ID, '2026-03-03 00:00:00.000000 +00:00', ADMIN_USER_ID, '2026-03-05 00:00:00.000000 +00:00'),
   ('4435a146-d0ac-4260-8a27-c550e0ed9563', 'CTT', 'd1354eb1-dd1c-471e-bd0e-2626e2e21366', '5466ef9b-aa6b-4b7d-9aac-6c6e55a66ab9', '306fa0fc-bd1a-45d3-9fef-e6f11a85b601', ADMIN_USER_ID, '2026-03-04 00:00:00.000000 +00:00', null, null),
   ('204459b1-3a07-4e65-9122-91c1699e3d3f', 'CTT', '42bde7a0-9efe-402a-a7c3-9161be7b00ba', '112788f5-4cb5-4acc-a3f5-d8b2b0e20945', '0c15ba2f-b4ba-406a-a0ae-213de64600a9', ADMIN_USER_ID, '2026-03-01 00:00:00.000000 +00:00', null, null),
-  ('204459b1-3a07-4e65-9122-91c1699e3d3f', 'CTT', '1e21b685-2247-4d96-bf39-f7dc30f356c2', '112788f5-4cb5-4acc-a3f5-d8b2b0e20945', '817647b3-d5d2-45e9-8833-df36d8264102', ADMIN_USER_ID, '2026-03-02 00:00:00.000000 +00:00', null, null);
+  ('204459b1-3a07-4e65-9122-91c1699e3d3f', 'CTT', '1e21b685-2247-4d96-bf39-f7dc30f356c2', '112788f5-4cb5-4acc-a3f5-d8b2b0e20945', '817647b3-d5d2-45e9-8833-df36d8264102', ADMIN_USER_ID, '2026-03-02 00:00:00.000000 +00:00', null, null),
+  -- Max's associated CPHs (44/081/0001, 0002, 0003, 0006)
+  ('aa810001-0000-4000-8000-000000000001', 'CTT', 'a17a772c-604e-495d-950e-3dbee2ba6e98', '112788f5-4cb5-4acc-a3f5-d8b2b0e20945', '0c15ba2f-b4ba-406a-a0ae-213de64600a9', ADMIN_USER_ID, '2026-04-16 00:00:00.000000 +00:00', null, null),
+  ('aa810002-0000-4000-8000-000000000002', 'CTT', 'a17a772c-604e-495d-950e-3dbee2ba6e98', '112788f5-4cb5-4acc-a3f5-d8b2b0e20945', '0c15ba2f-b4ba-406a-a0ae-213de64600a9', ADMIN_USER_ID, '2026-04-16 00:00:00.000000 +00:00', null, null),
+  ('aa810003-0000-4000-8000-000000000003', 'CTT', 'a17a772c-604e-495d-950e-3dbee2ba6e98', '112788f5-4cb5-4acc-a3f5-d8b2b0e20945', '0c15ba2f-b4ba-406a-a0ae-213de64600a9', ADMIN_USER_ID, '2026-04-16 00:00:00.000000 +00:00', null, null),
+  ('aa810006-0000-4000-8000-000000000006', 'CTT', 'a17a772c-604e-495d-950e-3dbee2ba6e98', '112788f5-4cb5-4acc-a3f5-d8b2b0e20945', '0c15ba2f-b4ba-406a-a0ae-213de64600a9', ADMIN_USER_ID, '2026-04-16 00:00:00.000000 +00:00', null, null),
+  -- Cedric's associated CPHs (44/082/0001, 0002, 0003, 0006)
+  ('ab820001-0000-4000-8000-000000000001', 'CTT', 'cd91b1e0-bae4-4cee-becf-3529cc557311', '112788f5-4cb5-4acc-a3f5-d8b2b0e20945', '0c15ba2f-b4ba-406a-a0ae-213de64600a9', ADMIN_USER_ID, '2026-04-16 00:00:00.000000 +00:00', null, null),
+  ('ab820002-0000-4000-8000-000000000002', 'CTT', 'cd91b1e0-bae4-4cee-becf-3529cc557311', '112788f5-4cb5-4acc-a3f5-d8b2b0e20945', '0c15ba2f-b4ba-406a-a0ae-213de64600a9', ADMIN_USER_ID, '2026-04-16 00:00:00.000000 +00:00', null, null),
+  ('ab820003-0000-4000-8000-000000000003', 'CTT', 'cd91b1e0-bae4-4cee-becf-3529cc557311', '112788f5-4cb5-4acc-a3f5-d8b2b0e20945', '0c15ba2f-b4ba-406a-a0ae-213de64600a9', ADMIN_USER_ID, '2026-04-16 00:00:00.000000 +00:00', null, null),
+  ('ab820006-0000-4000-8000-000000000006', 'CTT', 'cd91b1e0-bae4-4cee-becf-3529cc557311', '112788f5-4cb5-4acc-a3f5-d8b2b0e20945', '0c15ba2f-b4ba-406a-a0ae-213de64600a9', ADMIN_USER_ID, '2026-04-16 00:00:00.000000 +00:00', null, null);
+
+insert into county_parish_holding_delegations (id, county_parish_holding_id, delegating_user_id, delegated_user_id, delegated_user_email, delegated_user_role_id, invitation_token, invitation_expires_at, invitation_accepted_at, created_at, created_by_id) values
+  -- Max delegates 44/081/0004 and 44/081/0005 to Cedric
+  ('dd000001-0000-4000-8000-000000000001', 'aa810004-0000-4000-8000-000000000004', 'a17a772c-604e-495d-950e-3dbee2ba6e98', 'cd91b1e0-bae4-4cee-becf-3529cc557311', 'cedric.brasey@planet-side.co.uk', '0c15ba2f-b4ba-406a-a0ae-213de64600a9', '0000000000000000000000000000000000000000000000000000000000000001', '2029-01-01 00:00:00.000000 +00:00', '2026-04-16 00:00:00.000000 +00:00', '2026-04-16 00:00:00.000000 +00:00', 'a17a772c-604e-495d-950e-3dbee2ba6e98'),
+  ('dd000002-0000-4000-8000-000000000002', 'aa810005-0000-4000-8000-000000000005', 'a17a772c-604e-495d-950e-3dbee2ba6e98', 'cd91b1e0-bae4-4cee-becf-3529cc557311', 'cedric.brasey@planet-side.co.uk', '0c15ba2f-b4ba-406a-a0ae-213de64600a9', '0000000000000000000000000000000000000000000000000000000000000002', '2029-01-01 00:00:00.000000 +00:00', '2026-04-16 00:00:00.000000 +00:00', '2026-04-16 00:00:00.000000 +00:00', 'a17a772c-604e-495d-950e-3dbee2ba6e98'),
+  -- Cedric delegates 44/082/0004 and 44/082/0005 to Max
+  ('dd000003-0000-4000-8000-000000000003', 'ab820004-0000-4000-8000-000000000004', 'cd91b1e0-bae4-4cee-becf-3529cc557311', 'a17a772c-604e-495d-950e-3dbee2ba6e98', 'max.bladen-clark@esynergy.co.uk', '0c15ba2f-b4ba-406a-a0ae-213de64600a9', '0000000000000000000000000000000000000000000000000000000000000003', '2029-01-01 00:00:00.000000 +00:00', '2026-04-16 00:00:00.000000 +00:00', '2026-04-16 00:00:00.000000 +00:00', 'cd91b1e0-bae4-4cee-becf-3529cc557311'),
+  ('dd000004-0000-4000-8000-000000000004', 'ab820005-0000-4000-8000-000000000005', 'cd91b1e0-bae4-4cee-becf-3529cc557311', 'a17a772c-604e-495d-950e-3dbee2ba6e98', 'max.bladen-clark@esynergy.co.uk', '0c15ba2f-b4ba-406a-a0ae-213de64600a9', '0000000000000000000000000000000000000000000000000000000000000004', '2029-01-01 00:00:00.000000 +00:00', '2026-04-16 00:00:00.000000 +00:00', '2026-04-16 00:00:00.000000 +00:00', 'cd91b1e0-bae4-4cee-becf-3529cc557311');
 
 END
 $$;
