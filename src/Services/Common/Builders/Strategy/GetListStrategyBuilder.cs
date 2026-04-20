@@ -70,6 +70,8 @@ public class GetListStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSe
             ActionDescription.ToLowerInvariant(),
             PrimaryEntityDescription.ToLowerInvariant());
 
+        ExecuteSetup();
+
         await ExecuteRequestValidation();
 
         var entities = await ListableRepository.GetList(EntityFilter, CancellationToken.Value);

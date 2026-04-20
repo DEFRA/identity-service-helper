@@ -1,7 +1,7 @@
 ﻿// <copyright file="IUserDelegatedCphsRepository.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
-namespace Defra.Identity.Repositories.Users.Cphs;
+namespace Defra.Identity.Repositories.Users.Delegations;
 
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Common.Composites.Associations;

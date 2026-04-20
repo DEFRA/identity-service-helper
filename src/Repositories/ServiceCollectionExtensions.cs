@@ -12,6 +12,7 @@ using Defra.Identity.Repositories.Roles;
 using Defra.Identity.Repositories.Species;
 using Defra.Identity.Repositories.Users;
 using Defra.Identity.Repositories.Users.Cphs;
+using Defra.Identity.Repositories.Users.Delegations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -23,6 +24,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IUsersRepository, UsersRepository>();
         services.AddTransient<IUserAssociatedCphsRepository, UserAssociatedCphsRepository>();
         services.AddTransient<IUserDelegatedCphsRepository, UserDelegatedCphsRepository>();
+        services.AddTransient<IUserAssociatedDelegatesRepository, UserAssociatedDelegatesRepository>();
         services.AddTransient<IRoleRepository, RoleRepository>();
         services.AddTransient<IApplicationsRepository, ApplicationsRepository>();
         services.AddTransient<ICphRepository, CphRepository>();

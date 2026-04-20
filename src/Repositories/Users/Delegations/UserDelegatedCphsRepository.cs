@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Repositories.Users.Cphs;
+namespace Defra.Identity.Repositories.Users.Delegations;
 
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database;
@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 
 public class UserDelegatedCphsRepository(
     ReadOnlyPostgresDbContext readOnlyContext,
-    ILogger<UserAssociatedCphsRepository> logger) : IUserDelegatedCphsRepository
+    ILogger<UserDelegatedCphsRepository> logger) : IUserDelegatedCphsRepository
 {
     public async Task<List<CountyParishHoldingDelegations>> GetList(
         Expression<Func<UserAccounts, bool>> primaryPredicate,

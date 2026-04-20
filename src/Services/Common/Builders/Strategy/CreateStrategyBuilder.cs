@@ -85,6 +85,8 @@ public class CreateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
             PrimaryEntityDescription.ToLowerInvariant(),
             OperatorContext.OperatorId);
 
+        ExecuteSetup();
+
         await ExecuteRequestValidation();
 
         if (ReferenceRulesBuilder != null)

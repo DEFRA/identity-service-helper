@@ -15,6 +15,7 @@ using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Repositories.Users;
 using Defra.Identity.Repositories.Users.Cphs;
+using Defra.Identity.Repositories.Users.Delegations;
 using Defra.Identity.Services.Common.Builders.Strategy.Factories;
 using Defra.Identity.Services.Users;
 using Microsoft.Extensions.Logging;
@@ -27,13 +28,14 @@ public class UserServiceTests
     private readonly IUsersRepository repository = Substitute.For<IUsersRepository>();
     private readonly IUserAssociatedCphsRepository userAssociatedCphsRepository = Substitute.For<IUserAssociatedCphsRepository>();
     private readonly IUserDelegatedCphsRepository userDelegatedCphsRepository = Substitute.For<IUserDelegatedCphsRepository>();
+    private readonly IUserAssociatedDelegatesRepository userAssociatedDelegatesRepository = Substitute.For<IUserAssociatedDelegatesRepository>();
     private readonly IStrategyBuilderFactory<UserService> strategyBuilderFactory = Substitute.For<IStrategyBuilderFactory<UserService>>();
     private readonly ILogger<UserService> logger = Substitute.For<ILogger<UserService>>();
     private readonly UserService userService;
 
     public UserServiceTests()
     {
-        userService = new UserService(repository, userAssociatedCphsRepository, userDelegatedCphsRepository, strategyBuilderFactory, logger);
+        userService = new UserService(repository, userAssociatedCphsRepository, userDelegatedCphsRepository, userAssociatedDelegatesRepository, strategyBuilderFactory, logger);
     }
 
     [Fact]
@@ -119,7 +121,10 @@ public class UserServiceTests
 
         // Act
         var result = await userService.Delete(
-            new DeleteUser() { Id = userId, OperatorId = operatorId, },
+            new DeleteUser()
+            {
+                Id = userId, OperatorId = operatorId,
+            },
             TestContext.Current.CancellationToken);
 
         // Assert

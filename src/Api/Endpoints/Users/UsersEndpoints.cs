@@ -40,6 +40,10 @@ public static class UsersEndpoints
             .Produces<UserCphs>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
             .ProducesProblem(StatusCodes.Status404NotFound);
 
+        app.MapGet(RouteNames.Users + "/{id:guid}/delegates", GetUserOwnedCphDelegatesRoute)
+            .Produces<UserCphs>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
+            .ProducesProblem(StatusCodes.Status404NotFound);
+
         app.MapPut(RouteNames.Users + "/{id:guid}", PutByIdRoute)
             .WithName(OpenApiMetadata.PutByIdRoute.Name)
             .WithTags(OpenApiMetadata.Tag)
@@ -138,12 +142,11 @@ public static class UsersEndpoints
         [AsParameters] DeleteUserById request,
         IUserService service)
     {
-        await service.Delete(new DeleteUser()
+        await service.Delete(
+            new DeleteUser()
             {
-                OperatorId = headers.OperatorId,
-                Id = request.Id,
-            }
-        );
+                OperatorId = headers.OperatorId, Id = request.Id,
+            });
 
         return Results.NoContent();
     }
@@ -154,6 +157,16 @@ public static class UsersEndpoints
         IUserService service)
     {
         var user = await service.GetUserCphs(request);
+
+        return Results.Ok(user);
+    }
+
+    private static async Task<IResult> GetUserOwnedCphDelegatesRoute(
+        QueryRequestHeaders headers,
+        [AsParameters] GetUserDelegatesByUserId request,
+        IUserService service)
+    {
+        var user = await service.GetUserOwnedCphDelegates(request);
 
         return Results.Ok(user);
     }
