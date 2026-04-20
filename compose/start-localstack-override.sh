@@ -17,7 +17,7 @@ echo "Bootstrapping SQS setup..."
 # Create SQS resources
 queue_url=$(awslocal sqs create-queue  \
   --queue-name identity_service_helper_intake \
-  --endpoint-url=http://localhost:4566 \
+  --endpoint-url=http://localhost:4567 \
   --output text \
   --query 'QueueUrl')
 
@@ -26,6 +26,7 @@ echo "SQS Queue created: $queue_url"
 # Get the SQS Queue ARN
 queue_arn=$(awslocal sqs get-queue-attributes \
   --queue-url "$queue_url" \
+  --endpoint-url=http://localhost:4567 \
   --attribute-name QueueArn \
   --output text \
   --query 'Attributes.QueueArn')
@@ -35,7 +36,7 @@ echo "SQS Queue ARN: $queue_arn"
 # Create SNS Topics
 topic_arn=$(awslocal sns create-topic \
   --name ls_keeper_data_import_complete \
-  --endpoint-url=http://localhost:4566 \
+  --endpoint-url=http://localhost:4567 \
   --output text \
   --query 'TopicArn')
 
@@ -72,6 +73,7 @@ EOF
 policy_escaped=$(echo "$policy_json" | jq -c | sed 's/"/\\"/g')
 awslocal sqs set-queue-attributes \
   --queue-url "$queue_url" \
+  --endpoint-url=http://localhost:4567 \
   --attributes "{\"Policy\": \"$policy_escaped\"}"
 
 # Subscribe the Queue to the Topic
@@ -79,7 +81,7 @@ awslocal sns subscribe \
   --topic-arn "$topic_arn" \
   --protocol sqs \
   --notification-endpoint "$queue_arn" \
-  --endpoint-url http://localhost:4566
+  --endpoint-url=http://localhost:4567
 
 echo "SNS Topic subscription complete"
 
