@@ -14,6 +14,8 @@ TRUNCATE TABLE
     application_roles,
     application_user_account_holding_assignments,
     county_parish_holding_delegations,
+    county_parish_holding_delegations_notifications,
+    external_messaging,    
     user_accounts,
     krds_sync_logs,
     animal_species,
