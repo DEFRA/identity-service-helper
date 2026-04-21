@@ -2,14 +2,17 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
+using Defra.Identity.KeeperReferenceData.Models.Parties;
+using Defra.Identity.KeeperReferenceData.Models.Sites;
+using Party = Defra.Identity.KeeperReferenceData.Models.Parties.Party;
+using Site = Defra.Identity.KeeperReferenceData.Models.Sites.Site;
+
 namespace Defra.Identity.KeeperReferenceData.Providers;
 
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Web;
-using Defra.Identity.Models.Integration.Krds.Parties;
-using Defra.Identity.Models.Integration.Krds.Sites;
 using Json.Schema;
 using Microsoft.Extensions.Logging;
 
@@ -38,7 +41,7 @@ public class KrdsProvider(HttpClient client, ILogger<KrdsProvider> logger) : IKr
                 return JsonSerializer.Deserialize<SiteResponse>(result)!;
             }
 
-            var sites = JsonSerializer.Deserialize<List<Models.Integration.Krds.Sites.Site>>(result);
+            var sites = JsonSerializer.Deserialize<List<Site>>(result);
             return new SiteResponse
             {
                 Values = sites ?? [],
@@ -72,7 +75,7 @@ public class KrdsProvider(HttpClient client, ILogger<KrdsProvider> logger) : IKr
         {
             if (result.TrimStart().StartsWith('['))
             {
-                var parties = JsonSerializer.Deserialize<List<Models.Integration.Krds.Parties.Party>>(result);
+                var parties = JsonSerializer.Deserialize<List<Party>>(result);
                 return new PartyResponse
                 {
                     Values = parties ?? [],

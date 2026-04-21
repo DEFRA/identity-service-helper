@@ -2,14 +2,13 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Ingest;
-
+using Defra.Identity.KeeperReferenceData.Models.Sites;
 using Defra.Identity.KeeperReferenceData.Providers;
-using Defra.Identity.Models.Integration.Krds.Sites;
-using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Services.Cphs;
 
-public class IngestCountyParishHoldings(IKrdsProvider provider, ICphService service) : IIngestDataService<CountyParishHoldings>
+namespace Defra.Identity.Ingest.CountyParishHoldings;
+
+public class IngestService(IKrdsProvider provider, ICphService service) : IIngestService<Postgres.Database.Entities.CountyParishHoldings>
 {
     private const string Cphcode = "CPHN";
 
@@ -20,7 +19,7 @@ public class IngestCountyParishHoldings(IKrdsProvider provider, ICphService serv
 
         foreach (var cphIdentifier in cph)
         {
-           await service.Upsert(new CountyParishHoldings() { Identifier = cphIdentifier.Value });
+           await service.Upsert(new Postgres.Database.Entities.CountyParishHoldings() { Identifier = cphIdentifier.Value });
         }
 
         return true;

@@ -1,27 +1,30 @@
-// <copyright file="Mark.cs" company="Defra">
+// <copyright file="Species.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Models.Integration.Krds.Sites;
-
 using System.Text.Json.Serialization;
 
-public class Mark
+namespace Defra.Identity.KeeperReferenceData.Models.Sites;
+
+public class Species
 {
     [JsonPropertyName("id")]
     public Guid Id { get; set; }
 
-    [JsonPropertyName("mark")]
-    public string Value { get; set; } = string.Empty;
+    [JsonPropertyName("code")]
+    public string Code { get; set; } = string.Empty;
+
+    [JsonPropertyName("name")]
+    public string Name { get; set; } = string.Empty;
+
+    [JsonPropertyName("lastModifiedDate")]
+    public DateTimeOffset? LastModifiedDate { get; set; }
 
     [JsonPropertyName("startDate")]
     public DateTimeOffset? StartDate { get; set; }
 
     [JsonPropertyName("endDate")]
     public DateTimeOffset? EndDate { get; set; }
-
-    [JsonPropertyName("species")]
-    public List<Species> Species { get; set; } = new();
 
     [JsonPropertyName("lastUpdatedDate")]
     public DateTimeOffset? LastUpdatedDate { get; set; }

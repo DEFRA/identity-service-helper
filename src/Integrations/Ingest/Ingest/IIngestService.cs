@@ -4,7 +4,7 @@
 
 namespace Defra.Identity.Ingest;
 
-public interface IIngestDataService<T>
+public interface IIngestService<T>
     where T : class
 {
     Task<bool> Execute();

@@ -2,14 +2,13 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Ingest;
-
+using Defra.Identity.KeeperReferenceData.Models.Parties;
 using Defra.Identity.KeeperReferenceData.Providers;
-using Defra.Identity.Models.Integration.Krds.Parties;
-using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Services.Roles;
 
-public class IngestRoles(IKrdsProvider provider, IRolesService service) : IIngestDataService<Roles>
+namespace Defra.Identity.Ingest.Roles;
+
+public class IngestService(IKrdsProvider provider, IRolesService service) : IIngestService<Postgres.Database.Entities.Roles>
 {
     public async Task<bool> Execute()
     {

@@ -1,12 +1,12 @@
-// <copyright file="Type.cs" company="Defra">
+// <copyright file="Role.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Models.Integration.Krds.Sites;
-
 using System.Text.Json.Serialization;
 
-public class Type
+namespace Defra.Identity.KeeperReferenceData.Models.Sites;
+
+public class Role
 {
     [JsonPropertyName("id")]
     public Guid Id { get; set; }

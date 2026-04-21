@@ -10,7 +10,7 @@ using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.QueueManagement.Messages;
 using Microsoft.Extensions.Logging;
 
-public class KeeperDataImportCompleteHandler(ILogger<KeeperDataImportCompleteHandler> logger, IIngestDataService<CountyParishHoldings> cphService, IIngestDataService<Roles> rolesService) : IMessageHandler<KeeperDataImportComplete>
+public class KeeperDataImportCompleteHandler(ILogger<KeeperDataImportCompleteHandler> logger, IIngestService<CountyParishHoldings> cphService, IIngestService<Roles> rolesService) : IMessageHandler<KeeperDataImportComplete>
 {
     public async Task<MessageProcessStatus> HandleAsync(MessageEnvelope<KeeperDataImportComplete> messageEnvelope, CancellationToken cancellationToken = default)
     {

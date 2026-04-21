@@ -1,12 +1,12 @@
-// <copyright file="Species.cs" company="Defra">
+// <copyright file="Type.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Models.Integration.Krds.Sites;
-
 using System.Text.Json.Serialization;
 
-public class Species
+namespace Defra.Identity.KeeperReferenceData.Models.Sites;
+
+public class Type
 {
     [JsonPropertyName("id")]
     public Guid Id { get; set; }
@@ -16,15 +16,6 @@ public class Species
 
     [JsonPropertyName("name")]
     public string Name { get; set; } = string.Empty;
-
-    [JsonPropertyName("lastModifiedDate")]
-    public DateTimeOffset? LastModifiedDate { get; set; }
-
-    [JsonPropertyName("startDate")]
-    public DateTimeOffset? StartDate { get; set; }
-
-    [JsonPropertyName("endDate")]
-    public DateTimeOffset? EndDate { get; set; }
 
     [JsonPropertyName("lastUpdatedDate")]
     public DateTimeOffset? LastUpdatedDate { get; set; }

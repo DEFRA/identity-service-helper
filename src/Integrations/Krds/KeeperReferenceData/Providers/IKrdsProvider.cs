@@ -2,10 +2,10 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.KeeperReferenceData.Providers;
+using Defra.Identity.KeeperReferenceData.Models.Parties;
+using Defra.Identity.KeeperReferenceData.Models.Sites;
 
-using Defra.Identity.Models.Integration.Krds.Parties;
-using Defra.Identity.Models.Integration.Krds.Sites;
+namespace Defra.Identity.KeeperReferenceData.Providers;
 
 public interface IKrdsProvider : IDisposable
 {

@@ -8,9 +8,6 @@
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Models\Models.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <None Remove="Json\sites_response.schema.json" />
     <EmbeddedResource Include="Json\sites_response.schema.json" />
   </ItemGroup>

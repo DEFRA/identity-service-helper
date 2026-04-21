@@ -2,6 +2,10 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
+using Defra.Identity.Ingest.CountyParishHoldings;
+using Defra.Identity.Ingest.Roles;
+using IngestService = Defra.Identity.Ingest.Roles.IngestService;
+
 namespace Defra.Identity.Ingest;
 
 using Defra.Identity.Postgres.Database.Entities;
@@ -12,7 +16,7 @@ public static class ServiceCollectionExtensions
 {
     public static void AddDataIngestServices(this IServiceCollection services, IConfigurationRoot configuration)
     {
-        services.AddTransient<IIngestDataService<CountyParishHoldings>, IngestCountyParishHoldings>();
-        services.AddTransient<IIngestDataService<Roles>, IngestRoles>();
+        services.AddTransient<IIngestService<Postgres.Database.Entities.CountyParishHoldings>, CountyParishHoldings.IngestService>();
+        services.AddTransient<IIngestService<Postgres.Database.Entities.Roles>, IngestService>();
     }
 }

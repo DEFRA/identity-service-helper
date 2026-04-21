@@ -17,15 +17,15 @@ public class KeeperDataImportCompleteHandlerTests
 {
     private readonly ILogger<KeeperDataImportCompleteHandler> logger;
     private readonly KeeperDataImportCompleteHandler handler;
-    private readonly IIngestDataService<CountyParishHoldings> ingestDataService;
-    private readonly IIngestDataService<Roles> roleIngestDataService;
+    private readonly IIngestService<CountyParishHoldings> ingestService;
+    private readonly IIngestService<Roles> roleIngestService;
 
     public KeeperDataImportCompleteHandlerTests()
     {
         logger = Substitute.For<ILogger<KeeperDataImportCompleteHandler>>();
-        ingestDataService = Substitute.For<IIngestDataService<CountyParishHoldings>>();
-        roleIngestDataService = Substitute.For<IIngestDataService<Roles>>();
-        handler = new KeeperDataImportCompleteHandler(logger, ingestDataService, roleIngestDataService);
+        ingestService = Substitute.For<IIngestService<CountyParishHoldings>>();
+        roleIngestService = Substitute.For<IIngestService<Roles>>();
+        handler = new KeeperDataImportCompleteHandler(logger, ingestService, roleIngestService);
     }
 
     [Fact]
@@ -38,7 +38,7 @@ public class KeeperDataImportCompleteHandlerTests
             Message = message,
         };
 
-        ingestDataService.Execute().Returns(true);
+        ingestService.Execute().Returns(true);
 
         // Act
         var result = await handler.HandleAsync(messageEnvelope, CancellationToken.None);
@@ -59,7 +59,7 @@ public class KeeperDataImportCompleteHandlerTests
             Message = message,
         };
 
-        ingestDataService.Execute().Returns(false);
+        ingestService.Execute().Returns(false);
 
         // Act
         var result = await handler.HandleAsync(messageEnvelope, CancellationToken.None);

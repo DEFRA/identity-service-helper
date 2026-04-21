@@ -1,12 +1,12 @@
-// <copyright file="PartyResponse.cs" company="Defra">
+// <copyright file="SiteResponse.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Models.Integration.Krds.Parties;
-
 using System.Text.Json.Serialization;
 
-public class PartyResponse
+namespace Defra.Identity.KeeperReferenceData.Models.Sites;
+
+public class SiteResponse
 {
     [JsonPropertyName("count")]
     public int Count { get; set; }
@@ -15,7 +15,7 @@ public class PartyResponse
     public int TotalCount { get; set; }
 
     [JsonPropertyName("values")]
-    public List<Party> Values { get; set; } = new();
+    public List<Site> Values { get; set; } = new();
 
     [JsonPropertyName("page")]
     public int Page { get; set; }
