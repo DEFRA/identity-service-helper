@@ -2,19 +2,18 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-using Defra.Identity.KeeperReferenceData.Models.Parties;
-using Defra.Identity.KeeperReferenceData.Models.Sites;
-using Party = Defra.Identity.KeeperReferenceData.Models.Parties.Party;
-using Site = Defra.Identity.KeeperReferenceData.Models.Sites.Site;
-
 namespace Defra.Identity.KeeperReferenceData.Providers;
 
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Web;
+using Defra.Identity.KeeperReferenceData.Models.Parties;
+using Defra.Identity.KeeperReferenceData.Models.Sites;
 using Json.Schema;
 using Microsoft.Extensions.Logging;
+using Party = Defra.Identity.KeeperReferenceData.Models.Parties.Party;
+using Site = Defra.Identity.KeeperReferenceData.Models.Sites.Site;
 
 public class KrdsProvider(HttpClient client, ILogger<KrdsProvider> logger) : IKrdsProvider
 {

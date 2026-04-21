@@ -2,18 +2,17 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-using Defra.Identity.KeeperReferenceData.Models.Parties;
-using Defra.Identity.KeeperReferenceData.Models.Sites;
-
 namespace Defra.Identity.KeeperReferenceData.Tests;
 
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Net.Http.Headers;
+using Defra.Identity.KeeperReferenceData.Models.Parties;
+using Defra.Identity.KeeperReferenceData.Models.Sites;
 using Defra.Identity.KeeperReferenceData.Providers;
 using Microsoft.Extensions.Logging.Abstractions;
 using Polly;

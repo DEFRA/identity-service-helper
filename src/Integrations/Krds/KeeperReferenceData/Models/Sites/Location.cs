@@ -2,9 +2,9 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-using System.Text.Json.Serialization;
-
 namespace Defra.Identity.KeeperReferenceData.Models.Sites;
+
+using System.Text.Json.Serialization;
 
 public class Location
 {

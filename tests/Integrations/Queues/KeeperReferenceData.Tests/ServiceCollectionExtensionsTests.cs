@@ -5,10 +5,13 @@
 namespace Defra.Identity.KeeperReferenceData.Tests;
 
 using Defra.Identity.Ingest;
+using Defra.Identity.Repositories;
+using Defra.Identity.Postgres.Database;
 using Defra.Identity.QueueManagement;
 using Defra.Identity.QueueManagement.Handlers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
@@ -37,6 +40,13 @@ public class ServiceCollectionExtensionsTests
 
         services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
         services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
+        var mockEnv = new Microsoft.Extensions.Hosting.Internal.HostingEnvironment
+        {
+            EnvironmentName = Environments.Development
+        };
+        services.AddSingleton<IHostEnvironment>(mockEnv);
+        services.AddPostgresDatabase(configuration);
+        services.AddRepositories(configuration);
         services.AddDataIngestServices(configuration);
         services.AddKeeperRecordsDataIntegrationService(configuration);
 

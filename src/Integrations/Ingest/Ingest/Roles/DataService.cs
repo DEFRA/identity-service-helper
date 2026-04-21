@@ -1,16 +1,22 @@
-using Defra.Identity.KeeperReferenceData.Models.Parties;
+// <copyright file="DataService.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
 
 namespace Defra.Identity.Ingest.Roles;
 
-public class DataService : IDataService<Role>
+using Defra.Identity.KeeperReferenceData.Models.Parties;
+using Defra.Identity.Repositories.Roles;
+
+public class DataService(IRoleRepository repository) : IDataService<Role>
 {
-    public async Task Upsert(Models.Integration.Krds.Parties.Role role, CancellationToken cancellationToken = default)
+    public async Task Upsert(Defra.Identity.KeeperReferenceData.Models.Parties.Role role, CancellationToken cancellationToken = default)
     {
         var roles = await repository.GetSingle(x => x.Name.Equals(role.Code), cancellationToken);
-       
-
-        var newRole = MapIntegrationRoleToEntity(role);
-        await repository.Create(newRole, cancellationToken));
+        if (roles == null)
+        {
+            var newRole = MapIntegrationRoleToEntity(role);
+            await repository.Create(newRole, cancellationToken);
+        }
     }
 
     private static Postgres.Database.Entities.Roles MapIntegrationRoleToEntity(
@@ -22,6 +28,4 @@ public class DataService : IDataService<Role>
             Description = role.Name ?? string.Empty,
         };
     }
-
-    
 }

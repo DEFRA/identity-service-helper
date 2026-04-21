@@ -2,9 +2,9 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-using System.Text.Json.Serialization;
-
 namespace Defra.Identity.KeeperReferenceData.Models.Parties;
+
+using System.Text.Json.Serialization;
 
 public class Role
 {

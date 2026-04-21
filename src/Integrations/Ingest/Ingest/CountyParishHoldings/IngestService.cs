@@ -2,24 +2,23 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-using Defra.Identity.KeeperReferenceData.Models.Sites;
-using Defra.Identity.KeeperReferenceData.Providers;
-using Defra.Identity.Services.Cphs;
-
 namespace Defra.Identity.Ingest.CountyParishHoldings;
 
-public class IngestService(IKrdsProvider provider, ICphService service) : IIngestService<Postgres.Database.Entities.CountyParishHoldings>
+using Defra.Identity.KeeperReferenceData.Models.Sites;
+using Defra.Identity.KeeperReferenceData.Providers;
+
+public class IngestService(IKrdsProvider provider, IDataService<Site> service) : IIngestService<Postgres.Database.Entities.CountyParishHoldings>
 {
     private const string Cphcode = "CPHN";
 
     public async Task<bool> Execute()
     {
-        var sites = await GetSites(DateTime.UtcNow);
-        var cph = sites.Values.SelectMany(x => x.Identifiers).Where(t => t.Type is { Code: Cphcode }).ToList();
+        var responses = await GetSites(DateTime.UtcNow);
+        var sites = responses.Values.Where(t => (string)t.Type! == Cphcode).ToList();
 
-        foreach (var cphIdentifier in cph)
+        foreach (var cph in sites)
         {
-           await service.Upsert(new Postgres.Database.Entities.CountyParishHoldings() { Identifier = cphIdentifier.Value });
+           await service.Upsert(cph);
         }
 
         return true;
