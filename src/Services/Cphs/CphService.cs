@@ -22,14 +22,14 @@ using Microsoft.Extensions.Logging;
 public class CphService : ICphService
 {
     private readonly ICphRepository cphRepository;
-    private readonly ICphAssociatedUsersRepository cphAssociatedUsersRepository;
+    private readonly ICphAssigneesRepository cphAssigneesRepository;
     private readonly IValidator<IOperationByCphNumber> cphNumberValidator;
     private readonly ILogger<CphService> logger;
 
-    public CphService(ICphRepository cphRepository, ICphAssociatedUsersRepository cphAssociatedUsersRepository, IValidator<IOperationByCphNumber> cphNumberValidator, ILogger<CphService> logger)
+    public CphService(ICphRepository cphRepository, ICphAssigneesRepository cphAssigneesRepository, IValidator<IOperationByCphNumber> cphNumberValidator, ILogger<CphService> logger)
     {
         this.cphRepository = cphRepository;
-        this.cphAssociatedUsersRepository = cphAssociatedUsersRepository;
+        this.cphAssigneesRepository = cphAssigneesRepository;
         this.cphNumberValidator = cphNumberValidator;
         this.logger = logger;
     }
@@ -144,7 +144,7 @@ public class CphService : ICphService
         await cphRepository.Update(cphEntity, cancellationToken);
     }
 
-    public async Task<PagedResults<CphAssociatedUser>> GetAllCphUsersPaged(GetCphUsersByCphId request, CancellationToken cancellationToken = default)
+    public async Task<PagedResults<CphAssignee>> GetCphAssignees(GetCphAssigneesByCphId request, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Getting all county parish holding users for id {Id} by page", request.Id);
 
@@ -161,7 +161,7 @@ public class CphService : ICphService
             throw new NotFoundException("County parish holding not found.");
         }
 
-        var pageCphUserEntities = await cphAssociatedUsersRepository.GetPaged(
+        var pageCphUserEntities = await cphAssigneesRepository.GetPaged(
             primaryFilter,
             associationFilter,
             request.PageNumber,
@@ -170,7 +170,7 @@ public class CphService : ICphService
             request.OrderByDescending ?? false,
             cancellationToken);
 
-        var pagedCphUserResults = pageCphUserEntities.ToPagedResults(MapCphUserEntityToCphUser);
+        var pagedCphUserResults = pageCphUserEntities.ToPagedResults(MapCphUserEntityToCphAssignee);
 
         return pagedCphUserResults;
     }
@@ -183,9 +183,9 @@ public class CphService : ICphService
         };
     }
 
-    private static CphAssociatedUser MapCphUserEntityToCphUser(ApplicationUserAccountHoldingAssignments cphUserEntity)
+    private static CphAssignee MapCphUserEntityToCphAssignee(ApplicationUserAccountHoldingAssignments cphUserEntity)
     {
-        return new CphAssociatedUser
+        return new CphAssignee
         {
             AssociationId = cphUserEntity.Id,
             UserId = cphUserEntity.UserAccountId,

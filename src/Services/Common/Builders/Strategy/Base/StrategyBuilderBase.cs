@@ -24,7 +24,9 @@ public abstract class StrategyBuilderBase<TService, TBuilder>
 
     protected string? ActionDescription { get; private set; }
 
-    protected Func<Task<ValidationResult>>? ValidateAction { get; private set; }
+    private Action? SetupAction { get; set; }
+
+    private Func<Task<ValidationResult>>? ValidateAction { get; set; }
 
     public TBuilder WithLogger(ILogger<TService> logger)
     {
@@ -56,10 +58,21 @@ public abstract class StrategyBuilderBase<TService, TBuilder>
         return (TBuilder)this;
     }
 
+    public TBuilder WithSetup(Action setupAction)
+    {
+        SetupAction = setupAction;
+        return (TBuilder)this;
+    }
+
     public TBuilder WithRequestValidation(Func<Task<ValidationResult>> validateAction)
     {
         ValidateAction = validateAction;
         return (TBuilder)this;
+    }
+
+    protected void ExecuteSetup()
+    {
+        SetupAction?.Invoke();
     }
 
     protected async Task ExecuteRequestValidation()

@@ -6,8 +6,12 @@ namespace Defra.Identity.Services.Users;
 
 using Defra.Identity.Models.Requests.Users.Commands;
 using Defra.Identity.Models.Requests.Users.Queries;
+using Defra.Identity.Models.Responses.Common;
+using Defra.Identity.Models.Responses.Delegations;
 using Defra.Identity.Models.Responses.Users;
-using Defra.Identity.Responses.Users.Cphs.Aggregates;
+using Defra.Identity.Models.Responses.Users.Cphs;
+using Defra.Identity.Models.Responses.Users.Cphs.Aggregates;
+using Defra.Identity.Models.Responses.Users.Delegates;
 
 public interface IUserService
 {
@@ -19,9 +23,13 @@ public interface IUserService
 
     Task<User> Update(UpdateUser request, CancellationToken cancellationToken = default);
 
-    Task<User> Create(CreateUser request,  CancellationToken cancellationToken = default);
+    Task<User> Create(CreateUser request, CancellationToken cancellationToken = default);
 
     Task<bool> Delete(DeleteUser request, CancellationToken cancellationToken = default);
 
     Task<UserCphs> GetUserCphs(GetUserCphsByUserId request, CancellationToken cancellationToken = default);
+
+    Task<PagedResults<CphDelegate>> GetCphDelegatesForDelegator(GetCphDelegatesByDelegatorId request, CancellationToken cancellationToken = default);
+
+    Task<PagedResults<CphDelegation>> GetCphDelegationsForDelegateAssociatedWithDelegator(GetCphDelegationsByUserIdFiltered request, CancellationToken cancellationToken = default);
 }

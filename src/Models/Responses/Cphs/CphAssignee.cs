@@ -1,4 +1,4 @@
-﻿// <copyright file="CphAssociatedUser.cs" company="Defra">
+﻿// <copyright file="CphAssignee.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
@@ -7,7 +7,7 @@ namespace Defra.Identity.Models.Responses.Cphs;
 using System.ComponentModel;
 using Defra.Identity.Models;
 
-public class CphAssociatedUser
+public class CphAssignee
 {
     [Description(OpenApiMetadata.AssociatedUsers.Id)]
     public Guid AssociationId { get; set; }

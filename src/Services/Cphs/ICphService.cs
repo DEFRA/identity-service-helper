@@ -22,5 +22,5 @@ public interface ICphService
 
     Task Delete(DeleteCphByCphId request, Guid operatorId, CancellationToken cancellationToken = default);
 
-    Task<PagedResults<CphAssociatedUser>> GetAllCphUsersPaged(GetCphUsersByCphId request, CancellationToken cancellationToken = default);
+    Task<PagedResults<CphAssignee>> GetCphAssignees(GetCphAssigneesByCphId request, CancellationToken cancellationToken = default);
 }

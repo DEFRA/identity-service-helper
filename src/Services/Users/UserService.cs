@@ -7,38 +7,59 @@ namespace Defra.Identity.Services.Users;
 using System.Linq.Expressions;
 using Defra.Identity.Models.Requests.Users.Commands;
 using Defra.Identity.Models.Requests.Users.Queries;
+using Defra.Identity.Models.Responses.Common;
+using Defra.Identity.Models.Responses.Delegations;
 using Defra.Identity.Models.Responses.Users;
+using Defra.Identity.Models.Responses.Users.Cphs;
+using Defra.Identity.Models.Responses.Users.Cphs.Aggregates;
+using Defra.Identity.Models.Responses.Users.Delegates;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Repositories.Users;
 using Defra.Identity.Repositories.Users.Cphs;
-using Defra.Identity.Responses.Users.Cphs;
-using Defra.Identity.Responses.Users.Cphs.Aggregates;
+using Defra.Identity.Repositories.Users.Delegations;
 using Defra.Identity.Services.Common.Builders.Strategy.Factories;
+using Defra.Identity.Services.Common.Extensions;
+using Defra.Identity.Services.Common.Filters;
 using Defra.Identity.Services.Common.Helpers;
+using Defra.Identity.Services.Common.Selectors;
 using Defra.Identity.Services.Users.Rules;
 using Microsoft.Extensions.Logging;
 
 public class UserService : IUserService
 {
     private readonly IUsersRepository repository;
-    private readonly IUserAssociatedCphsRepository userAssociatedCphsRepository;
-    private readonly IUserDelegatedCphsRepository userDelegatedCphsRepository;
+    private readonly ICphAssignmentsForAssigneeRepository cphAssignmentsForAssigneeRepository;
+    private readonly ICphDelegationsForDelegateRepository cphDelegationsForDelegateRepository;
+    private readonly ICphDelegatesForDelegatorRepository cphDelegatesForDelegatorRepository;
+    private readonly ICphDelegationsForDelegatorRepository cphDelegationsForDelegatorRepository;
     private readonly IStrategyBuilderFactory<UserService> strategyBuilderFactory;
     private readonly ILogger<UserService> logger;
 
     public UserService(
         IUsersRepository repository,
-        IUserAssociatedCphsRepository userAssociatedCphsRepository,
-        IUserDelegatedCphsRepository userDelegatedCphsRepository,
+        ICphAssignmentsForAssigneeRepository cphAssignmentsForAssigneeRepository,
+        ICphDelegationsForDelegateRepository cphDelegationsForDelegateRepository,
+        ICphDelegatesForDelegatorRepository cphDelegatesForDelegatorRepository,
+        ICphDelegationsForDelegatorRepository cphDelegationsForDelegatorRepository,
         IStrategyBuilderFactory<UserService> strategyBuilderFactory,
         ILogger<UserService> logger)
     {
         this.repository = repository;
-        this.userAssociatedCphsRepository = userAssociatedCphsRepository;
-        this.userDelegatedCphsRepository = userDelegatedCphsRepository;
+        this.cphAssignmentsForAssigneeRepository = cphAssignmentsForAssigneeRepository;
+        this.cphDelegationsForDelegateRepository = cphDelegationsForDelegateRepository;
+        this.cphDelegatesForDelegatorRepository = cphDelegatesForDelegatorRepository;
+        this.cphDelegationsForDelegatorRepository = cphDelegationsForDelegatorRepository;
         this.strategyBuilderFactory = strategyBuilderFactory;
         this.logger = logger;
+
+        this.cphDelegatesForDelegatorRepository
+            .WithHoldingAssignmentsFilter(FiltersLibrary.CphAssignments.NotDeleted)
+            .WithCountyParishHoldingsFilter(FiltersLibrary.Cphs.NotDeletedOrExpired)
+            .WithDelegationsFilter(FiltersLibrary.CphDelegations.NotDeletedOrExpired);
+
+        this.cphDelegationsForDelegatorRepository
+            .WithHoldingAssignmentsFilter(FiltersLibrary.CphAssignments.NotDeleted);
 
         this.strategyBuilderFactory
             .WithDefaultLogger(this.logger);
@@ -51,15 +72,7 @@ public class UserService : IUserService
 
         var userAccounts = await repository.GetList(filter, cancellationToken);
 
-        var users = userAccounts.Select(
-            userAccount => new User()
-            {
-                Id = userAccount.Id,
-                Email = userAccount.EmailAddress,
-                FirstName = userAccount.FirstName,
-                LastName = userAccount.LastName,
-                DisplayName = userAccount.DisplayName,
-            }).ToList();
+        var users = userAccounts.Select(entity => MapUserEntityToUser(entity)).ToList();
 
         return users;
     }
@@ -77,10 +90,7 @@ public class UserService : IUserService
             throw new NotFoundException("user not found.");
         }
 
-        var user = new User()
-        {
-            Id = userAccount.Id, Email = userAccount.EmailAddress, FirstName = userAccount.FirstName, LastName = userAccount.LastName,
-        };
+        var user = MapUserEntityToUser(userAccount);
 
         return user;
     }
@@ -98,22 +108,19 @@ public class UserService : IUserService
             existingUser.EmailAddress = request.Email;
             var updated = await repository.Update(existingUser, cancellationToken);
 
-            return new User()
-            {
-                Id = updated.Id, Email = updated.EmailAddress, FirstName = updated.FirstName, LastName = updated.LastName,
-            };
+            return MapUserEntityToUser(updated);
         }
 
         logger.LogInformation("User with id {Id} not found, creating", request.Id);
+
         var userAccount = new UserAccounts()
         {
             Id = request.Id, EmailAddress = request.Email, FirstName = request.FirstName, LastName = request.LastName,
         };
+
         var result = await repository.Create(userAccount, cancellationToken);
-        return new User()
-        {
-            Id = result.Id, Email = result.EmailAddress, FirstName = result.FirstName, LastName = result.LastName,
-        };
+
+        return MapUserEntityToUser(result);
     }
 
     public async Task<User> Update(UpdateUser request, CancellationToken cancellationToken = default)
@@ -134,19 +141,13 @@ public class UserService : IUserService
 
         var updated = await repository.Update(existingUser, cancellationToken);
 
-        return new User
-        {
-            Id = updated.Id,
-            Email = updated.EmailAddress,
-            FirstName = updated.FirstName,
-            LastName = updated.LastName,
-            DisplayName = updated.DisplayName,
-        };
+        return MapUserEntityToUser(updated);
     }
 
     public async Task<User> Create(CreateUser request, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Creating new user with email {Email}", request.Email);
+
         var newUser = new UserAccounts
         {
             EmailAddress = request.Email,
@@ -157,14 +158,8 @@ public class UserService : IUserService
         };
 
         var createdUser = await repository.Create(newUser, cancellationToken);
-        return new User()
-        {
-            Id = createdUser.Id,
-            Email = createdUser.EmailAddress,
-            FirstName = createdUser.FirstName,
-            LastName = createdUser.LastName,
-            DisplayName = createdUser.DisplayName,
-        };
+
+        return MapUserEntityToUser(createdUser);
     }
 
     public async Task<bool> Delete(DeleteUser request, CancellationToken cancellationToken = default)
@@ -173,26 +168,19 @@ public class UserService : IUserService
         return await repository.Delete(x => x.Id == request.Id, request.OperatorId, cancellationToken);
     }
 
-    private static bool IncludeInactiveInferred(GetAllUsers request)
-    {
-        return request.IncludeInactive != null &&
-               (request.IncludeInactive == string.Empty ||
-                request.IncludeInactive.Equals("true", StringComparison.InvariantCultureIgnoreCase));
-    }
-
     public async Task<UserCphs> GetUserCphs(GetUserCphsByUserId request, CancellationToken cancellationToken = default)
     {
         var userAssociatedCphs = await strategyBuilderFactory.BuildGetAssociationsListStrategy<UserAccounts, ApplicationUserAccountHoldingAssignments>()
             .WithPrimaryEntityDescription("User account")
             .WithActionDescription("Get all county parish holdings associated with")
             .WithPrimaryRepository(repository)
-            .WithAssociationsRepository(userAssociatedCphsRepository)
+            .WithAssociationsRepository(cphAssignmentsForAssigneeRepository)
             .WithCancellationToken(cancellationToken)
             .WithRequestAndPrimaryEntityFilter(request, userAccount => userAccount.Id == request.Id)
-            .WithAssociatedEntityFilter(holdingAssignment => holdingAssignment.DeletedAt == null)
+            .WithAssociatedEntityFilter(FiltersLibrary.CphAssignments.NotDeleted)
             .WithPrimaryEntityExistenceRules(rules => { rules.Add(RulesLibrary.Existence.NotSoftDeleted); })
             .ExecuteAndMap(
-                entity => new UserAssociatedCph()
+                entity => new UserAssignedCph()
                 {
                     AssociationId = entity.Id,
                     CountyParishHoldingId = entity.CountyParishHoldingId,
@@ -206,31 +194,99 @@ public class UserService : IUserService
             .WithPrimaryEntityDescription("User account")
             .WithActionDescription("Get all county parish holding delegations associated with")
             .WithPrimaryRepository(repository)
-            .WithAssociationsRepository(userDelegatedCphsRepository)
+            .WithAssociationsRepository(cphDelegationsForDelegateRepository)
             .WithCancellationToken(cancellationToken)
             .WithRequestAndPrimaryEntityFilter(request, userAccount => userAccount.Id == request.Id)
-            .WithAssociatedEntityFilter(delegation => delegation.DeletedAt == null && (delegation.ExpiresAt == null || DateTime.UtcNow < delegation.ExpiresAt))
+            .WithAssociatedEntityFilter(FiltersLibrary.CphDelegations.Aggregates.DelegationAndReferencesNotDeletedOrExpired)
             .WithPrimaryEntityExistenceRules(rules => { rules.Add(RulesLibrary.Existence.NotSoftDeleted); })
-            .ExecuteAndMap(
-                entity => new UserDelegatedCph()
-                {
-                    DelegationId = entity.Id,
-                    CountyParishHoldingId = entity.CountyParishHoldingId,
-                    CountyParishHoldingNumber = entity.CountyParishHolding.Identifier,
-                    DelegatingUserId = entity.DelegatingUserId,
-                    DelegatingUserName = entity.DelegatingUser.DisplayName,
-                    DelegatedUserRoleId = entity.DelegatedUserRoleId,
-                    DelegatedUserRoleName = entity.DelegatedUserRole.Name,
-                    InvitationExpiresAt = entity.InvitationExpiresAt,
-                    InvitationAcceptedAt = entity.InvitationAcceptedAt,
-                    InvitationRejectedAt = entity.InvitationRejectedAt,
-                    RevokedAt = entity.RevokedAt,
-                    ExpiresAt = entity.ExpiresAt,
-                    RevokedById = entity.RevokedById,
-                    RevokedByName = entity.RevokedByUser?.DisplayName,
-                    Active = DelegationHelper.IsActiveDelegation(entity),
-                });
+            .ExecuteAndMap(MapCphDelegationEntityToCphDelegation);
 
         return new UserCphs(userAssociatedCphs, userDelegatedCphs);
+    }
+
+    public async Task<PagedResults<CphDelegate>> GetCphDelegatesForDelegator(GetCphDelegatesByDelegatorId request, CancellationToken cancellationToken = default)
+    {
+        return await strategyBuilderFactory.BuildGetAssociationsPagedStrategy<UserAccounts, UserAccounts>()
+            .WithPrimaryEntityDescription("User account")
+            .WithActionDescription("Get user owned county parish holding unique delegation users associated with")
+            .WithPrimaryRepository(repository)
+            .WithAssociationsRepository(cphDelegatesForDelegatorRepository)
+            .WithCancellationToken(cancellationToken)
+            .WithRequestAndPrimaryEntityFilter(request, userAccount => userAccount.Id == request.Id)
+            .WithAssociatedEntityFilter(FiltersLibrary.Users.NotDeleted)
+            .WithPrimaryEntityExistenceRules(rules => { rules.Add(RulesLibrary.Existence.NotSoftDeleted); })
+            .ExecuteAndMap(MapUserEntityToDelegatedUser, SelectorLibrary.UserDisplayName);
+    }
+
+    public async Task<PagedResults<CphDelegation>> GetCphDelegationsForDelegateAssociatedWithDelegator(
+        GetCphDelegationsByUserIdFiltered request,
+        CancellationToken cancellationToken = default)
+    {
+        return await strategyBuilderFactory.BuildGetAssociationsPagedStrategy<UserAccounts, CountyParishHoldingDelegations>()
+            .WithPrimaryEntityDescription("User account")
+            .WithActionDescription("Get county parish holding delegations for delegator filtered by")
+            .WithPrimaryRepository(repository)
+            .WithAssociationsRepository(cphDelegationsForDelegatorRepository)
+            .WithCancellationToken(cancellationToken)
+            .WithRequestAndPrimaryEntityFilter(request, userAccount => userAccount.Id == request.DelegatorId)
+            .WithAssociatedEntityFilter(
+                FiltersLibrary.CphDelegations.Aggregates.DelegationAndReferencesNotDeletedOrExpired
+                    .AndAlso(delegation => delegation.DelegatedUserId == request.Id))
+            .WithPrimaryEntityExistenceRules(rules => { rules.Add(RulesLibrary.Existence.NotSoftDeleted); })
+            .ExecuteAndMap(MapCphDelegationEntityToCphDelegation, SelectorLibrary.CphDelegationCphIdentifier);
+    }
+
+    private static CphDelegation MapCphDelegationEntityToCphDelegation(CountyParishHoldingDelegations cphDelegationEntity)
+    {
+        return new CphDelegation()
+        {
+            Id = cphDelegationEntity.Id,
+            CountyParishHoldingId = cphDelegationEntity.CountyParishHoldingId,
+            CountyParishHoldingNumber = cphDelegationEntity.CountyParishHolding.Identifier,
+            DelegatingUserId = cphDelegationEntity.DelegatingUserId,
+            DelegatingUserName = cphDelegationEntity.DelegatingUser.DisplayName,
+            DelegatedUserId = cphDelegationEntity.DelegatedUserId,
+            DelegatedUserName = cphDelegationEntity.DelegatedUser?.DisplayName,
+            DelegatedUserEmail = cphDelegationEntity.DelegatedUserEmail,
+            DelegatedUserRoleId = cphDelegationEntity.DelegatedUserRoleId,
+            DelegatedUserRoleName = cphDelegationEntity.DelegatedUserRole.Name,
+            InvitationExpiresAt = cphDelegationEntity.InvitationExpiresAt,
+            InvitationAcceptedAt = cphDelegationEntity.InvitationAcceptedAt,
+            InvitationRejectedAt = cphDelegationEntity.InvitationRejectedAt,
+            RevokedAt = cphDelegationEntity.RevokedAt,
+            ExpiresAt = cphDelegationEntity.ExpiresAt,
+            RevokedById = cphDelegationEntity.RevokedById,
+            RevokedByName = cphDelegationEntity.RevokedByUser?.DisplayName,
+            Active = DelegationHelper.IsActiveDelegation(cphDelegationEntity),
+        };
+    }
+
+    private static CphDelegate MapUserEntityToDelegatedUser(UserAccounts userEntity)
+    {
+        var delegatedUser = new CphDelegate();
+
+        MapUserEntityToUser(userEntity, delegatedUser);
+
+        return delegatedUser;
+    }
+
+    private static User MapUserEntityToUser(UserAccounts userEntity, User? mappingTarget = null)
+    {
+        var target = mappingTarget ?? new User();
+
+        target.Id = userEntity.Id;
+        target.Email = userEntity.EmailAddress;
+        target.FirstName = userEntity.FirstName;
+        target.LastName = userEntity.LastName;
+        target.DisplayName = userEntity.DisplayName;
+
+        return target;
+    }
+
+    private static bool IncludeInactiveInferred(GetAllUsers request)
+    {
+        return request.IncludeInactive != null &&
+               (request.IncludeInactive == string.Empty ||
+                request.IncludeInactive.Equals("true", StringComparison.InvariantCultureIgnoreCase));
     }
 }

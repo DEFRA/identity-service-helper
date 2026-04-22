@@ -87,6 +87,8 @@ public class GetStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TServic
             PrimaryEntityDescription.ToLowerInvariant(),
             Request.Id);
 
+        ExecuteSetup();
+
         await ExecuteRequestValidation();
 
         var entity = await GettableRepository.GetSingle(EntityFilter, CancellationToken.Value);

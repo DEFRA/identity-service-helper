@@ -1,7 +1,6 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/Api/Api.csproj" />
-    <Project Path="src\Models\Models.csproj" />
   </Folder>
   <Folder Name="/src/Database/">
     <Project Path="src/Database/DataSeeder/DataSeeder.csproj" />
@@ -16,6 +15,9 @@
   </Folder>
   <Folder Name="/src/Integrations/Schedules/">
     <Project Path="src\Integrations\Schedules\Scheduling\Scheduling.csproj" />
+  </Folder>
+  <Folder Name="/src/Models/">
+    <Project Path="src\Models\Models.csproj" />
   </Folder>
   <Folder Name="/src/Repositories/">
     <Project Path="src/Repositories/Repositories.csproj" />

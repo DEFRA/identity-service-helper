@@ -1,10 +1,10 @@
-﻿// <copyright file="UserAssociatedCph.cs" company="Defra">
+﻿// <copyright file="UserAssignedCph.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Responses.Users.Cphs;
+namespace Defra.Identity.Models.Responses.Users.Cphs;
 
-public class UserAssociatedCph
+public class UserAssignedCph
 {
     public required Guid AssociationId { get; set; }
 

@@ -216,7 +216,7 @@ public class CphDelegationsServiceTests
 
         await cphRepository.Received(1).ValidateReferenceById(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
         await roleRepository.Received(1).ValidateReferenceById(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
-        await userRepository.Received(2).ValidateReferenceById(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
+        await userRepository.Received(1).ValidateReferenceById(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
         await repository.Received(1).Create(Arg.Any<CountyParishHoldingDelegations>(), Arg.Any<CancellationToken>());
     }
 
@@ -527,7 +527,7 @@ public class CphDelegationsServiceTests
         await repository.Received(1).GetSingle(Arg.Any<Expression<Func<CountyParishHoldingDelegations, bool>>>(), Arg.Any<CancellationToken>());
         await cphRepository.Received(1).ValidateReferenceById(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
         await roleRepository.Received(1).ValidateReferenceById(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
-        await userRepository.Received(2).ValidateReferenceById(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
+        await userRepository.Received(1).ValidateReferenceById(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
         await repository.Received(1).Update(Arg.Any<CountyParishHoldingDelegations>(), Arg.Any<CancellationToken>());
     }
 
@@ -555,7 +555,7 @@ public class CphDelegationsServiceTests
         await act.ShouldThrowAsync<NotFoundException>();
         await cphRepository.DidNotReceive().GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>());
         await roleRepository.DidNotReceive().GetSingle(Arg.Any<Expression<Func<Roles, bool>>>(), Arg.Any<CancellationToken>());
-        await userRepository.DidNotReceive().GetSingle(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<CancellationToken>());
+        await userRepository.Received(1).GetSingle(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<CancellationToken>());
         await repository.DidNotReceive().Update(Arg.Any<CountyParishHoldingDelegations>(), Arg.Any<CancellationToken>());
     }
 

@@ -82,8 +82,8 @@ public static class CphEndpoints
             .Produces(StatusCodes.Status404NotFound);
 
         app.MapDelete(
-            RouteNames.CountyParishHoldings + "/{county:int}/{parish:int}/{holding:int}",
-            CphHandlerFactory.CreateCphNumberRerouteHandler<DeleteCphByCphId, DeleteCphByCphNumber>(DeleteByIdRoute))
+                RouteNames.CountyParishHoldings + "/{county:int}/{parish:int}/{holding:int}",
+                CphHandlerFactory.CreateCphNumberRerouteHandler<DeleteCphByCphId, DeleteCphByCphNumber>(DeleteByIdRoute))
             .WithName(OpenApiMetadata.DeleteByNumberRoute.Name)
             .WithTags(OpenApiMetadata.Tag)
             .WithSummary(OpenApiMetadata.DeleteByNumberRoute.Summary)
@@ -93,25 +93,25 @@ public static class CphEndpoints
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status404NotFound);
 
-        app.MapGet(RouteNames.CountyParishHoldings + "/{id:guid}/users", GetUsersByIdRoute)
+        app.MapGet(RouteNames.CountyParishHoldings + "/{id:guid}/users", GetCphAssigneesByCphIdRoute)
             .WithName(OpenApiMetadata.GetUsersByIdRoute.Name)
             .WithTags(OpenApiMetadata.Tag)
             .WithSummary(OpenApiMetadata.GetUsersByIdRoute.Summary)
             .WithDescription(OpenApiMetadata.GetUsersByIdRoute.Description)
             .AddEndpointFilter<ValidationFilter<PagedQuery>>()
-            .Produces<PagedResults<CphAssociatedUser>>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
+            .Produces<PagedResults<CphAssignee>>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
             .Produces(StatusCodes.Status404NotFound);
 
         app.MapGet(
-            RouteNames.CountyParishHoldings + "/{county:int}/{parish:int}/{holding:int}/users",
-            CphHandlerFactory.CreateCphNumberRerouteHandler<GetCphUsersByCphId, GetCphUsersByCphNumber>(GetUsersByIdRoute))
+                RouteNames.CountyParishHoldings + "/{county:int}/{parish:int}/{holding:int}/users",
+                CphHandlerFactory.CreateCphNumberRerouteHandler<GetCphAssigneesByCphId, GetCphAssigneesByCphNumber>(GetCphAssigneesByCphIdRoute))
             .WithName(OpenApiMetadata.GetUsersByNumberRoute.Name)
             .WithTags(OpenApiMetadata.Tag)
             .WithSummary(OpenApiMetadata.GetUsersByNumberRoute.Summary)
             .WithDescription(OpenApiMetadata.GetUsersByNumberRoute.Description)
             .AddEndpointFilter<ValidationFilter<IOperationByCphNumber>>()
             .AddEndpointFilter<ValidationFilter<PagedQuery>>()
-            .Produces<PagedResults<CphAssociatedUser>>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
+            .Produces<PagedResults<CphAssignee>>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
             .Produces(StatusCodes.Status404NotFound);
     }
 
@@ -155,12 +155,12 @@ public static class CphEndpoints
         return Results.NoContent();
     }
 
-    private static async Task<IResult> GetUsersByIdRoute(
+    private static async Task<IResult> GetCphAssigneesByCphIdRoute(
         QueryRequestHeaders headers,
-        [AsParameters] GetCphUsersByCphId request,
+        [AsParameters] GetCphAssigneesByCphId request,
         ICphService service)
     {
-        var pagedCphUsersResults = await service.GetAllCphUsersPaged(request);
+        var pagedCphUsersResults = await service.GetCphAssignees(request);
 
         return Results.Ok(pagedCphUsersResults);
     }
