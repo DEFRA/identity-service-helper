@@ -88,6 +88,15 @@ public class CphDelegationsService : ICphDelegationsService
 
     public async Task<CphDelegation> Create(CreateCphDelegation request, CancellationToken cancellationToken = default)
     {
+        var delegatedUser = request.DelegatedUserId == new Guid("00000000-0000-0000-0000-000000000001")
+            ? await usersRepository.GetSingle(user => user.EmailAddress == request.DelegatedUserEmail, cancellationToken)
+            : await usersRepository.GetSingle(user => user.Id == request.DelegatedUserId, cancellationToken);
+
+        if (delegatedUser is not { DeletedAt: null })
+        {
+            throw new NotFoundException("Delegated user not found");
+        }
+
         return await strategyBuilderFactory.BuildCreateStrategy<CountyParishHoldingDelegations>()
             .WithActionDescription("Create")
             .WithRepository(repository)
@@ -98,7 +107,6 @@ public class CphDelegationsService : ICphDelegationsService
                 {
                     rules.Add(cphRepository, request.CountyParishHoldingId, RulesLibrary.Reference.Descriptions.CphMustExistNotDeletedOrExpired);
                     rules.Add(usersRepository, request.DelegatingUserId, RulesLibrary.Reference.Descriptions.DelegatingUserMustExistNotDeleted);
-                    rules.Add(usersRepository, request.DelegatedUserId, RulesLibrary.Reference.Descriptions.DelegatedUserMustExistNotDeleted);
                     rules.Add(roleRepository, request.DelegatedUserRoleId, RulesLibrary.Reference.Descriptions.DelegatedUserRoleMustExistNotDeleted);
                 })
             .WithCreate(
@@ -107,7 +115,7 @@ public class CphDelegationsService : ICphDelegationsService
                     {
                         CountyParishHoldingId = request.CountyParishHoldingId,
                         DelegatingUserId = request.DelegatingUserId,
-                        DelegatedUserId = request.DelegatedUserId,
+                        DelegatedUserId = delegatedUser.Id,
                         DelegatedUserEmail = request.DelegatedUserEmail,
                         DelegatedUserRoleId = request.DelegatedUserRoleId,
                         InvitationToken = string.Empty,
@@ -120,6 +128,15 @@ public class CphDelegationsService : ICphDelegationsService
 
     public async Task<CphDelegation> Update(UpdateCphDelegationById request, CancellationToken cancellationToken = default)
     {
+        var delegatedUser = request.DelegatedUserId == new Guid("00000000-0000-0000-0000-000000000001")
+            ? await usersRepository.GetSingle(user => user.EmailAddress == request.DelegatedUserEmail, cancellationToken)
+            : await usersRepository.GetSingle(user => user.Id == request.DelegatedUserId, cancellationToken);
+
+        if (delegatedUser is not { DeletedAt: null })
+        {
+            throw new NotFoundException("Delegated user not found");
+        }
+
         return await strategyBuilderFactory.BuildUpdateStrategy<CountyParishHoldingDelegations>()
             .WithActionDescription("Update")
             .WithRepository(repository)
@@ -137,7 +154,6 @@ public class CphDelegationsService : ICphDelegationsService
                 {
                     rules.Add(cphRepository, request.CountyParishHoldingId, RulesLibrary.Reference.Descriptions.CphMustExistNotDeletedOrExpired);
                     rules.Add(usersRepository, request.DelegatingUserId, RulesLibrary.Reference.Descriptions.DelegatingUserMustExistNotDeleted);
-                    rules.Add(usersRepository, request.DelegatedUserId, RulesLibrary.Reference.Descriptions.DelegatedUserMustExistNotDeleted);
                     rules.Add(roleRepository, request.DelegatedUserRoleId, RulesLibrary.Reference.Descriptions.DelegatedUserRoleMustExistNotDeleted);
                 })
             .WithBusinessRules(
@@ -153,7 +169,7 @@ public class CphDelegationsService : ICphDelegationsService
                 {
                     delegation.CountyParishHoldingId = request.CountyParishHoldingId;
                     delegation.DelegatingUserId = request.DelegatingUserId;
-                    delegation.DelegatedUserId = request.DelegatedUserId;
+                    delegation.DelegatedUserId = delegatedUser.Id;
                     delegation.DelegatedUserEmail = request.DelegatedUserEmail;
                     delegation.DelegatedUserRoleId = request.DelegatedUserRoleId;
                 })
