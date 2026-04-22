@@ -30,7 +30,7 @@ public class CphServiceTests
         // Arrange
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
-        var cphUsersRepository = Substitute.For<ICphAssociatedUsersRepository>();
+        var cphUsersRepository = Substitute.For<ICphAssigneesRepository>();
         var cphNumberValidator = new OperationByCphNumberValidator();
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
@@ -56,7 +56,7 @@ public class CphServiceTests
         // Arrange
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
-        var cphUsersRepository = Substitute.For<ICphAssociatedUsersRepository>();
+        var cphUsersRepository = Substitute.For<ICphAssigneesRepository>();
         var cphNumberValidator = new OperationByCphNumberValidator();
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
@@ -80,7 +80,7 @@ public class CphServiceTests
         // Arrange
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
-        var cphUsersRepository = Substitute.For<ICphAssociatedUsersRepository>();
+        var cphUsersRepository = Substitute.For<ICphAssigneesRepository>();
         var cphNumberValidator = new OperationByCphNumberValidator();
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
@@ -104,7 +104,7 @@ public class CphServiceTests
         // Arrange
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
-        var cphUsersRepository = Substitute.For<ICphAssociatedUsersRepository>();
+        var cphUsersRepository = Substitute.For<ICphAssigneesRepository>();
         var cphNumberValidator = new OperationByCphNumberValidator();
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
@@ -121,7 +121,7 @@ public class CphServiceTests
         // Arrange
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
-        var cphUsersRepository = Substitute.For<ICphAssociatedUsersRepository>();
+        var cphUsersRepository = Substitute.For<ICphAssigneesRepository>();
         var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
@@ -177,7 +177,7 @@ public class CphServiceTests
         // Arrange
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
-        var cphUsersRepository = Substitute.For<ICphAssociatedUsersRepository>();
+        var cphUsersRepository = Substitute.For<ICphAssigneesRepository>();
         var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
@@ -226,7 +226,7 @@ public class CphServiceTests
         // Arrange
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
-        var cphUsersRepository = Substitute.For<ICphAssociatedUsersRepository>();
+        var cphUsersRepository = Substitute.For<ICphAssigneesRepository>();
         var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
@@ -282,7 +282,7 @@ public class CphServiceTests
         // Arrange
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
-        var cphUsersRepository = Substitute.For<ICphAssociatedUsersRepository>();
+        var cphUsersRepository = Substitute.For<ICphAssigneesRepository>();
         var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
@@ -338,7 +338,7 @@ public class CphServiceTests
         // Arrange
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
-        var cphUsersRepository = Substitute.For<ICphAssociatedUsersRepository>();
+        var cphUsersRepository = Substitute.For<ICphAssigneesRepository>();
         var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
@@ -394,7 +394,7 @@ public class CphServiceTests
         // Arrange
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
-        var cphUsersRepository = Substitute.For<ICphAssociatedUsersRepository>();
+        var cphUsersRepository = Substitute.For<ICphAssigneesRepository>();
         var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
@@ -443,7 +443,7 @@ public class CphServiceTests
         // Arrange
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
-        var cphUsersRepository = Substitute.For<ICphAssociatedUsersRepository>();
+        var cphUsersRepository = Substitute.For<ICphAssigneesRepository>();
         var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
@@ -499,7 +499,7 @@ public class CphServiceTests
         // Arrange
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
-        var cphUsersRepository = Substitute.For<ICphAssociatedUsersRepository>();
+        var cphUsersRepository = Substitute.For<ICphAssigneesRepository>();
         var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
@@ -555,7 +555,7 @@ public class CphServiceTests
         // Arrange
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
-        var cphUsersRepository = Substitute.For<ICphAssociatedUsersRepository>();
+        var cphUsersRepository = Substitute.For<ICphAssigneesRepository>();
         var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
@@ -587,7 +587,7 @@ public class CphServiceTests
         // Arrange
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
-        var cphUsersRepository = Substitute.For<ICphAssociatedUsersRepository>();
+        var cphUsersRepository = Substitute.For<ICphAssigneesRepository>();
         var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
@@ -619,7 +619,7 @@ public class CphServiceTests
         // Arrange
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
-        var cphUsersRepository = Substitute.For<ICphAssociatedUsersRepository>();
+        var cphUsersRepository = Substitute.For<ICphAssigneesRepository>();
         var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
@@ -649,7 +649,7 @@ public class CphServiceTests
         // Arrange
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
-        var cphUsersRepository = Substitute.For<ICphAssociatedUsersRepository>();
+        var cphUsersRepository = Substitute.For<ICphAssigneesRepository>();
         var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
@@ -677,7 +677,7 @@ public class CphServiceTests
         // Arrange
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
-        var cphUsersRepository = Substitute.For<ICphAssociatedUsersRepository>();
+        var cphUsersRepository = Substitute.For<ICphAssigneesRepository>();
         var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
@@ -707,7 +707,7 @@ public class CphServiceTests
         // Arrange
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
-        var cphUsersRepository = Substitute.For<ICphAssociatedUsersRepository>();
+        var cphUsersRepository = Substitute.For<ICphAssigneesRepository>();
         var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
@@ -737,7 +737,7 @@ public class CphServiceTests
         // Arrange
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
-        var cphUsersRepository = Substitute.For<ICphAssociatedUsersRepository>();
+        var cphUsersRepository = Substitute.For<ICphAssigneesRepository>();
         var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
@@ -771,7 +771,7 @@ public class CphServiceTests
         // Arrange
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
-        var cphUsersRepository = Substitute.For<ICphAssociatedUsersRepository>();
+        var cphUsersRepository = Substitute.For<ICphAssigneesRepository>();
         var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
@@ -803,7 +803,7 @@ public class CphServiceTests
         // Arrange
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
-        var cphUsersRepository = Substitute.For<ICphAssociatedUsersRepository>();
+        var cphUsersRepository = Substitute.For<ICphAssigneesRepository>();
         var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
@@ -833,7 +833,7 @@ public class CphServiceTests
         // Arrange
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
-        var cphUsersRepository = Substitute.For<ICphAssociatedUsersRepository>();
+        var cphUsersRepository = Substitute.For<ICphAssigneesRepository>();
         var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
@@ -867,7 +867,7 @@ public class CphServiceTests
         // Arrange
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
-        var cphUsersRepository = Substitute.For<ICphAssociatedUsersRepository>();
+        var cphUsersRepository = Substitute.For<ICphAssigneesRepository>();
         var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
@@ -899,7 +899,7 @@ public class CphServiceTests
         // Arrange
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
-        var cphUsersRepository = Substitute.For<ICphAssociatedUsersRepository>();
+        var cphUsersRepository = Substitute.For<ICphAssigneesRepository>();
         var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
@@ -921,13 +921,13 @@ public class CphServiceTests
                     CphRepositoryMockingHelper.GetCphUserEntities(),
                     (cph, cphUser) => cph.Id == cphUser.CountyParishHoldingId));
 
-        var request = new GetCphUsersByCphId()
+        var request = new GetCphAssigneesByCphId()
         {
             Id = new Guid("7140056b-b2ee-40d6-9be1-882bdff30cc2"), PageNumber = 1, PageSize = 2,
         };
 
         // Act
-        var pagedResults = await cphService.GetAllCphUsersPaged(request, TestContext.Current.CancellationToken);
+        var pagedResults = await cphService.GetCphAssignees(request, TestContext.Current.CancellationToken);
 
         // Assert
         logger.VerifyLogContainsOne(LogLevel.Information, $"Getting all county parish holding users for id {request.Id.ToString()} by page");
@@ -968,7 +968,7 @@ public class CphServiceTests
         // Arrange
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
-        var cphUsersRepository = Substitute.For<ICphAssociatedUsersRepository>();
+        var cphUsersRepository = Substitute.For<ICphAssigneesRepository>();
         var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
@@ -990,13 +990,13 @@ public class CphServiceTests
                     CphRepositoryMockingHelper.GetCphUserEntities(),
                     (cph, cphUser) => cph.Id == cphUser.CountyParishHoldingId));
 
-        var request = new GetCphUsersByCphId()
+        var request = new GetCphAssigneesByCphId()
         {
             Id = new Guid("7140056b-b2ee-40d6-9be1-882bdff30cc2"), PageNumber = 2, PageSize = 2,
         };
 
         // Act
-        var pagedResults = await cphService.GetAllCphUsersPaged(request, TestContext.Current.CancellationToken);
+        var pagedResults = await cphService.GetCphAssignees(request, TestContext.Current.CancellationToken);
 
         // Assert
         logger.VerifyLogContainsOne(LogLevel.Information, $"Getting all county parish holding users for id {request.Id.ToString()} by page");
@@ -1028,7 +1028,7 @@ public class CphServiceTests
         // Arrange
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
-        var cphUsersRepository = Substitute.For<ICphAssociatedUsersRepository>();
+        var cphUsersRepository = Substitute.For<ICphAssigneesRepository>();
         var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
@@ -1050,13 +1050,13 @@ public class CphServiceTests
                     CphRepositoryMockingHelper.GetCphUserEntities(),
                     (cph, cphUser) => cph.Id == cphUser.CountyParishHoldingId));
 
-        var request = new GetCphUsersByCphId()
+        var request = new GetCphAssigneesByCphId()
         {
             Id = new Guid("7140056b-b2ee-40d6-9be1-882bdff30cc2"), PageNumber = 1, PageSize = 2, OrderByDescending = true,
         };
 
         // Act
-        var pagedResults = await cphService.GetAllCphUsersPaged(request, TestContext.Current.CancellationToken);
+        var pagedResults = await cphService.GetCphAssignees(request, TestContext.Current.CancellationToken);
 
         // Assert
         logger.VerifyLogContainsOne(LogLevel.Information, $"Getting all county parish holding users for id {request.Id.ToString()} by page");
@@ -1097,7 +1097,7 @@ public class CphServiceTests
         // Arrange
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
-        var cphUsersRepository = Substitute.For<ICphAssociatedUsersRepository>();
+        var cphUsersRepository = Substitute.For<ICphAssigneesRepository>();
         var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
@@ -1119,13 +1119,13 @@ public class CphServiceTests
                     CphRepositoryMockingHelper.GetCphUserEntities(),
                     (cph, cphUser) => cph.Id == cphUser.CountyParishHoldingId));
 
-        var request = new GetCphUsersByCphId()
+        var request = new GetCphAssigneesByCphId()
         {
             Id = new Guid("7140056b-b2ee-40d6-9be1-882bdff30cc2"), PageNumber = 2, PageSize = 2, OrderByDescending = true,
         };
 
         // Act
-        var pagedResults = await cphService.GetAllCphUsersPaged(request, TestContext.Current.CancellationToken);
+        var pagedResults = await cphService.GetCphAssignees(request, TestContext.Current.CancellationToken);
 
         // Assert
         logger.VerifyLogContainsOne(LogLevel.Information, $"Getting all county parish holding users for id {request.Id.ToString()} by page");
@@ -1157,7 +1157,7 @@ public class CphServiceTests
         // Arrange
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
-        var cphUsersRepository = Substitute.For<ICphAssociatedUsersRepository>();
+        var cphUsersRepository = Substitute.For<ICphAssigneesRepository>();
         var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
@@ -1179,13 +1179,13 @@ public class CphServiceTests
                     CphRepositoryMockingHelper.GetCphUserEntities(),
                     (cph, cphUser) => cph.Id == cphUser.CountyParishHoldingId));
 
-        var request = new GetCphUsersByCphId()
+        var request = new GetCphAssigneesByCphId()
         {
             Id = new Guid("1cd09a5b-6b00-4f30-b03e-8de45130cad6"), PageNumber = 1, PageSize = 2,
         };
 
         // Act
-        var pagedResults = await cphService.GetAllCphUsersPaged(request, TestContext.Current.CancellationToken);
+        var pagedResults = await cphService.GetCphAssignees(request, TestContext.Current.CancellationToken);
 
         // Assert
         logger.VerifyLogContainsOne(LogLevel.Information, $"Getting all county parish holding users for id {request.Id.ToString()} by page");
@@ -1226,7 +1226,7 @@ public class CphServiceTests
         // Arrange
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
-        var cphUsersRepository = Substitute.For<ICphAssociatedUsersRepository>();
+        var cphUsersRepository = Substitute.For<ICphAssigneesRepository>();
         var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
@@ -1248,13 +1248,13 @@ public class CphServiceTests
                     CphRepositoryMockingHelper.GetCphUserEntities(),
                     (cph, cphUser) => cph.Id == cphUser.CountyParishHoldingId));
 
-        var request = new GetCphUsersByCphId()
+        var request = new GetCphAssigneesByCphId()
         {
             Id = new Guid("1cd09a5b-6b00-4f30-b03e-8de45130cad6"), PageNumber = 1, PageSize = 2, OrderByDescending = true,
         };
 
         // Act
-        var pagedResults = await cphService.GetAllCphUsersPaged(request, TestContext.Current.CancellationToken);
+        var pagedResults = await cphService.GetCphAssignees(request, TestContext.Current.CancellationToken);
 
         // Assert
         logger.VerifyLogContainsOne(LogLevel.Information, $"Getting all county parish holding users for id {request.Id.ToString()} by page");
@@ -1295,7 +1295,7 @@ public class CphServiceTests
         // Arrange
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
-        var cphUsersRepository = Substitute.For<ICphAssociatedUsersRepository>();
+        var cphUsersRepository = Substitute.For<ICphAssigneesRepository>();
         var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
@@ -1306,13 +1306,13 @@ public class CphServiceTests
                     Id = new Guid("cb84868b-00c1-4981-bb66-b6e45f9391f1"), DeletedAt = DateTime.Parse("2026-02-13").ToUniversalTime(),
                 });
 
-        var request = new GetCphUsersByCphId()
+        var request = new GetCphAssigneesByCphId()
         {
             Id = new Guid("cb84868b-00c1-4981-bb66-b6e45f9391f1"), PageNumber = 1, PageSize = 2,
         };
 
         // Act & Assert
-        Should.Throw<NotFoundException>(async () => await cphService.GetAllCphUsersPaged(request, TestContext.Current.CancellationToken));
+        Should.Throw<NotFoundException>(async () => await cphService.GetCphAssignees(request, TestContext.Current.CancellationToken));
 
         logger.VerifyLogContainsOne(LogLevel.Information, $"Getting all county parish holding users for id {request.Id.ToString()} by page");
         logger.VerifyLogContainsOne(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");
@@ -1334,20 +1334,20 @@ public class CphServiceTests
         // Arrange
         var logger = Substitute.For<ILogger<CphService>>();
         var cphRepository = Substitute.For<ICphRepository>();
-        var cphUsersRepository = Substitute.For<ICphAssociatedUsersRepository>();
+        var cphUsersRepository = Substitute.For<ICphAssigneesRepository>();
         var cphNumberValidator = Substitute.For<IValidator<IOperationByCphNumber>>();
         var cphService = new CphService(cphRepository, cphUsersRepository, cphNumberValidator, logger);
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult<CountyParishHoldings?>(null));
 
-        var request = new GetCphUsersByCphId()
+        var request = new GetCphAssigneesByCphId()
         {
             Id = new Guid("52b5185d-c03e-475f-8a60-52b6b75b6d90"), PageNumber = 1, PageSize = 2,
         };
 
         // Act & Assert
-        Should.Throw<NotFoundException>(async () => await cphService.GetAllCphUsersPaged(request, TestContext.Current.CancellationToken));
+        Should.Throw<NotFoundException>(async () => await cphService.GetCphAssignees(request, TestContext.Current.CancellationToken));
 
         logger.VerifyLogContainsOne(LogLevel.Information, $"Getting all county parish holding users for id {request.Id.ToString()} by page");
         logger.VerifyLogContainsOne(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");

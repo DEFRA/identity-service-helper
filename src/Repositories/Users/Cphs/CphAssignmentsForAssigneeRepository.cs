@@ -1,4 +1,4 @@
-﻿// <copyright file="UserAssociatedCphsRepository.cs" company="Defra">
+﻿// <copyright file="CphAssignmentsForAssigneeRepository.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
@@ -10,9 +10,9 @@ using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Common.Exceptions;
 using Microsoft.Extensions.Logging;
 
-public class UserAssociatedCphsRepository(
+public class CphAssignmentsForAssigneeRepository(
     ReadOnlyPostgresDbContext readOnlyContext,
-    ILogger<UserAssociatedCphsRepository> logger) : IUserAssociatedCphsRepository
+    ILogger<CphAssignmentsForAssigneeRepository> logger) : ICphAssignmentsForAssigneeRepository
 {
     public async Task<List<ApplicationUserAccountHoldingAssignments>> GetList(
         Expression<Func<UserAccounts, bool>> primaryPredicate,

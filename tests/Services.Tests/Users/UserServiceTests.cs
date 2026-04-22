@@ -26,16 +26,24 @@ using Xunit;
 public class UserServiceTests
 {
     private readonly IUsersRepository repository = Substitute.For<IUsersRepository>();
-    private readonly IUserAssociatedCphsRepository userAssociatedCphsRepository = Substitute.For<IUserAssociatedCphsRepository>();
-    private readonly IUserDelegatedCphsRepository userDelegatedCphsRepository = Substitute.For<IUserDelegatedCphsRepository>();
-    private readonly IUserAssociatedDelegatesRepository userAssociatedDelegatesRepository = Substitute.For<IUserAssociatedDelegatesRepository>();
+    private readonly ICphAssignmentsForAssigneeRepository cphAssignmentsForAssigneeRepository = Substitute.For<ICphAssignmentsForAssigneeRepository>();
+    private readonly ICphDelegationsForDelegateRepository cphDelegationsForDelegateRepository = Substitute.For<ICphDelegationsForDelegateRepository>();
+    private readonly ICphDelegatesForDelegatorRepository cphDelegatesForDelegatorRepository = Substitute.For<ICphDelegatesForDelegatorRepository>();
+    private readonly ICphDelegationsForDelegatorRepository cphDelegationsForDelegatorRepository = Substitute.For<ICphDelegationsForDelegatorRepository>();
     private readonly IStrategyBuilderFactory<UserService> strategyBuilderFactory = Substitute.For<IStrategyBuilderFactory<UserService>>();
     private readonly ILogger<UserService> logger = Substitute.For<ILogger<UserService>>();
     private readonly UserService userService;
 
     public UserServiceTests()
     {
-        userService = new UserService(repository, userAssociatedCphsRepository, userDelegatedCphsRepository, userAssociatedDelegatesRepository, strategyBuilderFactory, logger);
+        userService = new UserService(
+            repository,
+            cphAssignmentsForAssigneeRepository,
+            cphDelegationsForDelegateRepository,
+            cphDelegatesForDelegatorRepository,
+            cphDelegationsForDelegatorRepository,
+            strategyBuilderFactory,
+            logger);
     }
 
     [Fact]

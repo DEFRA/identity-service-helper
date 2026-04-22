@@ -8,12 +8,17 @@ using System.ComponentModel;
 using System.Net.Mime;
 using Defra.Identity.Api.Middleware.Headers;
 using Defra.Identity.Models.Requests;
+using Defra.Identity.Models.Requests.Common.Queries;
 using Defra.Identity.Models.Requests.Filters;
 using Defra.Identity.Models.Requests.MetaData;
 using Defra.Identity.Models.Requests.Users;
 using Defra.Identity.Models.Requests.Users.Commands;
 using Defra.Identity.Models.Requests.Users.Queries;
-using Defra.Identity.Responses.Users.Cphs.Aggregates;
+using Defra.Identity.Models.Responses.Common;
+using Defra.Identity.Models.Responses.Delegations;
+using Defra.Identity.Models.Responses.Users.Cphs;
+using Defra.Identity.Models.Responses.Users.Cphs.Aggregates;
+using Defra.Identity.Models.Responses.Users.Delegates;
 using Defra.Identity.Services.Users;
 using Microsoft.AspNetCore.Mvc;
 
@@ -40,8 +45,14 @@ public static class UsersEndpoints
             .Produces<UserCphs>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
             .ProducesProblem(StatusCodes.Status404NotFound);
 
-        app.MapGet(RouteNames.Users + "/{id:guid}/delegates", GetUserOwnedCphDelegatesRoute)
-            .Produces<UserCphs>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
+        app.MapGet(RouteNames.Users + "/{id:guid}/delegates", GetCphDelegatesForDelegatorRoute)
+            .AddEndpointFilter<ValidationFilter<PagedQuery>>()
+            .Produces<PagedResults<CphDelegate>>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
+            .ProducesProblem(StatusCodes.Status404NotFound);
+
+        app.MapGet(RouteNames.Users + "/{id:guid}/delegations/by-cph-owner/{delegatorId:guid}", GetCphDelegationsForDelegateAssociatedWithDelegatorRoute)
+            .AddEndpointFilter<ValidationFilter<PagedQuery>>()
+            .Produces<PagedResults<CphDelegation>>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
             .ProducesProblem(StatusCodes.Status404NotFound);
 
         app.MapPut(RouteNames.Users + "/{id:guid}", PutByIdRoute)
@@ -161,12 +172,22 @@ public static class UsersEndpoints
         return Results.Ok(user);
     }
 
-    private static async Task<IResult> GetUserOwnedCphDelegatesRoute(
+    private static async Task<IResult> GetCphDelegatesForDelegatorRoute(
         QueryRequestHeaders headers,
-        [AsParameters] GetUserDelegatesByUserId request,
+        [AsParameters] GetCphDelegatesByDelegatorId request,
         IUserService service)
     {
-        var user = await service.GetUserOwnedCphDelegates(request);
+        var user = await service.GetCphDelegatesForDelegator(request);
+
+        return Results.Ok(user);
+    }
+
+    private static async Task<IResult> GetCphDelegationsForDelegateAssociatedWithDelegatorRoute(
+        QueryRequestHeaders headers,
+        [AsParameters] GetCphDelegationsByUserIdFiltered request,
+        IUserService service)
+    {
+        var user = await service.GetCphDelegationsForDelegateAssociatedWithDelegator(request);
 
         return Results.Ok(user);
     }

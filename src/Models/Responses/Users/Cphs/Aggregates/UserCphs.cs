@@ -2,17 +2,19 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Responses.Users.Cphs.Aggregates;
+namespace Defra.Identity.Models.Responses.Users.Cphs.Aggregates;
+
+using Defra.Identity.Models.Responses.Delegations;
 
 public class UserCphs
 {
-    public UserCphs(IEnumerable<UserAssociatedCph> associations, IEnumerable<UserDelegatedCph> delegations)
+    public UserCphs(IEnumerable<UserAssignedCph> associations, IEnumerable<CphDelegation> delegations)
     {
         Associations = associations;
         Delegations = delegations;
     }
 
-    public IEnumerable<UserAssociatedCph> Associations { get; }
+    public IEnumerable<UserAssignedCph> Associations { get; }
 
-    public IEnumerable<UserDelegatedCph> Delegations { get; }
+    public IEnumerable<CphDelegation> Delegations { get; }
 }

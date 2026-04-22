@@ -9,5 +9,7 @@ using Defra.Identity.Postgres.Database.Entities;
 
 public static class SelectorLibrary
 {
-    public static Expression<Func<UserAccounts, string>> UserDisplayNameSelector = user => user.DisplayName;
+    public static readonly Expression<Func<UserAccounts, string>> UserDisplayName = user => user.DisplayName;
+
+    public static readonly Expression<Func<CountyParishHoldingDelegations, string>> CphDelegationCphIdentifier = delegation => delegation.CountyParishHolding.Identifier;
 }

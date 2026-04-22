@@ -1,4 +1,4 @@
-﻿// <copyright file="UserAssociatedDelegatesRepository.cs" company="Defra">
+﻿// <copyright file="CphDelegatesForDelegatorRepository.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
@@ -11,9 +11,9 @@ using Defra.Identity.Repositories.Common;
 using Defra.Identity.Repositories.Common.Exceptions;
 using Microsoft.Extensions.Logging;
 
-public class UserAssociatedDelegatesRepository(
+public class CphDelegatesForDelegatorRepository(
     ReadOnlyPostgresDbContext readOnlyContext,
-    ILogger<UserAssociatedDelegatesRepository> logger) : IUserAssociatedDelegatesRepository
+    ILogger<CphDelegatesForDelegatorRepository> logger) : ICphDelegatesForDelegatorRepository
 {
     private Expression<Func<ApplicationUserAccountHoldingAssignments, bool>>? HoldingAssignmentsFilter { get; set; }
 
@@ -21,19 +21,19 @@ public class UserAssociatedDelegatesRepository(
 
     private Expression<Func<CountyParishHoldingDelegations, bool>>? DelegationsFilter { get; set; }
 
-    public IUserAssociatedDelegatesRepository WithHoldingAssignmentsFilter(Expression<Func<ApplicationUserAccountHoldingAssignments, bool>> holdingAssignmentsFilter)
+    public ICphDelegatesForDelegatorRepository WithHoldingAssignmentsFilter(Expression<Func<ApplicationUserAccountHoldingAssignments, bool>> holdingAssignmentsFilter)
     {
         HoldingAssignmentsFilter = holdingAssignmentsFilter;
         return this;
     }
 
-    public IUserAssociatedDelegatesRepository WithCountyParishHoldingsFilter(Expression<Func<CountyParishHoldings, bool>> countyParishHoldingsFilter)
+    public ICphDelegatesForDelegatorRepository WithCountyParishHoldingsFilter(Expression<Func<CountyParishHoldings, bool>> countyParishHoldingsFilter)
     {
         CountyParishHoldingsFilter = countyParishHoldingsFilter;
         return this;
     }
 
-    public IUserAssociatedDelegatesRepository WithDelegationsFilter(Expression<Func<CountyParishHoldingDelegations, bool>> delegationsFilter)
+    public ICphDelegatesForDelegatorRepository WithDelegationsFilter(Expression<Func<CountyParishHoldingDelegations, bool>> delegationsFilter)
     {
         DelegationsFilter = delegationsFilter;
         return this;
@@ -63,7 +63,7 @@ public class UserAssociatedDelegatesRepository(
             throw new InvalidOperationException("Delegations filter must be provided for this operation");
         }
 
-        logger.LogInformation("Getting list of delegates for user account");
+        logger.LogInformation("Getting list of unique delegates for delegator");
 
         var primaryEntity = await readOnlyContext.UserAccounts
             .FirstOrDefaultAsync(primaryPredicate, cancellationToken);
