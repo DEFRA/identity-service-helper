@@ -28,8 +28,8 @@ public class UserServiceTests
     private readonly IUsersRepository repository = Substitute.For<IUsersRepository>();
     private readonly ICphAssignmentsForAssigneeRepository cphAssignmentsForAssigneeRepository = Substitute.For<ICphAssignmentsForAssigneeRepository>();
     private readonly ICphDelegationsForDelegateRepository cphDelegationsForDelegateRepository = Substitute.For<ICphDelegationsForDelegateRepository>();
-    private readonly ICphDelegatesForDelegatorRepository cphDelegatesForDelegatorRepository = Substitute.For<ICphDelegatesForDelegatorRepository>();
-    private readonly ICphDelegationsForDelegatorRepository cphDelegationsForDelegatorRepository = Substitute.For<ICphDelegationsForDelegatorRepository>();
+    private readonly ICphDelegatesForCphAssigneeRepository cphDelegatesForCphAssigneeRepository = Substitute.For<ICphDelegatesForCphAssigneeRepository>();
+    private readonly ICphDelegationsForCphAssigneeRepository cphDelegationsForCphAssigneeRepository = Substitute.For<ICphDelegationsForCphAssigneeRepository>();
     private readonly IStrategyBuilderFactory<UserService> strategyBuilderFactory = Substitute.For<IStrategyBuilderFactory<UserService>>();
     private readonly ILogger<UserService> logger = Substitute.For<ILogger<UserService>>();
     private readonly UserService userService;
@@ -40,8 +40,8 @@ public class UserServiceTests
             repository,
             cphAssignmentsForAssigneeRepository,
             cphDelegationsForDelegateRepository,
-            cphDelegatesForDelegatorRepository,
-            cphDelegationsForDelegatorRepository,
+            cphDelegatesForCphAssigneeRepository,
+            cphDelegationsForCphAssigneeRepository,
             strategyBuilderFactory,
             logger);
     }

@@ -29,8 +29,8 @@ public class UserService : IUserService
     private readonly IUsersRepository repository;
     private readonly ICphAssignmentsForAssigneeRepository cphAssignmentsForAssigneeRepository;
     private readonly ICphDelegationsForDelegateRepository cphDelegationsForDelegateRepository;
-    private readonly ICphDelegatesForDelegatorRepository cphDelegatesForDelegatorRepository;
-    private readonly ICphDelegationsForDelegatorRepository cphDelegationsForDelegatorRepository;
+    private readonly ICphDelegatesForCphAssigneeRepository cphDelegatesForCphAssigneeRepository;
+    private readonly ICphDelegationsForCphAssigneeRepository cphDelegationsForCphAssigneeRepository;
     private readonly IStrategyBuilderFactory<UserService> strategyBuilderFactory;
     private readonly ILogger<UserService> logger;
 
@@ -38,25 +38,25 @@ public class UserService : IUserService
         IUsersRepository repository,
         ICphAssignmentsForAssigneeRepository cphAssignmentsForAssigneeRepository,
         ICphDelegationsForDelegateRepository cphDelegationsForDelegateRepository,
-        ICphDelegatesForDelegatorRepository cphDelegatesForDelegatorRepository,
-        ICphDelegationsForDelegatorRepository cphDelegationsForDelegatorRepository,
+        ICphDelegatesForCphAssigneeRepository cphDelegatesForCphAssigneeRepository,
+        ICphDelegationsForCphAssigneeRepository cphDelegationsForCphAssigneeRepository,
         IStrategyBuilderFactory<UserService> strategyBuilderFactory,
         ILogger<UserService> logger)
     {
         this.repository = repository;
         this.cphAssignmentsForAssigneeRepository = cphAssignmentsForAssigneeRepository;
         this.cphDelegationsForDelegateRepository = cphDelegationsForDelegateRepository;
-        this.cphDelegatesForDelegatorRepository = cphDelegatesForDelegatorRepository;
-        this.cphDelegationsForDelegatorRepository = cphDelegationsForDelegatorRepository;
+        this.cphDelegatesForCphAssigneeRepository = cphDelegatesForCphAssigneeRepository;
+        this.cphDelegationsForCphAssigneeRepository = cphDelegationsForCphAssigneeRepository;
         this.strategyBuilderFactory = strategyBuilderFactory;
         this.logger = logger;
 
-        this.cphDelegatesForDelegatorRepository
+        this.cphDelegatesForCphAssigneeRepository
             .WithHoldingAssignmentsFilter(FiltersLibrary.CphAssignments.NotDeleted)
             .WithCountyParishHoldingsFilter(FiltersLibrary.Cphs.NotDeletedOrExpired)
             .WithDelegationsFilter(FiltersLibrary.CphDelegations.Aggregates.VisibleAndReferencesValid);
 
-        this.cphDelegationsForDelegatorRepository
+        this.cphDelegationsForCphAssigneeRepository
             .WithHoldingAssignmentsFilter(FiltersLibrary.CphAssignments.NotDeleted);
 
         this.strategyBuilderFactory
@@ -211,7 +211,7 @@ public class UserService : IUserService
             .WithPrimaryEntityDescription("User account")
             .WithActionDescription("Get user owned county parish holding unique delegation users associated with")
             .WithPrimaryRepository(repository)
-            .WithAssociationsRepository(cphDelegatesForDelegatorRepository)
+            .WithAssociationsRepository(cphDelegatesForCphAssigneeRepository)
             .WithCancellationToken(cancellationToken)
             .WithRequestAndPrimaryEntityFilter(request, userAccount => userAccount.Id == request.Id)
             .WithAssociatedEntityFilter(FiltersLibrary.Users.NotDeleted)
@@ -227,7 +227,7 @@ public class UserService : IUserService
             .WithPrimaryEntityDescription("User account")
             .WithActionDescription("Get county parish holding delegations for delegator filtered by")
             .WithPrimaryRepository(repository)
-            .WithAssociationsRepository(cphDelegationsForDelegatorRepository)
+            .WithAssociationsRepository(cphDelegationsForCphAssigneeRepository)
             .WithCancellationToken(cancellationToken)
             .WithRequestAndPrimaryEntityFilter(request, userAccount => userAccount.Id == request.DelegatorId)
             .WithAssociatedEntityFilter(
