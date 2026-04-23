@@ -5,21 +5,21 @@
 namespace Defra.Identity.Services.Common.Builders.Strategy;
 
 using System.Linq.Expressions;
+using Defra.Identity.Models.Requests.Common;
 using Defra.Identity.Repositories.Common.Composites;
-using Defra.Identity.Repositories.Exceptions;
-using Defra.Identity.Requests.Common;
+using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Services.Common.Builders.Rules;
 using Defra.Identity.Services.Common.Builders.Strategy.Base;
-using Defra.Identity.Services.Exceptions;
-using FluentValidation;
+using Defra.Identity.Services.Common.Builders.Strategy.Constants;
 using Microsoft.Extensions.Logging;
 
-public class UpdateStrategyBuilder<TService, TRepository, TEntity> : StrategyBuilderBase<TService, UpdateStrategyBuilder<TService, TRepository, TEntity>>
+public class UpdateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TService, UpdateStrategyBuilder<TService, TEntity>>
     where TService : class
-    where TRepository : IGettable<TEntity>, IUpdatable<TEntity>
     where TEntity : class
 {
-    private TRepository? Repository { get; set; }
+    private IGettable<TEntity>? GettableRepository { get; set; }
+
+    private IUpdatable<TEntity>? UpdateableRepository { get; set; }
 
     private IOperationById? Request { get; set; }
 
@@ -27,53 +27,66 @@ public class UpdateStrategyBuilder<TService, TRepository, TEntity> : StrategyBui
 
     private Action<TEntity>? UpdateAction { get; set; }
 
-    private ExistenceRulesBuilder<TEntity>? ExistenceRulesBuilder { get; set; }
+    private ExistenceRulesBuilder<TService, TEntity>? ExistenceRulesBuilder { get; set; }
 
-    private ReferenceRulesBuilder? ReferenceRulesBuilder { get; set; }
+    private ReferenceRulesBuilder<TService>? ReferenceRulesBuilder { get; set; }
 
-    private BusinessRulesBuilder<TEntity>? BusinessRulesBuilder { get; set; }
+    private ConflictRulesBuilder<TService, TEntity>? ConflictRulesBuilder { get; set; }
 
-    public UpdateStrategyBuilder<TService, TRepository, TEntity> WithRepository(TRepository repository)
+    private BusinessRulesBuilder<TService, TEntity>? BusinessRulesBuilder { get; set; }
+
+    public UpdateStrategyBuilder<TService, TEntity> WithRepository<TRepository>(TRepository repository)
+        where TRepository : IGettable<TEntity>, IUpdatable<TEntity>
     {
-        Repository = repository;
+        GettableRepository = repository;
+        UpdateableRepository = repository;
         return this;
     }
 
-    public UpdateStrategyBuilder<TService, TRepository, TEntity> WithRequestAndEntityFilter(IOperationById request, Expression<Func<TEntity, bool>> entityFilter)
+    public UpdateStrategyBuilder<TService, TEntity> WithRequestAndEntityFilter(IOperationById request, Expression<Func<TEntity, bool>> entityFilter)
     {
         Request = request;
         EntityFilter = entityFilter;
         return this;
     }
 
-    public UpdateStrategyBuilder<TService, TRepository, TEntity> WithExistenceRules(Action<ExistenceRulesBuilder<TEntity>> builder)
+    public UpdateStrategyBuilder<TService, TEntity> WithExistenceRules(Action<ExistenceRulesBuilder<TService, TEntity>> builder)
     {
-        ExistenceRulesBuilder = new ExistenceRulesBuilder<TEntity>();
+        ExistenceRulesBuilder = new ExistenceRulesBuilder<TService, TEntity>();
 
         builder(ExistenceRulesBuilder);
 
         return this;
     }
 
-    public UpdateStrategyBuilder<TService, TRepository, TEntity> WithReferenceRules(Action<ReferenceRulesBuilder> builder)
+    public UpdateStrategyBuilder<TService, TEntity> WithReferenceRules(Action<ReferenceRulesBuilder<TService>> builder)
     {
-        ReferenceRulesBuilder = new ReferenceRulesBuilder();
+        ReferenceRulesBuilder = new ReferenceRulesBuilder<TService>();
 
         builder(ReferenceRulesBuilder);
 
         return this;
     }
 
-    public UpdateStrategyBuilder<TService, TRepository, TEntity> WithBusinessRules(Action<BusinessRulesBuilder<TEntity>> builder)
+    public UpdateStrategyBuilder<TService, TEntity> WithConflictRules(Action<ConflictRulesBuilder<TService, TEntity>> builder)
     {
-        BusinessRulesBuilder = new BusinessRulesBuilder<TEntity>();
+        ConflictRulesBuilder = new ConflictRulesBuilder<TService, TEntity>();
+
+        builder(ConflictRulesBuilder);
+
+        return this;
+    }
+
+    public UpdateStrategyBuilder<TService, TEntity> WithBusinessRules(Action<BusinessRulesBuilder<TService, TEntity>> builder)
+    {
+        BusinessRulesBuilder = new BusinessRulesBuilder<TService, TEntity>();
 
         builder(BusinessRulesBuilder);
 
         return this;
     }
 
-    public UpdateStrategyBuilder<TService, TRepository, TEntity> WithUpdate(Action<TEntity> updateAction)
+    public UpdateStrategyBuilder<TService, TEntity> WithUpdate(Action<TEntity> updateAction)
     {
         UpdateAction = updateAction;
 
@@ -84,139 +97,86 @@ public class UpdateStrategyBuilder<TService, TRepository, TEntity> : StrategyBui
     {
         if (Logger == null)
         {
-            throw new InvalidOperationException("Logger must be provided for this operation");
+            throw new InvalidOperationException(StrategyBuilderConstants.Errors.LoggerRequired);
         }
 
         if (CancellationToken == null)
         {
-            throw new InvalidOperationException("Cancellation token must be provided for this operation");
+            throw new InvalidOperationException(StrategyBuilderConstants.Errors.CancellationTokenRequired);
         }
 
         if (OperatorContext == null)
         {
-            throw new InvalidOperationException("Operator context must be provided for this operation");
+            throw new InvalidOperationException(StrategyBuilderConstants.Errors.OperatorContextRequired);
         }
 
-        if (Repository == null)
+        if (GettableRepository == null)
         {
-            throw new InvalidOperationException("Repository must be provided for this operation");
+            throw new InvalidOperationException(StrategyBuilderConstants.Errors.GettableRepositoryRequired);
         }
 
-        if (EntityDescription == null)
+        if (UpdateableRepository == null)
         {
-            throw new InvalidOperationException("Entity description must be provided for this operation");
+            throw new InvalidOperationException(StrategyBuilderConstants.Errors.UpdatableRepositoryRequired);
+        }
+
+        if (PrimaryEntityDescription == null)
+        {
+            throw new InvalidOperationException(StrategyBuilderConstants.Errors.PrimaryEntityDescriptionRequired);
         }
 
         if (ActionDescription == null)
         {
-            throw new InvalidOperationException("Action description must be provided for this operation");
+            throw new InvalidOperationException(StrategyBuilderConstants.Errors.ActionDescriptionRequired);
         }
 
         if (Request == null || EntityFilter == null)
         {
-            throw new InvalidOperationException("Request and entity filter must be provided for this operation");
+            throw new InvalidOperationException(StrategyBuilderConstants.Errors.RequestAndEntityFilterRequired);
         }
 
         if (UpdateAction == null)
         {
-            throw new InvalidOperationException("Update action must be provided for this operation");
+            throw new InvalidOperationException(StrategyBuilderConstants.Errors.UpdateActionRequired);
         }
 
         Logger.LogInformation(
             "Executing {ActionDescription} {EntityDescription} with id {Id} by operator {OperatorId}",
             ActionDescription.ToLowerInvariant(),
-            EntityDescription.ToLowerInvariant(),
+            PrimaryEntityDescription.ToLowerInvariant(),
             Request.Id,
             OperatorContext.OperatorId);
 
-        if (ValidateAction != null)
-        {
-            var validationResult = await ValidateAction();
+        ExecuteSetup();
 
-            if (!validationResult.IsValid)
-            {
-                Logger.LogWarning(
-                    "Execute {ActionDescription} {EntityDescription} with id {Id} failed basic validation",
-                    ActionDescription.ToLowerInvariant(),
-                    EntityDescription.ToLowerInvariant(),
-                    Request.Id);
-
-                throw new ValidationException(validationResult.Errors);
-            }
-        }
+        await ExecuteRequestValidation();
 
         if (ReferenceRulesBuilder != null)
         {
-            foreach (var rule in ReferenceRulesBuilder.ReferenceRules)
-            {
-                var validAgainstReferenceRule = await rule.Repository.ValidateReferenceById(rule.Id);
-
-                if (!validAgainstReferenceRule)
-                {
-                    Logger.LogWarning(
-                        "Execute {ActionDescription} {EntityDescription} with id {Id} failed reference rule '{Description}'",
-                        ActionDescription.ToLowerInvariant(),
-                        EntityDescription.ToLowerInvariant(),
-                        Request.Id,
-                        rule.Description);
-
-                    throw new NotFoundException(rule.Description);
-                }
-            }
+            await ReferenceRulesBuilder.Validate(ActionDescription, PrimaryEntityDescription, Logger, CancellationToken.Value);
         }
 
-        var entityToUpdate = await Repository.GetSingle(EntityFilter, CancellationToken.Value);
+        var entityToUpdate = await GettableRepository.GetSingle(EntityFilter, CancellationToken.Value);
 
         if (entityToUpdate == null)
         {
-            Logger.LogWarning("{EntityDescription} with id {Id} not found", EntityDescription, Request.Id);
+            Logger.LogWarning("{EntityDescription} with id {Id} not found", PrimaryEntityDescription, Request.Id);
 
-            throw new NotFoundException($"{EntityDescription} not found.");
+            throw new NotFoundException($"{PrimaryEntityDescription} not found.");
         }
 
-        if (ExistenceRulesBuilder != null)
-        {
-            foreach (var rule in ExistenceRulesBuilder.ExistenceRules)
-            {
-                var validAgainstExistenceRule = rule.Predicate(entityToUpdate);
-
-                if (!validAgainstExistenceRule)
-                {
-                    Logger.LogWarning("{EntityDescription} with id {Id} not found", EntityDescription, Request.Id);
-
-                    throw new NotFoundException($"{EntityDescription} not found.");
-                }
-            }
-        }
-
-        if (BusinessRulesBuilder != null)
-        {
-            foreach (var rule in BusinessRulesBuilder.BusinessRules)
-            {
-                var validAgainstBusinessRule = rule.Predicate(entityToUpdate);
-
-                if (!validAgainstBusinessRule)
-                {
-                    Logger.LogWarning(
-                        "Execute {ActionDescription} {EntityDescription} with id {Id} failed business rule '{Description}'",
-                        ActionDescription.ToLowerInvariant(),
-                        EntityDescription.ToLowerInvariant(),
-                        Request.Id,
-                        rule.Description);
-
-                    throw new BusinessRuleException(rule.Description);
-                }
-            }
-        }
+        ExistenceRulesBuilder?.Validate(Request, entityToUpdate, PrimaryEntityDescription, Logger);
+        ConflictRulesBuilder?.Validate(Request, entityToUpdate, ActionDescription, PrimaryEntityDescription, Logger);
+        BusinessRulesBuilder?.Validate(Request, entityToUpdate, ActionDescription, PrimaryEntityDescription, Logger);
 
         UpdateAction(entityToUpdate);
 
-        var updatedEntity = await Repository.Update(entityToUpdate, CancellationToken.Value);
+        var updatedEntity = await UpdateableRepository.Update(entityToUpdate, CancellationToken.Value);
 
         Logger.LogInformation(
             "Successfully executed {ActionDescription} {EntityDescription} with id {Id} by operator {OperatorId}",
             ActionDescription.ToLowerInvariant(),
-            EntityDescription.ToLowerInvariant(),
+            PrimaryEntityDescription.ToLowerInvariant(),
             Request.Id,
             OperatorContext.OperatorId);
 

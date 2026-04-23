@@ -5,12 +5,11 @@
 namespace Defra.Identity.Services.Tests.Applications;
 
 using System.Linq.Expressions;
+using Defra.Identity.Models.Requests.Applications.Commands;
+using Defra.Identity.Models.Requests.Applications.Queries;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Applications;
-using Defra.Identity.Repositories.Exceptions;
-using Defra.Identity.Requests.Applications.Commands.Create;
-using Defra.Identity.Requests.Applications.Commands.Update;
-using Defra.Identity.Requests.Applications.Queries;
+using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Services.Applications;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
@@ -66,10 +65,10 @@ public class ApplicationServiceTests
         result.Count.ShouldBe(2);
         result[0].Name.ShouldBe("App 1");
         result[0].Scopes.ShouldBe(["scope1", "scope2"]);
-        result[0].RedirectUri.ShouldBe(["https://callback1"]);
+        result[0].RedirectUris.ShouldBe(["https://callback1"]);
         result[1].Name.ShouldBe("App 2");
         result[1].Scopes.ShouldBe(["scope3"]);
-        result[1].RedirectUri.ShouldBe(["https://callback2"]);
+        result[1].RedirectUris.ShouldBe(["https://callback2"]);
     }
 
     [Fact]
@@ -99,7 +98,7 @@ public class ApplicationServiceTests
         result.Id.ShouldBe(applicationEntity.ClientId);
         result.Name.ShouldBe("Test App");
         result.Scopes.ShouldBe(["scope1", "scope2"]);
-        result.RedirectUri.ShouldBe(["https://callback"]);
+        result.RedirectUris.ShouldBe(["https://callback"]);
     }
 
     [Fact]
@@ -155,7 +154,7 @@ public class ApplicationServiceTests
         result.ShouldNotBeNull();
         result.Name.ShouldBe(request.Name);
         result.Scopes.ShouldBe(request.Scopes);
-        result.RedirectUri.ShouldBe(request.RedirectUris);
+        result.RedirectUris.ShouldBe(request.RedirectUris);
         await repository.Received(1).Create(
             Arg.Is<Applications>(a =>
                 a.Name == request.Name &&
@@ -206,7 +205,7 @@ public class ApplicationServiceTests
         result.ShouldNotBeNull();
         result.Name.ShouldBe("Updated App");
         result.Scopes.ShouldBe(request.Scopes);
-        result.RedirectUri.ShouldBe(request.RedirectUris);
+        result.RedirectUris.ShouldBe(request.RedirectUris);
         await repository.Received(1).Update(
             Arg.Is<Applications>(a =>
                 a.Name == request.Name &&

@@ -7,7 +7,7 @@ namespace Defra.Identity.Repositories.Delegations;
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database;
 using Defra.Identity.Postgres.Database.Entities;
-using Defra.Identity.Repositories.Exceptions;
+using Defra.Identity.Repositories.Common.Exceptions;
 using Microsoft.Extensions.Logging;
 
 public class CphDelegationsRepository(PostgresDbContext context, ReadOnlyPostgresDbContext readOnlyContext, ILogger<CphDelegationsRepository> logger) : ICphDelegationsRepository

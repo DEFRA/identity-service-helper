@@ -7,6 +7,7 @@ namespace Defra.Identity.Repositories.Applications;
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database;
 using Defra.Identity.Postgres.Database.Entities;
+using Defra.Identity.Repositories.Common.Exceptions;
 using Microsoft.Extensions.Logging;
 
 public class ApplicationsRepository(
@@ -62,7 +63,7 @@ public class ApplicationsRepository(
         if (application == null)
         {
             logger.LogWarning("Application not found for deletion");
-            throw new Exceptions.NotFoundException("Application not found");
+            throw new NotFoundException("Application not found");
         }
 
         application.DeletedById = operatorId;

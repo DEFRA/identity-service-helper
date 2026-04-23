@@ -4,11 +4,11 @@
 
 namespace Defra.Identity.Services.Cphs;
 
-using Defra.Identity.Requests.Cphs.Commands;
-using Defra.Identity.Requests.Cphs.Common;
-using Defra.Identity.Requests.Cphs.Queries;
-using Defra.Identity.Responses.Common;
-using Defra.Identity.Responses.Cphs;
+using Defra.Identity.Models.Requests.Cphs.Commands;
+using Defra.Identity.Models.Requests.Cphs.Common;
+using Defra.Identity.Models.Requests.Cphs.Queries;
+using Defra.Identity.Models.Responses.Common;
+using Defra.Identity.Models.Responses.Cphs;
 
 public interface ICphService
 {
@@ -22,5 +22,5 @@ public interface ICphService
 
     Task Delete(DeleteCphByCphId request, Guid operatorId, CancellationToken cancellationToken = default);
 
-    Task<PagedResults<CphUser>> GetAllCphUsersPaged(GetCphUsersByCphId request, CancellationToken cancellationToken = default);
+    Task<PagedResults<CphAssignee>> GetCphAssignees(GetCphAssigneesByCphId request, CancellationToken cancellationToken = default);
 }

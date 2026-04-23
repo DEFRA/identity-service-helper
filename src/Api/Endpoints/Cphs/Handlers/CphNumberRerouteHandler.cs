@@ -4,9 +4,9 @@
 
 namespace Defra.Identity.Api.Endpoints.Cphs.Handlers;
 
-using Defra.Identity.Requests.Common;
-using Defra.Identity.Requests.Common.Queries;
-using Defra.Identity.Requests.Cphs.Common;
+using Defra.Identity.Models.Requests.Common;
+using Defra.Identity.Models.Requests.Common.Queries;
+using Defra.Identity.Models.Requests.Cphs.Common;
 using Defra.Identity.Services.Cphs;
 
 public class CphNumberRerouteHandler<TTarget, TSource, THeaders>

@@ -5,8 +5,7 @@
 namespace Defra.Identity.Endpoint.Tests.Bindings;
 
 using Defra.Identity.Endpoint.Tests.Contexts;
-using Defra.Identity.Endpoint.Tests.Support;
-using Defra.Identity.Responses.Common;
+using Defra.Identity.Models.Responses.Common;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
@@ -25,9 +24,11 @@ public class PagedResponseBindings(
 
         var result = GetPagedResults();
         result.ShouldNotBeNull();
-        result.PageNumber.ShouldBe(pageNumber);
-        result.TotalCount.ShouldBe(total);
-        result.Items.Count().ShouldBe(objectCount);
+        result.ShouldSatisfyAllConditions(
+            x => x.PageNumber.ShouldBe(pageNumber),
+            x => x.TotalCount.ShouldBe(total),
+            x => x.Items.Count().ShouldBe(objectCount)
+        );
     }
 
     [Then(

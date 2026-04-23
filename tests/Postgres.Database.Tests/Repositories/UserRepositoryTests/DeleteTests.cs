@@ -7,13 +7,13 @@ namespace Defra.Identity.Postgres.Database.Tests.Repositories;
 using System.ComponentModel;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
-using Defra.Identity.Repositories.Exceptions;
+using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Repositories.Users;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Shouldly;
 
-public class DeleteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
+public class DeleteByIdRouteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 {
     private const string AdminEmailAddress = "test@test.com";
 

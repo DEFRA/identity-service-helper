@@ -8,13 +8,13 @@ using System.ComponentModel;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
 using Defra.Identity.Repositories.Applications;
-using Defra.Identity.Repositories.Exceptions;
+using Defra.Identity.Repositories.Common.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Shouldly;
 
-public class DeleteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
+public class DeleteByIdRouteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 {
     [Fact]
     [Description("Should soft delete an application")]

@@ -12,7 +12,7 @@ using Defra.Identity.Repositories.Species;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 
-public class GetAllTests(PostgreContainerFixture fixture) : BaseTests(fixture)
+public class GetAllRouteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 {
     [Fact]
     [Description("Should get all species that are active")]

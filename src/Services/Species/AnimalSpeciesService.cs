@@ -5,13 +5,13 @@
 namespace Defra.Identity.Services.Species;
 
 using System.Linq.Expressions;
-using Defra.Identity.Repositories.Exceptions;
+using Defra.Identity.Models.Requests.Species.Commands;
+using Defra.Identity.Models.Requests.Species.Queries;
+using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Repositories.Species;
-using Defra.Identity.Requests.Species.Commands;
-using Defra.Identity.Requests.Species.Queries;
 using Microsoft.Extensions.Logging;
 using ModelAnimalSpecies = Defra.Identity.Postgres.Database.Entities.AnimalSpecies;
-using ResponseAnimalSpecies = Defra.Identity.Responses.Species.AnimalSpecies;
+using ResponseAnimalSpecies = Defra.Identity.Models.Responses.Species.AnimalSpecies;
 
 public class AnimalSpeciesService
     : IAnimalSpeciesService

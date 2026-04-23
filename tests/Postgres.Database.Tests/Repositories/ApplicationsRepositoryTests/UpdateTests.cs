@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Shouldly;
 
-public class UpdateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
+public class PutByIdRouteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 {
     [Fact]
     [Description("Should update an application")]

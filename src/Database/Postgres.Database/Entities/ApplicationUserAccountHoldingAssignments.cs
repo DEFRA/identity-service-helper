@@ -10,7 +10,7 @@ public class ApplicationUserAccountHoldingAssignments : BaseAuditEntity
 {
     public Guid CountyParishHoldingId { get; set; }
 
-    public CountyParishHoldings Type { get; set; } = null!;
+    public CountyParishHoldings CountyParishHolding { get; set; } = null!;
 
     public Guid ApplicationId { get; set; }
 

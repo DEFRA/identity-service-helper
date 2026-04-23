@@ -5,16 +5,14 @@
 namespace Defra.Identity.Services.Tests.Delegations;
 
 using System.Linq.Expressions;
+using Defra.Identity.Models.Requests.Delegations.Commands;
+using Defra.Identity.Models.Requests.Delegations.Queries;
 using Defra.Identity.Postgres.Database.Entities;
+using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Repositories.Cphs;
 using Defra.Identity.Repositories.Delegations;
-using Defra.Identity.Repositories.Exceptions;
 using Defra.Identity.Repositories.Roles;
 using Defra.Identity.Repositories.Users;
-using Defra.Identity.Requests.Delegations.Commands.Create;
-using Defra.Identity.Requests.Delegations.Commands.Delete;
-using Defra.Identity.Requests.Delegations.Commands.Update;
-using Defra.Identity.Requests.Delegations.Queries;
 using Defra.Identity.Services.Common.Builders.Strategy.Factories;
 using Defra.Identity.Services.Common.Context;
 using Defra.Identity.Services.Delegations;
@@ -34,8 +32,7 @@ public class CphDelegationsServiceTests
     private readonly IRoleRepository roleRepository = Substitute.For<IRoleRepository>();
     private readonly IOperatorContext operatorContext = Substitute.For<IOperatorContext>();
 
-    private readonly IStrategyBuilderFactory<CphDelegationsService, CountyParishHoldingDelegations> strategyBuilderFactory =
-        new StrategyBuilderFactory<CphDelegationsService, CountyParishHoldingDelegations>();
+    private readonly IStrategyBuilderFactory<CphDelegationsService> strategyBuilderFactory = new StrategyBuilderFactory<CphDelegationsService>();
 
     private readonly IValidator<CreateCphDelegation> createCphDelegationValidator = new CreateCphDelegationValidator();
     private readonly IValidator<UpdateCphDelegationById> updateCphDelegationValidator = new UpdateCphDelegationValidator();
@@ -219,7 +216,7 @@ public class CphDelegationsServiceTests
 
         await cphRepository.Received(1).ValidateReferenceById(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
         await roleRepository.Received(1).ValidateReferenceById(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
-        await userRepository.Received(2).ValidateReferenceById(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
+        await userRepository.Received(1).ValidateReferenceById(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
         await repository.Received(1).Create(Arg.Any<CountyParishHoldingDelegations>(), Arg.Any<CancellationToken>());
     }
 
@@ -530,7 +527,7 @@ public class CphDelegationsServiceTests
         await repository.Received(1).GetSingle(Arg.Any<Expression<Func<CountyParishHoldingDelegations, bool>>>(), Arg.Any<CancellationToken>());
         await cphRepository.Received(1).ValidateReferenceById(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
         await roleRepository.Received(1).ValidateReferenceById(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
-        await userRepository.Received(2).ValidateReferenceById(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
+        await userRepository.Received(1).ValidateReferenceById(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
         await repository.Received(1).Update(Arg.Any<CountyParishHoldingDelegations>(), Arg.Any<CancellationToken>());
     }
 
@@ -558,7 +555,7 @@ public class CphDelegationsServiceTests
         await act.ShouldThrowAsync<NotFoundException>();
         await cphRepository.DidNotReceive().GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>());
         await roleRepository.DidNotReceive().GetSingle(Arg.Any<Expression<Func<Roles, bool>>>(), Arg.Any<CancellationToken>());
-        await userRepository.DidNotReceive().GetSingle(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<CancellationToken>());
+        await userRepository.Received(1).GetSingle(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<CancellationToken>());
         await repository.DidNotReceive().Update(Arg.Any<CountyParishHoldingDelegations>(), Arg.Any<CancellationToken>());
     }
 

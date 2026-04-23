@@ -8,6 +8,7 @@ using System.Linq.Expressions;
 
 public interface IPageableAssociations<TPrimary, TAssociation>
     where TPrimary : class
+    where TAssociation : class
 {
     Task<PagedEntities<TAssociation>> GetPaged<TOrderBy>(
         Expression<Func<TPrimary, bool>> primaryPredicate,
