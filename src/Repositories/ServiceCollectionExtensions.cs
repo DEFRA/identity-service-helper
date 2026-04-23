@@ -5,14 +5,12 @@
 namespace Defra.Identity.Repositories;
 
 using Defra.Identity.Repositories.Applications;
+using Defra.Identity.Repositories.Assignments;
 using Defra.Identity.Repositories.Cphs;
-using Defra.Identity.Repositories.Cphs.Users;
 using Defra.Identity.Repositories.Delegations;
 using Defra.Identity.Repositories.Roles;
 using Defra.Identity.Repositories.Species;
 using Defra.Identity.Repositories.Users;
-using Defra.Identity.Repositories.Users.Cphs;
-using Defra.Identity.Repositories.Users.Delegations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -30,7 +28,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IApplicationsRepository, ApplicationsRepository>();
         services.AddTransient<ICphRepository, CphRepository>();
         services.AddTransient<ICphDelegationsRepository, CphDelegationsRepository>();
-        services.AddTransient<ICphAssigneesRepository, CphAssigneesRepository>();
+        services.AddTransient<ICphAssignmentsRepository, CphAssignmentsRepository>();
 
         return services;
     }

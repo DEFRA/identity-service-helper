@@ -7,17 +7,15 @@ namespace Defra.Identity.Services.Users;
 using System.Linq.Expressions;
 using Defra.Identity.Models.Requests.Users.Commands;
 using Defra.Identity.Models.Requests.Users.Queries;
+using Defra.Identity.Models.Responses.Assignments;
 using Defra.Identity.Models.Responses.Common;
 using Defra.Identity.Models.Responses.Delegations;
 using Defra.Identity.Models.Responses.Users;
-using Defra.Identity.Models.Responses.Users.Cphs;
-using Defra.Identity.Models.Responses.Users.Cphs.Aggregates;
-using Defra.Identity.Models.Responses.Users.Delegates;
 using Defra.Identity.Postgres.Database.Entities;
+using Defra.Identity.Repositories.Assignments;
 using Defra.Identity.Repositories.Common.Exceptions;
+using Defra.Identity.Repositories.Delegations;
 using Defra.Identity.Repositories.Users;
-using Defra.Identity.Repositories.Users.Cphs;
-using Defra.Identity.Repositories.Users.Delegations;
 using Defra.Identity.Services.Common.Builders.Strategy.Factories;
 using Defra.Identity.Services.Common.Extensions;
 using Defra.Identity.Services.Common.Filters;
@@ -180,14 +178,17 @@ public class UserService : IUserService
             .WithAssociatedEntityFilter(FiltersLibrary.CphAssignments.NotDeleted)
             .WithPrimaryEntityExistenceRules(rules => { rules.Add(RulesLibrary.Existence.NotSoftDeleted); })
             .ExecuteAndMap(
-                entity => new UserAssignedCph()
+                entity => new CphAssignment()
                 {
-                    AssociationId = entity.Id,
+                    Id = entity.Id,
                     CountyParishHoldingId = entity.CountyParishHoldingId,
                     CountyParishHoldingNumber = entity.CountyParishHolding.Identifier,
+                    UserId = entity.UserAccountId,
                     ApplicationId = entity.ApplicationId,
                     RoleId = entity.RoleId,
                     RoleName = entity.Role.Name,
+                    Email = entity.UserAccount.EmailAddress,
+                    DisplayName = entity.UserAccount.DisplayName,
                 });
 
         var userDelegatedCphs = await strategyBuilderFactory.BuildGetAssociationsListStrategy<UserAccounts, CountyParishHoldingDelegations>()
@@ -215,7 +216,7 @@ public class UserService : IUserService
             .WithRequestAndPrimaryEntityFilter(request, userAccount => userAccount.Id == request.Id)
             .WithAssociatedEntityFilter(FiltersLibrary.Users.NotDeleted)
             .WithPrimaryEntityExistenceRules(rules => { rules.Add(RulesLibrary.Existence.NotSoftDeleted); })
-            .ExecuteAndMap(MapUserEntityToDelegatedUser, SelectorLibrary.UserDisplayName);
+            .ExecuteAndMap(MapUserEntityToCphDelegate, SelectorLibrary.UserDisplayName);
     }
 
     public async Task<PagedResults<CphDelegation>> GetCphDelegationsForDelegateAssociatedWithDelegator(
@@ -261,7 +262,7 @@ public class UserService : IUserService
         };
     }
 
-    private static CphDelegate MapUserEntityToDelegatedUser(UserAccounts userEntity)
+    private static CphDelegate MapUserEntityToCphDelegate(UserAccounts userEntity)
     {
         var delegatedUser = new CphDelegate();
 

@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Repositories.Users.Delegations;
+namespace Defra.Identity.Repositories.Delegations;
 
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database.Entities;

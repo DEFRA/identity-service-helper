@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Repositories.Users.Cphs;
+namespace Defra.Identity.Repositories.Assignments;
 
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database;
@@ -19,7 +19,7 @@ public class CphAssignmentsForAssigneeRepository(
         Expression<Func<ApplicationUserAccountHoldingAssignments, bool>> associationsPredicate,
         CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Getting list of cphs for user account");
+        logger.LogInformation("Getting list of assignments for user account");
 
         var primaryEntity = await readOnlyContext.UserAccounts
             .FirstOrDefaultAsync(primaryPredicate, cancellationToken);

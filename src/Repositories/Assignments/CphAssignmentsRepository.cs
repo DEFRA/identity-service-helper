@@ -1,8 +1,8 @@
-﻿// <copyright file="CphAssigneesRepository.cs" company="Defra">
+﻿// <copyright file="CphAssignmentsRepository.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Repositories.Cphs.Users;
+namespace Defra.Identity.Repositories.Assignments;
 
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database;
@@ -11,9 +11,9 @@ using Defra.Identity.Repositories.Common;
 using Defra.Identity.Repositories.Common.Exceptions;
 using Microsoft.Extensions.Logging;
 
-public class CphAssigneesRepository(
+public class CphAssignmentsRepository(
     ReadOnlyPostgresDbContext readOnlyContext,
-    ILogger<CphAssigneesRepository> logger) : ICphAssigneesRepository
+    ILogger<CphAssignmentsRepository> logger) : ICphAssignmentsRepository
 {
     public async Task<PagedEntities<ApplicationUserAccountHoldingAssignments>> GetPaged<TOrderBy>(
         Expression<Func<CountyParishHoldings, bool>> primaryPredicate,
@@ -24,7 +24,7 @@ public class CphAssigneesRepository(
         bool orderByDescending,
         CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Getting list of users for county parish holding");
+        logger.LogInformation("Getting list of assignments for county parish holding");
 
         var primaryEntity = await readOnlyContext.CountyParishHoldings
             .FirstOrDefaultAsync(primaryPredicate, cancellationToken);
@@ -38,6 +38,7 @@ public class CphAssigneesRepository(
             .Entry(primaryEntity)
             .Collection(p => p.ApplicationUserAccountHoldingAssignments)
             .Query()
+            .Include(p => p.CountyParishHolding)
             .Include(p => p.UserAccount)
             .Include(p => p.Role)
             .Where(associationsPredicate)
