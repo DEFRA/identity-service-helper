@@ -9,13 +9,13 @@ using Defra.Identity.Models.Responses.Delegations;
 
 public class UserCphs
 {
-    public UserCphs(IEnumerable<CphAssignment> associations, IEnumerable<CphDelegation> delegations)
+    public UserCphs(IEnumerable<CphAssignment> assignments, IEnumerable<CphDelegation> delegations)
     {
-        Associations = associations;
+        Assignments = assignments;
         Delegations = delegations;
     }
 
-    public IEnumerable<CphAssignment> Associations { get; }
+    public IEnumerable<CphAssignment> Assignments { get; }
 
     public IEnumerable<CphDelegation> Delegations { get; }
 }
