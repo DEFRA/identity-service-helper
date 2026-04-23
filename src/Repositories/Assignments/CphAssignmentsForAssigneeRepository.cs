@@ -33,6 +33,7 @@ public class CphAssignmentsForAssigneeRepository(
             .Collection(p => p.ApplicationUserAccountHoldingAssignments)
             .Query()
             .Include(p => p.CountyParishHolding)
+            .Include(p => p.UserAccount)
             .Include(p => p.Role)
             .Where(associationsPredicate)
             .ToListAsync(cancellationToken);
