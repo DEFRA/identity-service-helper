@@ -56,7 +56,7 @@ public class UserService : IUserService
         this.cphDelegatesForDelegatorRepository
             .WithHoldingAssignmentsFilter(FiltersLibrary.CphAssignments.NotDeleted)
             .WithCountyParishHoldingsFilter(FiltersLibrary.Cphs.NotDeletedOrExpired)
-            .WithDelegationsFilter(FiltersLibrary.CphDelegations.NotDeletedOrExpired);
+            .WithDelegationsFilter(FiltersLibrary.CphDelegations.Aggregates.VisibleAndReferencesValid);
 
         this.cphDelegationsForDelegatorRepository
             .WithHoldingAssignmentsFilter(FiltersLibrary.CphAssignments.NotDeleted);
@@ -197,7 +197,7 @@ public class UserService : IUserService
             .WithAssociationsRepository(cphDelegationsForDelegateRepository)
             .WithCancellationToken(cancellationToken)
             .WithRequestAndPrimaryEntityFilter(request, userAccount => userAccount.Id == request.Id)
-            .WithAssociatedEntityFilter(FiltersLibrary.CphDelegations.Aggregates.DelegationAndReferencesNotDeletedOrExpired)
+            .WithAssociatedEntityFilter(FiltersLibrary.CphDelegations.Aggregates.VisibleAndReferencesValid)
             .WithPrimaryEntityExistenceRules(rules => { rules.Add(RulesLibrary.Existence.NotSoftDeleted); })
             .ExecuteAndMap(MapCphDelegationEntityToCphDelegation);
 
@@ -230,7 +230,7 @@ public class UserService : IUserService
             .WithCancellationToken(cancellationToken)
             .WithRequestAndPrimaryEntityFilter(request, userAccount => userAccount.Id == request.DelegatorId)
             .WithAssociatedEntityFilter(
-                FiltersLibrary.CphDelegations.Aggregates.DelegationAndReferencesNotDeletedOrExpired
+                FiltersLibrary.CphDelegations.Aggregates.VisibleAndReferencesValid
                     .AndAlso(delegation => delegation.DelegatedUserId == request.Id))
             .WithPrimaryEntityExistenceRules(rules => { rules.Add(RulesLibrary.Existence.NotSoftDeleted); })
             .ExecuteAndMap(MapCphDelegationEntityToCphDelegation, SelectorLibrary.CphDelegationCphIdentifier);

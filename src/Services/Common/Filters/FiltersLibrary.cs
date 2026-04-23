@@ -31,6 +31,9 @@ public static class FiltersLibrary
         public static readonly Expression<Func<CountyParishHoldingDelegations, bool>> NotDeletedOrExpired = delegation
             => delegation.DeletedAt == null && (delegation.ExpiresAt == null || DateTime.UtcNow < delegation.ExpiresAt);
 
+        public static readonly Expression<Func<CountyParishHoldingDelegations, bool>> NotRevoked = delegation
+            => delegation.RevokedAt == null;
+
         public static readonly Expression<Func<CountyParishHoldingDelegations, bool>> DelegatingUserNotDeleted = delegation
             => delegation.DelegatingUser.DeletedAt == null;
 
@@ -42,8 +45,9 @@ public static class FiltersLibrary
 
         public static class Aggregates
         {
-            public static readonly Expression<Func<CountyParishHoldingDelegations, bool>> DelegationAndReferencesNotDeletedOrExpired =
+            public static readonly Expression<Func<CountyParishHoldingDelegations, bool>> VisibleAndReferencesValid =
                 NotDeletedOrExpired
+                    .AndAlso(NotRevoked)
                     .AndAlso(CphNotDeletedOrExpired)
                     .AndAlso(DelegatingUserNotDeleted)
                     .AndAlso(DelegatedUserNotDeleted);
