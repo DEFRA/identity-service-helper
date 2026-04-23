@@ -352,4 +352,65 @@ public class UserServiceTests
             Arg.Any<Exception>(),
             Arg.Any<Func<object, Exception?, string>>());
     }
+
+    [Fact]
+    public async Task Validate_UserExists_ReturnsTrue()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var email = "test@example.com";
+        var userAccount = new UserAccounts
+        {
+            Id = userId,
+            EmailAddress = email,
+        };
+
+        repository.GetSingle(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns(userAccount);
+
+        // Act
+        var result = await userService.Validate(userId, email, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ShouldBeTrue();
+
+        logger.ReceivedWithAnyArgs().Log(
+            LogLevel.Information,
+            Arg.Any<EventId>(),
+            Arg.Any<object>(),
+            Arg.Any<Exception>(),
+            Arg.Any<Func<object, Exception?, string>>());
+    }
+
+    [Fact]
+    public async Task Validate_UserDoesNotExist_ReturnsFalse()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var email = "test@example.com";
+
+        repository.GetSingle(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns((UserAccounts)null!);
+
+        // Act
+        var result = await userService.Validate(userId, email, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ShouldBeFalse();
+
+        logger.ReceivedWithAnyArgs().Log(
+            LogLevel.Information,
+            Arg.Any<EventId>(),
+            Arg.Any<object>(),
+            Arg.Any<Exception>(),
+            Arg.Any<Func<object, Exception?, string>>());
+    }
+
+    [Fact]
+    public async Task Validate_InvalidEmail_ThrowsArgumentException()
+    {
+        // Act & Assert
+        await Should.ThrowAsync<ArgumentException>(async () =>
+            await userService.Validate(Guid.NewGuid(), string.Empty, TestContext.Current.CancellationToken));
+    }
 }

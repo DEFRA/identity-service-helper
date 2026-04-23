@@ -4,21 +4,12 @@
 
 namespace Defra.Identity.Api.Endpoints.Users;
 
-using System.ComponentModel;
 using System.Net.Mime;
 using Defra.Identity.Api.Middleware.Headers;
-using Defra.Identity.Models.Requests;
-using Defra.Identity.Models.Requests.Common.Queries;
 using Defra.Identity.Models.Requests.Filters;
 using Defra.Identity.Models.Requests.MetaData;
-using Defra.Identity.Models.Requests.Users;
 using Defra.Identity.Models.Requests.Users.Commands;
 using Defra.Identity.Models.Requests.Users.Queries;
-using Defra.Identity.Models.Responses.Common;
-using Defra.Identity.Models.Responses.Delegations;
-using Defra.Identity.Models.Responses.Users.Cphs;
-using Defra.Identity.Models.Responses.Users.Cphs.Aggregates;
-using Defra.Identity.Models.Responses.Users.Delegates;
 using Defra.Identity.Services.Users;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,67 +17,40 @@ public static class UsersEndpoints
 {
     public static void UseUsersEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapGet(RouteNames.Users, GetAllRoute)
-            .WithName(OpenApiMetadata.GetAllRoute.Name)
-            .WithTags(OpenApiMetadata.Tag)
-            .WithSummary(OpenApiMetadata.GetAllRoute.Summary)
-            .WithDescription(OpenApiMetadata.GetAllRoute.Description)
-            .Produces<IEnumerable<Models.Responses.Users.User>>(StatusCodes.Status200OK, MediaTypeNames.Application.Json);
+        app.MapGet(RouteNames.Users, GetAll);
 
-        app.MapGet(RouteNames.Users + "/{id:guid}", GetByIdRoute)
-            .WithName(OpenApiMetadata.GetByIdRoute.Name)
-            .WithTags(OpenApiMetadata.Tag)
-            .WithSummary(OpenApiMetadata.GetByIdRoute.Summary)
-            .WithDescription(OpenApiMetadata.GetByIdRoute.Description)
+        app.MapGet(RouteNames.Users + "/{id:guid}", Get)
+            .WithName(RouteNames.Users)
             .Produces<Models.Responses.Users.User>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
             .Produces(StatusCodes.Status404NotFound);
 
-        app.MapGet(RouteNames.Users + "/{id:guid}/cphs", GetUserCphsRoute)
-            .Produces<UserCphs>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
-            .ProducesProblem(StatusCodes.Status404NotFound);
-
-        app.MapGet(RouteNames.Users + "/{id:guid}/delegates", GetCphDelegatesForDelegatorRoute)
-            .AddEndpointFilter<ValidationFilter<PagedQuery>>()
-            .Produces<PagedResults<CphDelegate>>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
-            .ProducesProblem(StatusCodes.Status404NotFound);
-
-        app.MapGet(RouteNames.Users + "/{id:guid}/delegations/by-cph-owner/{delegatorId:guid}", GetCphDelegationsForDelegateAssociatedWithDelegatorRoute)
-            .AddEndpointFilter<ValidationFilter<PagedQuery>>()
-            .Produces<PagedResults<CphDelegation>>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
-            .ProducesProblem(StatusCodes.Status404NotFound);
-
-        app.MapPut(RouteNames.Users + "/{id:guid}", PutByIdRoute)
-            .WithName(OpenApiMetadata.PutByIdRoute.Name)
-            .WithTags(OpenApiMetadata.Tag)
-            .WithSummary(OpenApiMetadata.PutByIdRoute.Summary)
-            .WithDescription(OpenApiMetadata.PutByIdRoute.Description)
+        app.MapPut(RouteNames.Users + "/{id:guid}", Put)
             .AddEndpointFilter<ValidationFilter<UpdateUser>>()
             .WithMetadata(new RequiresOperatorId())
             .Produces(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status422UnprocessableEntity)
             .ProducesProblem(StatusCodes.Status404NotFound);
 
-        app.MapPost(RouteNames.Users, PostRoute)
-            .WithName(OpenApiMetadata.PostRoute.Name)
-            .WithTags(OpenApiMetadata.Tag)
-            .WithSummary(OpenApiMetadata.PostRoute.Summary)
-            .WithDescription(OpenApiMetadata.PostRoute.Description)
+        app.MapPost(RouteNames.Users, Post)
             .AddEndpointFilter<ValidationFilter<CreateUser>>()
             .WithMetadata(new RequiresOperatorId())
             .Produces<Models.Responses.Users.User>(StatusCodes.Status201Created, MediaTypeNames.Application.Json)
             .ProducesProblem(StatusCodes.Status422UnprocessableEntity);
 
-        app.MapDelete(RouteNames.Users + "/{id:guid}", DeleteByIdRoute)
-            .WithName(OpenApiMetadata.DeleteByIdRoute.Name)
-            .WithTags(OpenApiMetadata.Tag)
-            .WithSummary(OpenApiMetadata.DeleteByIdRoute.Summary)
-            .WithDescription(OpenApiMetadata.DeleteByIdRoute.Description)
+        app.MapPost(string.Concat(RouteNames.Users, ":validate"), ValidateUser)
+            .AddEndpointFilter<ValidationFilter<ValidateUser>>()
+            .WithMetadata(new RequiresOperatorId())
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status422UnprocessableEntity);
+
+        app.MapDelete(RouteNames.Users + "/{id:guid}", Delete)
             .WithMetadata(new RequiresOperatorId())
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status404NotFound);
     }
 
-    private static async Task<IResult> PostRoute(
+    private static async Task<IResult> Post(
         CommandRequestHeaders headers,
         [FromBody] CreateUser user,
         IUserService service)
@@ -103,39 +67,18 @@ public static class UsersEndpoints
             value: result);
     }
 
-    private static async Task<IResult> GetAllRoute(
-        QueryRequestHeaders headers,
-        [AsParameters] GetAllUsers request,
-        IUserService service)
-    {
-        var user = await service.GetAll(request);
-
-        return Results.Ok(user);
-    }
-
-    private static async Task<IResult> GetByIdRoute(
-        QueryRequestHeaders headers,
-        [AsParameters] GetUserById request,
-        IUserService service)
-    {
-        var user = await service.Get(request);
-
-        return Results.Ok(user);
-    }
-
-    private static async Task<IResult> PutByIdRoute(
+    private static async Task<IResult> Put(
         CommandRequestHeaders headers,
-        [AsParameters] UpdateUserById request,
-        [FromBody] UpdateUser payload,
+        [FromRoute] Guid id,
+        [FromBody] UpdateUser user,
         IUserService service)
     {
         try
         {
-            payload.Id = request.Id;
-            payload.OperatorId = headers.OperatorId;
+            user.Id = id;
+            user.OperatorId = headers.OperatorId;
 
-            var result = await service.Update(payload);
-
+            var result = await service.Update(user);
             return Results.Ok(result);
         }
         catch (NullReferenceException nex)
@@ -148,47 +91,43 @@ public static class UsersEndpoints
         }
     }
 
-    private static async Task<IResult> DeleteByIdRoute(
-        CommandRequestHeaders headers,
-        [AsParameters] DeleteUserById request,
+    private static async Task<IResult> Get(
+        QueryRequestHeaders headers,
+        [AsParameters] GetUserById request,
         IUserService service)
     {
-        await service.Delete(
-            new DeleteUser()
-            {
-                OperatorId = headers.OperatorId, Id = request.Id,
-            });
+        var user = await service.Get(request);
+
+        return Results.Ok(user);
+    }
+
+    private static async Task<IResult> GetAll(
+        QueryRequestHeaders headers,
+        [AsParameters] GetAllUsers request,
+        IUserService service)
+    {
+        var user = await service.GetAll(request);
+
+        return Results.Ok(user);
+    }
+
+    private static async Task<IResult> Delete(
+        CommandRequestHeaders headers,
+        [FromRoute] Guid id,
+        IUserService service)
+    {
+        var deleted = await service.Delete(id, headers.OperatorId);
 
         return Results.NoContent();
     }
 
-    private static async Task<IResult> GetUserCphsRoute(
-        QueryRequestHeaders headers,
-        [AsParameters] GetUserCphsByUserId request,
+    private static async Task<IResult> ValidateUser(
+        CommandRequestHeaders headers,
+        [FromBody] ValidateUser user,
         IUserService service)
     {
-        var user = await service.GetUserCphs(request);
+        var isValid = await service.Validate(headers.OperatorId, user.Email);
 
-        return Results.Ok(user);
-    }
-
-    private static async Task<IResult> GetCphDelegatesForDelegatorRoute(
-        QueryRequestHeaders headers,
-        [AsParameters] GetCphDelegatesByDelegatorId request,
-        IUserService service)
-    {
-        var user = await service.GetCphDelegatesForDelegator(request);
-
-        return Results.Ok(user);
-    }
-
-    private static async Task<IResult> GetCphDelegationsForDelegateAssociatedWithDelegatorRoute(
-        QueryRequestHeaders headers,
-        [AsParameters] GetCphDelegationsByUserIdFiltered request,
-        IUserService service)
-    {
-        var user = await service.GetCphDelegationsForDelegateAssociatedWithDelegator(request);
-
-        return Results.Ok(user);
+        return isValid ? Results.Ok() : Results.NotFound();
     }
 }

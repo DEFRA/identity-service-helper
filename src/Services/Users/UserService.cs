@@ -162,6 +162,11 @@ public class UserService : IUserService
         return MapUserEntityToUser(createdUser);
     }
 
+    public Task<bool> Delete(Guid id, Guid operatorId, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<bool> Delete(DeleteUser request, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Deleting user with id {Id} by operator {OperatorId}", request.Id, request.OperatorId);
@@ -288,5 +293,19 @@ public class UserService : IUserService
         return request.IncludeInactive != null &&
                (request.IncludeInactive == string.Empty ||
                 request.IncludeInactive.Equals("true", StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    public async Task<bool> Validate(Guid id, string email, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            throw new ArgumentException("Email cannot be null or whitespace", nameof(email));
+        }
+
+        logger.LogInformation("Validating user with id {Id} and email {Email}", id, email);
+
+        Expression<Func<UserAccounts, bool>> filter = x => x.EmailAddress == email && x.Id == id;
+
+        return await repository.GetSingle(filter, cancellationToken) != null;
     }
 }
