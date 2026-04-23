@@ -1,4 +1,4 @@
-﻿// <copyright file="GetCphUsersByCphNumber.cs" company="Defra">
+﻿// <copyright file="GetCphAssigneesByCphNumber.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
@@ -8,7 +8,7 @@ using System.ComponentModel;
 using Defra.Identity.Models.Requests.Common.Queries;
 using Defra.Identity.Models.Requests.Cphs.Common;
 
-public class GetCphUsersByCphNumber : PagedQuery, IOperationByCphNumber
+public class GetCphAssigneesByCphNumber : PagedQuery, IOperationByCphNumber
 {
     [Description(OpenApiMetadata.CountyElement)]
     public int County { get; set; }

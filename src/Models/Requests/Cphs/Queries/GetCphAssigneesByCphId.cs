@@ -1,4 +1,4 @@
-﻿// <copyright file="GetCphUsersByCphId.cs" company="Defra">
+﻿// <copyright file="GetCphAssigneesByCphId.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
@@ -8,7 +8,7 @@ using System.ComponentModel;
 using Defra.Identity.Models.Requests.Common;
 using Defra.Identity.Models.Requests.Common.Queries;
 
-public class GetCphUsersByCphId : PagedQuery, IOperationById
+public class GetCphAssigneesByCphId : PagedQuery, IOperationById
 {
     [Description(OpenApiMetadata.Cphs.Id)]
     public Guid Id { get; set; }

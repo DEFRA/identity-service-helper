@@ -1,4 +1,4 @@
-﻿// <copyright file="CphAssociatedUsersRepository.cs" company="Defra">
+﻿// <copyright file="CphAssigneesRepository.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
@@ -11,9 +11,9 @@ using Defra.Identity.Repositories.Common;
 using Defra.Identity.Repositories.Common.Exceptions;
 using Microsoft.Extensions.Logging;
 
-public class CphAssociatedUsersRepository(
+public class CphAssigneesRepository(
     ReadOnlyPostgresDbContext readOnlyContext,
-    ILogger<CphAssociatedUsersRepository> logger) : ICphAssociatedUsersRepository
+    ILogger<CphAssigneesRepository> logger) : ICphAssigneesRepository
 {
     public async Task<PagedEntities<ApplicationUserAccountHoldingAssignments>> GetPaged<TOrderBy>(
         Expression<Func<CountyParishHoldings, bool>> primaryPredicate,

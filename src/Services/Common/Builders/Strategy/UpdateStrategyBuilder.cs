@@ -147,6 +147,8 @@ public class UpdateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
             Request.Id,
             OperatorContext.OperatorId);
 
+        ExecuteSetup();
+
         await ExecuteRequestValidation();
 
         if (ReferenceRulesBuilder != null)

@@ -126,6 +126,8 @@ public class GetAssociationsPagedStrategyBuilder<TService, TPrimary, TAssociatio
             PrimaryEntityDescription.ToLowerInvariant(),
             RequestAsId.Id);
 
+        ExecuteSetup();
+
         await ExecuteRequestValidation();
 
         var primaryEntity = await GettablePrimaryRepository.GetSingle(PrimaryEntityFilter, CancellationToken.Value);
