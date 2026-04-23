@@ -26,7 +26,7 @@ public interface IUserService
 
     Task<UserCphs> GetUserCphs(GetUserCphsByUserId request, CancellationToken cancellationToken = default);
 
-    Task<PagedResults<CphDelegate>> GetCphDelegatesForDelegator(GetCphDelegatesByDelegatorId request, CancellationToken cancellationToken = default);
+    Task<PagedResults<CphDelegate>> GetCphDelegatesForCphAssignee(GetCphDelegatesByCphAssigneeId request, CancellationToken cancellationToken = default);
 
-    Task<PagedResults<CphDelegation>> GetCphDelegationsForDelegateAssociatedWithDelegator(GetCphDelegationsByUserIdFiltered request, CancellationToken cancellationToken = default);
+    Task<PagedResults<CphDelegation>> GetCphDelegationsForDelegateFilteredByCphAssignee(GetCphDelegationsByDelegateIdFiltered request, CancellationToken cancellationToken = default);
 }

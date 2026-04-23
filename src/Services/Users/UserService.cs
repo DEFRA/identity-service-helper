@@ -205,11 +205,11 @@ public class UserService : IUserService
         return new UserCphs(userAssociatedCphs, userDelegatedCphs);
     }
 
-    public async Task<PagedResults<CphDelegate>> GetCphDelegatesForDelegator(GetCphDelegatesByDelegatorId request, CancellationToken cancellationToken = default)
+    public async Task<PagedResults<CphDelegate>> GetCphDelegatesForCphAssignee(GetCphDelegatesByCphAssigneeId request, CancellationToken cancellationToken = default)
     {
         return await strategyBuilderFactory.BuildGetAssociationsPagedStrategy<UserAccounts, UserAccounts>()
             .WithPrimaryEntityDescription("User account")
-            .WithActionDescription("Get user owned county parish holding unique delegation users associated with")
+            .WithActionDescription("Get county parish holding unique delegates associated with cph assignee")
             .WithPrimaryRepository(repository)
             .WithAssociationsRepository(cphDelegatesForCphAssigneeRepository)
             .WithCancellationToken(cancellationToken)
@@ -219,17 +219,17 @@ public class UserService : IUserService
             .ExecuteAndMap(MapUserEntityToCphDelegate, SelectorLibrary.UserDisplayName);
     }
 
-    public async Task<PagedResults<CphDelegation>> GetCphDelegationsForDelegateAssociatedWithDelegator(
-        GetCphDelegationsByUserIdFiltered request,
+    public async Task<PagedResults<CphDelegation>> GetCphDelegationsForDelegateFilteredByCphAssignee(
+        GetCphDelegationsByDelegateIdFiltered request,
         CancellationToken cancellationToken = default)
     {
         return await strategyBuilderFactory.BuildGetAssociationsPagedStrategy<UserAccounts, CountyParishHoldingDelegations>()
             .WithPrimaryEntityDescription("User account")
-            .WithActionDescription("Get county parish holding delegations for delegator filtered by")
+            .WithActionDescription("Get county parish holding delegations filtered by cph assignee for delegate")
             .WithPrimaryRepository(repository)
             .WithAssociationsRepository(cphDelegationsForCphAssigneeRepository)
             .WithCancellationToken(cancellationToken)
-            .WithRequestAndPrimaryEntityFilter(request, userAccount => userAccount.Id == request.DelegatorId)
+            .WithRequestAndPrimaryEntityFilter(request, userAccount => userAccount.Id == request.CphAssigneeId)
             .WithAssociatedEntityFilter(
                 FiltersLibrary.CphDelegations.Aggregates.VisibleAndReferencesValid
                     .AndAlso(delegation => delegation.DelegatedUserId == request.Id))
