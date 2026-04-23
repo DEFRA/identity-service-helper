@@ -5,12 +5,10 @@
 namespace Defra.Identity.Api.Tests.Endpoints.Users;
 
 using Defra.Identity.Api.Endpoints.Users;
-using Defra.Identity.Requests;
-using Defra.Identity.Requests.Users.Commands.Create;
-using Defra.Identity.Requests.Users.Commands.Update;
-using Defra.Identity.Requests.Users.Commands.Validate;
-using Defra.Identity.Requests.Users.Queries;
-using Defra.Identity.Responses.Users;
+using Defra.Identity.Api.Middleware.Headers;
+using Defra.Identity.Models.Requests.Users.Commands;
+using Defra.Identity.Models.Requests.Users.Queries;
+using Defra.Identity.Models.Responses.Users;
 using Defra.Identity.Services.Users;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -67,7 +65,7 @@ public class UsersEndpointsTests
     public async Task GetAll_ReturnsOk()
     {
         // Arrange
-        var request = new GetUsers();
+        var request = new GetAllUsers();
         var users = new List<User> { new() { Id = Guid.NewGuid(), Email = "user1@example.com" } };
         service.GetAll(request, Arg.Any<CancellationToken>()).Returns(users);
 

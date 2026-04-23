@@ -4,20 +4,20 @@
 
 namespace Defra.Identity.Services.Users;
 
-using Defra.Identity.Requests.Users.Queries;
-using Defra.Identity.Responses.Users;
+using Defra.Identity.Models.Requests.Users.Queries;
+using Defra.Identity.Models.Responses.Users;
 
 public interface IUserService
 {
-    Task<List<User>> GetAll(GetUsers request, CancellationToken cancellationToken = default);
+    Task<List<User>> GetAll(GetAllUsers request, CancellationToken cancellationToken = default);
 
     Task<User> Get(GetUserById request, CancellationToken cancellationToken = default);
 
-    Task<User> Upsert(Requests.Users.Commands.Update.UpdateUser user, CancellationToken cancellationToken = default);
+    Task<User> Upsert(Models.Requests.Users.Commands.UpdateUser user, CancellationToken cancellationToken = default);
 
-    Task<User> Update(Requests.Users.Commands.Update.UpdateUser user, CancellationToken cancellationToken = default);
+    Task<User> Update(Models.Requests.Users.Commands.UpdateUser user, CancellationToken cancellationToken = default);
 
-    Task<User> Create(Requests.Users.Commands.Create.CreateUser user,  CancellationToken cancellationToken = default);
+    Task<User> Create(Models.Requests.Users.Commands.CreateUser user,  CancellationToken cancellationToken = default);
 
     Task<bool> Delete(Guid id, Guid operatorId, CancellationToken cancellationToken = default);
 

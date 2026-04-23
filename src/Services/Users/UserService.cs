@@ -162,6 +162,11 @@ public class UserService : IUserService
         return MapUserEntityToUser(createdUser);
     }
 
+    public Task<bool> Delete(Guid id, Guid operatorId, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<bool> Delete(DeleteUser request, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Deleting user with id {Id} by operator {OperatorId}", request.Id, request.OperatorId);
