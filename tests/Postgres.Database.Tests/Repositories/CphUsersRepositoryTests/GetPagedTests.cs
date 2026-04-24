@@ -36,7 +36,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         var pagedEntities = await repository.GetPaged(primaryFilter, associationFilter, pageNumber, pageSize, orderBy, descendingOrder, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.Received(1).Log(LogLevel.Information, "Getting list of users for county parish holding");
+        logger.Received(1).Log(LogLevel.Information, "Getting list of assignments for county parish holding");
 
         pagedEntities.ShouldSatisfyAllConditions(
             (x) => x.Items.Count.ShouldBe(2),
@@ -88,7 +88,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         var pagedEntities = await repository.GetPaged(primaryFilter, associationFilter, pageNumber, pageSize, orderBy, descendingOrder, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.Received(1).Log(LogLevel.Information, "Getting list of users for county parish holding");
+        logger.Received(1).Log(LogLevel.Information, "Getting list of assignments for county parish holding");
 
         pagedEntities.ShouldSatisfyAllConditions(
             (x) => x.Items.Count.ShouldBe(1),
@@ -130,7 +130,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         var pagedEntities = await repository.GetPaged(primaryFilter, associationFilter, pageNumber, pageSize, orderBy, descendingOrder, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.Received(1).Log(LogLevel.Information, "Getting list of users for county parish holding");
+        logger.Received(1).Log(LogLevel.Information, "Getting list of assignments for county parish holding");
 
         pagedEntities.ShouldSatisfyAllConditions(
             (x) => x.Items.Count.ShouldBe(2),
@@ -182,7 +182,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         var pagedEntities = await repository.GetPaged(primaryFilter, associationFilter, pageNumber, pageSize, orderBy, descendingOrder, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.Received(1).Log(LogLevel.Information, "Getting list of users for county parish holding");
+        logger.Received(1).Log(LogLevel.Information, "Getting list of assignments for county parish holding");
 
         pagedEntities.ShouldSatisfyAllConditions(
             (x) => x.Items.Count.ShouldBe(1),
@@ -224,7 +224,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         var pagedEntities = await repository.GetPaged(primaryFilter, associationFilter, pageNumber, pageSize, orderBy, descendingOrder, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.Received(1).Log(LogLevel.Information, "Getting list of users for county parish holding");
+        logger.Received(1).Log(LogLevel.Information, "Getting list of assignments for county parish holding");
 
         pagedEntities.ShouldSatisfyAllConditions(
             (x) => x.Items.Count.ShouldBe(2),
@@ -276,7 +276,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         var pagedEntities = await repository.GetPaged(primaryFilter, associationFilter, pageNumber, pageSize, orderBy, descendingOrder, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.Received(1).Log(LogLevel.Information, "Getting list of users for county parish holding");
+        logger.Received(1).Log(LogLevel.Information, "Getting list of assignments for county parish holding");
 
         pagedEntities.ShouldSatisfyAllConditions(
             (x) => x.Items.Count.ShouldBe(2),
