@@ -12,10 +12,10 @@ using System.Threading.Tasks;
 using Defra.Identity.Models.Requests.Users.Commands;
 using Defra.Identity.Models.Requests.Users.Queries;
 using Defra.Identity.Postgres.Database.Entities;
+using Defra.Identity.Repositories.Assignments;
 using Defra.Identity.Repositories.Common.Exceptions;
+using Defra.Identity.Repositories.Delegations;
 using Defra.Identity.Repositories.Users;
-using Defra.Identity.Repositories.Users.Cphs;
-using Defra.Identity.Repositories.Users.Delegations;
 using Defra.Identity.Services.Common.Builders.Strategy.Factories;
 using Defra.Identity.Services.Users;
 using Microsoft.Extensions.Logging;
@@ -28,8 +28,8 @@ public class UserServiceTests
     private readonly IUsersRepository repository = Substitute.For<IUsersRepository>();
     private readonly ICphAssignmentsForAssigneeRepository cphAssignmentsForAssigneeRepository = Substitute.For<ICphAssignmentsForAssigneeRepository>();
     private readonly ICphDelegationsForDelegateRepository cphDelegationsForDelegateRepository = Substitute.For<ICphDelegationsForDelegateRepository>();
-    private readonly ICphDelegatesForDelegatorRepository cphDelegatesForDelegatorRepository = Substitute.For<ICphDelegatesForDelegatorRepository>();
-    private readonly ICphDelegationsForDelegatorRepository cphDelegationsForDelegatorRepository = Substitute.For<ICphDelegationsForDelegatorRepository>();
+    private readonly ICphDelegatesForCphAssigneeRepository cphDelegatesForCphAssigneeRepository = Substitute.For<ICphDelegatesForCphAssigneeRepository>();
+    private readonly ICphDelegationsForCphAssigneeRepository cphDelegationsForCphAssigneeRepository = Substitute.For<ICphDelegationsForCphAssigneeRepository>();
     private readonly IStrategyBuilderFactory<UserService> strategyBuilderFactory = Substitute.For<IStrategyBuilderFactory<UserService>>();
     private readonly ILogger<UserService> logger = Substitute.For<ILogger<UserService>>();
     private readonly UserService userService;
@@ -40,8 +40,8 @@ public class UserServiceTests
             repository,
             cphAssignmentsForAssigneeRepository,
             cphDelegationsForDelegateRepository,
-            cphDelegatesForDelegatorRepository,
-            cphDelegationsForDelegatorRepository,
+            cphDelegatesForCphAssigneeRepository,
+            cphDelegationsForCphAssigneeRepository,
             strategyBuilderFactory,
             logger);
     }

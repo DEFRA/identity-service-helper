@@ -8,13 +8,14 @@ using System.Linq.Expressions;
 using Defra.Identity.Models.Requests.Cphs.Commands;
 using Defra.Identity.Models.Requests.Cphs.Common;
 using Defra.Identity.Models.Requests.Cphs.Queries;
+using Defra.Identity.Models.Responses.Assignments;
 using Defra.Identity.Models.Responses.Common;
 using Defra.Identity.Models.Responses.Cphs;
 using Defra.Identity.Postgres.Database.Entities;
+using Defra.Identity.Repositories.Assignments;
 using Defra.Identity.Repositories.Common;
 using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Repositories.Cphs;
-using Defra.Identity.Repositories.Cphs.Users;
 using Defra.Identity.Services.Common.Exceptions;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
@@ -22,14 +23,14 @@ using Microsoft.Extensions.Logging;
 public class CphService : ICphService
 {
     private readonly ICphRepository cphRepository;
-    private readonly ICphAssigneesRepository cphAssigneesRepository;
+    private readonly ICphAssignmentsRepository cphAssignmentsRepository;
     private readonly IValidator<IOperationByCphNumber> cphNumberValidator;
     private readonly ILogger<CphService> logger;
 
-    public CphService(ICphRepository cphRepository, ICphAssigneesRepository cphAssigneesRepository, IValidator<IOperationByCphNumber> cphNumberValidator, ILogger<CphService> logger)
+    public CphService(ICphRepository cphRepository, ICphAssignmentsRepository cphAssignmentsRepository, IValidator<IOperationByCphNumber> cphNumberValidator, ILogger<CphService> logger)
     {
         this.cphRepository = cphRepository;
-        this.cphAssigneesRepository = cphAssigneesRepository;
+        this.cphAssignmentsRepository = cphAssignmentsRepository;
         this.cphNumberValidator = cphNumberValidator;
         this.logger = logger;
     }
@@ -144,7 +145,7 @@ public class CphService : ICphService
         await cphRepository.Update(cphEntity, cancellationToken);
     }
 
-    public async Task<PagedResults<CphAssignee>> GetCphAssignees(GetCphAssigneesByCphId request, CancellationToken cancellationToken = default)
+    public async Task<PagedResults<CphAssignment>> GetCphAssignees(GetCphAssigneesByCphId request, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Getting all county parish holding users for id {Id} by page", request.Id);
 
@@ -161,7 +162,7 @@ public class CphService : ICphService
             throw new NotFoundException("County parish holding not found.");
         }
 
-        var pageCphUserEntities = await cphAssigneesRepository.GetPaged(
+        var pageCphUserEntities = await cphAssignmentsRepository.GetPaged(
             primaryFilter,
             associationFilter,
             request.PageNumber,
@@ -170,7 +171,7 @@ public class CphService : ICphService
             request.OrderByDescending ?? false,
             cancellationToken);
 
-        var pagedCphUserResults = pageCphUserEntities.ToPagedResults(MapCphUserEntityToCphAssignee);
+        var pagedCphUserResults = pageCphUserEntities.ToPagedResults(MapCphUserEntityToCphAssignment);
 
         return pagedCphUserResults;
     }
@@ -183,17 +184,19 @@ public class CphService : ICphService
         };
     }
 
-    private static CphAssignee MapCphUserEntityToCphAssignee(ApplicationUserAccountHoldingAssignments cphUserEntity)
+    private static CphAssignment MapCphUserEntityToCphAssignment(ApplicationUserAccountHoldingAssignments cphAssignmentEntity)
     {
-        return new CphAssignee
+        return new CphAssignment
         {
-            AssociationId = cphUserEntity.Id,
-            UserId = cphUserEntity.UserAccountId,
-            ApplicationId = cphUserEntity.ApplicationId,
-            RoleId = cphUserEntity.RoleId,
-            RoleName = cphUserEntity.Role.Name,
-            Email = cphUserEntity.UserAccount.EmailAddress,
-            DisplayName = cphUserEntity.UserAccount.DisplayName,
+            Id = cphAssignmentEntity.Id,
+            CountyParishHoldingId = cphAssignmentEntity.CountyParishHoldingId,
+            CountyParishHoldingNumber = cphAssignmentEntity.CountyParishHolding.Identifier,
+            UserId = cphAssignmentEntity.UserAccountId,
+            ApplicationId = cphAssignmentEntity.ApplicationId,
+            RoleId = cphAssignmentEntity.RoleId,
+            RoleName = cphAssignmentEntity.Role.Name,
+            Email = cphAssignmentEntity.UserAccount.EmailAddress,
+            DisplayName = cphAssignmentEntity.UserAccount.DisplayName,
         };
     }
 

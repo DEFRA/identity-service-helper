@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Repositories.Users.Delegations;
+namespace Defra.Identity.Repositories.Delegations;
 
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database;
@@ -11,9 +11,9 @@ using Defra.Identity.Repositories.Common;
 using Defra.Identity.Repositories.Common.Exceptions;
 using Microsoft.Extensions.Logging;
 
-public class CphDelegatesForDelegatorRepository(
+public class CphDelegatesForCphAssigneeRepository(
     ReadOnlyPostgresDbContext readOnlyContext,
-    ILogger<CphDelegatesForDelegatorRepository> logger) : ICphDelegatesForDelegatorRepository
+    ILogger<CphDelegatesForCphAssigneeRepository> logger) : ICphDelegatesForCphAssigneeRepository
 {
     private Expression<Func<ApplicationUserAccountHoldingAssignments, bool>>? HoldingAssignmentsFilter { get; set; }
 
@@ -21,19 +21,19 @@ public class CphDelegatesForDelegatorRepository(
 
     private Expression<Func<CountyParishHoldingDelegations, bool>>? DelegationsFilter { get; set; }
 
-    public ICphDelegatesForDelegatorRepository WithHoldingAssignmentsFilter(Expression<Func<ApplicationUserAccountHoldingAssignments, bool>> holdingAssignmentsFilter)
+    public ICphDelegatesForCphAssigneeRepository WithHoldingAssignmentsFilter(Expression<Func<ApplicationUserAccountHoldingAssignments, bool>> holdingAssignmentsFilter)
     {
         HoldingAssignmentsFilter = holdingAssignmentsFilter;
         return this;
     }
 
-    public ICphDelegatesForDelegatorRepository WithCountyParishHoldingsFilter(Expression<Func<CountyParishHoldings, bool>> countyParishHoldingsFilter)
+    public ICphDelegatesForCphAssigneeRepository WithCountyParishHoldingsFilter(Expression<Func<CountyParishHoldings, bool>> countyParishHoldingsFilter)
     {
         CountyParishHoldingsFilter = countyParishHoldingsFilter;
         return this;
     }
 
-    public ICphDelegatesForDelegatorRepository WithDelegationsFilter(Expression<Func<CountyParishHoldingDelegations, bool>> delegationsFilter)
+    public ICphDelegatesForCphAssigneeRepository WithDelegationsFilter(Expression<Func<CountyParishHoldingDelegations, bool>> delegationsFilter)
     {
         DelegationsFilter = delegationsFilter;
         return this;

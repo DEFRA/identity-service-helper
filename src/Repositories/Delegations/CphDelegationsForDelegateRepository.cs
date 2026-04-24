@@ -1,8 +1,8 @@
-﻿// <copyright file="CphAssignmentsForAssigneeRepository.cs" company="Defra">
+﻿// <copyright file="CphDelegationsForDelegateRepository.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Repositories.Users.Cphs;
+namespace Defra.Identity.Repositories.Delegations;
 
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database;
@@ -10,16 +10,16 @@ using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Common.Exceptions;
 using Microsoft.Extensions.Logging;
 
-public class CphAssignmentsForAssigneeRepository(
+public class CphDelegationsForDelegateRepository(
     ReadOnlyPostgresDbContext readOnlyContext,
-    ILogger<CphAssignmentsForAssigneeRepository> logger) : ICphAssignmentsForAssigneeRepository
+    ILogger<CphDelegationsForDelegateRepository> logger) : ICphDelegationsForDelegateRepository
 {
-    public async Task<List<ApplicationUserAccountHoldingAssignments>> GetList(
+    public async Task<List<CountyParishHoldingDelegations>> GetList(
         Expression<Func<UserAccounts, bool>> primaryPredicate,
-        Expression<Func<ApplicationUserAccountHoldingAssignments, bool>> associationsPredicate,
+        Expression<Func<CountyParishHoldingDelegations, bool>> associationsPredicate,
         CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Getting list of cphs for user account");
+        logger.LogInformation("Getting list of delegations for delegate");
 
         var primaryEntity = await readOnlyContext.UserAccounts
             .FirstOrDefaultAsync(primaryPredicate, cancellationToken);
@@ -29,11 +29,12 @@ public class CphAssignmentsForAssigneeRepository(
             throw new NotFoundException("User account not found.");
         }
 
-        var results = await readOnlyContext.Entry(primaryEntity)
-            .Collection(p => p.ApplicationUserAccountHoldingAssignments)
-            .Query()
+        var results = await readOnlyContext.CountyParishHoldingDelegations
             .Include(p => p.CountyParishHolding)
-            .Include(p => p.Role)
+            .Include(p => p.DelegatingUser)
+            .Include(p => p.DelegatedUser)
+            .Include(p => p.DelegatedUserRole)
+            .Where(entity => entity.DelegatedUserId == primaryEntity.Id)
             .Where(associationsPredicate)
             .ToListAsync(cancellationToken);
 

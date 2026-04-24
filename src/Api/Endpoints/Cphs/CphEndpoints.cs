@@ -7,13 +7,13 @@ namespace Defra.Identity.Api.Endpoints.Cphs;
 using System.Net.Mime;
 using Defra.Identity.Api.Endpoints.Cphs.Factories;
 using Defra.Identity.Api.Middleware.Headers;
-using Defra.Identity.Models.Requests;
 using Defra.Identity.Models.Requests.Common.Queries;
 using Defra.Identity.Models.Requests.Cphs.Commands;
 using Defra.Identity.Models.Requests.Cphs.Common;
 using Defra.Identity.Models.Requests.Cphs.Queries;
 using Defra.Identity.Models.Requests.Filters;
 using Defra.Identity.Models.Requests.MetaData;
+using Defra.Identity.Models.Responses.Assignments;
 using Defra.Identity.Models.Responses.Common;
 using Defra.Identity.Models.Responses.Cphs;
 using Defra.Identity.Services.Cphs;
@@ -99,7 +99,7 @@ public static class CphEndpoints
             .WithSummary(OpenApiMetadata.GetUsersByIdRoute.Summary)
             .WithDescription(OpenApiMetadata.GetUsersByIdRoute.Description)
             .AddEndpointFilter<ValidationFilter<PagedQuery>>()
-            .Produces<PagedResults<CphAssignee>>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
+            .Produces<PagedResults<CphAssignment>>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
             .Produces(StatusCodes.Status404NotFound);
 
         app.MapGet(
@@ -111,7 +111,7 @@ public static class CphEndpoints
             .WithDescription(OpenApiMetadata.GetUsersByNumberRoute.Description)
             .AddEndpointFilter<ValidationFilter<IOperationByCphNumber>>()
             .AddEndpointFilter<ValidationFilter<PagedQuery>>()
-            .Produces<PagedResults<CphAssignee>>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
+            .Produces<PagedResults<CphAssignment>>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
             .Produces(StatusCodes.Status404NotFound);
     }
 

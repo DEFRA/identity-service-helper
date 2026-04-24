@@ -1,8 +1,8 @@
-﻿// <copyright file="CphDelegationsForDelegatorRepository.cs" company="Defra">
+﻿// <copyright file="CphDelegationsForCphAssigneeRepository.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Repositories.Users.Delegations;
+namespace Defra.Identity.Repositories.Delegations;
 
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database;
@@ -11,13 +11,13 @@ using Defra.Identity.Repositories.Common;
 using Defra.Identity.Repositories.Common.Exceptions;
 using Microsoft.Extensions.Logging;
 
-public class CphDelegationsForDelegatorRepository(
+public class CphDelegationsForCphAssigneeRepository(
     ReadOnlyPostgresDbContext readOnlyContext,
-    ILogger<CphDelegationsForDelegateRepository> logger) : ICphDelegationsForDelegatorRepository
+    ILogger<CphDelegationsForDelegateRepository> logger) : ICphDelegationsForCphAssigneeRepository
 {
     private Expression<Func<ApplicationUserAccountHoldingAssignments, bool>>? HoldingAssignmentsFilter { get; set; }
 
-    public ICphDelegationsForDelegatorRepository WithHoldingAssignmentsFilter(Expression<Func<ApplicationUserAccountHoldingAssignments, bool>> holdingAssignmentsFilter)
+    public ICphDelegationsForCphAssigneeRepository WithHoldingAssignmentsFilter(Expression<Func<ApplicationUserAccountHoldingAssignments, bool>> holdingAssignmentsFilter)
     {
         HoldingAssignmentsFilter = holdingAssignmentsFilter;
         return this;
@@ -37,7 +37,7 @@ public class CphDelegationsForDelegatorRepository(
             throw new InvalidOperationException("Holding assignments filter must be provided for this operation");
         }
 
-        logger.LogInformation("Getting list of delegations for delegator");
+        logger.LogInformation("Getting list of delegations for cph assignee");
 
         var primaryEntity = await readOnlyContext.UserAccounts
             .FirstOrDefaultAsync(primaryPredicate, cancellationToken);
