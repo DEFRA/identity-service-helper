@@ -7,6 +7,7 @@ namespace Defra.Identity.Services;
 using Defra.Identity.Services.Applications;
 using Defra.Identity.Services.Common.Builders.Strategy.Factories;
 using Defra.Identity.Services.Common.Context;
+using Defra.Identity.Services.Configuration;
 using Defra.Identity.Services.Cphs;
 using Defra.Identity.Services.Delegations;
 using Defra.Identity.Services.Permissions;
@@ -45,6 +46,15 @@ public static class ServiceCollectionExtensions
         {
             services.AddTransient<IStrategyBuilderFactory<PermissionsService>, StrategyBuilderFactory<PermissionsService>>();
             services.AddTransient<IStrategyBuilderFactory<CphDelegationsService>, StrategyBuilderFactory<CphDelegationsService>>();
+
+            return services;
+        }
+
+        public IServiceCollection AddMessaging(IConfigurationRoot config)
+        {
+            services.AddOptions<MessagingOptions>().BindConfiguration("Email");
+            services.AddTransient<IMessagingFactory, MessagingFactory>();
+            services.AddTransient<IMessagingService, MessagingService>();
 
             return services;
         }

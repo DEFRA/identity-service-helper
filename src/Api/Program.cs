@@ -114,6 +114,7 @@ public class Program
         builder.Services.AddOperatorContext(configuration);
         builder.Services.AddStrategies(configuration);
         builder.Services.AddScheduling(configuration);
+        builder.Services.AddMessaging(configuration);
 
         // intentionally commented out until we get a queue to interact with  -- Gary Woodfine
         // builder.Services.AddKeeperReferenceDataQueueIntegration(configuration);

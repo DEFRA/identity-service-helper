@@ -16,9 +16,9 @@ create table external_messaging
     response_message  text,
     exception_message text,
     created_at        timestamp with time zone not null,
-    created_by        uuid
+    created_by_id     uuid
 );
 
 -- changeset cedricbrasey:1773744435706-04-02 splitStatements:false
 ALTER TABLE "external_messaging"
-    ADD CONSTRAINT "external_messaging_user_accounts_id_fk" FOREIGN KEY ("created_by") REFERENCES "user_accounts" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
+    ADD CONSTRAINT "external_messaging_user_accounts_id_fk" FOREIGN KEY ("created_by_id") REFERENCES "user_accounts" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION;
