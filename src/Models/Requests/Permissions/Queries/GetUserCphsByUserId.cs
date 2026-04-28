@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Models.Requests.Users.Queries;
+namespace Defra.Identity.Models.Requests.Permissions.Queries;
 
 using Defra.Identity.Models.Requests.Common;
 

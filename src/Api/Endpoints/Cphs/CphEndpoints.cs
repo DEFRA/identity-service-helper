@@ -93,7 +93,7 @@ public static class CphEndpoints
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status404NotFound);
 
-        app.MapGet(RouteNames.CountyParishHoldings + "/{id:guid}/users", GetCphAssigneesByCphIdRoute)
+        app.MapGet(RouteNames.CountyParishHoldings + "/{id:guid}/users", GetCphAssignmentsByIdRoute)
             .WithName(OpenApiMetadata.GetUsersByIdRoute.Name)
             .WithTags(OpenApiMetadata.Tag)
             .WithSummary(OpenApiMetadata.GetUsersByIdRoute.Summary)
@@ -104,7 +104,7 @@ public static class CphEndpoints
 
         app.MapGet(
                 RouteNames.CountyParishHoldings + "/{county:int}/{parish:int}/{holding:int}/users",
-                CphHandlerFactory.CreateCphNumberRerouteHandler<GetCphAssigneesByCphId, GetCphAssigneesByCphNumber>(GetCphAssigneesByCphIdRoute))
+                CphHandlerFactory.CreateCphNumberRerouteHandler<GetCphAssignmentsByCphId, GetCphAssigneesByCphNumber>(GetCphAssignmentsByIdRoute))
             .WithName(OpenApiMetadata.GetUsersByNumberRoute.Name)
             .WithTags(OpenApiMetadata.Tag)
             .WithSummary(OpenApiMetadata.GetUsersByNumberRoute.Summary)
@@ -155,12 +155,12 @@ public static class CphEndpoints
         return Results.NoContent();
     }
 
-    private static async Task<IResult> GetCphAssigneesByCphIdRoute(
+    private static async Task<IResult> GetCphAssignmentsByIdRoute(
         QueryRequestHeaders headers,
-        [AsParameters] GetCphAssigneesByCphId request,
+        [AsParameters] GetCphAssignmentsByCphId request,
         ICphService service)
     {
-        var pagedCphUsersResults = await service.GetCphAssignees(request);
+        var pagedCphUsersResults = await service.GetCphAssignments(request);
 
         return Results.Ok(pagedCphUsersResults);
     }

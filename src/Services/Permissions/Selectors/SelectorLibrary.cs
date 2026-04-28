@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Services.Common.Selectors;
+namespace Defra.Identity.Services.Permissions.Selectors;
 
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database.Entities;

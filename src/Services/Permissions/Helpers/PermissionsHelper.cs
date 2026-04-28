@@ -1,12 +1,12 @@
-﻿// <copyright file="DelegationHelper.cs" company="Defra">
+﻿// <copyright file="PermissionsHelper.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Services.Common.Helpers;
+namespace Defra.Identity.Services.Permissions.Helpers;
 
 using Defra.Identity.Postgres.Database.Entities;
 
-public static class DelegationHelper
+public static class PermissionsHelper
 {
     public static bool IsActiveDelegation(CountyParishHoldingDelegations entity)
     {
