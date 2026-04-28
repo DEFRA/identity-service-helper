@@ -16,8 +16,8 @@ using Defra.Identity.Repositories.Roles;
 using Defra.Identity.Repositories.Users;
 using Defra.Identity.Services.Common.Builders.Strategy.Factories;
 using Defra.Identity.Services.Common.Context;
-using Defra.Identity.Services.Common.Helpers;
 using Defra.Identity.Services.Delegations.Rules;
+using Defra.Identity.Services.Permissions.Helpers;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
 
@@ -66,7 +66,7 @@ public class CphDelegationsService : ICphDelegationsService
 
         var entities = await repository.GetList(entity => entity.DeletedAt == null && (entity.ExpiresAt == null || DateTime.UtcNow < entity.ExpiresAt), cancellationToken);
 
-        return entities.Select(MapToResponse).ToList();
+        return entities.Select(MapCphDelegationEntityToCphDelegation).ToList();
     }
 
     public async Task<CphDelegation> Get(GetCphDelegationById request, CancellationToken cancellationToken = default)
@@ -83,7 +83,7 @@ public class CphDelegationsService : ICphDelegationsService
             throw new NotFoundException("Delegation not found.");
         }
 
-        return MapToResponse(entity);
+        return MapCphDelegationEntityToCphDelegation(entity);
     }
 
     public async Task<CphDelegation> Create(CreateCphDelegation request, CancellationToken cancellationToken = default)
@@ -123,7 +123,7 @@ public class CphDelegationsService : ICphDelegationsService
                         CreatedAt = DateTime.UtcNow,
                         CreatedById = operatorContext.OperatorId,
                     })
-            .ExecuteAndMap(MapToResponse);
+            .ExecuteAndMap(MapCphDelegationEntityToCphDelegation);
     }
 
     public async Task<CphDelegation> Update(UpdateCphDelegationById request, CancellationToken cancellationToken = default)
@@ -173,7 +173,7 @@ public class CphDelegationsService : ICphDelegationsService
                     delegation.DelegatedUserEmail = request.DelegatedUserEmail;
                     delegation.DelegatedUserRoleId = request.DelegatedUserRoleId;
                 })
-            .ExecuteAndMap(MapToResponse);
+            .ExecuteAndMap(MapCphDelegationEntityToCphDelegation);
     }
 
     public async Task Accept(AcceptCphDelegationById request, CancellationToken cancellationToken = default)
@@ -267,7 +267,7 @@ public class CphDelegationsService : ICphDelegationsService
         return await repository.Delete(x => x.Id == request.Id, operatorContext.OperatorId, cancellationToken);
     }
 
-    private static CphDelegation MapToResponse(CountyParishHoldingDelegations entity)
+    private static CphDelegation MapCphDelegationEntityToCphDelegation(CountyParishHoldingDelegations entity)
     {
         return new CphDelegation
         {
@@ -288,7 +288,7 @@ public class CphDelegationsService : ICphDelegationsService
             ExpiresAt = entity.ExpiresAt,
             RevokedById = entity.RevokedById,
             RevokedByName = entity.RevokedByUser?.DisplayName,
-            Active = DelegationHelper.IsActiveDelegation(entity),
+            Active = PermissionsHelper.IsActiveDelegation(entity),
         };
     }
 }

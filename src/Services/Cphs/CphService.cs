@@ -145,7 +145,7 @@ public class CphService : ICphService
         await cphRepository.Update(cphEntity, cancellationToken);
     }
 
-    public async Task<PagedResults<CphAssignment>> GetCphAssignees(GetCphAssigneesByCphId request, CancellationToken cancellationToken = default)
+    public async Task<PagedResults<CphAssignment>> GetCphAssignments(GetCphAssignmentsByCphId request, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Getting all county parish holding users for id {Id} by page", request.Id);
 
@@ -155,7 +155,7 @@ public class CphService : ICphService
 
         var cphEntity = await cphRepository.GetSingle(primaryFilter, cancellationToken);
 
-        if (cphEntity is not { DeletedAt: null })
+        if (cphEntity is not { DeletedAt: null } || cphEntity.ExpiredAt != null)
         {
             logger.LogWarning("County parish holding with id {Id} not found", request.Id);
 

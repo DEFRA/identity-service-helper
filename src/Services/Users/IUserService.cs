@@ -23,10 +23,4 @@ public interface IUserService
     Task<User> Create(CreateUser request, CancellationToken cancellationToken = default);
 
     Task<bool> Delete(DeleteUser request, CancellationToken cancellationToken = default);
-
-    Task<UserCphs> GetUserCphs(GetUserCphsByUserId request, CancellationToken cancellationToken = default);
-
-    Task<PagedResults<CphDelegate>> GetCphDelegatesForCphAssignee(GetCphDelegatesByCphAssigneeId request, CancellationToken cancellationToken = default);
-
-    Task<PagedResults<CphDelegation>> GetCphDelegationsForDelegateFilteredByCphAssignee(GetCphDelegationsByDelegateIdFiltered request, CancellationToken cancellationToken = default);
 }

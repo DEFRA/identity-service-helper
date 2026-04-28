@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Models.Responses.Users;
+namespace Defra.Identity.Models.Responses.Permissions;
 
 using Defra.Identity.Models.Responses.Assignments;
 using Defra.Identity.Models.Responses.Delegations;

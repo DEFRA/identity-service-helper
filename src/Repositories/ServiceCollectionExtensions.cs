@@ -22,7 +22,6 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IUsersRepository, UsersRepository>();
         services.AddTransient<ICphAssignmentsForAssigneeRepository, CphAssignmentsForAssigneeRepository>();
         services.AddTransient<ICphDelegationsForDelegateRepository, CphDelegationsForDelegateRepository>();
-        services.AddTransient<ICphDelegationsForCphAssigneeRepository, CphDelegationsForCphAssigneeRepository>();
         services.AddTransient<ICphDelegatesForCphAssigneeRepository, CphDelegatesForCphAssigneeRepository>();
         services.AddTransient<IRoleRepository, RoleRepository>();
         services.AddTransient<IApplicationsRepository, ApplicationsRepository>();

@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Services.Users.Rules;
+namespace Defra.Identity.Services.Permissions.Rules;
 
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Services.Common.Builders.Predicates.Models;
