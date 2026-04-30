@@ -7,6 +7,7 @@ namespace Defra.Identity.Requests.Tests;
 using Defra.Identity.Api.Extensions;
 using Defra.Identity.Api.Middleware;
 using Defra.Identity.Models.Requests;
+using Defra.Identity.Models.Requests.Services;
 using Defra.Identity.Models.Requests.Users.Commands;
 using FluentValidation;
 using Microsoft.AspNetCore.Builder;
@@ -22,10 +23,13 @@ public class ServiceCollectionExtensionsTests
         // Arrange
         var services = new ServiceCollection();
         var configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string?>
-            {
-                { "DefraIndentityApiKey", "test-api-key" },
-            })
+            .AddInMemoryCollection(
+                new Dictionary<string, string?>
+                {
+                    {
+                        "DefraIndentityApiKey", "test-api-key"
+                    },
+                })
             .Build();
 
         // Act
@@ -38,6 +42,7 @@ public class ServiceCollectionExtensionsTests
         serviceProvider.GetService<ApiKeyValidationMiddleware>().ShouldNotBeNull();
         serviceProvider.GetService<CorrelationIdMiddleware>().ShouldNotBeNull();
         serviceProvider.GetService<OperatorIdMiddleware>().ShouldNotBeNull();
+        serviceProvider.GetService<IOperatorIdService>().ShouldNotBeNull();
 
         // Check if validators are registered
         serviceProvider.GetService<IValidator<CreateUser>>().ShouldNotBeNull();
@@ -52,6 +57,6 @@ public class ServiceCollectionExtensionsTests
         var app = builder.Build();
 
         // Act & Assert
-        Should.NotThrow(() => app.UseRequests());
+        Should.NotThrow(app.UseRequests);
     }
 }

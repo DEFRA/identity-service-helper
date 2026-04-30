@@ -6,60 +6,25 @@ namespace Defra.Identity.Services.Cphs;
 
 using System.Linq.Expressions;
 using Defra.Identity.Models.Requests.Cphs.Commands;
-using Defra.Identity.Models.Requests.Cphs.Common;
 using Defra.Identity.Models.Requests.Cphs.Queries;
-using Defra.Identity.Models.Responses.Assignments;
 using Defra.Identity.Models.Responses.Common;
 using Defra.Identity.Models.Responses.Cphs;
 using Defra.Identity.Postgres.Database.Entities;
-using Defra.Identity.Repositories.Assignments;
 using Defra.Identity.Repositories.Common;
 using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Repositories.Cphs;
 using Defra.Identity.Services.Common.Exceptions;
-using FluentValidation;
 using Microsoft.Extensions.Logging;
 
 public class CphService : ICphService
 {
     private readonly ICphRepository cphRepository;
-    private readonly ICphAssignmentsRepository cphAssignmentsRepository;
-    private readonly IValidator<IOperationByCphNumber> cphNumberValidator;
     private readonly ILogger<CphService> logger;
 
-    public CphService(ICphRepository cphRepository, ICphAssignmentsRepository cphAssignmentsRepository, IValidator<IOperationByCphNumber> cphNumberValidator, ILogger<CphService> logger)
+    public CphService(ICphRepository cphRepository, ILogger<CphService> logger)
     {
         this.cphRepository = cphRepository;
-        this.cphAssignmentsRepository = cphAssignmentsRepository;
-        this.cphNumberValidator = cphNumberValidator;
         this.logger = logger;
-    }
-
-    public async Task<Guid> GetIdFromCphNumber(IOperationByCphNumber request, CancellationToken cancellationToken = default)
-    {
-        var cphNumberValidationResult = await cphNumberValidator.ValidateAsync(request, cancellationToken);
-
-        if (!cphNumberValidationResult.IsValid)
-        {
-            throw new ValidationException(cphNumberValidationResult.Errors);
-        }
-
-        var formattedCphNumber = $"{request.County:D2}/{request.Parish:D3}/{request.Holding:D4}";
-
-        logger.LogInformation("Getting county parish holding id by cph number {FormattedCphNumber}", formattedCphNumber);
-
-        Expression<Func<CountyParishHoldings, bool>> filter = cph => cph.Identifier == formattedCphNumber;
-
-        var cphEntity = await cphRepository.GetSingle(filter, cancellationToken);
-
-        if (cphEntity is not { DeletedAt: null })
-        {
-            logger.LogWarning("County parish holding with cph number {FormattedCphNumber} not found", formattedCphNumber);
-
-            throw new NotFoundException("County parish holding not found.");
-        }
-
-        return cphEntity.Id;
     }
 
     public async Task<PagedResults<Cph>> GetAllPaged(GetCphs request, CancellationToken cancellationToken = default)
@@ -145,58 +110,11 @@ public class CphService : ICphService
         await cphRepository.Update(cphEntity, cancellationToken);
     }
 
-    public async Task<PagedResults<CphAssignment>> GetCphAssignments(GetCphAssignmentsByCphId request, CancellationToken cancellationToken = default)
-    {
-        logger.LogInformation("Getting all county parish holding users for id {Id} by page", request.Id);
-
-        Expression<Func<CountyParishHoldings, bool>> primaryFilter = cph => cph.Id == request.Id;
-        Expression<Func<ApplicationUserAccountHoldingAssignments, bool>> associationFilter = cphUser => cphUser.DeletedAt == null;
-        Expression<Func<ApplicationUserAccountHoldingAssignments, string>> orderBy = cphUser => cphUser.UserAccount.DisplayName;
-
-        var cphEntity = await cphRepository.GetSingle(primaryFilter, cancellationToken);
-
-        if (cphEntity is not { DeletedAt: null } || cphEntity.ExpiredAt != null)
-        {
-            logger.LogWarning("County parish holding with id {Id} not found", request.Id);
-
-            throw new NotFoundException("County parish holding not found.");
-        }
-
-        var pageCphUserEntities = await cphAssignmentsRepository.GetPaged(
-            primaryFilter,
-            associationFilter,
-            request.PageNumber,
-            request.PageSize,
-            orderBy,
-            request.OrderByDescending ?? false,
-            cancellationToken);
-
-        var pagedCphUserResults = pageCphUserEntities.ToPagedResults(MapCphUserEntityToCphAssignment);
-
-        return pagedCphUserResults;
-    }
-
     private static Cph MapCphEntityToCph(CountyParishHoldings cphEntity)
     {
         return new Cph
         {
             Id = cphEntity.Id, CountyParishHoldingNumber = cphEntity.Identifier, Expired = cphEntity.ExpiredAt != null, ExpiredAt = cphEntity.ExpiredAt,
-        };
-    }
-
-    private static CphAssignment MapCphUserEntityToCphAssignment(ApplicationUserAccountHoldingAssignments cphAssignmentEntity)
-    {
-        return new CphAssignment
-        {
-            Id = cphAssignmentEntity.Id,
-            CountyParishHoldingId = cphAssignmentEntity.CountyParishHoldingId,
-            CountyParishHoldingNumber = cphAssignmentEntity.CountyParishHolding.Identifier,
-            UserId = cphAssignmentEntity.UserAccountId,
-            ApplicationId = cphAssignmentEntity.ApplicationId,
-            RoleId = cphAssignmentEntity.RoleId,
-            RoleName = cphAssignmentEntity.Role.Name,
-            Email = cphAssignmentEntity.UserAccount.EmailAddress,
-            DisplayName = cphAssignmentEntity.UserAccount.DisplayName,
         };
     }
 

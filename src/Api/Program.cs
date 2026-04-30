@@ -10,6 +10,7 @@ using Defra.Identity.Api.Endpoints.Applications;
 using Defra.Identity.Api.Endpoints.Cphs;
 using Defra.Identity.Api.Endpoints.Delegations;
 using Defra.Identity.Api.Endpoints.Health;
+using Defra.Identity.Api.Endpoints.Permissions;
 using Defra.Identity.Api.Endpoints.Species;
 using Defra.Identity.Api.Endpoints.Users;
 using Defra.Identity.Api.Exceptions;
@@ -105,11 +106,12 @@ public class Program
         // Add support services
         builder.Services.AddValidatorsFromAssemblyContaining<Program>();
         builder.Services.AddRequests(configuration);
+        builder.Services.AddCphNumberRerouting(configuration);
 
         // Set up the endpoints and their dependencies
         builder.Services.AddRepositories(configuration);
         builder.Services.AddDataServices(configuration);
-        builder.Services.AddContext(configuration);
+        builder.Services.AddOperatorContext(configuration);
         builder.Services.AddStrategies(configuration);
         builder.Services.AddScheduling(configuration);
 
@@ -132,6 +134,7 @@ public class Program
 
         app.UseHealthEndpoints();
         app.UseUsersEndpoints();
+        app.UsePermissionEndpoints();
         app.UseApplicationEndpoints();
         app.UseCphDelegationEndpoints();
         app.UseCphEndpoints();

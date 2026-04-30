@@ -2,33 +2,37 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Api.Endpoints.Cphs.Handlers;
+namespace Defra.Identity.Api.Common.Handlers;
 
 using Defra.Identity.Models.Requests.Common;
 using Defra.Identity.Models.Requests.Common.Queries;
 using Defra.Identity.Models.Requests.Cphs.Common;
 using Defra.Identity.Services.Cphs;
 
-public class CphNumberRerouteHandler<TTarget, TSource, THeaders>
+public class CphNumberRerouteHandler<TTarget, TSource, TService, THeaders>
     where TTarget : IOperationById, new()
     where TSource : IOperationByCphNumber
+    where TService : class
     where THeaders : class
 {
-    private readonly Func<THeaders, TTarget, ICphService, Task<IResult>> action;
+    private readonly ICphNumberService cphNumberService;
+    private readonly Func<THeaders, TTarget, TService, Task<IResult>> action;
 
-    public CphNumberRerouteHandler(Func<THeaders, TTarget, ICphService, Task<IResult>> action)
+    public CphNumberRerouteHandler(ICphNumberService cphNumberService, Func<THeaders, TTarget, TService, Task<IResult>> action)
     {
+        ArgumentNullException.ThrowIfNull(cphNumberService);
         ArgumentNullException.ThrowIfNull(action);
 
+        this.cphNumberService = cphNumberService;
         this.action = action;
     }
 
     public async Task<IResult> Handler(
         THeaders headers,
         [AsParameters] TSource sourceRequest,
-        ICphService service)
+        TService service)
     {
-        var cphId = await service.GetIdFromCphNumber(sourceRequest);
+        var cphId = await cphNumberService.GetIdFromCphNumber(sourceRequest);
         var targetRequest = CreateTargetRequestWithId(cphId);
 
         MapPagingQueryToTargetRequest(targetRequest, sourceRequest);

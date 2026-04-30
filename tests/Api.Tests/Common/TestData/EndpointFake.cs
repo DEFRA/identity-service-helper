@@ -1,18 +1,17 @@
-﻿// <copyright file="CphEndpointFake.cs" company="Defra">
+﻿// <copyright file="EndpointFake.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-namespace Defra.Identity.Api.Tests.Endpoints.Cphs.TestData;
+namespace Defra.Identity.Api.Tests.Common.TestData;
 
-using Defra.Identity.Services.Cphs;
 using Microsoft.AspNetCore.Http;
 
-public class CphEndpointFake<TRequest>
+public class EndpointFake<TRequest>
 {
     private readonly IResult result;
 
-    private CphEndpointFake(IResult result)
+    private EndpointFake(IResult result)
     {
         this.result = result;
     }
@@ -21,23 +20,23 @@ public class CphEndpointFake<TRequest>
 
     public TRequest? CapturedRequest { get; private set; }
 
-    public ICphService? CapturedCphService { get; private set; }
+    public ServiceFake? CapturedService { get; private set; }
 
     public int CapturedCallCount { get; private set; } = 0;
 
-    public static CphEndpointFake<TRequest> Create(IResult result)
+    public static EndpointFake<TRequest> Create(IResult result)
     {
-        return new CphEndpointFake<TRequest>(result);
+        return new EndpointFake<TRequest>(result);
     }
 
     public async Task<IResult> FakeHandlerMethod(
         HeadersFake headers,
         [AsParameters] TRequest request,
-        ICphService service)
+        ServiceFake service)
     {
         this.CapturedHeaders = headers;
         this.CapturedRequest = request;
-        this.CapturedCphService = service;
+        this.CapturedService = service;
         this.CapturedCallCount += 1;
 
         return this.result;

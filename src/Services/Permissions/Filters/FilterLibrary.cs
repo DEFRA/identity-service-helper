@@ -1,4 +1,4 @@
-﻿// <copyright file="FiltersLibrary.cs" company="Defra">
+﻿// <copyright file="FilterLibrary.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
@@ -8,7 +8,7 @@ using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Services.Common.Extensions;
 
-public static class FiltersLibrary
+public static class FilterLibrary
 {
     public static class Users
     {

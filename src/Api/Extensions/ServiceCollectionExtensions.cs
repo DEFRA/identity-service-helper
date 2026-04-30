@@ -4,9 +4,13 @@
 
 namespace Defra.Identity.Api.Extensions;
 
+using Defra.Identity.Api.Common.Factories;
 using Defra.Identity.Api.Middleware;
 using Defra.Identity.Models.Requests.Services;
 using Defra.Identity.Models.Requests.Users.Commands;
+using Defra.Identity.Repositories.Cphs;
+using Defra.Identity.Services.Cphs;
+using Defra.Identity.Services.Permissions;
 using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -23,9 +27,8 @@ public static class ServiceCollectionExtensions
         services.AddTransient<ApiKeyValidationMiddleware>(sp => new ApiKeyValidationMiddleware(ApiKey!, sp.GetRequiredService<ILogger<ApiKeyValidationMiddleware>>()));
         services.AddTransient<CorrelationIdMiddleware>();
         services.AddTransient<OperatorIdMiddleware>();
-        services.AddValidatorsFromAssemblyContaining<CreateUser>();
-
         services.AddScoped<IOperatorIdService, OperatorIdService>();
+        services.AddValidatorsFromAssemblyContaining<CreateUser>();
 
         return services;
     }
@@ -35,5 +38,13 @@ public static class ServiceCollectionExtensions
         app.UseMiddleware<ApiKeyValidationMiddleware>();
         app.UseMiddleware<CorrelationIdMiddleware>();
         app.UseMiddleware<OperatorIdMiddleware>();
+    }
+
+    public static IServiceCollection AddCphNumberRerouting(this IServiceCollection services, IConfigurationRoot config)
+    {
+        services.AddTransient<ICphNumberHandlerFactory<ICphService>, CphNumberHandlerFactory<ICphService>>();
+        services.AddTransient<ICphNumberHandlerFactory<IPermissionsService>, CphNumberHandlerFactory<IPermissionsService>>();
+
+        return services;
     }
 }
