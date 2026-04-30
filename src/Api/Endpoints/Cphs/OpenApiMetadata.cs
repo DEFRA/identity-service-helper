@@ -19,7 +19,6 @@ public static class OpenApiMetadata
     // GetById endpoint
     public static class GetByIdRoute
     {
-
         public const string Name = "GetCountyParishHoldingById";
         public const string Summary = "Get a County Parish Holding by its internal identifier";
 
@@ -79,26 +78,5 @@ public static class OpenApiMetadata
 
         public const string Description =
             "Deletes a specific County Parish Holding by its County Parish Holding identifier";
-    }
-
-    // GetUsersById endpoint
-    public static class GetUsersByIdRoute
-    {
-        public const string Name = "GetCountyParishHoldingUsersById";
-        public const string Summary = "Get users for a County Parish Holding by its internal identitifer";
-
-        public const string Description =
-            "Retrieves a paged list of users associated with a specific County Parish Holding by its internal identifier";
-    }
-
-    // GetUsersByNumber endpoint
-    public static class GetUsersByNumberRoute
-    {
-        public const string Name = "GetCountyParishHoldingUsersByNumber";
-
-        public const string Summary = "Get users for a County Parish Holding by its County Parish Holding identifier";
-
-        public const string Description =
-            "Retrieves a paged list of users associated with a specific Holding by its County Parish Holding identifier";
     }
 }

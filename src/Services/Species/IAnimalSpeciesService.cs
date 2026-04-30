@@ -7,6 +7,7 @@ namespace Defra.Identity.Services.Species;
 using Defra.Identity.Models.Requests.Species.Commands;
 using Defra.Identity.Models.Requests.Species.Queries;
 using Defra.Identity.Models.Responses.Species;
+using Defra.Identity.Services.Common;
 
 public interface IAnimalSpeciesService
 {

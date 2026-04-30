@@ -6,8 +6,6 @@ namespace Defra.Identity.Services.Users;
 
 using Defra.Identity.Models.Requests.Users.Commands;
 using Defra.Identity.Models.Requests.Users.Queries;
-using Defra.Identity.Models.Responses.Common;
-using Defra.Identity.Models.Responses.Delegations;
 using Defra.Identity.Models.Responses.Users;
 
 public interface IUserService

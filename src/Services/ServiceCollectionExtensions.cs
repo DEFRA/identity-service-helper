@@ -28,12 +28,13 @@ public static class ServiceCollectionExtensions
             services.AddTransient<IApplicationService, ApplicationService>();
             services.AddTransient<ICphDelegationsService, CphDelegationsService>();
             services.AddTransient<ICphService, CphService>();
+            services.AddTransient<ICphNumberService, CphNumberService>();
             services.AddTransient<IAnimalSpeciesService, AnimalSpeciesService>();
 
             return services;
         }
 
-        public IServiceCollection AddContext(IConfigurationRoot config)
+        public IServiceCollection AddOperatorContext(IConfigurationRoot config)
         {
             services.AddScoped<IOperatorContext, OperatorContext>();
 

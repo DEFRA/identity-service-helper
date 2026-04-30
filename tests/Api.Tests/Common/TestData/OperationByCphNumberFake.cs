@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Api.Tests.Endpoints.Cphs.TestData;
+namespace Defra.Identity.Api.Tests.Common.TestData;
 
 using Defra.Identity.Models.Requests.Cphs.Common;
 

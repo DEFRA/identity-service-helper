@@ -6,16 +6,11 @@ namespace Defra.Identity.Api.Endpoints.Users;
 
 using System.Net.Mime;
 using Defra.Identity.Api.Middleware.Headers;
-using Defra.Identity.Models.Requests.Common.Queries;
 using Defra.Identity.Models.Requests.Filters;
 using Defra.Identity.Models.Requests.MetaData;
-using Defra.Identity.Models.Requests.Permissions.Queries;
 using Defra.Identity.Models.Requests.Users.Commands;
 using Defra.Identity.Models.Requests.Users.Queries;
-using Defra.Identity.Models.Responses.Common;
-using Defra.Identity.Models.Responses.Permissions;
 using Defra.Identity.Models.Responses.Users;
-using Defra.Identity.Services.Permissions;
 using Defra.Identity.Services.Users;
 using Microsoft.AspNetCore.Mvc;
 
@@ -37,15 +32,6 @@ public static class UsersEndpoints
             .WithDescription(OpenApiMetadata.GetByIdRoute.Description)
             .Produces<User>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
             .Produces(StatusCodes.Status404NotFound);
-
-        app.MapGet(RouteNames.Users + "/{id:guid}/cphs", GetUserCphsRoute)
-            .Produces<UserCphs>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
-            .ProducesProblem(StatusCodes.Status404NotFound);
-
-        app.MapGet(RouteNames.Users + "/{id:guid}/delegates", GetUserDelegatesRoute)
-            .AddEndpointFilter<ValidationFilter<PagedQuery>>()
-            .Produces<PagedResults<User>>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
-            .ProducesProblem(StatusCodes.Status404NotFound);
 
         app.MapPut(RouteNames.Users + "/{id:guid}", PutByIdRoute)
             .WithName(OpenApiMetadata.PutByIdRoute.Name)
@@ -152,25 +138,5 @@ public static class UsersEndpoints
             });
 
         return Results.NoContent();
-    }
-
-    private static async Task<IResult> GetUserCphsRoute(
-        QueryRequestHeaders headers,
-        [AsParameters] GetUserCphsByUserId request,
-        IPermissionsService service)
-    {
-        var user = await service.GetUserCphs(request);
-
-        return Results.Ok(user);
-    }
-
-    private static async Task<IResult> GetUserDelegatesRoute(
-        QueryRequestHeaders headers,
-        [AsParameters] GetUserDelegatesById request,
-        IPermissionsService service)
-    {
-        var user = await service.GetUserDelegates(request);
-
-        return Results.Ok(user);
     }
 }

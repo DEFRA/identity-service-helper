@@ -4,6 +4,8 @@
 
 namespace Defra.Identity.Services.Permissions;
 
+using System.Linq.Expressions;
+using Defra.Identity.Models.Requests.Cphs.Queries;
 using Defra.Identity.Models.Requests.Permissions.Queries;
 using Defra.Identity.Models.Responses.Assignments;
 using Defra.Identity.Models.Responses.Common;
@@ -12,6 +14,9 @@ using Defra.Identity.Models.Responses.Permissions;
 using Defra.Identity.Models.Responses.Users;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Assignments;
+using Defra.Identity.Repositories.Common;
+using Defra.Identity.Repositories.Common.Exceptions;
+using Defra.Identity.Repositories.Cphs;
 using Defra.Identity.Repositories.Delegations;
 using Defra.Identity.Repositories.Users;
 using Defra.Identity.Services.Common.Builders.Strategy.Factories;
@@ -24,13 +29,18 @@ using Microsoft.Extensions.Logging;
 public class PermissionsService : IPermissionsService
 {
     private readonly IUsersRepository userRepository;
+    private readonly ICphRepository cphRepository;
+    private readonly ICphAssignmentsRepository cphAssignmentsRepository;
     private readonly ICphAssignmentsForAssigneeRepository cphAssignmentsForAssigneeRepository;
     private readonly ICphDelegationsForDelegateRepository cphDelegationsForDelegateRepository;
     private readonly ICphDelegatesForCphAssigneeRepository cphDelegatesForCphAssigneeRepository;
     private readonly IStrategyBuilderFactory<PermissionsService> strategyBuilderFactory;
+    private readonly ILogger<PermissionsService> logger;
 
     public PermissionsService(
         IUsersRepository userRepository,
+        ICphRepository cphRepository,
+        ICphAssignmentsRepository cphAssignmentsRepository,
         ICphAssignmentsForAssigneeRepository cphAssignmentsForAssigneeRepository,
         ICphDelegationsForDelegateRepository cphDelegationsForDelegateRepository,
         ICphDelegatesForCphAssigneeRepository cphDelegatesForCphAssigneeRepository,
@@ -38,18 +48,52 @@ public class PermissionsService : IPermissionsService
         ILogger<PermissionsService> logger)
     {
         this.userRepository = userRepository;
+        this.cphRepository = cphRepository;
+        this.cphAssignmentsRepository = cphAssignmentsRepository;
         this.cphAssignmentsForAssigneeRepository = cphAssignmentsForAssigneeRepository;
         this.cphDelegationsForDelegateRepository = cphDelegationsForDelegateRepository;
         this.cphDelegatesForCphAssigneeRepository = cphDelegatesForCphAssigneeRepository;
         this.strategyBuilderFactory = strategyBuilderFactory;
+        this.logger = logger;
 
         this.cphDelegatesForCphAssigneeRepository
-            .WithHoldingAssignmentsFilter(FiltersLibrary.CphAssignments.NotSoftDeleted)
-            .WithCountyParishHoldingsFilter(FiltersLibrary.Cphs.NotSoftDeletedOrExpired)
-            .WithDelegationsFilter(FiltersLibrary.CphDelegations.ActiveDelegation);
+            .WithHoldingAssignmentsFilter(FilterLibrary.CphAssignments.NotSoftDeleted)
+            .WithCountyParishHoldingsFilter(FilterLibrary.Cphs.NotSoftDeletedOrExpired)
+            .WithDelegationsFilter(FilterLibrary.CphDelegations.ActiveDelegation);
 
         this.strategyBuilderFactory
             .WithDefaultLogger(logger);
+    }
+
+    public async Task<PagedResults<CphAssignment>> GetCphAssignments(GetCphAssignmentsByCphId request, CancellationToken cancellationToken = default)
+    {
+        logger.LogInformation("Getting all county parish holding users for id {Id} by page", request.Id);
+
+        Expression<Func<CountyParishHoldings, bool>> primaryFilter = cph => cph.Id == request.Id;
+        Expression<Func<ApplicationUserAccountHoldingAssignments, bool>> associationFilter = cphUser => cphUser.DeletedAt == null;
+        Expression<Func<ApplicationUserAccountHoldingAssignments, string>> orderBy = cphUser => cphUser.UserAccount.DisplayName;
+
+        var cphEntity = await cphRepository.GetSingle(primaryFilter, cancellationToken);
+
+        if (cphEntity is not { DeletedAt: null } || cphEntity.ExpiredAt != null)
+        {
+            logger.LogWarning("County parish holding with id {Id} not found", request.Id);
+
+            throw new NotFoundException("County parish holding not found.");
+        }
+
+        var pagedCphAssignmentEntities = await cphAssignmentsRepository.GetPaged(
+            primaryFilter,
+            associationFilter,
+            request.PageNumber,
+            request.PageSize,
+            orderBy,
+            request.OrderByDescending ?? false,
+            cancellationToken);
+
+        var pagedCphUserResults = pagedCphAssignmentEntities.ToPagedResults(MapCphAssignmentEntityToCphAssignment);
+
+        return pagedCphUserResults;
     }
 
     public async Task<UserCphs> GetUserCphs(GetUserCphsByUserId request, CancellationToken cancellationToken = default)
@@ -61,21 +105,9 @@ public class PermissionsService : IPermissionsService
             .WithAssociationsRepository(cphAssignmentsForAssigneeRepository)
             .WithCancellationToken(cancellationToken)
             .WithRequestAndPrimaryEntityFilter(request, userAccount => userAccount.Id == request.Id)
-            .WithAssociatedEntityFilter(FiltersLibrary.CphAssignments.ActiveAssignment)
+            .WithAssociatedEntityFilter(FilterLibrary.CphAssignments.ActiveAssignment)
             .WithPrimaryEntityExistenceRules(rules => { rules.Add(RulesLibrary.Existence.NotSoftDeleted); })
-            .ExecuteAndMap(
-                entity => new CphAssignment()
-                {
-                    Id = entity.Id,
-                    CountyParishHoldingId = entity.CountyParishHoldingId,
-                    CountyParishHoldingNumber = entity.CountyParishHolding.Identifier,
-                    UserId = entity.UserAccountId,
-                    ApplicationId = entity.ApplicationId,
-                    RoleId = entity.RoleId,
-                    RoleName = entity.Role.Name,
-                    Email = entity.UserAccount.EmailAddress,
-                    DisplayName = entity.UserAccount.DisplayName,
-                });
+            .ExecuteAndMap(MapCphAssignmentEntityToCphAssignment);
 
         var userDelegatedCphs = await strategyBuilderFactory.BuildGetAssociationsListStrategy<UserAccounts, CountyParishHoldingDelegations>()
             .WithPrimaryEntityDescription("User account")
@@ -84,7 +116,7 @@ public class PermissionsService : IPermissionsService
             .WithAssociationsRepository(cphDelegationsForDelegateRepository)
             .WithCancellationToken(cancellationToken)
             .WithRequestAndPrimaryEntityFilter(request, userAccount => userAccount.Id == request.Id)
-            .WithAssociatedEntityFilter(FiltersLibrary.CphDelegations.ActiveDelegation)
+            .WithAssociatedEntityFilter(FilterLibrary.CphDelegations.ActiveDelegation)
             .WithPrimaryEntityExistenceRules(rules => { rules.Add(RulesLibrary.Existence.NotSoftDeleted); })
             .ExecuteAndMap(MapCphDelegationEntityToCphDelegation);
 
@@ -100,9 +132,25 @@ public class PermissionsService : IPermissionsService
             .WithAssociationsRepository(cphDelegatesForCphAssigneeRepository)
             .WithCancellationToken(cancellationToken)
             .WithRequestAndPrimaryEntityFilter(request, userAccount => userAccount.Id == request.Id)
-            .WithAssociatedEntityFilter(FiltersLibrary.Users.NotSoftDeleted)
+            .WithAssociatedEntityFilter(FilterLibrary.Users.NotSoftDeleted)
             .WithPrimaryEntityExistenceRules(rules => { rules.Add(RulesLibrary.Existence.NotSoftDeleted); })
             .ExecuteAndMap(MapUserEntityToUser, SelectorLibrary.UserDisplayName);
+    }
+
+    private static CphAssignment MapCphAssignmentEntityToCphAssignment(ApplicationUserAccountHoldingAssignments cphAssignmentEntity)
+    {
+        return new CphAssignment
+        {
+            Id = cphAssignmentEntity.Id,
+            CountyParishHoldingId = cphAssignmentEntity.CountyParishHoldingId,
+            CountyParishHoldingNumber = cphAssignmentEntity.CountyParishHolding.Identifier,
+            UserId = cphAssignmentEntity.UserAccountId,
+            ApplicationId = cphAssignmentEntity.ApplicationId,
+            RoleId = cphAssignmentEntity.RoleId,
+            RoleName = cphAssignmentEntity.Role.Name,
+            Email = cphAssignmentEntity.UserAccount.EmailAddress,
+            DisplayName = cphAssignmentEntity.UserAccount.DisplayName,
+        };
     }
 
     private static CphDelegation MapCphDelegationEntityToCphDelegation(CountyParishHoldingDelegations cphDelegationEntity)
