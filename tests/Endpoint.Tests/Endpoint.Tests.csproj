@@ -2,14 +2,17 @@
   <ItemGroup>
     <Content Include="**/*.feature"/>
   </ItemGroup>
+
   <PropertyGroup>
     <ReqnrollUseIntermediateOutputPathForCodeBehind>true</ReqnrollUseIntermediateOutputPathForCodeBehind>
   </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\src\Api\Api.csproj" />
     <ProjectReference Include="..\Postgres.Database.Tests\Postgres.Database.Tests.csproj" />
     <ProjectReference Include="..\Test.Utilities\Test.Utilities.csproj" />
   </ItemGroup>
+
   <ItemGroup>
     <None Update="testsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

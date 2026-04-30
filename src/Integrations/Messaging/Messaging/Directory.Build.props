@@ -2,9 +2,9 @@
   <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))"/>
 
   <ItemGroup>
+    <PackageReference Include="GovukNotify" />
     <PackageReference Include="Quartz"/>
     <PackageReference Include="Quartz.Extensions.DependencyInjection"/>
     <PackageReference Include="Quartz.Extensions.Hosting"/>
-    <PackageReference Include="GovukNotify" />
   </ItemGroup>
 </Project>
