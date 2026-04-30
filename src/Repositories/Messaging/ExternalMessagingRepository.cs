@@ -22,7 +22,8 @@ public class ExternalMessagingRepository(
     {
         logger.LogInformation("Getting single external messaging record");
 
-        var result = await readOnlyContext.ExternalMessaging
+        var result = await readOnlyContext
+            .ExternalMessaging
             .Include(x => x.CreatedByUser)
             .Include(x => x.CountyParishHoldingDelegationsNotifications)
             .SingleOrDefaultAsync(predicate, cancellationToken);
@@ -36,7 +37,8 @@ public class ExternalMessagingRepository(
     {
         logger.LogInformation("Getting list of external messaging records");
 
-        var results = await readOnlyContext.ExternalMessaging
+        var results = await readOnlyContext
+            .ExternalMessaging
             .Include(x => x.CreatedByUser)
             .Include(x => x.CountyParishHoldingDelegationsNotifications)
             .Where(predicate)
@@ -53,7 +55,8 @@ public class ExternalMessagingRepository(
         var addedEntry = await context.ExternalMessaging.AddAsync(entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
-        var result = await readOnlyContext.ExternalMessaging
+        var result = await readOnlyContext
+            .ExternalMessaging
             .Include(x => x.CreatedByUser)
             .Include(x => x.CountyParishHoldingDelegationsNotifications)
             .SingleAsync(x => x.Id == addedEntry.Entity.Id, cancellationToken);
@@ -66,10 +69,18 @@ public class ExternalMessagingRepository(
         ArgumentNullException.ThrowIfNull(entity);
 
         logger.LogInformation("Updating external messaging record with id {Id}", entity.Id);
-        context.Update(entity);
+
+        var trackedEntity =
+            context.ExternalMessaging.Local
+                .FirstOrDefault(x => x.Id == entity.Id) ??
+            await context.ExternalMessaging
+                .SingleAsync(x => x.Id == entity.Id, cancellationToken);
+
+        context.Entry(trackedEntity).CurrentValues.SetValues(entity);
         await context.SaveChangesAsync(cancellationToken);
 
-        var result = await readOnlyContext.ExternalMessaging
+        var result = await readOnlyContext
+            .ExternalMessaging
             .Include(x => x.CreatedByUser)
             .Include(x => x.CountyParishHoldingDelegationsNotifications)
             .SingleAsync(x => x.Id == entity.Id, cancellationToken);

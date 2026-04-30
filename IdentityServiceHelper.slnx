@@ -6,18 +6,21 @@
     <Project Path="src/Database/DataSeeder/DataSeeder.csproj" />
     <Project Path="src/Database/Postgres.Database/Postgres.Database.csproj" />
   </Folder>
+  <Folder Name="/src/Integrations/Messaging/">
+    <Project Path="src/Integrations/Messaging/Messaging/Messaging.csproj" />
+  </Folder>
   <Folder Name="/src/Integrations/" />
   <Folder Name="/src/Integrations/Krds/">
-    <Project Path="src\Integrations\Krds\KeeperReferenceData\KeeperReferenceData.csproj" />
+    <Project Path="src/Integrations/Krds/KeeperReferenceData/KeeperReferenceData.csproj" />
   </Folder>
   <Folder Name="/src/Integrations/Queues/">
     <Project Path="src/Integrations/Queues/KeeperReferenceData/KeeperReferenceData.csproj" />
   </Folder>
   <Folder Name="/src/Integrations/Schedules/">
-    <Project Path="src\Integrations\Schedules\Scheduling\Scheduling.csproj" />
+    <Project Path="src/Integrations/Schedules/Scheduling/Scheduling.csproj" />
   </Folder>
   <Folder Name="/src/Models/">
-    <Project Path="src\Models\Models.csproj" />
+    <Project Path="src/Models/Models.csproj" />
   </Folder>
   <Folder Name="/src/Repositories/">
     <Project Path="src/Repositories/Repositories.csproj" />
@@ -34,7 +37,9 @@
   <Folder Name="/tests/Database/">
     <Project Path="tests/Postgres.Database.Tests/Postgres.Database.Tests.csproj" />
   </Folder>
-  <Folder Name="/tests/Integrations/" />
+  <Folder Name="/tests/Integrations/Messaging/">
+    <Project Path="tests/Integrations/Messaging/Messaging.Tests/Messaging.Tests.csproj" />
+  </Folder>
   <Folder Name="/tests/Integrations/Krds/">
     <Project Path="tests/Integrations/Krds/KeeperReferenceData.Tests/KeeperReferenceData.Tests.csproj" />
   </Folder>

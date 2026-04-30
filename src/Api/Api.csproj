@@ -7,7 +7,4 @@
     <ProjectReference Include="..\Repositories\Repositories.csproj" />
     <ProjectReference Include="..\Services\Services.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Remove="MongoDB.Driver" />
-  </ItemGroup>
 </Project>

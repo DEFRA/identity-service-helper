@@ -4,7 +4,7 @@
 
 namespace Defra.Identity.Postgres.Database.Entities;
 
-using Defra.Identity.Models;
+using System.Net;
 
 public class ExternalMessaging
 {
@@ -22,7 +22,7 @@ public class ExternalMessaging
 
     public DateTime? SentAt { get; set; }
 
-    public int? ResponseCode { get; set; }
+    public HttpStatusCode? ResponseCode { get; set; }
 
     public string? ResponseMessage { get; set; }
 

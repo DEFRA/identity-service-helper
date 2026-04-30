@@ -3,11 +3,13 @@
   
   <ItemGroup>
     <PackageReference Include="Npgsql"/>
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Using Include="Xunit" />
-    <Using Include="Xunit.v3" />
-    <Using Include="Shouldly" />
+    <PackageReference Include="coverlet.collector">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.msbuild">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 </Project>

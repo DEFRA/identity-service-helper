@@ -5,6 +5,7 @@
 namespace Defra.Identity.Services.Tests.Delegations;
 
 using System.Linq.Expressions;
+using Defra.Identity.Messaging.Services;
 using Defra.Identity.Models.Requests.Delegations.Commands;
 using Defra.Identity.Models.Requests.Delegations.Queries;
 using Defra.Identity.Postgres.Database.Entities;
@@ -32,6 +33,7 @@ public class CphDelegationsServiceTests
     private readonly IRoleRepository roleRepository = Substitute.For<IRoleRepository>();
     private readonly IOperatorContext operatorContext = Substitute.For<IOperatorContext>();
 
+    private readonly IMessagingFactory messagingFactory = Substitute.For<IMessagingFactory>();
     private readonly IStrategyBuilderFactory<CphDelegationsService> strategyBuilderFactory = new StrategyBuilderFactory<CphDelegationsService>();
 
     private readonly IValidator<CreateCphDelegation> createCphDelegationValidator = new CreateCphDelegationValidator();
@@ -51,6 +53,7 @@ public class CphDelegationsServiceTests
             cphRepository,
             roleRepository,
             operatorContext,
+            messagingFactory,
             strategyBuilderFactory,
             createCphDelegationValidator,
             updateCphDelegationValidator,

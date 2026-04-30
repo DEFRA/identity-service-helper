@@ -18,6 +18,7 @@ using Defra.Identity.Api.Extensions;
 using Defra.Identity.Api.Utility.Http;
 using Defra.Identity.Api.Utility.Logging;
 using Defra.Identity.Api.Utility.OpenApi;
+using Defra.Identity.Messaging.Extensions;
 using Defra.Identity.Models.Requests;
 using Defra.Identity.Models.Requests.MetaData;
 using Defra.Identity.Postgres.Database;
@@ -114,10 +115,10 @@ public class Program
         builder.Services.AddOperatorContext(configuration);
         builder.Services.AddStrategies(configuration);
         builder.Services.AddScheduling(configuration);
-        builder.Services.AddMessaging(configuration);
 
         // intentionally commented out until we get a queue to interact with  -- Gary Woodfine
         // builder.Services.AddKeeperReferenceDataQueueIntegration(configuration);
+        builder.Services.AddMessagingIntegrationService(configuration);
     }
 
     [ExcludeFromCodeCoverage]
