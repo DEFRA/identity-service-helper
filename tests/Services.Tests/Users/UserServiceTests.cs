@@ -14,9 +14,6 @@ using Defra.Identity.Models.Requests.Users.Queries;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Repositories.Users;
-using Defra.Identity.Repositories.Users.Cphs;
-using Defra.Identity.Repositories.Users.Delegations;
-using Defra.Identity.Services.Common.Builders.Strategy.Factories;
 using Defra.Identity.Services.Users;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
@@ -26,24 +23,12 @@ using Xunit;
 public class UserServiceTests
 {
     private readonly IUsersRepository repository = Substitute.For<IUsersRepository>();
-    private readonly ICphAssignmentsForAssigneeRepository cphAssignmentsForAssigneeRepository = Substitute.For<ICphAssignmentsForAssigneeRepository>();
-    private readonly ICphDelegationsForDelegateRepository cphDelegationsForDelegateRepository = Substitute.For<ICphDelegationsForDelegateRepository>();
-    private readonly ICphDelegatesForDelegatorRepository cphDelegatesForDelegatorRepository = Substitute.For<ICphDelegatesForDelegatorRepository>();
-    private readonly ICphDelegationsForDelegatorRepository cphDelegationsForDelegatorRepository = Substitute.For<ICphDelegationsForDelegatorRepository>();
-    private readonly IStrategyBuilderFactory<UserService> strategyBuilderFactory = Substitute.For<IStrategyBuilderFactory<UserService>>();
     private readonly ILogger<UserService> logger = Substitute.For<ILogger<UserService>>();
     private readonly UserService userService;
 
     public UserServiceTests()
     {
-        userService = new UserService(
-            repository,
-            cphAssignmentsForAssigneeRepository,
-            cphDelegationsForDelegateRepository,
-            cphDelegatesForDelegatorRepository,
-            cphDelegationsForDelegatorRepository,
-            strategyBuilderFactory,
-            logger);
+        userService = new UserService(repository, logger);
     }
 
     [Fact]
@@ -55,11 +40,11 @@ public class UserServiceTests
         {
             new UserAccounts
             {
-                Id = Guid.NewGuid(), EmailAddress = "user1@example.com", FirstName = "User", LastName = "One"
+                Id = Guid.NewGuid(), EmailAddress = "user1@example.com", FirstName = "User", LastName = "One",
             },
             new UserAccounts
             {
-                Id = Guid.NewGuid(), EmailAddress = "user2@example.com", FirstName = "User", LastName = "Two"
+                Id = Guid.NewGuid(), EmailAddress = "user2@example.com", FirstName = "User", LastName = "Two",
             },
         };
 
@@ -90,7 +75,7 @@ public class UserServiceTests
         var userId = Guid.NewGuid();
         var request = new GetUserById
         {
-            Id = userId
+            Id = userId,
         };
         var userAccount = new UserAccounts
         {
@@ -153,7 +138,7 @@ public class UserServiceTests
         // Arrange
         var request = new GetUserById
         {
-            Id = Guid.NewGuid()
+            Id = Guid.NewGuid(),
         };
         repository.GetSingle(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<CancellationToken>())
             .Returns((UserAccounts)null!);

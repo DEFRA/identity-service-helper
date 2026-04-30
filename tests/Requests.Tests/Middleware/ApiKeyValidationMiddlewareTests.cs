@@ -7,7 +7,6 @@ namespace Defra.Identity.Requests.Tests.Middleware;
 using Defra.Identity.Api.Extensions;
 using Defra.Identity.Api.Middleware;
 using Defra.Identity.Api.Middleware.Headers;
-using Defra.Identity.Models.Requests;
 using Defra.Identity.Models.Requests.MetaData;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -51,7 +50,7 @@ public class ApiKeyValidationMiddlewareTests
         var app = builder.Build();
 
         // Act & Assert
-        Should.NotThrow(() => app.UseRequests());
+        Should.NotThrow(app.UseRequests);
     }
 
     [Fact]

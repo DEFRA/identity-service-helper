@@ -7,7 +7,6 @@ namespace Defra.Identity.Requests.Tests.Middleware;
 using Defra.Identity.Api.Extensions;
 using Defra.Identity.Api.Middleware;
 using Defra.Identity.Api.Middleware.Headers;
-using Defra.Identity.Models.Requests;
 using Defra.Identity.Models.Requests.MetaData;
 using Defra.Identity.Models.Requests.Services;
 using Microsoft.AspNetCore.Builder;
@@ -27,11 +26,11 @@ public class OperatorIdMiddlewareTests
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(
                 new Dictionary<string, string?>
-            {
                 {
-                    "DefraIndentityApiKey", "test-api-key"
-                },
-            })
+                    {
+                        "DefraIndentityApiKey", "test-api-key"
+                    },
+                })
             .Build();
 
         // Act
@@ -53,7 +52,7 @@ public class OperatorIdMiddlewareTests
         var app = builder.Build();
 
         // Act & Assert
-        Should.NotThrow(() => app.UseRequests());
+        Should.NotThrow(app.UseRequests);
     }
 
     [Fact]
@@ -227,9 +226,9 @@ public class OperatorIdMiddlewareTests
     private static void SetupEndpoint(HttpContext context)
     {
         var metadataItems = new List<object>
-            {
-                new RequiresOperatorId(),
-            };
+        {
+            new RequiresOperatorId(),
+        };
         var metadata = new EndpointMetadataCollection(metadataItems);
         var endpoint = new Endpoint(null, metadata, "Test endpoint");
 

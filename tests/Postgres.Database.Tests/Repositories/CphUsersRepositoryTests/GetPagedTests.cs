@@ -8,8 +8,8 @@ using System.ComponentModel;
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
+using Defra.Identity.Repositories.Assignments;
 using Defra.Identity.Repositories.Cphs;
-using Defra.Identity.Repositories.Cphs.Users;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 
@@ -20,8 +20,8 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     public async Task ShouldGetPageOneCphUsersInAscendingOrderWithOrderingAndFiltersApplied()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<CphAssigneesRepository>>();
-        var repository = new CphAssigneesRepository(ReadOnlyContext, logger);
+        var logger = Substitute.For<ILogger<CphAssignmentsRepository>>();
+        var repository = new CphAssignmentsRepository(ReadOnlyContext, logger);
 
         var cphId = new Guid("4435a146-d0ac-4260-8a27-c550e0ed9563");
         const int pageNumber = 1;
@@ -36,7 +36,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         var pagedEntities = await repository.GetPaged(primaryFilter, associationFilter, pageNumber, pageSize, orderBy, descendingOrder, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.Received(1).Log(LogLevel.Information, "Getting list of users for county parish holding");
+        logger.Received(1).Log(LogLevel.Information, "Getting list of assignments for county parish holding");
 
         pagedEntities.ShouldSatisfyAllConditions(
             (x) => x.Items.Count.ShouldBe(2),
@@ -72,8 +72,8 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     public async Task ShouldGetPageTwoCphUsersInAscendingOrderWithOrderingAndFiltersApplied()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<CphAssigneesRepository>>();
-        var repository = new CphAssigneesRepository(ReadOnlyContext, logger);
+        var logger = Substitute.For<ILogger<CphAssignmentsRepository>>();
+        var repository = new CphAssignmentsRepository(ReadOnlyContext, logger);
 
         var cphId = new Guid("4435a146-d0ac-4260-8a27-c550e0ed9563");
         const int pageNumber = 2;
@@ -88,7 +88,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         var pagedEntities = await repository.GetPaged(primaryFilter, associationFilter, pageNumber, pageSize, orderBy, descendingOrder, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.Received(1).Log(LogLevel.Information, "Getting list of users for county parish holding");
+        logger.Received(1).Log(LogLevel.Information, "Getting list of assignments for county parish holding");
 
         pagedEntities.ShouldSatisfyAllConditions(
             (x) => x.Items.Count.ShouldBe(1),
@@ -114,8 +114,8 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     public async Task ShouldGetPageOneCphUsersInDescendingOrderWithOrderingAndFiltersApplied()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<CphAssigneesRepository>>();
-        var repository = new CphAssigneesRepository(ReadOnlyContext, logger);
+        var logger = Substitute.For<ILogger<CphAssignmentsRepository>>();
+        var repository = new CphAssignmentsRepository(ReadOnlyContext, logger);
 
         var cphId = new Guid("4435a146-d0ac-4260-8a27-c550e0ed9563");
         const int pageNumber = 1;
@@ -130,7 +130,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         var pagedEntities = await repository.GetPaged(primaryFilter, associationFilter, pageNumber, pageSize, orderBy, descendingOrder, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.Received(1).Log(LogLevel.Information, "Getting list of users for county parish holding");
+        logger.Received(1).Log(LogLevel.Information, "Getting list of assignments for county parish holding");
 
         pagedEntities.ShouldSatisfyAllConditions(
             (x) => x.Items.Count.ShouldBe(2),
@@ -166,8 +166,8 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     public async Task ShouldGetPageTwoCphUsersInDescendingOrderWithOrderingAndFiltersApplied()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<CphAssigneesRepository>>();
-        var repository = new CphAssigneesRepository(ReadOnlyContext, logger);
+        var logger = Substitute.For<ILogger<CphAssignmentsRepository>>();
+        var repository = new CphAssignmentsRepository(ReadOnlyContext, logger);
 
         var cphId = new Guid("4435a146-d0ac-4260-8a27-c550e0ed9563");
         const int pageNumber = 2;
@@ -182,7 +182,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         var pagedEntities = await repository.GetPaged(primaryFilter, associationFilter, pageNumber, pageSize, orderBy, descendingOrder, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.Received(1).Log(LogLevel.Information, "Getting list of users for county parish holding");
+        logger.Received(1).Log(LogLevel.Information, "Getting list of assignments for county parish holding");
 
         pagedEntities.ShouldSatisfyAllConditions(
             (x) => x.Items.Count.ShouldBe(1),
@@ -208,8 +208,8 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     public async Task ShouldGetPageOneCphUsersInDifferentCphInAscendingOrderWithOrderingAndFiltersApplied()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<CphAssigneesRepository>>();
-        var repository = new CphAssigneesRepository(ReadOnlyContext, logger);
+        var logger = Substitute.For<ILogger<CphAssignmentsRepository>>();
+        var repository = new CphAssignmentsRepository(ReadOnlyContext, logger);
 
         var cphId = new Guid("204459b1-3a07-4e65-9122-91c1699e3d3f");
         const int pageNumber = 1;
@@ -224,7 +224,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         var pagedEntities = await repository.GetPaged(primaryFilter, associationFilter, pageNumber, pageSize, orderBy, descendingOrder, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.Received(1).Log(LogLevel.Information, "Getting list of users for county parish holding");
+        logger.Received(1).Log(LogLevel.Information, "Getting list of assignments for county parish holding");
 
         pagedEntities.ShouldSatisfyAllConditions(
             (x) => x.Items.Count.ShouldBe(2),
@@ -260,8 +260,8 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     public async Task ShouldGetPageOneCphUsersInDifferentCphInDescendingOrderWithOrderingAndFiltersApplied()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<CphAssigneesRepository>>();
-        var repository = new CphAssigneesRepository(ReadOnlyContext, logger);
+        var logger = Substitute.For<ILogger<CphAssignmentsRepository>>();
+        var repository = new CphAssignmentsRepository(ReadOnlyContext, logger);
 
         var cphId = new Guid("204459b1-3a07-4e65-9122-91c1699e3d3f");
         const int pageNumber = 1;
@@ -276,7 +276,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         var pagedEntities = await repository.GetPaged(primaryFilter, associationFilter, pageNumber, pageSize, orderBy, descendingOrder, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.Received(1).Log(LogLevel.Information, "Getting list of users for county parish holding");
+        logger.Received(1).Log(LogLevel.Information, "Getting list of assignments for county parish holding");
 
         pagedEntities.ShouldSatisfyAllConditions(
             (x) => x.Items.Count.ShouldBe(2),
