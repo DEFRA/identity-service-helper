@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Api.Config;
+namespace Defra.Identity.Api.Configuration;
 
 public static class Environment
 {

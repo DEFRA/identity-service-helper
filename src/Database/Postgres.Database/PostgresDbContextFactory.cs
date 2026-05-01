@@ -41,7 +41,9 @@ internal class ReadOnlyPostgresDbContextFactory : IDesignTimeDbContextFactory<Re
         DbContextOptionsBuilder<ReadOnlyPostgresDbContext> dbContextOptionsBuilder =
             new();
 
-        dbContextOptionsBuilder.UseNpgsql(LocalBuild);
+        dbContextOptionsBuilder
+            .UseNpgsql(LocalBuild)
+            .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         return new ReadOnlyPostgresDbContext(dbContextOptionsBuilder.Options);
     }
 }

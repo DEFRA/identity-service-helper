@@ -8,15 +8,26 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational"/>
     <PackageReference Include="Npgsql"/>
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
+
   <ItemGroup>
     <Using Include="Microsoft.EntityFrameworkCore"/>
     <Using Include="Microsoft.EntityFrameworkCore.Metadata.Builders" />
     <Using Include="Defra.Identity.Postgres.Database.Entities" />
   </ItemGroup>
+
   <ItemGroup>
     <InternalsVisibleTo Include="Defra.Identity.Postgres.Database.Tests"/>
   </ItemGroup>
+
   <PropertyGroup>
     <CollectCoverage>true</CollectCoverage>
     <Exclude>Postgres.Database.Migrations.*</Exclude>

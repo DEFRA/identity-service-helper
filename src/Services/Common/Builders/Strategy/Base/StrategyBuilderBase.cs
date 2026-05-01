@@ -24,7 +24,7 @@ public abstract class StrategyBuilderBase<TService, TBuilder>
 
     protected string? ActionDescription { get; private set; }
 
-    private Action? SetupAction { get; set; }
+    private Action? BeforeExecuteAction { get; set; }
 
     private Func<Task<ValidationResult>>? ValidateAction { get; set; }
 
@@ -58,9 +58,9 @@ public abstract class StrategyBuilderBase<TService, TBuilder>
         return (TBuilder)this;
     }
 
-    public TBuilder WithSetup(Action setupAction)
+    public TBuilder WithBeforeExecute(Action setupAction)
     {
-        SetupAction = setupAction;
+        BeforeExecuteAction = setupAction;
         return (TBuilder)this;
     }
 
@@ -72,7 +72,7 @@ public abstract class StrategyBuilderBase<TService, TBuilder>
 
     protected void ExecuteSetup()
     {
-        SetupAction?.Invoke();
+        BeforeExecuteAction?.Invoke();
     }
 
     protected async Task ExecuteRequestValidation()

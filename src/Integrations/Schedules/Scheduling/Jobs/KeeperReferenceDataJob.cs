@@ -2,9 +2,10 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Scheduling;
+namespace Defra.Identity.Scheduling.Jobs;
 
 using Defra.Identity.KeeperReferenceData.Providers;
+using Defra.Identity.Scheduling.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Quartz;
@@ -13,10 +14,10 @@ using Quartz;
 public class KeeperReferenceDataJob(
     ISitesProvider sitesService,
     ILogger<KeeperReferenceDataJob> logger,
-    IOptions<KeeperReferenceDataOptions> options)
+    IOptions<KeeperReferenceDataSchedulingOptions> options)
     : IJob
 {
-    private readonly KeeperReferenceDataOptions options = options.Value;
+    private readonly KeeperReferenceDataSchedulingOptions options = options.Value;
 
     public async Task Execute(IJobExecutionContext context)
     {
