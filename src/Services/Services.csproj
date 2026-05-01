@@ -1,9 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-     
   <ItemGroup>
     <ProjectReference Include="..\Database\Postgres.Database\Postgres.Database.csproj" />
+    <ProjectReference Include="..\Integrations\Messaging\Messaging\Messaging.csproj" />
     <ProjectReference Include="..\Models\Models.csproj" />
     <ProjectReference Include="..\Repositories\Repositories.csproj" />
   </ItemGroup>
-
 </Project>

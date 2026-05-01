@@ -8,6 +8,7 @@ using Defra.Identity.Repositories.Applications;
 using Defra.Identity.Repositories.Assignments;
 using Defra.Identity.Repositories.Cphs;
 using Defra.Identity.Repositories.Delegations;
+using Defra.Identity.Repositories.Messaging;
 using Defra.Identity.Repositories.Roles;
 using Defra.Identity.Repositories.Species;
 using Defra.Identity.Repositories.Users;
@@ -28,6 +29,8 @@ public static class ServiceCollectionExtensions
         services.AddTransient<ICphRepository, CphRepository>();
         services.AddTransient<ICphDelegationsRepository, CphDelegationsRepository>();
         services.AddTransient<ICphAssignmentsRepository, CphAssignmentsRepository>();
+        services.AddTransient<IExternalMessagingRepository, ExternalMessagingRepository>();
+        services.AddTransient<ICountyParishHoldingDelegationsNotificationsRepository, CountyParishHoldingDelegationsNotificationsRepository>();
 
         return services;
     }

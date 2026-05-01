@@ -51,4 +51,6 @@ public class UserAccounts : BaseAuditEntity
     public ICollection<CountyParishHoldingDelegations> CountyParishHoldingDelegationsDeletedByUsers { get; set; } = new List<CountyParishHoldingDelegations>();
 
     public ICollection<CountyParishHoldingDelegations>? CountyParishHoldingDelegationsRevokedByUsers { get; set; } = new List<CountyParishHoldingDelegations>();
+
+    public ICollection<ExternalMessaging> ExternalMessagingCreatedByUsers { get; set; } = new List<ExternalMessaging>();
 }

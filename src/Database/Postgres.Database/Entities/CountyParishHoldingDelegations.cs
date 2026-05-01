@@ -45,4 +45,6 @@ public class CountyParishHoldingDelegations : BaseAuditEntity
     public UserAccounts CreatedByUser { get; set; } = null!;
 
     public UserAccounts? DeletedByUser { get; set; }
+
+    public ICollection<CountyParishHoldingDelegationsNotifications> CountyParishHoldingDelegationsNotifications { get; set; } = new List<CountyParishHoldingDelegationsNotifications>();
 }

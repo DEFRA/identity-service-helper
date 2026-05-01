@@ -27,8 +27,7 @@ public class PagedResponseBindings(
         result.ShouldSatisfyAllConditions(
             x => x.PageNumber.ShouldBe(pageNumber),
             x => x.TotalCount.ShouldBe(total),
-            x => x.Items.Count().ShouldBe(objectCount)
-        );
+            x => x.Items.Count().ShouldBe(objectCount));
     }
 
     [Then(

@@ -5,6 +5,9 @@
 namespace Defra.Identity.Services.Delegations;
 
 using System.Linq.Expressions;
+using Defra.Identity.Messaging;
+using Defra.Identity.Messaging.Models.Request;
+using Defra.Identity.Messaging.Services;
 using Defra.Identity.Models.Requests.Delegations.Commands;
 using Defra.Identity.Models.Requests.Delegations.Queries;
 using Defra.Identity.Models.Responses.Delegations;
@@ -32,6 +35,7 @@ public class CphDelegationsService : ICphDelegationsService
     private readonly IValidator<CreateCphDelegation> createCphDelegationValidator;
     private readonly IValidator<UpdateCphDelegationById> updateCphDelegationValidator;
     private readonly ILogger<CphDelegationsService> logger;
+    private readonly IMessagingFactory messagingFactory;
 
     public CphDelegationsService(
         ICphDelegationsRepository repository,
@@ -39,6 +43,7 @@ public class CphDelegationsService : ICphDelegationsService
         ICphRepository cphRepository,
         IRoleRepository roleRepository,
         IOperatorContext operatorContext,
+        IMessagingFactory messagingFactory,
         IStrategyBuilderFactory<CphDelegationsService> strategyBuilderFactory,
         IValidator<CreateCphDelegation> createCphDelegationValidator,
         IValidator<UpdateCphDelegationById> updateCphDelegationValidator,
@@ -49,6 +54,7 @@ public class CphDelegationsService : ICphDelegationsService
         this.cphRepository = cphRepository;
         this.roleRepository = roleRepository;
         this.operatorContext = operatorContext;
+        this.messagingFactory = messagingFactory;
         this.strategyBuilderFactory = strategyBuilderFactory;
         this.createCphDelegationValidator = createCphDelegationValidator;
         this.updateCphDelegationValidator = updateCphDelegationValidator;
@@ -123,6 +129,17 @@ public class CphDelegationsService : ICphDelegationsService
                         CreatedAt = DateTime.UtcNow,
                         CreatedById = operatorContext.OperatorId,
                     })
+            .WithAfterExecute(async entity =>
+            {
+                await messagingFactory
+                    .QueueDelegationEmailAsync(
+                        new DelegationEmailMessage(entity.Id, MessageTemplateTypes.Delegation.DelegationInvitee)
+                        {
+                            Recipient = entity.DelegatedUserEmail,
+                        },
+                        cancellationToken)
+                    .ConfigureAwait(false);
+            })
             .ExecuteAndMap(MapCphDelegationEntityToCphDelegation);
     }
 

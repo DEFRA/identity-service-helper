@@ -18,6 +18,8 @@ public class CreateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
 
     private Func<TEntity>? CreateAction { get; set; }
 
+    private Func<TEntity, Task>? AfterExecuteAction { get; set; }
+
     private ReferenceRulesBuilder<TService>? ReferenceRulesBuilder { get; set; }
 
     public CreateStrategyBuilder<TService, TEntity> WithRepository(ICreatable<TEntity> repository)
@@ -38,6 +40,13 @@ public class CreateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
     public CreateStrategyBuilder<TService, TEntity> WithCreate(Func<TEntity> createAction)
     {
         CreateAction = createAction;
+
+        return this;
+    }
+
+    public CreateStrategyBuilder<TService, TEntity> WithAfterExecute(Func<TEntity, Task> afterExecuteAction)
+    {
+        AfterExecuteAction = afterExecuteAction;
 
         return this;
     }
@@ -97,6 +106,11 @@ public class CreateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
         var entityToCreate = CreateAction();
 
         var createdEntity = await CreatableRepository.Create(entityToCreate, CancellationToken.Value);
+
+        if (AfterExecuteAction != null)
+        {
+            await AfterExecuteAction.Invoke(createdEntity);
+        }
 
         Logger.LogInformation(
             "Successfully executed {ActionDescription} {EntityDescription} by operator {OperatorId}",
