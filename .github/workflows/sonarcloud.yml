@@ -1,11 +1,11 @@
 name: Run SonarCloud coverage scan
 
-#on:
-#  workflow_call:
-#    secrets:
-#      SONAR_TOKEN:
-#        description: "SonarCloud token used for authentication"
-#        required: true
+on:
+  workflow_call:
+    secrets:
+      SONAR_TOKEN:
+        description: "SonarCloud token used for authentication"
+        required: true
         
 permissions:
   id-token: write
@@ -70,20 +70,19 @@ jobs:
       - name: Build and analyze
         if: github.actor != 'dependabot[bot]'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
+          GITHUB_TOKEN: ${{ github.token }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_VERSION: ${{ steps.shortsha.outputs.shortsha }}
           BRANCH_NAME: ${{ github.ref_name }}
         run: |
           ./.sonar/scanner/dotnet-sonarscanner begin \
-          /k:"DEFRA_identity-service-handler" \
-          /o:"defra" \
-          /d:sonar.token="$SONAR_TOKEN" \
-          /d:sonar.host.url="https://sonarcloud.io" \
-          /v:"$SONAR_VERSION" \
-          /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml \
-          /d:sonar.branch.name="$BRANCH_NAME" \
-          /d:sonar.exclusions="changelog/**,tests/**"
+            /k:"DEFRA_identity-service-handler" \
+            /o:"defra" \
+            /d:sonar.token="$SONAR_TOKEN" \
+            /d:sonar.host.url="https://sonarcloud.io" \
+            /v:"$SONAR_VERSION" \
+            /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml \
+            /d:sonar.exclusions="changelog/**,tests/**"
           dotnet build --no-incremental
           ./.sonar/coverage/dotnet-coverage collect "dotnet test" -f xml -o "coverage.xml"
           ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="$SONAR_TOKEN"
