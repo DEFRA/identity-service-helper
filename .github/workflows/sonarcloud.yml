@@ -67,10 +67,11 @@ jobs:
           ./.sonar/scanner/dotnet-sonarscanner begin \
           /k:"DEFRA_identity-service-handler" \
           /o:"defra" \
-          /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
+          /d:sonar.token="$SONAR_TOKEN" \
           /d:sonar.host.url="https://sonarcloud.io" \
           /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml \
+          /d:sonar.projectBaseDir="${{ github.workspace }}" \
           /d:sonar.exclusions="changelog/**,tests/**"
           dotnet build --no-incremental
           ./.sonar/coverage/dotnet-coverage collect "dotnet test" -f xml -o "coverage.xml"
-          ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="$SONAR_TOKEN"
