@@ -86,6 +86,5 @@ jobs:
             /d:sonar.exclusions="changelog/**,.github/**" \
             /d:sonar.dotnet.excludeTestProjects=true
           dotnet build --no-incremental
-          ls -lR tests
           ./.sonar/coverage/dotnet-coverage collect "dotnet test" -f xml -o "coverage.xml"
           ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="$SONAR_TOKEN"
