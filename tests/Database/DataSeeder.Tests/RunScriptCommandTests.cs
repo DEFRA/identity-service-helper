@@ -1,4 +1,4 @@
-﻿// <copyright file="UnitTest1.cs" company="Defra">
+﻿// <copyright file="RunScriptCommandTests.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
@@ -8,21 +8,19 @@ using System.CommandLine;
 using Defra.Identity.DataSeeder.Commands;
 using Shouldly;
 
-public class ProgramTests
+public class RunScriptCommandTests
 {
     [Fact]
-    public void RootCommand_ShouldContainRunScriptCommand()
+    public void RunScriptCommand_ShouldHaveRunAlias()
     {
         // Arrange
-        var rootCommand = new RootCommand("Database utilities for Defra Identity.");
-        rootCommand.Add(new RunScriptCommand());
+        var command = new RunScriptCommand();
 
         // Act
-        var subcommands = rootCommand.Subcommands;
+        var aliases = command.Aliases.ToList();
 
         // Assert
-        // subcommands.ShouldContainSingle();
-        subcommands.First().Name.ShouldBe("RunScriptDatabase");
+        aliases.ShouldContain("run");
     }
 
     [Fact]
@@ -40,19 +38,6 @@ public class ProgramTests
         options.ShouldContain(o => o.Name == "-uid" && o.Required);
         options.ShouldContain(o => o.Name == "-pwd" && o.Required);
         options.ShouldContain(o => o.Name == "-script" && o.Required);
-    }
-
-    [Fact]
-    public void RunScriptCommand_ShouldHaveRunAlias()
-    {
-        // Arrange
-        var command = new RunScriptCommand();
-
-        // Act
-        var aliases = command.Aliases.ToList();
-
-        // Assert
-        aliases.ShouldContain("run");
     }
 
     [Fact]
@@ -87,6 +72,35 @@ public class ProgramTests
 
             // Assert
             parseResult.Errors.ShouldBeEmpty();
+        }
+        finally
+        {
+            if (File.Exists(tempFile))
+            {
+                File.Delete(tempFile);
+            }
+        }
+    }
+
+    [Fact]
+    public void RunScriptCommand_Invoke_Returns_Error()
+    {
+        // Arrange
+        var tempFile = Path.GetTempFileName();
+        try
+        {
+            var rootCommand = new RootCommand();
+            rootCommand.Add(new RunScriptCommand());
+            var args = new[] { "run", "-db", "postgresql://localhost/testdb", "-uid", "testuser", "-pwd", "testpass", "-script", tempFile };
+
+            // Act
+            var parseResult = rootCommand.Parse(args);
+            var commandResult = parseResult
+                .Invoke();
+
+            // Assert
+            parseResult.Errors.ShouldBeEmpty();
+            commandResult.ShouldBe(1);
         }
         finally
         {

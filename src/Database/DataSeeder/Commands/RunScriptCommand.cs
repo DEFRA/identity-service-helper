@@ -49,14 +49,6 @@ public class RunScriptCommand : BaseCommand
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(scriptFile);
 
-        if (!File.Exists(scriptFile))
-        {
-            await Console.Error
-                .WriteLineAsync($"The script file '{scriptFile}' could not be found.")
-                .ConfigureAwait(false);
-            return 1;
-        }
-
         var connectionString = BuildConnectionString(databaseUrl, databaseUserName, databasePassword);
         var sql = await File.ReadAllTextAsync(scriptFile, cancellationToken);
         try
