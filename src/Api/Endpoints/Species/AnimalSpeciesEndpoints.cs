@@ -4,13 +4,8 @@
 
 namespace Defra.Identity.Api.Endpoints.Species;
 
-using System.ComponentModel;
 using Defra.Identity.Api.Middleware.Headers;
-using Defra.Identity.Models.Requests;
-using Defra.Identity.Models.Requests.Delegations.Commands;
-using Defra.Identity.Models.Requests.Filters;
 using Defra.Identity.Models.Requests.MetaData;
-using Defra.Identity.Models.Requests.Species;
 using Defra.Identity.Models.Requests.Species.Commands;
 using Defra.Identity.Models.Requests.Species.Queries;
 using Defra.Identity.Services.Species;

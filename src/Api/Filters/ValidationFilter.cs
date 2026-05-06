@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Models.Requests.Filters;
+namespace Defra.Identity.Api.Filters;
 
 using FluentValidation;
 using Microsoft.AspNetCore.Http;

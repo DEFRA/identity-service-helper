@@ -6,12 +6,12 @@ namespace Defra.Identity.Api.Endpoints.Cphs;
 
 using System.Net.Mime;
 using Defra.Identity.Api.Common.Factories;
+using Defra.Identity.Api.Filters;
 using Defra.Identity.Api.Middleware.Headers;
 using Defra.Identity.Models.Requests.Common.Queries;
 using Defra.Identity.Models.Requests.Cphs.Commands;
 using Defra.Identity.Models.Requests.Cphs.Common;
 using Defra.Identity.Models.Requests.Cphs.Queries;
-using Defra.Identity.Models.Requests.Filters;
 using Defra.Identity.Models.Requests.MetaData;
 using Defra.Identity.Models.Responses.Common;
 using Defra.Identity.Models.Responses.Cphs;

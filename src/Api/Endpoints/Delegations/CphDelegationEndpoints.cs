@@ -4,14 +4,11 @@
 
 namespace Defra.Identity.Api.Endpoints.Delegations;
 
-using System.ComponentModel;
 using System.Net.Mime;
+using Defra.Identity.Api.Filters;
 using Defra.Identity.Api.Middleware.Headers;
-using Defra.Identity.Models.Requests;
-using Defra.Identity.Models.Requests.Delegations;
 using Defra.Identity.Models.Requests.Delegations.Commands;
 using Defra.Identity.Models.Requests.Delegations.Queries;
-using Defra.Identity.Models.Requests.Filters;
 using Defra.Identity.Models.Requests.MetaData;
 using Defra.Identity.Services.Delegations;
 using Microsoft.AspNetCore.Mvc;
