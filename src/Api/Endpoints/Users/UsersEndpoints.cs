@@ -5,8 +5,8 @@
 namespace Defra.Identity.Api.Endpoints.Users;
 
 using System.Net.Mime;
+using Defra.Identity.Api.Filters;
 using Defra.Identity.Api.Middleware.Headers;
-using Defra.Identity.Models.Requests.Filters;
 using Defra.Identity.Models.Requests.MetaData;
 using Defra.Identity.Models.Requests.Users.Commands;
 using Defra.Identity.Models.Requests.Users.Queries;

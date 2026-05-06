@@ -82,7 +82,9 @@ jobs:
             /d:sonar.host.url="https://sonarcloud.io" \
             /v:"$SONAR_VERSION" \
             /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml \
-            /d:sonar.exclusions="changelog/**,tests/**"
+            /d:sonar.sources=./src \
+            /d:sonar.exclusions="changelog/**,.github/**" \
+            /d:sonar.dotnet.excludeTestProjects=true
           dotnet build --no-incremental
           ./.sonar/coverage/dotnet-coverage collect "dotnet test" -f xml -o "coverage.xml"
           ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="$SONAR_TOKEN"

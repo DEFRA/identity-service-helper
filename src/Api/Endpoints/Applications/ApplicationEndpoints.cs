@@ -5,11 +5,10 @@
 namespace Defra.Identity.Api.Endpoints.Applications;
 
 using System.Net.Mime;
+using Defra.Identity.Api.Filters;
 using Defra.Identity.Api.Middleware.Headers;
-using Defra.Identity.Models.Requests;
 using Defra.Identity.Models.Requests.Applications.Commands;
 using Defra.Identity.Models.Requests.Applications.Queries;
-using Defra.Identity.Models.Requests.Filters;
 using Defra.Identity.Models.Requests.MetaData;
 using Defra.Identity.Models.Responses.Applications;
 using Defra.Identity.Services.Applications;

@@ -6,11 +6,11 @@ namespace Defra.Identity.Api.Endpoints.Permissions;
 
 using System.Net.Mime;
 using Defra.Identity.Api.Common.Factories;
+using Defra.Identity.Api.Filters;
 using Defra.Identity.Api.Middleware.Headers;
 using Defra.Identity.Models.Requests.Common.Queries;
 using Defra.Identity.Models.Requests.Cphs.Common;
 using Defra.Identity.Models.Requests.Cphs.Queries;
-using Defra.Identity.Models.Requests.Filters;
 using Defra.Identity.Models.Requests.Permissions.Queries;
 using Defra.Identity.Models.Responses.Assignments;
 using Defra.Identity.Models.Responses.Common;

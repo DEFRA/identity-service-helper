@@ -35,11 +35,13 @@
     <Project Path="tests/Endpoint.Tests/Endpoint.Tests.csproj" />
   </Folder>
   <Folder Name="/tests/Database/">
-    <Project Path="tests/Postgres.Database.Tests/Postgres.Database.Tests.csproj" />
+    <Project Path="tests/Database/DataSeeder.Tests/DataSeeder.Tests.csproj" />
+    <Project Path="tests/Database/Postgres.Database.Tests/Postgres.Database.Tests.csproj" />
   </Folder>
   <Folder Name="/tests/Integrations/Messaging/">
     <Project Path="tests/Integrations/Messaging/Messaging.Tests/Messaging.Tests.csproj" />
   </Folder>
+  <Folder Name="/tests/Integrations/" />
   <Folder Name="/tests/Integrations/Krds/">
     <Project Path="tests/Integrations/Krds/KeeperReferenceData.Tests/KeeperReferenceData.Tests.csproj" />
   </Folder>

@@ -1,4 +1,4 @@
-// <copyright file="RunScriptDatabase.cs" company="Defra">
+// <copyright file="RunScriptCommand.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
@@ -14,7 +14,7 @@ public class RunScriptCommand : BaseCommand
     public RunScriptCommand()
         : base("RunScriptDatabase", "Run a script on the specified database.")
     {
-        this.Aliases.Add("run");
+        Aliases.Add("run");
 
         Option<string> scriptFileOption = new("-script")
         {
@@ -28,11 +28,11 @@ public class RunScriptCommand : BaseCommand
             }
         });
 
-        this.Add(DatabaseUrlOption);
-        this.Add(DatabaseUserNameOption);
-        this.Add(DatabasePasswordOption);
-        this.Add(scriptFileOption);
-        this.SetAction((parsedResult, cancellationToken) => ExecuteAsync(
+        Add(DatabaseUrlOption);
+        Add(DatabaseUserNameOption);
+        Add(DatabasePasswordOption);
+        Add(scriptFileOption);
+        SetAction((parsedResult, cancellationToken) => ExecuteAsync(
             parsedResult.GetValue(DatabaseUrlOption),
             parsedResult.GetValue(DatabaseUserNameOption),
             parsedResult.GetValue(DatabasePasswordOption),
@@ -49,12 +49,6 @@ public class RunScriptCommand : BaseCommand
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(scriptFile);
 
-        if (!File.Exists(scriptFile))
-        {
-            Console.Error.WriteLine($"The script file '{scriptFile}' could not be found.");
-            return 1;
-        }
-
         var connectionString = BuildConnectionString(databaseUrl, databaseUserName, databasePassword);
         var sql = await File.ReadAllTextAsync(scriptFile, cancellationToken);
         try
@@ -63,7 +57,9 @@ public class RunScriptCommand : BaseCommand
         }
         catch (Exception e)
         {
-            Console.Error.WriteLine($"Error running script: {e.Message}");
+            await Console.Error
+                .WriteLineAsync($"Error running script: {e.Message}")
+                .ConfigureAwait(false);
             return 1;
         }
 
