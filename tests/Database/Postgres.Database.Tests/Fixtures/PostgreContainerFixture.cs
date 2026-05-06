@@ -81,6 +81,7 @@ public class PostgreContainerFixture
 
     private static async Task ResetData()
     {
-        await SqlHelper.ExecuteSqlFile(ConnectionString, "../../../../../changelog/schema/testcontainer.postgresql.sql");
+        var script = Path.Combine(Path.GetFullPath("changelog"), "schema/testcontainer.postgresql.sql");
+        await SqlHelper.ExecuteSqlFile(ConnectionString, script);
     }
 }

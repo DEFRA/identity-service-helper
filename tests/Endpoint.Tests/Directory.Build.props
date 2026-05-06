@@ -6,4 +6,9 @@
     <PackageReference Include="Reqnroll.xunit.v3" />
     <PackageReference Include="Testcontainers" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildProjectDirectory)\..\..\changelog\**\*"
+          Link="changelog\%(RecursiveDir)%(Filename)%(Extension)"
+          CopyToOutputDirectory="Always" />
+  </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-// <copyright file="RunScriptDatabase.cs" company="Defra">
+// <copyright file="RunScriptCommand.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
@@ -14,7 +14,7 @@ public class RunScriptCommand : BaseCommand
     public RunScriptCommand()
         : base("RunScriptDatabase", "Run a script on the specified database.")
     {
-        this.Aliases.Add("run");
+        Aliases.Add("run");
 
         Option<string> scriptFileOption = new("-script")
         {
@@ -28,11 +28,11 @@ public class RunScriptCommand : BaseCommand
             }
         });
 
-        this.Add(DatabaseUrlOption);
-        this.Add(DatabaseUserNameOption);
-        this.Add(DatabasePasswordOption);
-        this.Add(scriptFileOption);
-        this.SetAction((parsedResult, cancellationToken) => ExecuteAsync(
+        Add(DatabaseUrlOption);
+        Add(DatabaseUserNameOption);
+        Add(DatabasePasswordOption);
+        Add(scriptFileOption);
+        SetAction((parsedResult, cancellationToken) => ExecuteAsync(
             parsedResult.GetValue(DatabaseUrlOption),
             parsedResult.GetValue(DatabaseUserNameOption),
             parsedResult.GetValue(DatabasePasswordOption),

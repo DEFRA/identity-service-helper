@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Api\Api.csproj" />
-    <ProjectReference Include="..\Postgres.Database.Tests\Postgres.Database.Tests.csproj" />
+    <ProjectReference Include="..\Database\Postgres.Database.Tests\Postgres.Database.Tests.csproj" />
     <ProjectReference Include="..\Test.Utilities\Test.Utilities.csproj" />
   </ItemGroup>
 
