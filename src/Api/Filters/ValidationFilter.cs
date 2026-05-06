@@ -7,7 +7,9 @@ namespace Defra.Identity.Models.Requests.Filters;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
 
-public class ValidationFilter<T>(IValidator<T> validator) : IEndpointFilter
+public class ValidationFilter<T>(IValidator<T> validator)
+    : IEndpointFilter
+    where T : class
 {
     public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {

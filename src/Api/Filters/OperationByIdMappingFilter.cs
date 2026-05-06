@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
 public class OperationByIdMappingFilter<T> : IEndpointFilter
-    where T : IOperationById
+    where T : class, IOperationById
 {
     public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {
@@ -20,15 +20,13 @@ public class OperationByIdMappingFilter<T> : IEndpointFilter
             return Results.BadRequest("Invalid request.");
         }
 
-        if (Guid.TryParse(context.HttpContext.GetRouteValue("id")?.ToString(), out var id))
-        {
-            request.Id = id;
-
-            return await next(context);
-        }
-        else
+        if (!Guid.TryParse(context.HttpContext.GetRouteValue("id")?.ToString(), out var id))
         {
             throw new InvalidOperationException("Unable to bind id for update");
         }
+
+        request.Id = id;
+
+        return await next(context);
     }
 }
