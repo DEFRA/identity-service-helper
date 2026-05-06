@@ -1,4 +1,4 @@
-﻿// <copyright file="ICphHandlerFactory.cs" company="Defra">
+﻿// <copyright file="ICphNumberHandlerFactory.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 

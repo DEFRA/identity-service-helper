@@ -1,4 +1,4 @@
-﻿// <copyright file="ISitesProviders.cs" company="Defra">
+﻿// <copyright file="ISitesProvider.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 

@@ -1,4 +1,4 @@
-// <copyright file="DeleteTests.cs" company="Defra">
+// <copyright file="DeleteByIdRouteTests.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 

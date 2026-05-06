@@ -12,9 +12,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 
-public class ExceptionTests(PostgreContainerFixture fixture) : BaseTests(fixture)
+public class ExceptionTests(PostgreContainerFixture fixture)
+    : BaseTests(fixture)
 {
-    private const string AdminEmailAddress = "test@test.com";
+    private const string EmailAddress = "test@test.com";
 
     [Fact]
     [Trait("Category", "Integration")]
@@ -25,7 +26,8 @@ public class ExceptionTests(PostgreContainerFixture fixture) : BaseTests(fixture
         var logger = Substitute.For<ILogger<UsersRepository>>();
         var repository = new UsersRepository(Context, ReadOnlyContext, logger);
 
-        var adminUser = await repository.GetSingle(x => x.EmailAddress == AdminEmailAddress, TestContext.Current.CancellationToken);
+        var adminUser = await repository
+            .GetSingle(x => x.EmailAddress == EmailAddress, TestContext.Current.CancellationToken);
         adminUser.ShouldNotBeNull();
 
         var duplicateUser = new UserAccounts
@@ -33,12 +35,13 @@ public class ExceptionTests(PostgreContainerFixture fixture) : BaseTests(fixture
             DisplayName = "Dup User",
             FirstName = "Dup",
             LastName = "User",
-            EmailAddress = AdminEmailAddress,   // <-- violates unique constraint om email address field
+            EmailAddress = EmailAddress,   // <-- violates unique constraint om email address field
             CreatedById = adminUser.Id,
         };
 
         // Act
-        Func<Task> act = async () => await repository.Create(duplicateUser, TestContext.Current.CancellationToken);
+        Func<Task> act = async () => await repository
+            .Create(duplicateUser, TestContext.Current.CancellationToken);
 
         // Assert (Shouldly)
         var ex = await act.ShouldThrowAsync<DbUpdateException>();

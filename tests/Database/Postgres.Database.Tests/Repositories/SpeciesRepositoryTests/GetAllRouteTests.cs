@@ -1,4 +1,4 @@
-﻿// <copyright file="GetAllTests.cs" company="Defra">
+﻿// <copyright file="GetAllRouteTests.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 

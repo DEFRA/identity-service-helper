@@ -1,4 +1,4 @@
-﻿// <copyright file="CphDelegatesForDelegatorRepository.cs" company="Defra">
+﻿// <copyright file="CphDelegatesForCphAssigneeRepository.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 

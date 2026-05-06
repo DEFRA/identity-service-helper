@@ -1,4 +1,4 @@
-// <copyright file="CreateTests.cs" company="Defra">
+// <copyright file="PostRouteTests.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
@@ -15,7 +15,7 @@ using Shouldly;
 
 public class PostRouteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 {
-    private const string AdminEmailAddress = "test@test.com";
+    private const string EmailAddress = "test@test.com";
 
     [Fact]
     [Description("Should create a new application")]
@@ -29,7 +29,7 @@ public class PostRouteTests(PostgreContainerFixture fixture) : BaseTests(fixture
         var userRepository = new UsersRepository(Context, ReadOnlyContext, userLogger);
 
         var adminUser = await userRepository.GetSingle(
-            x => x.EmailAddress == AdminEmailAddress,
+            x => x.EmailAddress == EmailAddress,
             TestContext.Current.CancellationToken);
 
         adminUser.ShouldNotBeNull("Seeded admin user was not found; check test data initialization.");
@@ -44,7 +44,8 @@ public class PostRouteTests(PostgreContainerFixture fixture) : BaseTests(fixture
         };
 
         // Act
-        var createdApplication = await repository.Create(newApplication, TestContext.Current.CancellationToken);
+        var createdApplication = await repository
+            .Create(newApplication, TestContext.Current.CancellationToken);
 
         // Assert
         createdApplication.ShouldSatisfyAllConditions(

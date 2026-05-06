@@ -1,4 +1,4 @@
-// <copyright file="DeleteTests.cs" company="Defra">
+// <copyright file="DeleteByIdRouteTests.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
@@ -15,7 +15,7 @@ using Shouldly;
 
 public class DeleteByIdRouteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 {
-    private const string AdminEmailAddress = "test@test.com";
+    private const string EmailAddress = "test@test.com";
 
     [Fact]
     [Description("Should soft delete a user account by setting status to 4")]
@@ -24,7 +24,8 @@ public class DeleteByIdRouteTests(PostgreContainerFixture fixture) : BaseTests(f
         // Arrange
         var logger = Substitute.For<ILogger<UsersRepository>>();
         var repository = new UsersRepository(Context, ReadOnlyContext, logger);
-        var adminUser = await repository.GetSingle(x => x.EmailAddress == AdminEmailAddress, TestContext.Current.CancellationToken);
+        var adminUser = await repository
+            .GetSingle(x => x.EmailAddress == EmailAddress, TestContext.Current.CancellationToken);
         adminUser.ShouldNotBeNull();
 
         var userId = Guid.NewGuid();
@@ -41,11 +42,13 @@ public class DeleteByIdRouteTests(PostgreContainerFixture fixture) : BaseTests(f
         await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
-        var result = await repository.Delete(x => x.Id == userId, adminUser.Id, TestContext.Current.CancellationToken);
+        var result = await repository
+            .Delete(x => x.Id == userId, adminUser.Id, TestContext.Current.CancellationToken);
 
         // Assert
         result.ShouldBeTrue();
-        var deletedUser = await repository.GetSingle(x => x.Id == userId, TestContext.Current.CancellationToken);
+        var deletedUser = await repository
+            .GetSingle(x => x.Id == userId, TestContext.Current.CancellationToken);
         deletedUser.ShouldNotBeNull();
 
         logger.ReceivedWithAnyArgs().Log(
@@ -67,7 +70,8 @@ public class DeleteByIdRouteTests(PostgreContainerFixture fixture) : BaseTests(f
         var operatorId = Guid.NewGuid();
 
         // Act
-        Func<Task> act = async () => await repository.Delete(x => x.Id == nonExistentId, operatorId, TestContext.Current.CancellationToken);
+        Func<Task> act = async () => await repository
+            .Delete(x => x.Id == nonExistentId, operatorId, TestContext.Current.CancellationToken);
 
         // Assert
         await act.ShouldThrowAsync<NotFoundException>();

@@ -1,4 +1,4 @@
-// <copyright file="CreateTests.cs" company="Defra">
+// <copyright file="PostRouteTests.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
@@ -14,7 +14,7 @@ using NSubstitute;
 
 public class PostRouteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 {
-    private const string AdminEmailAddress = "test@test.com";
+    private const string EmailAddress = "test@test.com";
 
     [Fact]
     [Description("Should create a new user account")]
@@ -23,12 +23,9 @@ public class PostRouteTests(PostgreContainerFixture fixture) : BaseTests(fixture
         // Arrange
         var logger = Substitute.For<ILogger<UsersRepository>>();
         var repository = new UsersRepository(Context, ReadOnlyContext, logger);
-
-        var adminEmail = AdminEmailAddress;
-
         var adminUser = await repository.GetSingle(
             x =>
-                x.EmailAddress == adminEmail,
+                x.EmailAddress == EmailAddress,
             TestContext.Current.CancellationToken);
 
         adminUser.ShouldNotBeNull("Seeded admin user was not found; check test data initialization.");

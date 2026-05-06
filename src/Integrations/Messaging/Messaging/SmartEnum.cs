@@ -2,12 +2,12 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Models;
+namespace Defra.Identity.Messaging;
 
 using System.Reflection;
 
 public abstract class SmartEnum<TEnum, TValueType>(string name, TValueType value)
-    where TEnum : SmartEnum<TEnum,TValueType>
+    where TEnum : SmartEnum<TEnum, TValueType>
 {
     private static readonly Lazy<IReadOnlyCollection<TEnum>> AllItems = new(() =>
         typeof(TEnum)

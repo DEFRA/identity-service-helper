@@ -1,4 +1,4 @@
-// <copyright file="PostgresDbContextFactory.cs" company="Defra">
+// <copyright file="ReadOnlyPostgresDbContextFactory.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
@@ -17,16 +17,18 @@ using Microsoft.EntityFrameworkCore.Design;
 ///     Intentionally excluded from Code Coverage because this is just for development use
 /// </summary>
 [ExcludeFromCodeCoverage]
-internal class PostgresDbContextFactory : IDesignTimeDbContextFactory<PostgresDbContext>
+internal class ReadOnlyPostgresDbContextFactory : IDesignTimeDbContextFactory<ReadOnlyPostgresDbContext>
 {
     private const string LocalBuild = "LocalBuild";
 
-    public PostgresDbContext CreateDbContext(string[] args)
+    public ReadOnlyPostgresDbContext CreateDbContext(string[] args)
     {
-        DbContextOptionsBuilder<PostgresDbContext> dbContextOptionsBuilder =
+        DbContextOptionsBuilder<ReadOnlyPostgresDbContext> dbContextOptionsBuilder =
             new();
 
-        dbContextOptionsBuilder.UseNpgsql(LocalBuild);
-        return new PostgresDbContext(dbContextOptionsBuilder.Options);
+        dbContextOptionsBuilder
+            .UseNpgsql(LocalBuild)
+            .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+        return new ReadOnlyPostgresDbContext(dbContextOptionsBuilder.Options);
     }
 }
