@@ -51,7 +51,9 @@ public class RunScriptCommand : BaseCommand
 
         if (!File.Exists(scriptFile))
         {
-            Console.Error.WriteLine($"The script file '{scriptFile}' could not be found.");
+            await Console.Error
+                .WriteLineAsync($"The script file '{scriptFile}' could not be found.")
+                .ConfigureAwait(false);
             return 1;
         }
 
@@ -63,7 +65,9 @@ public class RunScriptCommand : BaseCommand
         }
         catch (Exception e)
         {
-            Console.Error.WriteLine($"Error running script: {e.Message}");
+            await Console.Error
+                .WriteLineAsync($"Error running script: {e.Message}")
+                .ConfigureAwait(false);
             return 1;
         }
 
