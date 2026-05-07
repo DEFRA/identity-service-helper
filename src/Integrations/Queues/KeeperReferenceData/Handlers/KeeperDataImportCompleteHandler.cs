@@ -15,7 +15,6 @@ public class KeeperDataImportCompleteHandler(ILogger<KeeperDataImportCompleteHan
         logger.LogInformation("Processing KeeperDataImportComplete message.");
 
         // TODO: Implement actual logic to handle the message.
-
         return Task.FromResult(MessageProcessStatus.Success());
     }
 }

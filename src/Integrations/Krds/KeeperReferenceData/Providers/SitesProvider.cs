@@ -24,10 +24,10 @@ public class SitesProvider(HttpClient client, ILogger<SitesProvider> logger) : I
         return string.IsNullOrEmpty(result) ? new List<Site>() : JsonSerializer.Deserialize<List<Site>>(result)!;
     }
 
-    private static string GetSitesSince(DateTime since) => $"sites?since={HttpUtility.UrlEncode(since.ToLongDateString())}";
-
     public void Dispose()
     {
         client.Dispose();
     }
+
+    private static string GetSitesSince(DateTime since) => $"sites?since={HttpUtility.UrlEncode(since.ToLongDateString())}";
 }

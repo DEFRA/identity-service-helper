@@ -23,10 +23,9 @@ using NSubstitute;
 
 public class CphServiceTests
 {
-    ICphRepository cphRepository = Substitute.For<ICphRepository>();
-    ICphAssignmentsRepository cphUsersRepository = Substitute.For<ICphAssignmentsRepository>();
-    ILogger<CphService> logger = Substitute.For<ILogger<CphService>>();
-    private ICphService cphService;
+    private readonly ICphRepository cphRepository = Substitute.For<ICphRepository>();
+    private readonly ILogger<CphService> logger = Substitute.For<ILogger<CphService>>();
+    private readonly ICphService cphService;
 
     public CphServiceTests()
     {

@@ -4,6 +4,7 @@
 
 namespace Defra.Identity.Messaging.Services;
 
+using System.Diagnostics;
 using System.Net;
 using System.Text.RegularExpressions;
 using Defra.Identity.Messaging.Configuration;
@@ -127,6 +128,7 @@ public class MessagingService(
         if (match.Success)
         {
             var tmp = JsonConvert.DeserializeObject<ErrorResponse>(match.Value);
+            Debug.Assert(tmp != null, nameof(tmp) + " != null");
             result.Status = tmp.StatusCode;
             result.Errors = tmp.Errors;
         }

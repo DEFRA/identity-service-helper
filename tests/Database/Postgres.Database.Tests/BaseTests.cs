@@ -11,6 +11,10 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
+/// <summary>
+/// The base class for the database fixture driven tests.
+/// </summary>
+/// <param name="fixture">The test fixture used for this test.</param>
 [Collection(nameof(PostgreCollection))]
 public abstract partial class BaseTests(PostgreContainerFixture fixture) : IAsyncLifetime
 {

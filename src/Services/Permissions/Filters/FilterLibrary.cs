@@ -8,6 +8,7 @@ using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Services.Common.Extensions;
 
+#pragma warning disable SA1202 // ordering of the public and privates is important here
 public static class FilterLibrary
 {
     public static class Users
@@ -66,3 +67,4 @@ public static class FilterLibrary
                 .AndAlso(NotSoftDeletedOrExpired);
     }
 }
+#pragma warning restore SA1202
