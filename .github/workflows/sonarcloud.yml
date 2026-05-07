@@ -73,6 +73,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_VERSION: ${{ steps.shortsha.outputs.shortsha }}
           BRANCH_NAME: ${{ github.ref_name }}
+          DOTNET_ENVIRONMENT: Development
         run: |
           ./.sonar/scanner/dotnet-sonarscanner begin \
             /k:"DEFRA_identity-service-helper" \
