@@ -21,6 +21,8 @@ public class MessagingService(
     ILogger<MessagingService> logger,
     IOptions<MessagingOptions> config) : IMessagingService
 {
+    private static readonly TimeSpan RegexTimeout = TimeSpan.FromSeconds(1);
+
     public async Task<MessageResponse> SendEmailMessageAsync(Message request)
     {
         return await SendMessageAsync(request, MessageTypes.Email)
@@ -113,7 +115,7 @@ public class MessagingService(
     private MessageResponse HandleNotifyClientException(NotifyClientException ex, Message request)
     {
         var pattern = @"\{(?:[^{}]|(?<open>\{)|(?<-open>\}))*\}(?(open)(?!))";
-        var match = Regex.Match(ex.Message, pattern);
+        var match = Regex.Match(ex.Message, pattern, RegexOptions.None, RegexTimeout);
         var result = new MessageResponse()
         {
             NotifyId = Guid.Empty.ToString(),
