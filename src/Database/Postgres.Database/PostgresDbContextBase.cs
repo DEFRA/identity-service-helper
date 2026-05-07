@@ -21,6 +21,8 @@ public abstract class PostgresDbContextBase<T>(DbContextOptions<T> options) : Db
 
     public virtual DbSet<CountyParishHoldings> CountyParishHoldings { get; set; }
 
+    public virtual DbSet<ApplicationUserAccountHoldingAssignments> ApplicationUserAccountHoldingAssignments { get; set; }
+
     public virtual DbSet<CountyParishHoldingDelegations> CountyParishHoldingDelegations { get; set; }
 
     public virtual DbSet<ExternalMessaging> ExternalMessaging { get; set; }

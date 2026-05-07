@@ -42,18 +42,6 @@ public static class CphDelegationEndpoints
             .Produces<Models.Responses.Delegations.CphDelegation>(StatusCodes.Status201Created, MediaTypeNames.Application.Json)
             .ProducesProblem(StatusCodes.Status422UnprocessableEntity);
 
-        app.MapPut(RouteNames.Delegations + "/{id:guid}", PutByIdRoute)
-            .WithName(OpenApiMetadata.Update.Name)
-            .WithTags(OpenApiMetadata.Tag)
-            .WithSummary(OpenApiMetadata.Update.Summary)
-            .WithDescription(OpenApiMetadata.Update.Description)
-            .AddEndpointFilter<OperationByIdMappingFilter<UpdateCphDelegationById>>()
-            .AddEndpointFilter<ValidationFilter<UpdateCphDelegationById>>()
-            .WithMetadata(new RequiresOperatorId())
-            .Produces(StatusCodes.Status200OK)
-            .ProducesProblem(StatusCodes.Status422UnprocessableEntity)
-            .ProducesProblem(StatusCodes.Status404NotFound);
-
         app.MapPost(RouteNames.Delegations + "/{id:guid}:accept", AcceptByIdRoute)
             .WithName(OpenApiMetadata.Accept.Name)
             .WithTags(OpenApiMetadata.Tag)
@@ -138,16 +126,6 @@ public static class CphDelegationEndpoints
                 id = result.Id,
             },
             value: result);
-    }
-
-    private static async Task<IResult> PutByIdRoute(
-        CommandRequestHeaders headers,
-        [FromBody] UpdateCphDelegationById request,
-        ICphDelegationsService service)
-    {
-        var result = await service.Update(request);
-
-        return Results.Ok(result);
     }
 
     private static async Task<IResult> AcceptByIdRoute(

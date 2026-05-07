@@ -9,7 +9,7 @@ using Defra.Identity.Api.Middleware;
 using Defra.Identity.Models.Requests.Services;
 using Defra.Identity.Models.Requests.Users.Commands;
 using Defra.Identity.Services.Cphs;
-using Defra.Identity.Services.Permissions;
+using Defra.Identity.Services.Profiles;
 using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -47,7 +47,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddCphNumberRerouting(this IServiceCollection services, IConfigurationRoot config)
     {
         services.AddTransient<ICphNumberHandlerFactory<ICphService>, CphNumberHandlerFactory<ICphService>>();
-        services.AddTransient<ICphNumberHandlerFactory<IPermissionsService>, CphNumberHandlerFactory<IPermissionsService>>();
+        services.AddTransient<ICphNumberHandlerFactory<IProfileService>, CphNumberHandlerFactory<IProfileService>>();
 
         return services;
     }

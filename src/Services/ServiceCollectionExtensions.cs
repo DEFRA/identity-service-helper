@@ -9,7 +9,7 @@ using Defra.Identity.Services.Common.Builders.Strategy.Factories;
 using Defra.Identity.Services.Common.Context;
 using Defra.Identity.Services.Cphs;
 using Defra.Identity.Services.Delegations;
-using Defra.Identity.Services.Permissions;
+using Defra.Identity.Services.Profiles;
 using Defra.Identity.Services.Species;
 using Defra.Identity.Services.Users;
 using Microsoft.Extensions.Configuration;
@@ -24,7 +24,7 @@ public static class ServiceCollectionExtensions
         public IServiceCollection AddDataServices(IConfigurationRoot config)
         {
             services.AddTransient<IUserService, UserService>();
-            services.AddTransient<IPermissionsService, PermissionsService>();
+            services.AddTransient<IProfileService, ProfileService>();
             services.AddTransient<IApplicationService, ApplicationService>();
             services.AddTransient<ICphDelegationsService, CphDelegationsService>();
             services.AddTransient<ICphService, CphService>();
@@ -43,7 +43,7 @@ public static class ServiceCollectionExtensions
 
         public IServiceCollection AddStrategies(IConfigurationRoot config)
         {
-            services.AddTransient<IStrategyBuilderFactory<PermissionsService>, StrategyBuilderFactory<PermissionsService>>();
+            services.AddTransient<IStrategyBuilderFactory<ProfileService>, StrategyBuilderFactory<ProfileService>>();
             services.AddTransient<IStrategyBuilderFactory<CphDelegationsService>, StrategyBuilderFactory<CphDelegationsService>>();
 
             return services;

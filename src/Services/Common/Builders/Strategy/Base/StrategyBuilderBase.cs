@@ -58,9 +58,9 @@ public abstract class StrategyBuilderBase<TService, TBuilder>
         return (TBuilder)this;
     }
 
-    public TBuilder WithBeforeExecute(Action setupAction)
+    public TBuilder WithBeforeExecute(Action beforeExecuteAction)
     {
-        BeforeExecuteAction = setupAction;
+        BeforeExecuteAction = beforeExecuteAction;
         return (TBuilder)this;
     }
 

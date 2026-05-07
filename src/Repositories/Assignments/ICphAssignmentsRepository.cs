@@ -5,6 +5,6 @@
 namespace Defra.Identity.Repositories.Assignments;
 
 using Defra.Identity.Postgres.Database.Entities;
-using Defra.Identity.Repositories.Common.Composites.Associations;
+using Defra.Identity.Repositories.Common.Composites;
 
-public interface ICphAssignmentsRepository : IPageableAssociations<CountyParishHoldings, ApplicationUserAccountHoldingAssignments>;
+public interface ICphAssignmentsRepository : IListable<ApplicationUserAccountHoldingAssignments>, IPageable<ApplicationUserAccountHoldingAssignments>;

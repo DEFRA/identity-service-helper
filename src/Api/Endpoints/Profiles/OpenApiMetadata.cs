@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Api.Endpoints.Permissions;
+namespace Defra.Identity.Api.Endpoints.Profiles;
 
 public static class OpenApiMetadata
 {

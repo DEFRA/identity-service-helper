@@ -33,12 +33,4 @@ public interface IStrategyBuilderFactory<TService>
 
     GetPagedStrategyBuilder<TService, TEntity> BuildGetPagedStrategy<TEntity>()
         where TEntity : class;
-
-    GetAssociationsListStrategyBuilder<TService, TPrimary, TAssociation> BuildGetAssociationsListStrategy<TPrimary, TAssociation>()
-        where TPrimary : class
-        where TAssociation : class;
-
-    GetAssociationsPagedStrategyBuilder<TService, TPrimary, TAssociation> BuildGetAssociationsPagedStrategy<TPrimary, TAssociation>()
-        where TPrimary : class
-        where TAssociation : class;
 }

@@ -16,8 +16,6 @@ public interface ICphDelegationsService
 
     Task<CphDelegation> Create(CreateCphDelegation request, CancellationToken cancellationToken = default);
 
-    Task<CphDelegation> Update(UpdateCphDelegationById request, CancellationToken cancellationToken = default);
-
     Task Accept(AcceptCphDelegationById request, CancellationToken cancellationToken = default);
 
     Task Reject(RejectCphDelegationById request, CancellationToken cancellationToken = default);

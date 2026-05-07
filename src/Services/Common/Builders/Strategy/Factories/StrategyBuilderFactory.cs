@@ -95,28 +95,6 @@ public class StrategyBuilderFactory<TService> : IStrategyBuilderFactory<TService
         return getPagedStrategyBuilder;
     }
 
-    public GetAssociationsListStrategyBuilder<TService, TPrimary, TAssociation> BuildGetAssociationsListStrategy<TPrimary, TAssociation>()
-        where TPrimary : class
-        where TAssociation : class
-    {
-        var getAssociationsListStrategyBuilder = new GetAssociationsListStrategyBuilder<TService, TPrimary, TAssociation>();
-
-        AttachDefaults(getAssociationsListStrategyBuilder);
-
-        return getAssociationsListStrategyBuilder;
-    }
-
-    public GetAssociationsPagedStrategyBuilder<TService, TPrimary, TAssociation> BuildGetAssociationsPagedStrategy<TPrimary, TAssociation>()
-        where TPrimary : class
-        where TAssociation : class
-    {
-        var getAssociationsPagedStrategyBuilder = new GetAssociationsPagedStrategyBuilder<TService, TPrimary, TAssociation>();
-
-        AttachDefaults(getAssociationsPagedStrategyBuilder);
-
-        return getAssociationsPagedStrategyBuilder;
-    }
-
     private void AttachDefaults<TBuilder>(StrategyBuilderBase<TService, TBuilder> strategyBuilder)
         where TBuilder : StrategyBuilderBase<TService, TBuilder>
     {

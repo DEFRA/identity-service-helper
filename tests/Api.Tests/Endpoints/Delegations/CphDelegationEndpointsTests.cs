@@ -136,47 +136,6 @@ public class CphDelegationEndpointsTests
     }
 
     [Fact]
-    public async Task Put_ReturnsOk()
-    {
-        // Arrange
-        var request = new UpdateCphDelegationById
-        {
-            Id = Guid.NewGuid(),
-            CountyParishHoldingId = Guid.NewGuid(),
-            DelegatingUserId = Guid.NewGuid(),
-            DelegatedUserId = Guid.NewGuid(),
-            DelegatedUserEmail = "test200@test.com",
-            DelegatedUserRoleId = Guid.NewGuid(),
-        };
-
-        var delegation = new CphDelegation()
-        {
-            Id = request.Id,
-            CountyParishHoldingId = request.CountyParishHoldingId,
-            CountyParishHoldingNumber = "22/001/0001",
-            DelegatingUserId = request.DelegatingUserId,
-            DelegatingUserName = "Test User 100",
-            DelegatedUserId = Guid.NewGuid(),
-            DelegatedUserName = "Test User 200",
-            DelegatedUserEmail = request.DelegatedUserEmail,
-            DelegatedUserRoleId = request.DelegatedUserRoleId,
-            DelegatedUserRoleName = "Test Role 100",
-        };
-
-        service.Update(request, Arg.Any<CancellationToken>()).Returns(delegation);
-
-        // Act
-        var result = await (Task<IResult>)typeof(CphDelegationEndpoints)
-            .GetMethod("PutByIdRoute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
-            .Invoke(null, [commandHeaders, request, service])!;
-
-        // Assert
-        result.ShouldBeOfType<Ok<CphDelegation>>();
-        ((Ok<CphDelegation>)result).Value.ShouldBe(delegation);
-        request.Id.ShouldBe(request.Id);
-    }
-
-    [Fact]
     public async Task Delete_ReturnsNoContent()
     {
         // Arrange

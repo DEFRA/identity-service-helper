@@ -35,7 +35,9 @@ public class CphDelegationsRepository(PostgresDbContext context, ReadOnlyPostgre
             .Include(p => p.DelegatingUser)
             .Include(p => p.DelegatedUser)
             .Include(p => p.DelegatedUserRole)
-            .Where(predicate).ToListAsync(cancellationToken);
+            .Where(predicate)
+            .AsSplitQuery()
+            .ToListAsync(cancellationToken);
 
         return results;
     }
