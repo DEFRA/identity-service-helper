@@ -5,9 +5,9 @@
 namespace Defra.Identity.Requests.Tests.Middleware;
 
 using Defra.Identity.Api.Extensions;
+using Defra.Identity.Api.MetaData;
 using Defra.Identity.Api.Middleware;
 using Defra.Identity.Api.Middleware.Headers;
-using Defra.Identity.Models.Requests.MetaData;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
@@ -28,7 +28,7 @@ public class CorrelationIdMiddlewareTests
                 new Dictionary<string, string?>
                 {
                     {
-                        "DefraIndentityApiKey", "test-api-key"
+                        "DefraIdentityApiKey", "test-api-key"
                     },
                 })
             .Build();

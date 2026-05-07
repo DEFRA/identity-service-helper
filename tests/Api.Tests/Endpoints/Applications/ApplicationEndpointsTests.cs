@@ -6,7 +6,6 @@ namespace Defra.Identity.Api.Tests.Endpoints.Applications;
 
 using Defra.Identity.Api.Endpoints.Applications;
 using Defra.Identity.Api.Middleware.Headers;
-using Defra.Identity.Models.Requests;
 using Defra.Identity.Models.Requests.Applications.Commands;
 using Defra.Identity.Models.Requests.Applications.Queries;
 using Defra.Identity.Models.Responses.Applications;

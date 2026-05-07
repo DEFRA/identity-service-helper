@@ -4,7 +4,7 @@
 
 namespace Defra.Identity.Api.Endpoints.Health;
 
-using Defra.Identity.Models.Requests.MetaData;
+using Defra.Identity.Api.MetaData;
 
 public static class HealthEndpoints
 {

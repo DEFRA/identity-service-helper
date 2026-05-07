@@ -6,7 +6,6 @@ namespace Defra.Identity.Requests.Tests;
 
 using Defra.Identity.Api.Extensions;
 using Defra.Identity.Api.Middleware;
-using Defra.Identity.Models.Requests;
 using Defra.Identity.Models.Requests.Services;
 using Defra.Identity.Models.Requests.Users.Commands;
 using FluentValidation;
@@ -27,7 +26,7 @@ public class ServiceCollectionExtensionsTests
                 new Dictionary<string, string?>
                 {
                     {
-                        "DefraIndentityApiKey", "test-api-key"
+                        "DefraIdentityApiKey", "test-api-key"
                     },
                 })
             .Build();

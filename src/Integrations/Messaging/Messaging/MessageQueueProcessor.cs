@@ -8,7 +8,6 @@ using System.Linq.Expressions;
 using System.Net;
 using Defra.Identity.Messaging.Models;
 using Defra.Identity.Messaging.Models.Request;
-using Defra.Identity.Messaging.Models.Response;
 using Defra.Identity.Messaging.Services;
 using Defra.Identity.Postgres.Database;
 using Defra.Identity.Postgres.Database.Entities;

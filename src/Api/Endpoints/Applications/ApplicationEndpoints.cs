@@ -6,10 +6,10 @@ namespace Defra.Identity.Api.Endpoints.Applications;
 
 using System.Net.Mime;
 using Defra.Identity.Api.Filters;
+using Defra.Identity.Api.MetaData;
 using Defra.Identity.Api.Middleware.Headers;
 using Defra.Identity.Models.Requests.Applications.Commands;
 using Defra.Identity.Models.Requests.Applications.Queries;
-using Defra.Identity.Models.Requests.MetaData;
 using Defra.Identity.Models.Responses.Applications;
 using Defra.Identity.Services.Applications;
 using Microsoft.AspNetCore.Mvc;
@@ -127,7 +127,7 @@ public static class ApplicationEndpoints
         [AsParameters] DeleteApplicationById request,
         IApplicationService service)
     {
-        var deleted = await service.Delete(request.Id, headers.OperatorId);
+        await service.Delete(request.Id, headers.OperatorId);
 
         return Results.NoContent();
     }

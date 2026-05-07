@@ -4,8 +4,6 @@
 
 namespace Defra.Identity.Messaging;
 
-using Defra.Identity.Models;
-
 public static class MessageTemplateTypes
 {
     public sealed class Delegation(string name, Guid value)

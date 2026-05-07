@@ -6,7 +6,6 @@ namespace Defra.Identity.Api.Tests.Endpoints.Delegations;
 
 using Defra.Identity.Api.Endpoints.Delegations;
 using Defra.Identity.Api.Middleware.Headers;
-using Defra.Identity.Models.Requests;
 using Defra.Identity.Models.Requests.Delegations.Commands;
 using Defra.Identity.Models.Requests.Delegations.Queries;
 using Defra.Identity.Models.Responses.Delegations;

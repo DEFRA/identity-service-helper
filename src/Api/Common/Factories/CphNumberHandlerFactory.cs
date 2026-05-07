@@ -10,16 +10,10 @@ using Defra.Identity.Models.Requests.Common;
 using Defra.Identity.Models.Requests.Cphs.Common;
 using Defra.Identity.Services.Cphs;
 
-public class CphNumberHandlerFactory<TService> : ICphNumberHandlerFactory<TService>
+public class CphNumberHandlerFactory<TService>(ICphNumberService cphNumberService)
+    : ICphNumberHandlerFactory<TService>
     where TService : class
 {
-    private readonly ICphNumberService cphNumberService;
-
-    public CphNumberHandlerFactory(ICphNumberService cphNumberService)
-    {
-        this.cphNumberService = cphNumberService;
-    }
-
     public Func<QueryRequestHeaders, TSource, TService, Task<IResult>> CreateRerouteHandler<TTarget, TSource>(Func<QueryRequestHeaders, TTarget, TService, Task<IResult>> action)
         where TTarget : IOperationById, new()
         where TSource : IOperationByCphNumber
