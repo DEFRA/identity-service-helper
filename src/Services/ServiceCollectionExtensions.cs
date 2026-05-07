@@ -17,8 +17,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 public static class ServiceCollectionExtensions
 {
-    public static string? GlobalConfigValue { get; private set; }
-
     extension(IServiceCollection services)
     {
         public IServiceCollection AddDataServices(IConfigurationRoot config)

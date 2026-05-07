@@ -19,6 +19,7 @@ using Defra.Identity.Api.MetaData;
 using Defra.Identity.Api.Utility.Http;
 using Defra.Identity.Api.Utility.Logging;
 using Defra.Identity.Api.Utility.OpenApi;
+using Defra.Identity.KeeperReferenceData;
 using Defra.Identity.Messaging.Extensions;
 using Defra.Identity.Postgres.Database;
 using Defra.Identity.Repositories;
@@ -33,7 +34,6 @@ public class Program
     {
         var app = CreateWebApplication(args);
         await app.RunAsync();
-        return;
     }
 
     [ExcludeFromCodeCoverage]
@@ -115,7 +115,6 @@ public class Program
         builder.Services.AddStrategies(configuration);
         builder.Services.AddScheduling(configuration);
 
-        // intentionally commented out until we get a queue to interact with  -- Gary Woodfine
         // builder.Services.AddKeeperReferenceDataQueueIntegration(configuration);
         builder.Services.AddMessagingIntegrationService(configuration);
     }

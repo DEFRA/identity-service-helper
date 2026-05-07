@@ -17,8 +17,6 @@ public class KeeperReferenceDataJob(
     IOptions<KeeperReferenceDataSchedulingOptions> options)
     : IJob
 {
-    private readonly KeeperReferenceDataSchedulingOptions options = options.Value;
-
     public async Task Execute(IJobExecutionContext context)
     {
         try
@@ -32,9 +30,9 @@ public class KeeperReferenceDataJob(
 
             logger.LogInformation("{Job} succeeded. Found {Count} sites.", context.JobDetail.Key.Name, sites.Count);
         }
-        catch (OperationCanceledException)
+        catch (OperationCanceledException ex)
         {
-            logger.LogWarning("{Job} cancelled.", context.JobDetail.Key.Name);
+            logger.LogWarning(ex, "{Job} cancelled.", context.JobDetail.Key.Name);
             throw;
         }
         catch (Exception ex)

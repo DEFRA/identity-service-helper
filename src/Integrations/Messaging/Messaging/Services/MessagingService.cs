@@ -58,6 +58,25 @@ public class MessagingService(
         return result;
     }
 
+    private static async Task<NotificationResponse> InvokeSendAsync(
+        Message request,
+        NotificationClient client,
+        MessageTypes messageType)
+    {
+        // Not an ideal way to do this, but using a generic type for the response results in covariance issues as
+        // I need the base class for the response.
+        return messageType switch
+        {
+            MessageTypes.Email => await client
+                .SendEmailAsync(request.Recipient, request.TemplateId.ToString(), request.Payload)
+                .ConfigureAwait(false),
+            MessageTypes.Sms => await client
+                .SendSmsAsync(request.Recipient, request.TemplateId.ToString(), request.Payload)
+                .ConfigureAwait(false),
+            _ => throw new ArgumentOutOfRangeException(nameof(messageType), messageType, null),
+        };
+    }
+
     private async Task<MessageResponse> SendMessageAsync(Message request, MessageTypes messageType)
     {
         logger.LogInformation(
@@ -94,25 +113,6 @@ public class MessagingService(
         }
     }
 
-    private async Task<NotificationResponse> InvokeSendAsync(
-        Message request,
-        NotificationClient client,
-        MessageTypes messageType)
-    {
-        // Not an ideal way to do this, but using a generic type for the response results in covariance issues as
-        // I need the base class for the response.
-        return messageType switch
-        {
-            MessageTypes.Email => await client
-                .SendEmailAsync(request.Recipient, request.TemplateId.ToString(), request.Payload)
-                .ConfigureAwait(false),
-            MessageTypes.Sms => await client
-                .SendSmsAsync(request.Recipient, request.TemplateId.ToString(), request.Payload)
-                .ConfigureAwait(false),
-            _ => throw new ArgumentOutOfRangeException(nameof(messageType), messageType, null),
-        };
-    }
-
     private MessageResponse HandleNotifyClientException(NotifyClientException ex, Message request)
     {
         var pattern = @"\{(?:[^{}]|(?<open>\{)|(?<-open>\}))*\}(?(open)(?!))";
@@ -140,7 +140,7 @@ public class MessagingService(
             "Error sending message. Recipient: {Recipient}, TemplateId: {TemplateId}, Reason: {Reason}",
             request.Recipient,
             request.TemplateId,
-            result.Errors.First().Message);
+            result.Errors[0].Message);
 
         return result;
     }

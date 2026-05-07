@@ -89,7 +89,6 @@ public static class ApplicationEndpoints
     }
 
     private static async Task<IResult> GetByIdRoute(
-        QueryRequestHeaders headers,
         [AsParameters] GetApplicationById request,
         IApplicationService service)
     {

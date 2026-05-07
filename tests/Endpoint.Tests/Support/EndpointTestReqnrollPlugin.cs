@@ -27,10 +27,10 @@ public class EndpointTestReqnrollPlugin : IRuntimePlugin
     {
         Requires.NotNull(runtimePluginEvents);
 
-        runtimePluginEvents.RegisterGlobalDependencies += this.RegisterGlobalDependencies!;
+        runtimePluginEvents.RegisterGlobalDependencies += RegisterGlobalDependencies;
     }
 
-    private void RegisterGlobalDependencies(object sender, RegisterGlobalDependenciesEventArgs e)
+    private static void RegisterGlobalDependencies(object? sender, RegisterGlobalDependenciesEventArgs e)
     {
         var serviceProvider = EndpointTestService.ServiceProvider;
         serviceProvider.ShouldNotBeNull();

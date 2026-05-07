@@ -11,7 +11,7 @@ public interface IMessagingService
 {
     Task<MessageResponse> SendEmailMessageAsync(Message request);
 
-    Task<MessageResponse> SendSmsMessageAsync(Message message);
+    Task<MessageResponse> SendSmsMessageAsync(Message request);
 
     Task<MessageStatus> GetNotificationAsync(string id);
 }

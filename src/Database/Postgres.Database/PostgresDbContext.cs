@@ -27,11 +27,6 @@ public class PostgresDbContext(DbContextOptions<PostgresDbContext> options)
         return base.SaveChangesAsync(cancellationToken);
     }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        base.OnConfiguring(optionsBuilder);
-    }
-
     protected virtual void ConfigureModel(ModelBuilder modelBuilder)
     {
         Requires.NotNull(modelBuilder);
@@ -75,7 +70,7 @@ public class PostgresDbContext(DbContextOptions<PostgresDbContext> options)
         if (defaultCreatorId.HasValue)
         {
             foreach (var entry in ChangeTracker.Entries<BaseAuditEntity>()
-                         .Where(e => e.State == EntityState.Added && e.Entity.CreatedById == default))
+                         .Where(e => e.State == EntityState.Added && e.Entity.CreatedById == Guid.Empty))
             {
                 entry.Entity.CreatedById = defaultCreatorId.Value;
             }

@@ -97,7 +97,6 @@ public static class CphEndpoints
     }
 
     private static async Task<IResult> GetAllPagedRoute(
-        QueryRequestHeaders headers,
         [AsParameters] GetCphs request,
         ICphService service)
     {

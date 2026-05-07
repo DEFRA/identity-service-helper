@@ -8,5 +8,5 @@ using Defra.Identity.Messaging.Models;
 
 public interface IMessageQueueProcessor
 {
-    Task<ProcessResult> ProcessMessageQueueAsync(CancellationToken cancellationToken);
+    Task<ProcessResult> ProcessMessageQueueAsync(CancellationToken cancellationToken = default);
 }

@@ -58,7 +58,7 @@ public class ApplicationEndpointsTests
         // Act
         var result = await (Task<IResult>)typeof(ApplicationEndpoints)
             .GetMethod("GetByIdRoute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
-            .Invoke(null, [queryHeaders, request, service])!;
+            .Invoke(null, [request, service])!;
 
         // Assert
         result.ShouldBeOfType<Ok<Application>>();
@@ -83,7 +83,7 @@ public class ApplicationEndpointsTests
         var createdResult = (CreatedAtRoute<Application>)result;
         createdResult.Value.ShouldBe(application);
         createdResult.RouteName.ShouldBe(RouteNames.Applications);
-        createdResult.RouteValues!["id"].ShouldBe(application.Id);
+        createdResult.RouteValues["id"].ShouldBe(application.Id);
         request.OperatorId.ShouldBe(commandHeaders.OperatorId);
     }
 

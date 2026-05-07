@@ -17,8 +17,6 @@ public class MessagingJob(
     IMessageQueueProcessor messageQueueProcessor)
     : IJob
 {
-    private readonly MessagingSchedulingOptions options = options.Value;
-
     public async Task Execute(IJobExecutionContext context)
     {
         try
@@ -39,9 +37,9 @@ public class MessagingJob(
                 result.Success.SmsCountProcessed,
                 result.Error.SmsCountProcessed);
         }
-        catch (OperationCanceledException)
+        catch (OperationCanceledException ex)
         {
-            logger.LogWarning("{Job} cancelled.", context.JobDetail.Key.Name);
+            logger.LogWarning(ex, "{Job} cancelled.", context.JobDetail.Key.Name);
             throw;
         }
         catch (Exception ex)
