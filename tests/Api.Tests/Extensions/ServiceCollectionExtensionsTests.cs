@@ -48,6 +48,21 @@ public class ServiceCollectionExtensionsTests
     }
 
     [Fact]
+    public void AddRequests_WithoutApiKey_ThrowsException()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+        var configuration = new ConfigurationBuilder()
+            .Build();
+
+        // Act
+        var exception = Should.Throw<ArgumentException>(() => services.AddRequests(configuration));
+
+        // Assert
+        exception.Message.ShouldContain("DefraIdentityApiKey configuration value is missing or empty");
+    }
+
+    [Fact]
     public void UseRequests_Adds_Middlewares_To_Pipeline()
     {
         // Arrange
