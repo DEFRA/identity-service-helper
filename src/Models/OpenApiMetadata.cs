@@ -13,7 +13,7 @@ public static class OpenApiMetadata
     public const string IncludeInactive = "Whether to include inactive objects in the response";
     public const string Expired = "Is the object expired";
     public const string ExpiresAt = "When the object expires at";
-    private const string BaseId = "The internal identifier of the ";
+    private const string BaseId = "The internal identifier of the";
 
     public static class Applications
     {
