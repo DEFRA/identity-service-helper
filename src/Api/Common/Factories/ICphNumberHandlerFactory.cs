@@ -1,4 +1,4 @@
-﻿// <copyright file="ICphHandlerFactory.cs" company="Defra">
+﻿// <copyright file="ICphNumberHandlerFactory.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
@@ -11,11 +11,11 @@ using Defra.Identity.Models.Requests.Cphs.Common;
 public interface ICphNumberHandlerFactory<TService>
     where TService : class
 {
-    public Func<QueryRequestHeaders, TSource, TService, Task<IResult>> CreateRerouteHandler<TTarget, TSource>(Func<QueryRequestHeaders, TTarget, TService, Task<IResult>> action)
+    Func<QueryRequestHeaders, TSource, TService, Task<IResult>> CreateRerouteHandler<TTarget, TSource>(Func<QueryRequestHeaders, TTarget, TService, Task<IResult>> action)
         where TTarget : IOperationById, new()
         where TSource : IOperationByCphNumber;
 
-    public Func<CommandRequestHeaders, TSource, TService, Task<IResult>> CreateRerouteHandler<TTarget, TSource>(
+    Func<CommandRequestHeaders, TSource, TService, Task<IResult>> CreateRerouteHandler<TTarget, TSource>(
         Func<CommandRequestHeaders, TTarget, TService, Task<IResult>> action)
         where TTarget : IOperationById, new()
         where TSource : IOperationByCphNumber;

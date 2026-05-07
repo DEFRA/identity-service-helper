@@ -7,7 +7,6 @@ namespace Defra.Identity.Postgres.Database.Tests.Repositories.MessagingRepositor
 using System.ComponentModel;
 using System.Linq.Expressions;
 using System.Net;
-using Defra.Identity.Models;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
 using Defra.Identity.Repositories.Messaging;

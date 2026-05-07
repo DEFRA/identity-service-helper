@@ -2,6 +2,6 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Models.Requests.MetaData;
+namespace Defra.Identity.Api.MetaData;
 
 public sealed class RequiresOperatorId;

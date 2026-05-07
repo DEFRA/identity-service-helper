@@ -10,7 +10,7 @@ on:
       - reopened
       - synchronize
       - ready_for_review
-
+  
 jobs:
   sonar-cloud:
     name: CDP SonarCloud Scan
@@ -33,4 +33,6 @@ jobs:
           dotnet-version: '10.0.x'
 
       - name: Run the Cake script
+        env:
+          DOTNET_ENVIRONMENT: Development
         uses: cake-build/cake-action@v3

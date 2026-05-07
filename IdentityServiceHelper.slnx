@@ -29,10 +29,10 @@
     <Project Path="src/Services/Services.csproj" />
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="tests/Requests.Tests/Requests.Tests.csproj" />
     <Project Path="tests/Services.Tests/Services.Tests.csproj" />
     <Project Path="tests/Api.Tests/Api.Tests.csproj" />
     <Project Path="tests/Endpoint.Tests/Endpoint.Tests.csproj" />
+    <Project Path="tests\Models.Tests\Models.Tests.csproj" />
   </Folder>
   <Folder Name="/tests/Database/">
     <Project Path="tests/Database/DataSeeder.Tests/DataSeeder.Tests.csproj" />

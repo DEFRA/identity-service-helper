@@ -36,7 +36,6 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddPostgresDatabase(this IServiceCollection services, IConfiguration configuration)
     {
-
         services.AddDbContext<PostgresDbContext>((sp, options) =>
         {
             var connectionString = configuration.GetConnectionString(DatabaseConstants.ConnectionStringName);

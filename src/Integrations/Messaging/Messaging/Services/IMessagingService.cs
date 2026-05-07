@@ -4,7 +4,6 @@
 
 namespace Defra.Identity.Messaging.Services;
 
-using Defra.Identity.Messaging.Models;
 using Defra.Identity.Messaging.Models.Request;
 using Defra.Identity.Messaging.Models.Response;
 

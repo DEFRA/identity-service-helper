@@ -4,12 +4,9 @@
 
 namespace Defra.Identity.Messaging.Tests;
 
-using Defra.Identity.Messaging.Models;
 using Defra.Identity.Messaging.Models.Request;
 using Defra.Identity.Messaging.Models.Response;
 using Defra.Identity.Messaging.Services;
-using Defra.Identity.Models;
-using Defra.Identity.Models.Requests.Delegations;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Messaging;
 using Microsoft.Extensions.Logging;

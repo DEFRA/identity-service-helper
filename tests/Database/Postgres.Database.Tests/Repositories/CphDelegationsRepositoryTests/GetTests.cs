@@ -5,7 +5,6 @@
 namespace Defra.Identity.Postgres.Database.Tests.Repositories.CphDelegationsRepositoryTests;
 
 using System.ComponentModel;
-using System.Globalization;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
 using Defra.Identity.Repositories.Delegations;

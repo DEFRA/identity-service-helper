@@ -8,7 +8,6 @@ using Defra.Identity.Api.Common.Factories;
 using Defra.Identity.Api.Middleware;
 using Defra.Identity.Models.Requests.Services;
 using Defra.Identity.Models.Requests.Users.Commands;
-using Defra.Identity.Repositories.Cphs;
 using Defra.Identity.Services.Cphs;
 using Defra.Identity.Services.Permissions;
 using FluentValidation;
@@ -23,8 +22,13 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddRequests(this IServiceCollection services, IConfigurationRoot config)
     {
-        ApiKey = config.GetValue<string>("DefraIndentityApiKey");
-        services.AddTransient<ApiKeyValidationMiddleware>(sp => new ApiKeyValidationMiddleware(ApiKey!, sp.GetRequiredService<ILogger<ApiKeyValidationMiddleware>>()));
+        ApiKey = config.GetValue<string>("DefraIdentityApiKey");
+        if (string.IsNullOrEmpty(ApiKey))
+        {
+            throw new ArgumentException("DefraIdentityApiKey configuration value is missing or empty");
+        }
+
+        services.AddTransient<ApiKeyValidationMiddleware>(sp => new ApiKeyValidationMiddleware(ApiKey, sp.GetRequiredService<ILogger<ApiKeyValidationMiddleware>>()));
         services.AddTransient<CorrelationIdMiddleware>();
         services.AddTransient<OperatorIdMiddleware>();
         services.AddScoped<IOperatorIdService, OperatorIdService>();

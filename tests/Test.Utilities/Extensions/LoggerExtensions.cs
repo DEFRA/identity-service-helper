@@ -16,7 +16,9 @@ public static class LoggerExtensions
         logger.Received(1).Log(
             logLevel,
             Arg.Any<EventId>(),
-            Arg.Is<object>(v => v != null ? v.ToString().Contains(message) : false),
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            Arg.Is<object>(v => v != null && v.ToString().Contains(message)),
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
             Arg.Any<Exception>(),
             Arg.Any<Func<object, Exception?, string>>());
     }

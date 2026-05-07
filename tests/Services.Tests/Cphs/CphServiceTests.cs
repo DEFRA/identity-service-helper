@@ -7,26 +7,22 @@ namespace Defra.Identity.Services.Tests.Cphs;
 using System.ComponentModel;
 using System.Linq.Expressions;
 using Defra.Identity.Models.Requests.Cphs.Commands;
-using Defra.Identity.Models.Requests.Cphs.Common;
 using Defra.Identity.Models.Requests.Cphs.Queries;
 using Defra.Identity.Postgres.Database.Entities;
-using Defra.Identity.Repositories.Assignments;
 using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Repositories.Cphs;
 using Defra.Identity.Services.Common.Exceptions;
 using Defra.Identity.Services.Cphs;
 using Defra.Identity.Services.Tests.Cphs.TestData;
 using Defra.Identity.Test.Utilities.Repository;
-using FluentValidation;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 
 public class CphServiceTests
 {
-    ICphRepository cphRepository = Substitute.For<ICphRepository>();
-    ICphAssignmentsRepository cphUsersRepository = Substitute.For<ICphAssignmentsRepository>();
-    ILogger<CphService> logger = Substitute.For<ILogger<CphService>>();
-    private ICphService cphService;
+    private readonly ICphRepository cphRepository = Substitute.For<ICphRepository>();
+    private readonly ILogger<CphService> logger = Substitute.For<ILogger<CphService>>();
+    private readonly ICphService cphService;
 
     public CphServiceTests()
     {

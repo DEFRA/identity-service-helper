@@ -4,9 +4,8 @@
 
 namespace Defra.Identity.Api.Middleware;
 
+using Defra.Identity.Api.MetaData;
 using Defra.Identity.Api.Middleware.Headers;
-using Defra.Identity.Models.Requests;
-using Defra.Identity.Models.Requests.MetaData;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
