@@ -4,6 +4,9 @@
 
 namespace Defra.Identity.Models;
 
+using System.Diagnostics.CodeAnalysis;
+
+[ExcludeFromCodeCoverage]
 public static class OpenApiMetadata
 {
     public const string CountyElement = "County part of the CPH (first 2 digits)";
