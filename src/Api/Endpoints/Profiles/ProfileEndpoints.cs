@@ -5,7 +5,6 @@
 namespace Defra.Identity.Api.Endpoints.Profiles;
 
 using System.Net.Mime;
-using Defra.Identity.Api.Middleware.Headers;
 using Defra.Identity.Models.Requests.Profiles.Queries;
 using Defra.Identity.Models.Responses.Profiles;
 using Defra.Identity.Services.Profiles;
@@ -20,7 +19,6 @@ public static class ProfileEndpoints
     }
 
     private static async Task<IResult> GetUserProfileRoute(
-        QueryRequestHeaders headers,
         [AsParameters] GetUserProfileByUserId request,
         IProfileService service)
     {
