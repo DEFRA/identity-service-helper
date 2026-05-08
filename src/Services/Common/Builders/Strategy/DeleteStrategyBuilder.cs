@@ -93,7 +93,7 @@ public partial class DeleteStrategyBuilder<TService, TEntity>
             throw new InvalidOperationException(StrategyBuilderConstants.Errors.RequestAndEntityFilterRequired);
         }
 
-        LogExecutingActionEntityWithIdByOperatorid(Logger, ActionDescription.ToLowerInvariant(), PrimaryEntityDescription.ToLowerInvariant(), Request.Id, OperatorContext.OperatorId);
+        LogExecutingActionEntityWithIdByOperatorid(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant(), Request.Id, OperatorContext.OperatorId);
 
         ExecuteSetup();
 
@@ -103,7 +103,7 @@ public partial class DeleteStrategyBuilder<TService, TEntity>
 
         if (entityToDelete == null)
         {
-            LogEntityWithIdNotFound(Logger, PrimaryEntityDescription, Request.Id);
+            LogEntityWithIdNotFound(Logger, EntityDescription, Request.Id);
 
             throw new NotFoundException($"{EntityDescription} not found.");
         }
@@ -112,7 +112,7 @@ public partial class DeleteStrategyBuilder<TService, TEntity>
 
         var successfullyDeleted = await DeletableRepository.Delete(EntityFilter, OperatorContext.OperatorId, CancellationToken.Value);
 
-        LogSuccessfullyExecutedActionEntityWithIdIdByOperatorId(Logger, ActionDescription.ToLowerInvariant(), PrimaryEntityDescription.ToLowerInvariant(), Request.Id, OperatorContext.OperatorId);
+        LogSuccessfullyExecutedActionEntityWithIdIdByOperatorId(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant(), Request.Id, OperatorContext.OperatorId);
 
         return successfullyDeleted;
     }

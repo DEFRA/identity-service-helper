@@ -75,7 +75,7 @@ public partial class GetPagedStrategyBuilder<TService, TEntity> : StrategyBuilde
             throw new InvalidOperationException(StrategyBuilderConstants.Errors.RequestAndEntityFilterRequired);
         }
 
-        LogExecutingActionEntity(Logger, ActionDescription.ToLowerInvariant(), PrimaryEntityDescription.ToLowerInvariant());
+        LogExecutingActionEntity(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant());
 
         ExecuteSetup();
 
@@ -91,7 +91,7 @@ public partial class GetPagedStrategyBuilder<TService, TEntity> : StrategyBuilde
 
         var associatedPagedResults = pagedEntities.ToPagedResults(map);
 
-        LogSuccessfullyExecutedActionEntity(Logger, ActionDescription.ToLowerInvariant(), PrimaryEntityDescription.ToLowerInvariant());
+        LogSuccessfullyExecutedActionEntity(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant());
 
         return associatedPagedResults;
     }

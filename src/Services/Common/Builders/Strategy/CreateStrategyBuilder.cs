@@ -89,7 +89,7 @@ public partial class CreateStrategyBuilder<TService, TEntity>
             throw new InvalidOperationException(StrategyBuilderConstants.Errors.CreateActionRequired);
         }
 
-        LogExecutingActionEntityWithByOperatorId(Logger, ActionDescription.ToLowerInvariant(), PrimaryEntityDescription.ToLowerInvariant(), OperatorContext.OperatorId);
+        LogExecutingActionEntityWithByOperatorId(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant(), OperatorContext.OperatorId);
 
         ExecuteSetup();
 
@@ -109,7 +109,7 @@ public partial class CreateStrategyBuilder<TService, TEntity>
             await AfterExecuteAction.Invoke(createdEntity);
         }
 
-        LogSuccessfullyExecutedActionEntityByOperatorId(Logger, ActionDescription.ToLowerInvariant(), PrimaryEntityDescription.ToLowerInvariant(), OperatorContext.OperatorId);
+        LogSuccessfullyExecutedActionEntityByOperatorId(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant(), OperatorContext.OperatorId);
 
         return createdEntity;
     }

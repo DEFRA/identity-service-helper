@@ -82,7 +82,7 @@ public partial class GetStrategyBuilder<TService, TEntity>
             throw new InvalidOperationException(StrategyBuilderConstants.Errors.RequestAndEntityFilterRequired);
         }
 
-        LogExecutingActiondescriptionEntitydescriptionWithIdId(Logger, ActionDescription.ToLowerInvariant(), PrimaryEntityDescription.ToLowerInvariant(), Request.Id);
+        LogExecutingActiondescriptionEntitydescriptionWithIdId(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant(), Request.Id);
 
         ExecuteSetup();
 
@@ -92,7 +92,7 @@ public partial class GetStrategyBuilder<TService, TEntity>
 
         if (entity == null)
         {
-            LogEntitydescriptionWithIdIdNotFound(Logger, PrimaryEntityDescription, Request.Id);
+            LogEntitydescriptionWithIdIdNotFound(Logger, EntityDescription, Request.Id);
 
             throw new NotFoundException($"{EntityDescription} not found.");
         }
@@ -101,7 +101,7 @@ public partial class GetStrategyBuilder<TService, TEntity>
 
         var mappedEntity = map(entity);
 
-        LogSuccessfullyExecutedActiondescriptionEntitydescriptionWithIdId(Logger, ActionDescription.ToLowerInvariant(), PrimaryEntityDescription.ToLowerInvariant(), Request.Id);
+        LogSuccessfullyExecutedActiondescriptionEntitydescriptionWithIdId(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant(), Request.Id);
 
         return mappedEntity;
     }

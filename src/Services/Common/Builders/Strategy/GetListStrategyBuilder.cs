@@ -65,7 +65,7 @@ public partial class GetListStrategyBuilder<TService, TEntity>
             throw new InvalidOperationException(StrategyBuilderConstants.Errors.EntityFilterRequired);
         }
 
-        LogExecutingActionEntity(Logger, ActionDescription.ToLowerInvariant(), PrimaryEntityDescription.ToLowerInvariant());
+        LogExecutingActionEntity(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant());
 
         ExecuteSetup();
 
@@ -75,7 +75,7 @@ public partial class GetListStrategyBuilder<TService, TEntity>
 
         var mappedEntities = entities.Select(map).ToList();
 
-        LogSuccessfullyExecutedActionEntity(Logger, ActionDescription.ToLowerInvariant(), PrimaryEntityDescription.ToLowerInvariant());
+        LogSuccessfullyExecutedActionEntity(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant());
 
         return mappedEntities;
     }

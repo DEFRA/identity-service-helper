@@ -205,11 +205,6 @@ public class CorrelationIdMiddlewareTests
         var ex = await Should.ThrowAsync<Exception>(() => middleware.InvokeAsync(context, next));
         ex.ShouldBe(exception);
 
-        logger.Received(1).Log(
-            LogLevel.Error,
-            Arg.Any<EventId>(),
-            Arg.Any<Arg.AnyType>(),
-            exception,
-            Arg.Any<Func<Arg.AnyType, Exception?, string>>());
+        logger.VerifyLogExceptionTypeOne<Exception>(LogLevel.Error);
     }
 }

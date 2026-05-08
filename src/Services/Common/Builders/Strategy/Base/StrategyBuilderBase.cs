@@ -98,7 +98,7 @@ public abstract partial class StrategyBuilderBase<TService, TBuilder>
 
             if (!validationResult.IsValid)
             {
-                LogExecuteActionEntityFailedBasicValidation(Logger, ActionDescription.ToLowerInvariant(), PrimaryEntityDescription.ToLowerInvariant());
+                LogExecuteActionEntityFailedBasicValidation(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant());
 
                 throw new ValidationException(validationResult.Errors);
             }

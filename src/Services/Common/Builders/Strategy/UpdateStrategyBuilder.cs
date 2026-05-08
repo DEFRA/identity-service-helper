@@ -141,7 +141,7 @@ public partial class UpdateStrategyBuilder<TService, TEntity>
             throw new InvalidOperationException(StrategyBuilderConstants.Errors.UpdateActionRequired);
         }
 
-        LogExecutingActionEntityWithIdByOperatorid(Logger, ActionDescription.ToLowerInvariant(), PrimaryEntityDescription.ToLowerInvariant(), Request.Id, OperatorContext.OperatorId);
+        LogExecutingActionEntityWithIdByOperatorid(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant(), Request.Id, OperatorContext.OperatorId);
 
         ExecuteSetup();
 
@@ -156,7 +156,7 @@ public partial class UpdateStrategyBuilder<TService, TEntity>
 
         if (entityToUpdate == null)
         {
-            LogEntityWithIdNotFound(Logger, PrimaryEntityDescription, Request.Id);
+            LogEntityWithIdNotFound(Logger, EntityDescription, Request.Id);
 
             throw new NotFoundException($"{EntityDescription} not found.");
         }
@@ -169,7 +169,7 @@ public partial class UpdateStrategyBuilder<TService, TEntity>
 
         var updatedEntity = await UpdateableRepository.Update(entityToUpdate, CancellationToken.Value);
 
-        LogSuccessfullyExecutedActionEntityWithIdByOperatorid(Logger, ActionDescription.ToLowerInvariant(), PrimaryEntityDescription.ToLowerInvariant(), Request.Id, OperatorContext.OperatorId);
+        LogSuccessfullyExecutedActionEntityWithIdByOperatorid(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant(), Request.Id, OperatorContext.OperatorId);
 
         return updatedEntity;
     }
