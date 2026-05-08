@@ -39,7 +39,7 @@ public class BusinessRulesBuilder<TService, TEntity>
             if (!validAgainstBusinessRule)
             {
                 logger.LogWarning(
-                    "Execute {ActionDescription} {EntityDescription} with id {Id} failed business rule '{Description}'",
+                    "Execute {ActionDescription} [{EntityDescription}] with id {Id} failed business rule '{Description}'",
                     actionDescription.ToLowerInvariant(),
                     primaryEntityDescription.ToLowerInvariant(),
                     request.Id,

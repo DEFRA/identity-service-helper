@@ -20,7 +20,7 @@ public abstract class StrategyBuilderBase<TService, TBuilder>
 
     protected IOperatorContext? OperatorContext { get; private set; }
 
-    protected string? PrimaryEntityDescription { get; private set; }
+    protected string? EntityDescription { get; private set; }
 
     protected string? ActionDescription { get; private set; }
 
@@ -46,9 +46,9 @@ public abstract class StrategyBuilderBase<TService, TBuilder>
         return (TBuilder)this;
     }
 
-    public TBuilder WithPrimaryEntityDescription(string primaryEntityDescription)
+    public TBuilder WithEntityDescription(string entityDescription)
     {
-        PrimaryEntityDescription = primaryEntityDescription;
+        EntityDescription = entityDescription;
         return (TBuilder)this;
     }
 
@@ -82,7 +82,7 @@ public abstract class StrategyBuilderBase<TService, TBuilder>
             throw new InvalidOperationException(StrategyBuilderConstants.Errors.LoggerRequired);
         }
 
-        if (PrimaryEntityDescription == null)
+        if (EntityDescription == null)
         {
             throw new InvalidOperationException(StrategyBuilderConstants.Errors.PrimaryEntityDescriptionRequired);
         }
@@ -99,9 +99,9 @@ public abstract class StrategyBuilderBase<TService, TBuilder>
             if (!validationResult.IsValid)
             {
                 Logger.LogWarning(
-                    "Execute {ActionDescription} {EntityDescription} failed basic validation",
+                    "Execute {ActionDescription} [{EntityDescription}] failed basic validation",
                     ActionDescription.ToLowerInvariant(),
-                    PrimaryEntityDescription.ToLowerInvariant());
+                    EntityDescription.ToLowerInvariant());
 
                 throw new ValidationException(validationResult.Errors);
             }

@@ -13,6 +13,7 @@ using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Assignments;
 using Defra.Identity.Repositories.Delegations;
 using Defra.Identity.Repositories.Users;
+using Defra.Identity.Services.Common;
 using Defra.Identity.Services.Common.Builders.Strategy.Factories;
 using Defra.Identity.Services.Common.Extensions;
 using Defra.Identity.Services.Common.Filters;
@@ -64,32 +65,32 @@ public class ProfileService : IProfileService
                             .Any(cphAssignmentsFilter));
 
         var userDetails = await strategyBuilderFactory.BuildGetStrategy<UserAccounts>()
-            .WithPrimaryEntityDescription("User account")
-            .WithActionDescription("Get user details associated with")
+            .WithEntityDescription(EntityDescriptions.User)
+            .WithActionDescription("Get user details")
             .WithRepository(userRepository)
             .WithCancellationToken(cancellationToken)
             .WithRequestAndEntityFilter(request, userAccountFilter)
             .ExecuteAndMap(MapUserEntityToUser);
 
         var directAssignments = await strategyBuilderFactory.BuildGetListStrategy<ApplicationUserAccountHoldingAssignments>()
-            .WithPrimaryEntityDescription("User account")
-            .WithActionDescription("Get all county parish holdings assigned to")
+            .WithEntityDescription(EntityDescriptions.CphAssignment)
+            .WithActionDescription("Get county parish holdings assigned to user")
             .WithRepository(cphAssignmentsRepository)
             .WithCancellationToken(cancellationToken)
             .WithEntityFilter(cphAssignmentsFilter)
             .ExecuteAndMap(MapCphAssignmentEntityToCphAssignment);
 
         var inboundDelegations = await strategyBuilderFactory.BuildGetListStrategy<CountyParishHoldingDelegations>()
-            .WithPrimaryEntityDescription("User account")
-            .WithActionDescription("Get all county parish holdings delegated to")
+            .WithEntityDescription(EntityDescriptions.CphDelegation)
+            .WithActionDescription("Get all county parish holdings delegated to user")
             .WithRepository(cphDelegationsRepository)
             .WithCancellationToken(cancellationToken)
             .WithEntityFilter(inboundDelegationsFilter)
             .ExecuteAndMap(MapCphDelegationEntityToCphDelegation);
 
         var outboundDelegations = await strategyBuilderFactory.BuildGetListStrategy<CountyParishHoldingDelegations>()
-            .WithPrimaryEntityDescription("User account")
-            .WithActionDescription("Get all county parish holdings delegated to others from cphs assigned to")
+            .WithEntityDescription(EntityDescriptions.CphDelegation)
+            .WithActionDescription("Get all county parish holdings delegations associated with cphs owned by user")
             .WithRepository(cphDelegationsRepository)
             .WithCancellationToken(cancellationToken)
             .WithEntityFilter(outboundDelegationsFilter)

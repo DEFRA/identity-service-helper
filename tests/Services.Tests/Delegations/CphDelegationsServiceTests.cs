@@ -32,15 +32,10 @@ public class CphDelegationsServiceTests
     private readonly ICphRepository cphRepository = Substitute.For<ICphRepository>();
     private readonly IRoleRepository roleRepository = Substitute.For<IRoleRepository>();
     private readonly IOperatorContext operatorContext = Substitute.For<IOperatorContext>();
-
     private readonly IMessagingFactory messagingFactory = Substitute.For<IMessagingFactory>();
     private readonly IStrategyBuilderFactory<CphDelegationsService> strategyBuilderFactory = new StrategyBuilderFactory<CphDelegationsService>();
-
     private readonly IValidator<CreateCphDelegation> createCphDelegationValidator = new CreateCphDelegationValidator();
-    private readonly IValidator<UpdateCphDelegationById> updateCphDelegationValidator = new UpdateCphDelegationValidator();
-
     private readonly ILogger<CphDelegationsService> logger = Substitute.For<ILogger<CphDelegationsService>>();
-
     private readonly CphDelegationsService service;
 
     private readonly Guid mockOperatorId = new Guid("d7c98e62-af07-46ae-8b93-4765bfdb81c5");
@@ -56,7 +51,6 @@ public class CphDelegationsServiceTests
             messagingFactory,
             strategyBuilderFactory,
             createCphDelegationValidator,
-            updateCphDelegationValidator,
             logger);
 
         operatorContext.OperatorId.Returns(mockOperatorId);

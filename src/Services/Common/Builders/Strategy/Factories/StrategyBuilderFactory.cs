@@ -15,7 +15,7 @@ public class StrategyBuilderFactory<TService> : IStrategyBuilderFactory<TService
 
     private IOperatorContext? DefaultOperatorContext { get; set; }
 
-    private string? DefaultPrimaryEntityDescription { get; set; }
+    private string? DefaultEntityDescription { get; set; }
 
     public IStrategyBuilderFactory<TService> WithDefaultLogger(ILogger<TService> logger)
     {
@@ -29,9 +29,9 @@ public class StrategyBuilderFactory<TService> : IStrategyBuilderFactory<TService
         return this;
     }
 
-    public IStrategyBuilderFactory<TService> WithDefaultPrimaryEntityDescription(string primaryEntityDescription)
+    public IStrategyBuilderFactory<TService> WithDefaultEntityDescription(string entityDescription)
     {
-        this.DefaultPrimaryEntityDescription = primaryEntityDescription;
+        this.DefaultEntityDescription = entityDescription;
         return this;
     }
 
@@ -108,9 +108,9 @@ public class StrategyBuilderFactory<TService> : IStrategyBuilderFactory<TService
             strategyBuilder.WithOperatorContext(DefaultOperatorContext);
         }
 
-        if (DefaultPrimaryEntityDescription != null)
+        if (DefaultEntityDescription != null)
         {
-            strategyBuilder.WithPrimaryEntityDescription(DefaultPrimaryEntityDescription);
+            strategyBuilder.WithEntityDescription(DefaultEntityDescription);
         }
     }
 }

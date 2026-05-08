@@ -17,6 +17,7 @@ using Defra.Identity.Repositories.Cphs;
 using Defra.Identity.Repositories.Delegations;
 using Defra.Identity.Repositories.Roles;
 using Defra.Identity.Repositories.Users;
+using Defra.Identity.Services.Common;
 using Defra.Identity.Services.Common.Builders.Strategy.Factories;
 using Defra.Identity.Services.Common.Context;
 using Defra.Identity.Services.Delegations.Helpers;
@@ -33,7 +34,6 @@ public class CphDelegationsService : ICphDelegationsService
     private readonly IOperatorContext operatorContext;
     private readonly IStrategyBuilderFactory<CphDelegationsService> strategyBuilderFactory;
     private readonly IValidator<CreateCphDelegation> createCphDelegationValidator;
-    private readonly IValidator<UpdateCphDelegationById> updateCphDelegationValidator;
     private readonly ILogger<CphDelegationsService> logger;
     private readonly IMessagingFactory messagingFactory;
 
@@ -46,7 +46,6 @@ public class CphDelegationsService : ICphDelegationsService
         IMessagingFactory messagingFactory,
         IStrategyBuilderFactory<CphDelegationsService> strategyBuilderFactory,
         IValidator<CreateCphDelegation> createCphDelegationValidator,
-        IValidator<UpdateCphDelegationById> updateCphDelegationValidator,
         ILogger<CphDelegationsService> logger)
     {
         this.repository = repository;
@@ -57,13 +56,12 @@ public class CphDelegationsService : ICphDelegationsService
         this.messagingFactory = messagingFactory;
         this.strategyBuilderFactory = strategyBuilderFactory;
         this.createCphDelegationValidator = createCphDelegationValidator;
-        this.updateCphDelegationValidator = updateCphDelegationValidator;
         this.logger = logger;
 
         this.strategyBuilderFactory
             .WithDefaultLogger(this.logger)
             .WithDefaultOperatorContext(this.operatorContext)
-            .WithDefaultPrimaryEntityDescription("County parish holding delegation");
+            .WithDefaultEntityDescription(EntityDescriptions.CphDelegation);
     }
 
     public async Task<List<CphDelegation>> GetAll(GetCphDelegations request, CancellationToken cancellationToken = default)

@@ -120,7 +120,7 @@ public class UpdateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
             throw new InvalidOperationException(StrategyBuilderConstants.Errors.UpdatableRepositoryRequired);
         }
 
-        if (PrimaryEntityDescription == null)
+        if (EntityDescription == null)
         {
             throw new InvalidOperationException(StrategyBuilderConstants.Errors.PrimaryEntityDescriptionRequired);
         }
@@ -141,9 +141,9 @@ public class UpdateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
         }
 
         Logger.LogInformation(
-            "Executing {ActionDescription} {EntityDescription} with id {Id} by operator {OperatorId}",
+            "Executing {ActionDescription} [{EntityDescription}] with id {Id} by operator {OperatorId}",
             ActionDescription.ToLowerInvariant(),
-            PrimaryEntityDescription.ToLowerInvariant(),
+            EntityDescription.ToLowerInvariant(),
             Request.Id,
             OperatorContext.OperatorId);
 
@@ -153,30 +153,30 @@ public class UpdateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
 
         if (ReferenceRulesBuilder != null)
         {
-            await ReferenceRulesBuilder.Validate(ActionDescription, PrimaryEntityDescription, Logger, CancellationToken.Value);
+            await ReferenceRulesBuilder.Validate(ActionDescription, EntityDescription, Logger, CancellationToken.Value);
         }
 
         var entityToUpdate = await GettableRepository.GetSingle(EntityFilter, CancellationToken.Value);
 
         if (entityToUpdate == null)
         {
-            Logger.LogWarning("{EntityDescription} with id {Id} not found", PrimaryEntityDescription, Request.Id);
+            Logger.LogWarning("{EntityDescription} with id {Id} not found", EntityDescription, Request.Id);
 
-            throw new NotFoundException($"{PrimaryEntityDescription} not found.");
+            throw new NotFoundException($"{EntityDescription} not found.");
         }
 
-        ExistenceRulesBuilder?.Validate(Request, entityToUpdate, PrimaryEntityDescription, Logger);
-        ConflictRulesBuilder?.Validate(Request, entityToUpdate, ActionDescription, PrimaryEntityDescription, Logger);
-        BusinessRulesBuilder?.Validate(Request, entityToUpdate, ActionDescription, PrimaryEntityDescription, Logger);
+        ExistenceRulesBuilder?.Validate(Request, entityToUpdate, EntityDescription, Logger);
+        ConflictRulesBuilder?.Validate(Request, entityToUpdate, ActionDescription, EntityDescription, Logger);
+        BusinessRulesBuilder?.Validate(Request, entityToUpdate, ActionDescription, EntityDescription, Logger);
 
         UpdateAction(entityToUpdate);
 
         var updatedEntity = await UpdateableRepository.Update(entityToUpdate, CancellationToken.Value);
 
         Logger.LogInformation(
-            "Successfully executed {ActionDescription} {EntityDescription} with id {Id} by operator {OperatorId}",
+            "Successfully executed {ActionDescription} [{EntityDescription}] with id {Id} by operator {OperatorId}",
             ActionDescription.ToLowerInvariant(),
-            PrimaryEntityDescription.ToLowerInvariant(),
+            EntityDescription.ToLowerInvariant(),
             Request.Id,
             OperatorContext.OperatorId);
 

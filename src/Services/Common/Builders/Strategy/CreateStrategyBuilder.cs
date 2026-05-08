@@ -73,7 +73,7 @@ public class CreateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
             throw new InvalidOperationException(StrategyBuilderConstants.Errors.CreatableRepositoryRequired);
         }
 
-        if (PrimaryEntityDescription == null)
+        if (EntityDescription == null)
         {
             throw new InvalidOperationException(StrategyBuilderConstants.Errors.PrimaryEntityDescriptionRequired);
         }
@@ -89,9 +89,9 @@ public class CreateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
         }
 
         Logger.LogInformation(
-            "Executing {ActionDescription} {EntityDescription} with by operator {OperatorId}",
+            "Executing {ActionDescription} [{EntityDescription}] by operator {OperatorId}",
             ActionDescription.ToLowerInvariant(),
-            PrimaryEntityDescription.ToLowerInvariant(),
+            EntityDescription.ToLowerInvariant(),
             OperatorContext.OperatorId);
 
         ExecuteSetup();
@@ -100,7 +100,7 @@ public class CreateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
 
         if (ReferenceRulesBuilder != null)
         {
-            await ReferenceRulesBuilder.Validate(ActionDescription, PrimaryEntityDescription, Logger, CancellationToken.Value);
+            await ReferenceRulesBuilder.Validate(ActionDescription, EntityDescription, Logger, CancellationToken.Value);
         }
 
         var entityToCreate = CreateAction();
@@ -113,9 +113,9 @@ public class CreateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
         }
 
         Logger.LogInformation(
-            "Successfully executed {ActionDescription} {EntityDescription} by operator {OperatorId}",
+            "Successfully executed {ActionDescription} [{EntityDescription}] by operator {OperatorId}",
             ActionDescription.ToLowerInvariant(),
-            PrimaryEntityDescription.ToLowerInvariant(),
+            EntityDescription.ToLowerInvariant(),
             OperatorContext.OperatorId);
 
         return createdEntity;

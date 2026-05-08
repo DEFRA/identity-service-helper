@@ -50,7 +50,7 @@ public class GetListStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSe
             throw new InvalidOperationException(StrategyBuilderConstants.Errors.ListableRepositoryRequired);
         }
 
-        if (PrimaryEntityDescription == null)
+        if (EntityDescription == null)
         {
             throw new InvalidOperationException(StrategyBuilderConstants.Errors.PrimaryEntityDescriptionRequired);
         }
@@ -68,7 +68,7 @@ public class GetListStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSe
         Logger.LogInformation(
             "Executing {ActionDescription} {EntityDescription}",
             ActionDescription.ToLowerInvariant(),
-            PrimaryEntityDescription.ToLowerInvariant());
+            EntityDescription.ToLowerInvariant());
 
         ExecuteSetup();
 
@@ -79,9 +79,9 @@ public class GetListStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSe
         var mappedEntities = entities.Select(map).ToList();
 
         Logger.LogInformation(
-            "Successfully executed {ActionDescription} {EntityDescription}",
+            "Successfully executed {ActionDescription} [{EntityDescription}]",
             ActionDescription.ToLowerInvariant(),
-            PrimaryEntityDescription.ToLowerInvariant());
+            EntityDescription.ToLowerInvariant());
 
         return mappedEntities;
     }

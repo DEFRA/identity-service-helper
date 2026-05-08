@@ -14,7 +14,7 @@ public interface IStrategyBuilderFactory<TService>
 
     IStrategyBuilderFactory<TService> WithDefaultOperatorContext(IOperatorContext operatorContext);
 
-    IStrategyBuilderFactory<TService> WithDefaultPrimaryEntityDescription(string primaryEntityDescription);
+    IStrategyBuilderFactory<TService> WithDefaultEntityDescription(string entityDescription);
 
     CreateStrategyBuilder<TService, TEntity> BuildCreateStrategy<TEntity>()
         where TEntity : class;

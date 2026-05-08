@@ -66,7 +66,7 @@ public class GetStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TServic
             throw new InvalidOperationException(StrategyBuilderConstants.Errors.GettableRepositoryRequired);
         }
 
-        if (PrimaryEntityDescription == null)
+        if (EntityDescription == null)
         {
             throw new InvalidOperationException(StrategyBuilderConstants.Errors.PrimaryEntityDescriptionRequired);
         }
@@ -82,9 +82,9 @@ public class GetStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TServic
         }
 
         Logger.LogInformation(
-            "Executing {ActionDescription} {EntityDescription} with id {Id}",
+            "Executing {ActionDescription} [{EntityDescription}] with id {Id}",
             ActionDescription.ToLowerInvariant(),
-            PrimaryEntityDescription.ToLowerInvariant(),
+            EntityDescription.ToLowerInvariant(),
             Request.Id);
 
         ExecuteSetup();
@@ -95,19 +95,19 @@ public class GetStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TServic
 
         if (entity == null)
         {
-            Logger.LogWarning("{EntityDescription} with id {Id} not found", PrimaryEntityDescription, Request.Id);
+            Logger.LogWarning("{EntityDescription} with id {Id} not found", EntityDescription, Request.Id);
 
-            throw new NotFoundException($"{PrimaryEntityDescription} not found.");
+            throw new NotFoundException($"{EntityDescription} not found.");
         }
 
-        ExistenceRulesBuilder?.Validate(Request, entity, PrimaryEntityDescription, Logger);
+        ExistenceRulesBuilder?.Validate(Request, entity, EntityDescription, Logger);
 
         var mappedEntity = map(entity);
 
         Logger.LogInformation(
-            "Successfully executed {ActionDescription} {EntityDescription} with id {Id}",
+            "Successfully executed {ActionDescription} [{EntityDescription}] with id {Id}",
             ActionDescription.ToLowerInvariant(),
-            PrimaryEntityDescription.ToLowerInvariant(),
+            EntityDescription.ToLowerInvariant(),
             Request.Id);
 
         return mappedEntity;
