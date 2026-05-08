@@ -13,7 +13,8 @@ using Defra.Identity.Services.Common.Builders.Strategy.Base;
 using Defra.Identity.Services.Common.Builders.Strategy.Constants;
 using Microsoft.Extensions.Logging;
 
-public class GetStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TService, GetStrategyBuilder<TService, TEntity>>
+public partial class GetStrategyBuilder<TService, TEntity>
+    : StrategyBuilderBase<TService, GetStrategyBuilder<TService, TEntity>>
     where TService : class
     where TEntity : class
 {
@@ -81,11 +82,7 @@ public class GetStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TServic
             throw new InvalidOperationException(StrategyBuilderConstants.Errors.RequestAndEntityFilterRequired);
         }
 
-        Logger.LogInformation(
-            "Executing {ActionDescription} [{EntityDescription}] with id {Id}",
-            ActionDescription.ToLowerInvariant(),
-            EntityDescription.ToLowerInvariant(),
-            Request.Id);
+        LogExecutingActiondescriptionEntitydescriptionWithIdId(Logger, ActionDescription.ToLowerInvariant(), PrimaryEntityDescription.ToLowerInvariant(), Request.Id);
 
         ExecuteSetup();
 
@@ -95,7 +92,7 @@ public class GetStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TServic
 
         if (entity == null)
         {
-            Logger.LogWarning("{EntityDescription} with id {Id} not found", EntityDescription, Request.Id);
+            LogEntitydescriptionWithIdIdNotFound(Logger, PrimaryEntityDescription, Request.Id);
 
             throw new NotFoundException($"{EntityDescription} not found.");
         }
@@ -104,11 +101,7 @@ public class GetStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TServic
 
         var mappedEntity = map(entity);
 
-        Logger.LogInformation(
-            "Successfully executed {ActionDescription} [{EntityDescription}] with id {Id}",
-            ActionDescription.ToLowerInvariant(),
-            EntityDescription.ToLowerInvariant(),
-            Request.Id);
+        LogSuccessfullyExecutedActiondescriptionEntitydescriptionWithIdId(Logger, ActionDescription.ToLowerInvariant(), PrimaryEntityDescription.ToLowerInvariant(), Request.Id);
 
         return mappedEntity;
     }

@@ -9,7 +9,7 @@ using Defra.Identity.Api.Middleware.Headers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-public class CorrelationIdMiddleware(ILogger<CorrelationIdMiddleware> logger) : JsonErrorMiddleware
+public partial class CorrelationIdMiddleware(ILogger<CorrelationIdMiddleware> logger) : JsonErrorMiddleware
 {
     public override async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
@@ -49,7 +49,7 @@ public class CorrelationIdMiddleware(ILogger<CorrelationIdMiddleware> logger) : 
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error in {MiddlewareName}", nameof(CorrelationIdMiddleware));
+            LogErrorInMiddleware(logger, nameof(CorrelationIdMiddleware), ex);
             throw;
         }
     }

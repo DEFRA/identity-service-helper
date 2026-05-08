@@ -19,7 +19,7 @@ public class GetTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     public async Task ShouldGetSingleDelegation()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<CphDelegationsRepository>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<CphDelegationsRepository>();
         var repository = new CphDelegationsRepository(Context, ReadOnlyContext, logger);
 
         var id = Guid.NewGuid();
@@ -71,7 +71,7 @@ public class GetTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     public async Task ShouldGetListDelegations()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<CphDelegationsRepository>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<CphDelegationsRepository>();
         var repository = new CphDelegationsRepository(Context, ReadOnlyContext, logger);
 
         var adminUser = Context.UserAccounts.First(x => x.Id == new Guid("cd91b1e0-bae4-4cee-becf-3529cc557311"));

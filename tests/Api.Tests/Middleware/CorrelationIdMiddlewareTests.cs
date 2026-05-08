@@ -59,7 +59,7 @@ public class CorrelationIdMiddlewareTests
     public async Task UseRequests_WithNoEndpoint_ReturnsWithoutProcessing()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<CorrelationIdMiddleware>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<CorrelationIdMiddleware>();
         var middleware = new CorrelationIdMiddleware(logger);
         var context = new DefaultHttpContext();
         context.Request.Headers[RequestHeaderNames.ApiKey] = "test-key";
@@ -76,7 +76,7 @@ public class CorrelationIdMiddlewareTests
     public async Task UseRequests_WithIgnoreKey_ReturnsWithoutProcessing()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<CorrelationIdMiddleware>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<CorrelationIdMiddleware>();
         var middleware = new CorrelationIdMiddleware(logger);
 
         var endpoint = Substitute.For<IEndpointFeature>();
@@ -191,7 +191,7 @@ public class CorrelationIdMiddlewareTests
     public async Task InvokeAsync_WhenExceptionThrown_LogsErrorAndReThrows()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<CorrelationIdMiddleware>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<CorrelationIdMiddleware>();
         var middleware = new CorrelationIdMiddleware(logger);
         var endpoint = Substitute.For<IEndpointFeature>();
         endpoint.Endpoint = new Endpoint(null, null, "fake endpoint");

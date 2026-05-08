@@ -4,5 +4,6 @@
   <ItemGroup>
     <PackageReference Include="AWS.Messaging" />
     <PackageReference Include="AWSSDK.SQS" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
   </ItemGroup>
 </Project>

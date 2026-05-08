@@ -11,9 +11,9 @@ using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Services.Common.Builders.Rules;
 using Defra.Identity.Services.Common.Builders.Strategy.Base;
 using Defra.Identity.Services.Common.Builders.Strategy.Constants;
-using Microsoft.Extensions.Logging;
 
-public class DeleteStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TService, DeleteStrategyBuilder<TService, TEntity>>
+public partial class DeleteStrategyBuilder<TService, TEntity>
+    : StrategyBuilderBase<TService, DeleteStrategyBuilder<TService, TEntity>>
     where TService : class
     where TEntity : class
 {
@@ -93,12 +93,7 @@ public class DeleteStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
             throw new InvalidOperationException(StrategyBuilderConstants.Errors.RequestAndEntityFilterRequired);
         }
 
-        Logger.LogInformation(
-            "Executing {ActionDescription} [{EntityDescription}] with id {Id} by operator {OperatorId}",
-            ActionDescription.ToLowerInvariant(),
-            EntityDescription.ToLowerInvariant(),
-            Request.Id,
-            OperatorContext.OperatorId);
+        LogExecutingActionEntityWithIdByOperatorid(Logger, ActionDescription.ToLowerInvariant(), PrimaryEntityDescription.ToLowerInvariant(), Request.Id, OperatorContext.OperatorId);
 
         ExecuteSetup();
 
@@ -108,7 +103,7 @@ public class DeleteStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
 
         if (entityToDelete == null)
         {
-            Logger.LogWarning("{EntityDescription} with id {Id} not found", EntityDescription, Request.Id);
+            LogEntityWithIdNotFound(Logger, PrimaryEntityDescription, Request.Id);
 
             throw new NotFoundException($"{EntityDescription} not found.");
         }
@@ -117,12 +112,7 @@ public class DeleteStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
 
         var successfullyDeleted = await DeletableRepository.Delete(EntityFilter, OperatorContext.OperatorId, CancellationToken.Value);
 
-        Logger.LogInformation(
-            "Successfully executed {ActionDescription} [{EntityDescription}] with id {Id} by operator {OperatorId}",
-            ActionDescription.ToLowerInvariant(),
-            EntityDescription.ToLowerInvariant(),
-            Request.Id,
-            OperatorContext.OperatorId);
+        LogSuccessfullyExecutedActionEntityWithIdIdByOperatorId(Logger, ActionDescription.ToLowerInvariant(), PrimaryEntityDescription.ToLowerInvariant(), Request.Id, OperatorContext.OperatorId);
 
         return successfullyDeleted;
     }

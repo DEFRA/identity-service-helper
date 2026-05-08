@@ -22,10 +22,10 @@ public class PostRouteTests(PostgreContainerFixture fixture) : BaseTests(fixture
     public async Task ShouldCreateApplication()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<ApplicationsRepository>>();
-        var repository = new ApplicationsRepository(Context, ReadOnlyContext, logger);
+        var appLogger = DefraLoggerExtensions.CreateNSubstituteLogger<ApplicationsRepository>();
+        var repository = new ApplicationsRepository(Context, ReadOnlyContext, appLogger);
 
-        var userLogger = Substitute.For<ILogger<UsersRepository>>();
+        var userLogger = DefraLoggerExtensions.CreateNSubstituteLogger<UsersRepository>();
         var userRepository = new UsersRepository(Context, ReadOnlyContext, userLogger);
 
         var adminUser = await userRepository.GetSingle(
@@ -55,7 +55,7 @@ public class PostRouteTests(PostgreContainerFixture fixture) : BaseTests(fixture
             x => x.Description.ShouldBe("Test Description"),
             x => x.CreatedById.ShouldBe(adminUser.Id));
 
-        logger.ReceivedWithAnyArgs().Log(
+        appLogger.ReceivedWithAnyArgs().Log(
             LogLevel.Information,
             Arg.Any<EventId>(),
             Arg.Any<object>(),

@@ -19,7 +19,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     public async Task ShouldGetPageOneCphsInAscendingOrderWithPageSizeOfThree()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<CphRepository>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<CphRepository>();
         var repository = new CphRepository(Context, ReadOnlyContext, logger);
 
         Expression<Func<CountyParishHoldings, bool>> filter = cph => true;
@@ -33,7 +33,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         var pagedEntities = await repository.GetPaged(filter, pageNumber, pageSize, orderBy, descendingOrder, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.Received(1).Log(LogLevel.Information, "Getting paged list of county parish holdings");
+        logger.VerifyLogContainsOne(LogLevel.Information, "Getting list of county parish holdings");
 
         pagedEntities.ShouldSatisfyAllConditions(
             (x) => x.Items.Count.ShouldBe(3),
@@ -79,7 +79,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     public async Task ShouldGetPageOneCphsInDescendingOrderWithPageSizeOfThree()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<CphRepository>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<CphRepository>();
         var repository = new CphRepository(Context, ReadOnlyContext, logger);
 
         Expression<Func<CountyParishHoldings, bool>> filter = cph => true;
@@ -93,7 +93,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         var pagedEntities = await repository.GetPaged(filter, pageNumber, pageSize, orderBy, descendingOrder, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.Received(1).Log(LogLevel.Information, "Getting paged list of county parish holdings");
+        logger.VerifyLogContainsOne(LogLevel.Information, "Getting list of county parish holdings");
 
         pagedEntities.ShouldSatisfyAllConditions(
             (x) => x.Items.Count.ShouldBe(3),

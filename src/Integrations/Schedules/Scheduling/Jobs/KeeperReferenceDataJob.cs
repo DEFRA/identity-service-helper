@@ -5,40 +5,40 @@
 namespace Defra.Identity.Scheduling.Jobs;
 
 using Defra.Identity.KeeperReferenceData.Providers;
-using Defra.Identity.Scheduling.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Quartz;
 
+/// <summary>
+/// KRDS data sync job entry point.
+/// </summary>
+/// <param name="sitesService">Instance of the site service.</param>
+/// <param name="logger">Instance of the logger service.</param>
 [DisallowConcurrentExecution]
-public class KeeperReferenceDataJob(
+public partial class KeeperReferenceDataJob(
     ISitesProvider sitesService,
-    ILogger<KeeperReferenceDataJob> logger,
-    IOptions<KeeperReferenceDataSchedulingOptions> options)
+    ILogger<KeeperReferenceDataJob> logger)
     : IJob
 {
     public async Task Execute(IJobExecutionContext context)
     {
         try
         {
-            logger.LogInformation("{Job} starting {Date}", context.JobDetail.Key.Name, DateTime.UtcNow);
+            LogJobStartingDate(context.JobDetail.Key.Name, DateTime.UtcNow);
 
             // We fetch since 24 hours ago as a default, or we could add it to options
             var since = DateTime.UtcNow.AddDays(-1);
-            logger.LogInformation("Fetching sites since {Date}", since);
+            LogFetchingSitesSinceDate(since);
             var sites = await sitesService.Sites(since, context.CancellationToken);
 
-            logger.LogInformation("{Job} succeeded. Found {Count} sites.", context.JobDetail.Key.Name, sites.Count);
+            LogJobSucceededFoundCountSites(context.JobDetail.Key.Name, sites.Count);
         }
         catch (OperationCanceledException ex)
         {
-            logger.LogWarning(ex, "{Job} cancelled.", context.JobDetail.Key.Name);
-            throw;
+            LogJobCancelled(context.JobDetail.Key.Name, ex);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "{Job} failed", context.JobDetail.Key.Name);
-            throw;
+            LogJobFailed(context.JobDetail.Key.Name, ex);
         }
     }
 }

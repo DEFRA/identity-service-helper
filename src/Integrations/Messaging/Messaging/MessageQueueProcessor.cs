@@ -15,7 +15,7 @@ using Defra.Identity.Repositories.Messaging;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-public class MessageQueueProcessor(
+public partial class MessageQueueProcessor(
     IExternalMessagingRepository externalMessagingRepository,
     IMessagingService messagingService,
     ILogger<MessageQueueProcessor> logger)
@@ -23,7 +23,7 @@ public class MessageQueueProcessor(
 {
     public async Task<ProcessResult> ProcessMessageQueueAsync(CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Processing message queue.");
+        LogProcessingMessageQueue();
 
         Expression<Func<ExternalMessaging, bool>> filter = x =>
             x.ResponseCode == HttpStatusCode.Accepted ||
@@ -34,24 +34,16 @@ public class MessageQueueProcessor(
 
         if (messages.Count == 0)
         {
-            logger.LogInformation("No messages to process.");
+            LogNoMessagesToProcess();
             return new ProcessResult();
         }
 
-        logger.LogInformation(
-            "{EmailCount} Emails and {SmsCount} Texts to process",
-            messages.Count(x => x.MessageType == MessageTypes.Email),
-            messages.Count(x => x.MessageType == MessageTypes.Sms));
+        LogEmailCountAndSmsCount(messages.Count(x => x.MessageType == MessageTypes.Email), messages.Count(x => x.MessageType == MessageTypes.Sms));
 
         var result = await SendAndUpdateMessageAsync(messages, cancellationToken)
             .ConfigureAwait(false);
 
-        logger.LogInformation(
-            "Processed Email {SuccessEmailCount}-S, {ErrorEmailCount}-F, Text {SuccessSmsCount}-S, {ErrorSmsCount}-F",
-            result.Success.EmailCountProcessed,
-            result.Error.EmailCountProcessed,
-            result.Success.SmsCountProcessed,
-            result.Error.SmsCountProcessed);
+        LogProcessedEmailCounts(result.Success.EmailCountProcessed, result.Error.EmailCountProcessed, result.Success.SmsCountProcessed, result.Error.SmsCountProcessed);
 
         return result;
     }

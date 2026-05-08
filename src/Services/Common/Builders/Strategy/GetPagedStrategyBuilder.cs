@@ -14,7 +14,7 @@ using Defra.Identity.Services.Common.Builders.Strategy.Base;
 using Defra.Identity.Services.Common.Builders.Strategy.Constants;
 using Microsoft.Extensions.Logging;
 
-public class GetPagedStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TService,
+public partial class GetPagedStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TService,
     GetPagedStrategyBuilder<TService, TEntity>>
     where TService : class
     where TEntity : class
@@ -75,10 +75,7 @@ public class GetPagedStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TS
             throw new InvalidOperationException(StrategyBuilderConstants.Errors.RequestAndEntityFilterRequired);
         }
 
-        Logger.LogInformation(
-            "Executing {ActionDescription} [{EntityDescription}]",
-            ActionDescription.ToLowerInvariant(),
-            EntityDescription.ToLowerInvariant());
+        LogExecutingActionEntity(Logger, ActionDescription.ToLowerInvariant(), PrimaryEntityDescription.ToLowerInvariant());
 
         ExecuteSetup();
 
@@ -94,10 +91,7 @@ public class GetPagedStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TS
 
         var associatedPagedResults = pagedEntities.ToPagedResults(map);
 
-        Logger.LogInformation(
-            "Successfully executed {ActionDescription} [{EntityDescription}]",
-            ActionDescription.ToLowerInvariant(),
-            EntityDescription.ToLowerInvariant());
+        LogSuccessfullyExecutedActionEntity(Logger, ActionDescription.ToLowerInvariant(), PrimaryEntityDescription.ToLowerInvariant());
 
         return associatedPagedResults;
     }

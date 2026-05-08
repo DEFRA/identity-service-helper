@@ -10,7 +10,7 @@ using FluentValidation;
 using Microsoft.Extensions.Logging;
 using ValidationResult = FluentValidation.Results.ValidationResult;
 
-public abstract class StrategyBuilderBase<TService, TBuilder>
+public abstract partial class StrategyBuilderBase<TService, TBuilder>
     where TService : class
     where TBuilder : StrategyBuilderBase<TService, TBuilder>
 {
@@ -98,10 +98,7 @@ public abstract class StrategyBuilderBase<TService, TBuilder>
 
             if (!validationResult.IsValid)
             {
-                Logger.LogWarning(
-                    "Execute {ActionDescription} [{EntityDescription}] failed basic validation",
-                    ActionDescription.ToLowerInvariant(),
-                    EntityDescription.ToLowerInvariant());
+                LogExecuteActionEntityFailedBasicValidation(Logger, ActionDescription.ToLowerInvariant(), PrimaryEntityDescription.ToLowerInvariant());
 
                 throw new ValidationException(validationResult.Errors);
             }

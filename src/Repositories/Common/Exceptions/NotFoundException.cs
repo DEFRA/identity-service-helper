@@ -4,7 +4,8 @@
 
 namespace Defra.Identity.Repositories.Common.Exceptions;
 
-public sealed class NotFoundException : Exception
+public sealed class NotFoundException
+    : Exception
 {
     public NotFoundException(string message)
         : base(message)

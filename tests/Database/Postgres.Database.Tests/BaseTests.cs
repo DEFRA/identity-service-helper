@@ -10,6 +10,8 @@ using Defra.Identity.Postgres.Database.Tests.Fixtures;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using NSubstitute;
 
 /// <summary>
 /// The base class for the database fixture driven tests.

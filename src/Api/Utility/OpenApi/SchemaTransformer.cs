@@ -10,7 +10,8 @@ using System.Reflection;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
 
-public class SchemaTransformer : IOpenApiSchemaTransformer
+public class SchemaTransformer
+    : IOpenApiSchemaTransformer
 {
     public Task TransformAsync(
         OpenApiSchema schema,

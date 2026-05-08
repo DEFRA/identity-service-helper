@@ -25,7 +25,7 @@ using Defra.Identity.Services.Delegations.Rules;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
 
-public class CphDelegationsService : ICphDelegationsService
+public partial class CphDelegationsService : ICphDelegationsService
 {
     private readonly ICphDelegationsRepository repository;
     private readonly IUsersRepository usersRepository;
@@ -66,7 +66,7 @@ public class CphDelegationsService : ICphDelegationsService
 
     public async Task<List<CphDelegation>> GetAll(GetCphDelegations request, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Getting all delegations");
+        LogGettingAllDelegations();
 
         var entities = await repository.GetList(entity => entity.DeletedAt == null && (entity.ExpiresAt == null || DateTime.UtcNow < entity.ExpiresAt), cancellationToken);
 
@@ -75,14 +75,14 @@ public class CphDelegationsService : ICphDelegationsService
 
     public async Task<CphDelegation> Get(GetCphDelegationById request, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Getting delegation by id {Id}", request.Id);
+        LogGettingDelegationById(request.Id);
         Expression<Func<CountyParishHoldingDelegations, bool>> filter = x => x.Id == request.Id;
 
         var entity = await repository.GetSingle(filter, cancellationToken);
 
         if (entity is not { DeletedAt: null } || (entity.ExpiresAt != null && DateTime.UtcNow < entity.ExpiresAt))
         {
-            logger.LogWarning("Delegation with id {Id} not found", request.Id);
+            LogDelegationWithIdNotFound(request.Id);
 
             throw new NotFoundException("Delegation not found.");
         }
@@ -229,7 +229,7 @@ public class CphDelegationsService : ICphDelegationsService
 
     public async Task<bool> Delete(DeleteCphDelegationById request, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Deleting delegation with id {Id} by operator {OperatorId}", request.Id, operatorContext.OperatorId);
+        LogDeletingDelegationWithIdByOperatorId(request.Id, operatorContext.OperatorId);
         return await repository.Delete(x => x.Id == request.Id, operatorContext.OperatorId, cancellationToken);
     }
 

@@ -23,7 +23,7 @@ using Xunit;
 public class UserServiceTests
 {
     private readonly IUsersRepository repository = Substitute.For<IUsersRepository>();
-    private readonly ILogger<UserService> logger = Substitute.For<ILogger<UserService>>();
+    private readonly ILogger<UserService> logger = DefraLoggerExtensions.CreateNSubstituteLogger<UserService>();
     private readonly UserService userService;
 
     public UserServiceTests()

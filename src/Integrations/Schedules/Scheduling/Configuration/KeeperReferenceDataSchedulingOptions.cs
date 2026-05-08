@@ -4,4 +4,5 @@
 
 namespace Defra.Identity.Scheduling.Configuration;
 
-public class KeeperReferenceDataSchedulingOptions : BaseSchedulingOptions;
+public class KeeperReferenceDataSchedulingOptions
+    : BaseSchedulingOptions;

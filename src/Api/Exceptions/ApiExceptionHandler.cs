@@ -1,4 +1,4 @@
-// <copyright file="ApiExceptionhandler.cs" company="Defra">
+// <copyright file="ApiExceptionHandler.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Serilog.Context;
 
-public sealed class ApiExceptionHandler(ILogger<ApiExceptionHandler> logger) : IExceptionHandler
+public sealed partial class ApiExceptionHandler(ILogger<ApiExceptionHandler> logger) : IExceptionHandler
 {
     public async ValueTask<bool> TryHandleAsync(
         HttpContext httpContext,
@@ -37,21 +37,11 @@ public sealed class ApiExceptionHandler(ILogger<ApiExceptionHandler> logger) : I
         {
             if (statusCode >= 500)
             {
-                logger.LogError(
-                    exception,
-                    "Unhandled exception while processing request {Method} {Path}",
-                    httpContext.Request.Method,
-                    httpContext.Request.Path);
+                LogUnhandledExceptionWhileProcessingRequestMethodPath(httpContext.Request.Method, httpContext.Request.Path, exception);
             }
             else
             {
-                logger.LogWarning(
-                    exception,
-                    "Request failed with {StatusCode} {Title} for {Method} {Path}",
-                    statusCode,
-                    title,
-                    httpContext.Request.Method,
-                    httpContext.Request.Path);
+                LogRequestFailedWithStatusCodeTitleForMethodPath(statusCode, title, httpContext.Request.Method, httpContext.Request.Path, exception);
             }
         }
 

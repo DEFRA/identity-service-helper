@@ -10,9 +10,10 @@ using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Common;
 using Microsoft.Extensions.Logging;
 
-public class CphAssignmentsRepository(
+public partial class CphAssignmentsRepository(
     ReadOnlyPostgresDbContext readOnlyContext,
-    ILogger<CphAssignmentsRepository> logger) : ICphAssignmentsRepository
+    ILogger<CphAssignmentsRepository> logger)
+    : ICphAssignmentsRepository
 {
     public async Task<List<ApplicationUserAccountHoldingAssignments>> GetList(
         Expression<Func<ApplicationUserAccountHoldingAssignments, bool>> predicate,
@@ -34,7 +35,7 @@ public class CphAssignmentsRepository(
         bool orderByDescending,
         CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Getting paged list of county parish holding assignments");
+        LogGettingListOfAssignmentsForCountyParishHolding();
 
         var results = await GetQueryable(predicate)
             .ToPaged(pageNumber, pageSize, orderBy, orderByDescending, cancellationToken);

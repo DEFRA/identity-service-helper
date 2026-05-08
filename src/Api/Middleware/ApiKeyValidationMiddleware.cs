@@ -9,7 +9,7 @@ using Defra.Identity.Api.Middleware.Headers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-public class ApiKeyValidationMiddleware(string apiKey, ILogger<ApiKeyValidationMiddleware> logger)
+public partial class ApiKeyValidationMiddleware(string apiKey, ILogger<ApiKeyValidationMiddleware> logger)
     : JsonErrorMiddleware
 {
     public override async Task InvokeAsync(HttpContext context, RequestDelegate next)
@@ -62,7 +62,7 @@ public class ApiKeyValidationMiddleware(string apiKey, ILogger<ApiKeyValidationM
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error in {MiddlewareName}", nameof(ApiKeyValidationMiddleware));
+            LogErrorInMiddleware(logger, nameof(ApiKeyValidationMiddleware), ex);
             throw;
         }
     }

@@ -4,4 +4,5 @@
 
 namespace Defra.Identity.KeeperReferenceData.Exceptions;
 
-public class KeeperReferenceDataConfigurationException(string message) : Exception(message);
+public class KeeperReferenceDataConfigurationException(string message)
+    : Exception(message);

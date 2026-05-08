@@ -57,7 +57,7 @@ public class ApiKeyValidationMiddlewareTests
     public async Task UseRequests_WithNoEndpoint_ReturnsWithoutProcessing()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<ApiKeyValidationMiddleware>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<ApiKeyValidationMiddleware>();
         var middleware = new ApiKeyValidationMiddleware("test-key", logger);
         var context = new DefaultHttpContext();
         context.Request.Headers[RequestHeaderNames.ApiKey] = "test-key";
@@ -74,7 +74,7 @@ public class ApiKeyValidationMiddlewareTests
     public async Task UseRequests_WithIgnoreKey_ReturnsWithoutProcessing()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<ApiKeyValidationMiddleware>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<ApiKeyValidationMiddleware>();
         var middleware = new ApiKeyValidationMiddleware("test-key", logger);
         var endpoint = Substitute.For<IEndpointFeature>();
         endpoint.Endpoint = new Endpoint(null, new EndpointMetadataCollection([new IgnoreApiKeyCheck()]), "fake endpoint");
@@ -97,7 +97,7 @@ public class ApiKeyValidationMiddlewareTests
     public async Task UseRequests_WithMissingKey_ReturnsErrorJson(string keyValue)
     {
         // Arrange
-        var logger = Substitute.For<ILogger<ApiKeyValidationMiddleware>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<ApiKeyValidationMiddleware>();
         var middleware = new ApiKeyValidationMiddleware("test-key", logger);
         var endpoint = Substitute.For<IEndpointFeature>();
         endpoint.Endpoint = new Endpoint(null, null, "fake endpoint");
@@ -118,7 +118,7 @@ public class ApiKeyValidationMiddlewareTests
     public async Task InvokeAsync_WhenExceptionThrown_LogsErrorAndReThrows()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<ApiKeyValidationMiddleware>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<ApiKeyValidationMiddleware>();
         var middleware = new ApiKeyValidationMiddleware("test-key", logger);
 
         var endpoint = Substitute.For<IEndpointFeature>();

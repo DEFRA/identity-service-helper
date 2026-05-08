@@ -21,7 +21,7 @@ public class CphNumberServiceTests
 {
     private readonly ICphRepository cphRepository = Substitute.For<ICphRepository>();
     private readonly OperationByCphNumberValidator cphNumberValidator = new OperationByCphNumberValidator();
-    private readonly ILogger<CphNumberService> logger = Substitute.For<ILogger<CphNumberService>>();
+    private readonly ILogger<CphNumberService> logger = DefraLoggerExtensions.CreateNSubstituteLogger<CphNumberService>();
     private readonly ICphNumberService cphNumberService;
 
     public CphNumberServiceTests()

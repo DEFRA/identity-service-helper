@@ -19,7 +19,7 @@ public class GetSingleTests(PostgreContainerFixture fixture) : BaseTests(fixture
     public async Task ShouldGetSingleEntity()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<CphRepository>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<CphRepository>();
         var repository = new CphRepository(Context, ReadOnlyContext, logger);
 
         Expression<Func<CountyParishHoldings, bool>> filter = cph => cph.Id == new Guid("088967e7-71b8-457a-9001-5b71f24798fd");
@@ -28,7 +28,7 @@ public class GetSingleTests(PostgreContainerFixture fixture) : BaseTests(fixture
         var entity = await repository.GetSingle(filter, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.Received(1).Log(LogLevel.Information, "Getting single county parish holding");
+        logger.VerifyLogContainsOne(LogLevel.Information, "Getting single county parish holding");
 
         entity.ShouldNotBeNull();
 
@@ -47,7 +47,7 @@ public class GetSingleTests(PostgreContainerFixture fixture) : BaseTests(fixture
     public async Task ShouldReturnNullWhenEntityDoesNotExist()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<CphRepository>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<CphRepository>();
         var repository = new CphRepository(Context, ReadOnlyContext, logger);
 
         var noneExistingEntityId = new Guid("e2dd6e69-2866-4065-bbac-b716853889b8");
@@ -58,7 +58,7 @@ public class GetSingleTests(PostgreContainerFixture fixture) : BaseTests(fixture
         var entity = await repository.GetSingle(filter, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.Received(1).Log(LogLevel.Information, "Getting single county parish holding");
+        logger.VerifyLogContainsOne(LogLevel.Information, "Getting single county parish holding");
 
         entity.ShouldBeNull();
     }

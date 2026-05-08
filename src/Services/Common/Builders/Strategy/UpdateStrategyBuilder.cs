@@ -13,7 +13,8 @@ using Defra.Identity.Services.Common.Builders.Strategy.Base;
 using Defra.Identity.Services.Common.Builders.Strategy.Constants;
 using Microsoft.Extensions.Logging;
 
-public class UpdateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TService, UpdateStrategyBuilder<TService, TEntity>>
+public partial class UpdateStrategyBuilder<TService, TEntity>
+    : StrategyBuilderBase<TService, UpdateStrategyBuilder<TService, TEntity>>
     where TService : class
     where TEntity : class
 {
@@ -140,12 +141,7 @@ public class UpdateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
             throw new InvalidOperationException(StrategyBuilderConstants.Errors.UpdateActionRequired);
         }
 
-        Logger.LogInformation(
-            "Executing {ActionDescription} [{EntityDescription}] with id {Id} by operator {OperatorId}",
-            ActionDescription.ToLowerInvariant(),
-            EntityDescription.ToLowerInvariant(),
-            Request.Id,
-            OperatorContext.OperatorId);
+        LogExecutingActionEntityWithIdByOperatorid(Logger, ActionDescription.ToLowerInvariant(), PrimaryEntityDescription.ToLowerInvariant(), Request.Id, OperatorContext.OperatorId);
 
         ExecuteSetup();
 
@@ -160,7 +156,7 @@ public class UpdateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
 
         if (entityToUpdate == null)
         {
-            Logger.LogWarning("{EntityDescription} with id {Id} not found", EntityDescription, Request.Id);
+            LogEntityWithIdNotFound(Logger, PrimaryEntityDescription, Request.Id);
 
             throw new NotFoundException($"{EntityDescription} not found.");
         }
@@ -173,12 +169,7 @@ public class UpdateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
 
         var updatedEntity = await UpdateableRepository.Update(entityToUpdate, CancellationToken.Value);
 
-        Logger.LogInformation(
-            "Successfully executed {ActionDescription} [{EntityDescription}] with id {Id} by operator {OperatorId}",
-            ActionDescription.ToLowerInvariant(),
-            EntityDescription.ToLowerInvariant(),
-            Request.Id,
-            OperatorContext.OperatorId);
+        LogSuccessfullyExecutedActionEntityWithIdByOperatorid(Logger, ActionDescription.ToLowerInvariant(), PrimaryEntityDescription.ToLowerInvariant(), Request.Id, OperatorContext.OperatorId);
 
         return updatedEntity;
     }

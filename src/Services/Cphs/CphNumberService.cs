@@ -12,19 +12,12 @@ using Defra.Identity.Repositories.Cphs;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
 
-public class CphNumberService : ICphNumberService
+public partial class CphNumberService(
+    ICphRepository cphRepository,
+    IValidator<IOperationByCphNumber> cphNumberValidator,
+    ILogger<CphNumberService> logger)
+    : ICphNumberService
 {
-    private readonly ICphRepository cphRepository;
-    private readonly IValidator<IOperationByCphNumber> cphNumberValidator;
-    private readonly ILogger<CphNumberService> logger;
-
-    public CphNumberService(ICphRepository cphRepository, IValidator<IOperationByCphNumber> cphNumberValidator, ILogger<CphNumberService> logger)
-    {
-        this.cphRepository = cphRepository;
-        this.cphNumberValidator = cphNumberValidator;
-        this.logger = logger;
-    }
-
     public async Task<Guid> GetIdFromCphNumber(IOperationByCphNumber request, CancellationToken cancellationToken = default)
     {
         var cphNumberValidationResult = await cphNumberValidator.ValidateAsync(request, cancellationToken);
@@ -36,7 +29,7 @@ public class CphNumberService : ICphNumberService
 
         var formattedCphNumber = $"{request.County:D2}/{request.Parish:D3}/{request.Holding:D4}";
 
-        logger.LogInformation("Getting county parish holding id by cph number {FormattedCphNumber}", formattedCphNumber);
+        LogGettingCountyParishHoldingIdByCphNumber(formattedCphNumber);
 
         Expression<Func<CountyParishHoldings, bool>> filter = cph => cph.Identifier == formattedCphNumber;
 
@@ -44,7 +37,7 @@ public class CphNumberService : ICphNumberService
 
         if (cphEntity is not { DeletedAt: null })
         {
-            logger.LogWarning("County parish holding with cph number {FormattedCphNumber} not found", formattedCphNumber);
+            LogCountyParishHoldingWithCphNumberNotFound(formattedCphNumber);
 
             throw new NotFoundException("County parish holding not found.");
         }

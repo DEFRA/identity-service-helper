@@ -19,7 +19,7 @@ public class GetTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     public async Task ShouldGetSingleApplication()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<ApplicationsRepository>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<ApplicationsRepository>();
         var repository = new ApplicationsRepository(Context, ReadOnlyContext, logger);
 
         var adminUser = Context.UserAccounts.First();
@@ -47,7 +47,7 @@ public class GetTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     public async Task ShouldGetListApplications()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<ApplicationsRepository>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<ApplicationsRepository>();
         var repository = new ApplicationsRepository(Context, ReadOnlyContext, logger);
 
         var adminUser = Context.UserAccounts.First();

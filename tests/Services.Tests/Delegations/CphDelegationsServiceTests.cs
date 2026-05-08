@@ -35,7 +35,9 @@ public class CphDelegationsServiceTests
     private readonly IMessagingFactory messagingFactory = Substitute.For<IMessagingFactory>();
     private readonly IStrategyBuilderFactory<CphDelegationsService> strategyBuilderFactory = new StrategyBuilderFactory<CphDelegationsService>();
     private readonly IValidator<CreateCphDelegation> createCphDelegationValidator = new CreateCphDelegationValidator();
-    private readonly ILogger<CphDelegationsService> logger = Substitute.For<ILogger<CphDelegationsService>>();
+
+    private readonly ILogger<CphDelegationsService> logger = DefraLoggerExtensions.CreateNSubstituteLogger<CphDelegationsService>();
+
     private readonly CphDelegationsService service;
 
     private readonly Guid mockOperatorId = new Guid("d7c98e62-af07-46ae-8b93-4765bfdb81c5");

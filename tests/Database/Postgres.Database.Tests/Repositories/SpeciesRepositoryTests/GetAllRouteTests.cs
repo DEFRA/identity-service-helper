@@ -19,7 +19,7 @@ public class GetAllRouteTests(PostgreContainerFixture fixture) : BaseTests(fixtu
     public async Task ShouldGetAllSpeciesThatAreActive()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<AnimalSpeciesRepository>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<AnimalSpeciesRepository>();
         var repository = new AnimalSpeciesRepository(Context, ReadOnlyContext, logger);
 
         Expression<Func<AnimalSpecies, bool>> filter = species => species.IsActive;
@@ -28,7 +28,7 @@ public class GetAllRouteTests(PostgreContainerFixture fixture) : BaseTests(fixtu
         var speciesList = await repository.GetList(filter, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.Received(1).Log(LogLevel.Information, "Getting list of animal species");
+        logger.VerifyLogContainsOne(LogLevel.Information, "Getting list of animal species");
 
         speciesList.ShouldSatisfyAllConditions((x) => x.Count.ShouldBe(1));
 
@@ -43,7 +43,7 @@ public class GetAllRouteTests(PostgreContainerFixture fixture) : BaseTests(fixtu
     public async Task ShouldGetAllSpeciesThatAreBothActiveAndInactive()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<AnimalSpeciesRepository>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<AnimalSpeciesRepository>();
         var repository = new AnimalSpeciesRepository(Context, ReadOnlyContext, logger);
 
         Expression<Func<AnimalSpecies, bool>> filter = species => true;
@@ -52,7 +52,7 @@ public class GetAllRouteTests(PostgreContainerFixture fixture) : BaseTests(fixtu
         var speciesList = await repository.GetList(filter, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.Received(1).Log(LogLevel.Information, "Getting list of animal species");
+        logger.VerifyLogContainsOne(LogLevel.Information, "Getting list of animal species");
 
         speciesList.ShouldSatisfyAllConditions((x) => x.Count.ShouldBe(6));
 

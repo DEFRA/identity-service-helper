@@ -18,7 +18,7 @@ public class PutByIdRouteTests(PostgreContainerFixture fixture) : BaseTests(fixt
     public async Task ShouldUpdateEntity()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<CphRepository>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<CphRepository>();
         var repository = new CphRepository(Context, ReadOnlyContext, logger);
         var id = Guid.NewGuid();
         const string identifier = "44/001/0001";

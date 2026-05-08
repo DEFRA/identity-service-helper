@@ -10,7 +10,7 @@ using Defra.Identity.Models.Requests.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-public class OperatorIdMiddleware(IOperatorIdService operatorIdService, ILogger<OperatorIdMiddleware> logger) : JsonErrorMiddleware
+public partial class OperatorIdMiddleware(IOperatorIdService operatorIdService, ILogger<OperatorIdMiddleware> logger) : JsonErrorMiddleware
 {
     public override async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
@@ -66,7 +66,7 @@ public class OperatorIdMiddleware(IOperatorIdService operatorIdService, ILogger<
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error in {MiddlewareName}", nameof(OperatorIdMiddleware));
+            LogErrorInMiddleware(logger, nameof(OperatorIdMiddleware), ex);
             throw;
         }
     }

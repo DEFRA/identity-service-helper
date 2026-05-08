@@ -10,7 +10,7 @@ using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Common.Exceptions;
 using Microsoft.Extensions.Logging;
 
-public class ExternalMessagingRepository(
+public partial class ExternalMessagingRepository(
     PostgresDbContext context,
     ReadOnlyPostgresDbContext readOnlyContext,
     ILogger<ExternalMessagingRepository> logger)
@@ -20,7 +20,7 @@ public class ExternalMessagingRepository(
         Expression<Func<ExternalMessaging, bool>> predicate,
         CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Getting single external messaging record");
+        LogGettingSingleExternalMessagingRecord();
 
         var result = await readOnlyContext
             .ExternalMessaging
@@ -35,7 +35,7 @@ public class ExternalMessagingRepository(
         Expression<Func<ExternalMessaging, bool>> predicate,
         CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Getting list of external messaging records");
+        LogGettingListOfExternalMessagingRecords();
 
         var results = await readOnlyContext
             .ExternalMessaging
@@ -51,7 +51,7 @@ public class ExternalMessagingRepository(
     {
         ArgumentNullException.ThrowIfNull(entity);
 
-        logger.LogInformation("Creating external messaging record with id {Id}", entity.Id);
+        LogCreatingExternalMessagingRecordWithId(entity.Id);
         var addedEntry = await context.ExternalMessaging.AddAsync(entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
@@ -68,7 +68,7 @@ public class ExternalMessagingRepository(
     {
         ArgumentNullException.ThrowIfNull(entity);
 
-        logger.LogInformation("Updating external messaging record with id {Id}", entity.Id);
+        LogUpdatingExternalMessagingRecordWithId(entity.Id);
 
         var trackedEntity =
             context.ExternalMessaging.Local
@@ -93,16 +93,14 @@ public class ExternalMessagingRepository(
         Guid operatorId,
         CancellationToken cancellationToken = default)
     {
-        logger.LogInformation(
-            "Deleting external messaging record with operator id {OperatorId}",
-            operatorId);
+        LogDeletingExternalMessagingRecordWithOperatorId(operatorId);
 
         var entity = await context.ExternalMessaging
             .SingleOrDefaultAsync(predicate, cancellationToken);
 
         if (entity == null)
         {
-            logger.LogWarning("External messaging record not found for deletion");
+            LogExternalMessagingRecordNotFoundForDeletion();
             throw new NotFoundException("External messaging record not found");
         }
 

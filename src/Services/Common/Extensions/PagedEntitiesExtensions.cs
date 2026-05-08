@@ -9,6 +9,13 @@ using Defra.Identity.Models.Responses.Common;
 
 public static class PagedEntitiesExtensions
 {
-    public static PagedResults<T> ToPagedResults<T, TEntity>(this PagedEntities<TEntity> pagedEntities, Func<TEntity, T> mapper)
-        => new(pagedEntities.Items.Select(mapper), pagedEntities.TotalCount, pagedEntities.TotalPages, pagedEntities.PageNumber, pagedEntities.PageSize);
+    public static PagedResults<T> ToPagedResults<T, TEntity>(
+        this PagedEntities<TEntity> pagedEntities,
+        Func<TEntity, T> mapper)
+        => new(
+            pagedEntities.Items.Select(mapper),
+            pagedEntities.TotalCount,
+            pagedEntities.TotalPages,
+            pagedEntities.PageNumber,
+            pagedEntities.PageSize);
 }
