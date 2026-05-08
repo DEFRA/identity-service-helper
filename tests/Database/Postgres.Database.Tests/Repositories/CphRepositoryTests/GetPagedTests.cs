@@ -33,7 +33,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         var pagedEntities = await repository.GetPaged(filter, pageNumber, pageSize, orderBy, descendingOrder, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.Received(1).Log(LogLevel.Information, "Getting list of county parish holdings");
+        logger.Received(1).Log(LogLevel.Information, "Getting paged list of county parish holdings");
 
         pagedEntities.ShouldSatisfyAllConditions(
             (x) => x.Items.Count.ShouldBe(3),
@@ -93,7 +93,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         var pagedEntities = await repository.GetPaged(filter, pageNumber, pageSize, orderBy, descendingOrder, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.Received(1).Log(LogLevel.Information, "Getting list of county parish holdings");
+        logger.Received(1).Log(LogLevel.Information, "Getting paged list of county parish holdings");
 
         pagedEntities.ShouldSatisfyAllConditions(
             (x) => x.Items.Count.ShouldBe(3),

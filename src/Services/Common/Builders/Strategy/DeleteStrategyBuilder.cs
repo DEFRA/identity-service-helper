@@ -78,7 +78,7 @@ public class DeleteStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
             throw new InvalidOperationException(StrategyBuilderConstants.Errors.DeletableRepositoryRequired);
         }
 
-        if (PrimaryEntityDescription == null)
+        if (EntityDescription == null)
         {
             throw new InvalidOperationException(StrategyBuilderConstants.Errors.PrimaryEntityDescriptionRequired);
         }
@@ -94,9 +94,9 @@ public class DeleteStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
         }
 
         Logger.LogInformation(
-            "Executing {ActionDescription} {EntityDescription} with id {Id} by operator {OperatorId}",
+            "Executing {ActionDescription} [{EntityDescription}] with id {Id} by operator {OperatorId}",
             ActionDescription.ToLowerInvariant(),
-            PrimaryEntityDescription.ToLowerInvariant(),
+            EntityDescription.ToLowerInvariant(),
             Request.Id,
             OperatorContext.OperatorId);
 
@@ -108,19 +108,19 @@ public class DeleteStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
 
         if (entityToDelete == null)
         {
-            Logger.LogWarning("{EntityDescription} with id {Id} not found", PrimaryEntityDescription, Request.Id);
+            Logger.LogWarning("{EntityDescription} with id {Id} not found", EntityDescription, Request.Id);
 
-            throw new NotFoundException($"{PrimaryEntityDescription} not found.");
+            throw new NotFoundException($"{EntityDescription} not found.");
         }
 
-        ExistenceRulesBuilder?.Validate(Request, entityToDelete, PrimaryEntityDescription, Logger);
+        ExistenceRulesBuilder?.Validate(Request, entityToDelete, EntityDescription, Logger);
 
         var successfullyDeleted = await DeletableRepository.Delete(EntityFilter, OperatorContext.OperatorId, CancellationToken.Value);
 
         Logger.LogInformation(
-            "Successfully executed {ActionDescription} {EntityDescription} with id {Id} by operator {OperatorId}",
+            "Successfully executed {ActionDescription} [{EntityDescription}] with id {Id} by operator {OperatorId}",
             ActionDescription.ToLowerInvariant(),
-            PrimaryEntityDescription.ToLowerInvariant(),
+            EntityDescription.ToLowerInvariant(),
             Request.Id,
             OperatorContext.OperatorId);
 

@@ -8,42 +8,49 @@ using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Common;
-using Defra.Identity.Repositories.Common.Exceptions;
 using Microsoft.Extensions.Logging;
 
 public class CphAssignmentsRepository(
     ReadOnlyPostgresDbContext readOnlyContext,
     ILogger<CphAssignmentsRepository> logger) : ICphAssignmentsRepository
 {
+    public async Task<List<ApplicationUserAccountHoldingAssignments>> GetList(
+        Expression<Func<ApplicationUserAccountHoldingAssignments, bool>> predicate,
+        CancellationToken cancellationToken = default)
+    {
+        logger.LogInformation("Getting list of county parish holding assignments");
+
+        var results = await GetQueryable(predicate)
+            .ToListAsync(cancellationToken);
+
+        return results;
+    }
+
     public async Task<PagedEntities<ApplicationUserAccountHoldingAssignments>> GetPaged<TOrderBy>(
-        Expression<Func<CountyParishHoldings, bool>> primaryPredicate,
-        Expression<Func<ApplicationUserAccountHoldingAssignments, bool>> associationsPredicate,
+        Expression<Func<ApplicationUserAccountHoldingAssignments, bool>> predicate,
         int pageNumber,
         int pageSize,
         Expression<Func<ApplicationUserAccountHoldingAssignments, TOrderBy>> orderBy,
         bool orderByDescending,
         CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Getting list of assignments for county parish holding");
+        logger.LogInformation("Getting paged list of county parish holding assignments");
 
-        var primaryEntity = await readOnlyContext.CountyParishHoldings
-            .FirstOrDefaultAsync(primaryPredicate, cancellationToken);
-
-        if (primaryEntity == null)
-        {
-            throw new NotFoundException("County parish holding not found.");
-        }
-
-        var pagedResults = await readOnlyContext
-            .Entry(primaryEntity)
-            .Collection(p => p.ApplicationUserAccountHoldingAssignments)
-            .Query()
-            .Include(p => p.CountyParishHolding)
-            .Include(p => p.UserAccount)
-            .Include(p => p.Role)
-            .Where(associationsPredicate)
+        var results = await GetQueryable(predicate)
             .ToPaged(pageNumber, pageSize, orderBy, orderByDescending, cancellationToken);
 
-        return pagedResults;
+        return results;
+    }
+
+    private IQueryable<ApplicationUserAccountHoldingAssignments> GetQueryable(Expression<Func<ApplicationUserAccountHoldingAssignments, bool>> predicate)
+    {
+        var results = readOnlyContext.ApplicationUserAccountHoldingAssignments
+            .Include(p => p.CountyParishHolding)
+            .Include(p => p.UserAccount)
+            .Include(p => p.Application)
+            .Include(p => p.Role)
+            .Where(predicate);
+
+        return results;
     }
 }

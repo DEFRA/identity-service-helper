@@ -10,7 +10,7 @@ using Defra.Identity.Api.Endpoints.Applications;
 using Defra.Identity.Api.Endpoints.Cphs;
 using Defra.Identity.Api.Endpoints.Delegations;
 using Defra.Identity.Api.Endpoints.Health;
-using Defra.Identity.Api.Endpoints.Permissions;
+using Defra.Identity.Api.Endpoints.Profiles;
 using Defra.Identity.Api.Endpoints.Species;
 using Defra.Identity.Api.Endpoints.Users;
 using Defra.Identity.Api.Exceptions;
@@ -135,7 +135,7 @@ public class Program
 
         app.UseHealthEndpoints();
         app.UseUsersEndpoints();
-        app.UsePermissionEndpoints();
+        app.UseProfileEndpoints();
         app.UseApplicationEndpoints();
         app.UseCphDelegationEndpoints();
         app.UseCphEndpoints();

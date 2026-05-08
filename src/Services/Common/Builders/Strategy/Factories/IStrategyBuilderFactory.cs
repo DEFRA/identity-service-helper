@@ -14,7 +14,7 @@ public interface IStrategyBuilderFactory<TService>
 
     IStrategyBuilderFactory<TService> WithDefaultOperatorContext(IOperatorContext operatorContext);
 
-    IStrategyBuilderFactory<TService> WithDefaultPrimaryEntityDescription(string primaryEntityDescription);
+    IStrategyBuilderFactory<TService> WithDefaultEntityDescription(string entityDescription);
 
     CreateStrategyBuilder<TService, TEntity> BuildCreateStrategy<TEntity>()
         where TEntity : class;
@@ -33,12 +33,4 @@ public interface IStrategyBuilderFactory<TService>
 
     GetPagedStrategyBuilder<TService, TEntity> BuildGetPagedStrategy<TEntity>()
         where TEntity : class;
-
-    GetAssociationsListStrategyBuilder<TService, TPrimary, TAssociation> BuildGetAssociationsListStrategy<TPrimary, TAssociation>()
-        where TPrimary : class
-        where TAssociation : class;
-
-    GetAssociationsPagedStrategyBuilder<TService, TPrimary, TAssociation> BuildGetAssociationsPagedStrategy<TPrimary, TAssociation>()
-        where TPrimary : class
-        where TAssociation : class;
 }

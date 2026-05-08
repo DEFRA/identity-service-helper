@@ -31,13 +31,6 @@ public static class OpenApiMetadata
         public const string Description = "Creates a new CPH delegation request from one operator to another";
     }
 
-    public static class Update
-    {
-        public const string Name = "UpdateCphDelegation";
-        public const string Summary = "Update CPH delegation by ID";
-        public const string Description = "Updates an existing CPH delegation by its unique identifier";
-    }
-
     public static class Accept
     {
         public const string Name = "AcceptCphDelegation";

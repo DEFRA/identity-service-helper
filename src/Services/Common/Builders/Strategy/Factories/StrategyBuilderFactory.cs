@@ -15,7 +15,7 @@ public class StrategyBuilderFactory<TService> : IStrategyBuilderFactory<TService
 
     private IOperatorContext? DefaultOperatorContext { get; set; }
 
-    private string? DefaultPrimaryEntityDescription { get; set; }
+    private string? DefaultEntityDescription { get; set; }
 
     public IStrategyBuilderFactory<TService> WithDefaultLogger(ILogger<TService> logger)
     {
@@ -29,9 +29,9 @@ public class StrategyBuilderFactory<TService> : IStrategyBuilderFactory<TService
         return this;
     }
 
-    public IStrategyBuilderFactory<TService> WithDefaultPrimaryEntityDescription(string primaryEntityDescription)
+    public IStrategyBuilderFactory<TService> WithDefaultEntityDescription(string entityDescription)
     {
-        this.DefaultPrimaryEntityDescription = primaryEntityDescription;
+        this.DefaultEntityDescription = entityDescription;
         return this;
     }
 
@@ -95,28 +95,6 @@ public class StrategyBuilderFactory<TService> : IStrategyBuilderFactory<TService
         return getPagedStrategyBuilder;
     }
 
-    public GetAssociationsListStrategyBuilder<TService, TPrimary, TAssociation> BuildGetAssociationsListStrategy<TPrimary, TAssociation>()
-        where TPrimary : class
-        where TAssociation : class
-    {
-        var getAssociationsListStrategyBuilder = new GetAssociationsListStrategyBuilder<TService, TPrimary, TAssociation>();
-
-        AttachDefaults(getAssociationsListStrategyBuilder);
-
-        return getAssociationsListStrategyBuilder;
-    }
-
-    public GetAssociationsPagedStrategyBuilder<TService, TPrimary, TAssociation> BuildGetAssociationsPagedStrategy<TPrimary, TAssociation>()
-        where TPrimary : class
-        where TAssociation : class
-    {
-        var getAssociationsPagedStrategyBuilder = new GetAssociationsPagedStrategyBuilder<TService, TPrimary, TAssociation>();
-
-        AttachDefaults(getAssociationsPagedStrategyBuilder);
-
-        return getAssociationsPagedStrategyBuilder;
-    }
-
     private void AttachDefaults<TBuilder>(StrategyBuilderBase<TService, TBuilder> strategyBuilder)
         where TBuilder : StrategyBuilderBase<TService, TBuilder>
     {
@@ -130,9 +108,9 @@ public class StrategyBuilderFactory<TService> : IStrategyBuilderFactory<TService
             strategyBuilder.WithOperatorContext(DefaultOperatorContext);
         }
 
-        if (DefaultPrimaryEntityDescription != null)
+        if (DefaultEntityDescription != null)
         {
-            strategyBuilder.WithPrimaryEntityDescription(DefaultPrimaryEntityDescription);
+            strategyBuilder.WithEntityDescription(DefaultEntityDescription);
         }
     }
 }

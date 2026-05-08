@@ -19,13 +19,10 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddRepositories(this IServiceCollection services, IConfigurationRoot config)
     {
-        services.AddTransient<IAnimalSpeciesRepository, AnimalSpeciesRepository>();
         services.AddTransient<IUsersRepository, UsersRepository>();
-        services.AddTransient<ICphAssignmentsForAssigneeRepository, CphAssignmentsForAssigneeRepository>();
-        services.AddTransient<ICphDelegationsForDelegateRepository, CphDelegationsForDelegateRepository>();
-        services.AddTransient<ICphDelegatesForCphAssigneeRepository, CphDelegatesForCphAssigneeRepository>();
         services.AddTransient<IRoleRepository, RoleRepository>();
         services.AddTransient<IApplicationsRepository, ApplicationsRepository>();
+        services.AddTransient<IAnimalSpeciesRepository, AnimalSpeciesRepository>();
         services.AddTransient<ICphRepository, CphRepository>();
         services.AddTransient<ICphDelegationsRepository, CphDelegationsRepository>();
         services.AddTransient<ICphAssignmentsRepository, CphAssignmentsRepository>();

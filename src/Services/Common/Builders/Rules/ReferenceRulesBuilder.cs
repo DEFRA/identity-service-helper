@@ -29,7 +29,7 @@ public class ReferenceRulesBuilder<TService>
             if (!validAgainstReferenceRule)
             {
                 logger.LogWarning(
-                    "Execute {ActionDescription} {EntityDescription} failed reference rule '{Description}'",
+                    "Execute {ActionDescription} [{EntityDescription}] failed reference rule '{Description}'",
                     actionDescription.ToLowerInvariant(),
                     primaryEntityDescription.ToLowerInvariant(),
                     rule.Description);

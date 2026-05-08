@@ -60,7 +60,7 @@ public class GetPagedStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TS
             throw new InvalidOperationException(StrategyBuilderConstants.Errors.PageableRepositoryRequired);
         }
 
-        if (PrimaryEntityDescription == null)
+        if (EntityDescription == null)
         {
             throw new InvalidOperationException(StrategyBuilderConstants.Errors.PrimaryEntityDescriptionRequired);
         }
@@ -76,9 +76,9 @@ public class GetPagedStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TS
         }
 
         Logger.LogInformation(
-            "Executing {ActionDescription} {EntityDescription}",
+            "Executing {ActionDescription} [{EntityDescription}]",
             ActionDescription.ToLowerInvariant(),
-            PrimaryEntityDescription.ToLowerInvariant());
+            EntityDescription.ToLowerInvariant());
 
         ExecuteSetup();
 
@@ -95,9 +95,9 @@ public class GetPagedStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TS
         var associatedPagedResults = pagedEntities.ToPagedResults(map);
 
         Logger.LogInformation(
-            "Successfully executed {ActionDescription} {EntityDescription}",
+            "Successfully executed {ActionDescription} [{EntityDescription}]",
             ActionDescription.ToLowerInvariant(),
-            PrimaryEntityDescription.ToLowerInvariant());
+            EntityDescription.ToLowerInvariant());
 
         return associatedPagedResults;
     }

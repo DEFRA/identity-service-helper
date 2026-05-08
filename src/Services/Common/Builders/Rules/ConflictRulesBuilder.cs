@@ -39,7 +39,7 @@ public class ConflictRulesBuilder<TService, TEntity>
             if (!validAgainstBusinessRule)
             {
                 logger.LogWarning(
-                    "Execute {ActionDescription} {EntityDescription} with id {Id} failed conflict rule '{Description}'",
+                    "Execute {ActionDescription} [{EntityDescription}] with id {Id} failed conflict rule '{Description}'",
                     actionDescription.ToLowerInvariant(),
                     primaryEntityDescription.ToLowerInvariant(),
                     request.Id,

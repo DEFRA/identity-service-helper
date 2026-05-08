@@ -17,10 +17,11 @@ using Defra.Identity.Repositories.Cphs;
 using Defra.Identity.Repositories.Delegations;
 using Defra.Identity.Repositories.Roles;
 using Defra.Identity.Repositories.Users;
+using Defra.Identity.Services.Common;
 using Defra.Identity.Services.Common.Builders.Strategy.Factories;
 using Defra.Identity.Services.Common.Context;
+using Defra.Identity.Services.Delegations.Helpers;
 using Defra.Identity.Services.Delegations.Rules;
-using Defra.Identity.Services.Permissions.Helpers;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
 
@@ -33,7 +34,6 @@ public class CphDelegationsService : ICphDelegationsService
     private readonly IOperatorContext operatorContext;
     private readonly IStrategyBuilderFactory<CphDelegationsService> strategyBuilderFactory;
     private readonly IValidator<CreateCphDelegation> createCphDelegationValidator;
-    private readonly IValidator<UpdateCphDelegationById> updateCphDelegationValidator;
     private readonly ILogger<CphDelegationsService> logger;
     private readonly IMessagingFactory messagingFactory;
 
@@ -46,7 +46,6 @@ public class CphDelegationsService : ICphDelegationsService
         IMessagingFactory messagingFactory,
         IStrategyBuilderFactory<CphDelegationsService> strategyBuilderFactory,
         IValidator<CreateCphDelegation> createCphDelegationValidator,
-        IValidator<UpdateCphDelegationById> updateCphDelegationValidator,
         ILogger<CphDelegationsService> logger)
     {
         this.repository = repository;
@@ -57,13 +56,12 @@ public class CphDelegationsService : ICphDelegationsService
         this.messagingFactory = messagingFactory;
         this.strategyBuilderFactory = strategyBuilderFactory;
         this.createCphDelegationValidator = createCphDelegationValidator;
-        this.updateCphDelegationValidator = updateCphDelegationValidator;
         this.logger = logger;
 
         this.strategyBuilderFactory
             .WithDefaultLogger(this.logger)
             .WithDefaultOperatorContext(this.operatorContext)
-            .WithDefaultPrimaryEntityDescription("County parish holding delegation");
+            .WithDefaultEntityDescription(EntityDescriptions.CphDelegation);
     }
 
     public async Task<List<CphDelegation>> GetAll(GetCphDelegations request, CancellationToken cancellationToken = default)
@@ -129,66 +127,17 @@ public class CphDelegationsService : ICphDelegationsService
                         CreatedAt = DateTime.UtcNow,
                         CreatedById = operatorContext.OperatorId,
                     })
-            .WithAfterExecute(async entity =>
-            {
-                await messagingFactory
-                    .QueueDelegationEmailAsync(
-                        new DelegationEmailMessage(entity.Id, MessageTemplateTypes.Delegation.DelegationInvitee)
-                        {
-                            Recipient = entity.DelegatedUserEmail,
-                        },
-                        cancellationToken)
-                    .ConfigureAwait(false);
-            })
-            .ExecuteAndMap(MapCphDelegationEntityToCphDelegation);
-    }
-
-    public async Task<CphDelegation> Update(UpdateCphDelegationById request, CancellationToken cancellationToken = default)
-    {
-        var delegatedUser = request.DelegatedUserId == new Guid("00000000-0000-0000-0000-000000000001")
-            ? await usersRepository.GetSingle(user => user.EmailAddress == request.DelegatedUserEmail, cancellationToken)
-            : await usersRepository.GetSingle(user => user.Id == request.DelegatedUserId, cancellationToken);
-
-        if (delegatedUser is not { DeletedAt: null })
-        {
-            throw new NotFoundException("Delegated user not found");
-        }
-
-        return await strategyBuilderFactory.BuildUpdateStrategy<CountyParishHoldingDelegations>()
-            .WithActionDescription("Update")
-            .WithRepository(repository)
-            .WithCancellationToken(cancellationToken)
-            .WithRequestValidation(() => updateCphDelegationValidator.ValidateAsync(request, cancellationToken))
-            .WithRequestAndEntityFilter(request, delegation => request.Id == delegation.Id)
-            .WithExistenceRules(
-                rules =>
+            .WithAfterExecute(
+                async entity =>
                 {
-                    rules.Add(RulesLibrary.Existence.NotSoftDeleted);
-                    rules.Add(RulesLibrary.Existence.NotExpired);
-                })
-            .WithReferenceRules(
-                rules =>
-                {
-                    rules.Add(cphRepository, request.CountyParishHoldingId, RulesLibrary.Reference.Descriptions.CphMustExistNotDeletedOrExpired);
-                    rules.Add(usersRepository, request.DelegatingUserId, RulesLibrary.Reference.Descriptions.DelegatingUserMustExistNotDeleted);
-                    rules.Add(roleRepository, request.DelegatedUserRoleId, RulesLibrary.Reference.Descriptions.DelegatedUserRoleMustExistNotDeleted);
-                })
-            .WithBusinessRules(
-                rules =>
-                {
-                    rules.Add(RulesLibrary.Business.InvitationNotExpired);
-                    rules.Add(RulesLibrary.Business.InvitationNotAccepted);
-                    rules.Add(RulesLibrary.Business.InvitationNotRejected);
-                    rules.Add(RulesLibrary.Business.NotRevoked);
-                })
-            .WithUpdate(
-                delegation =>
-                {
-                    delegation.CountyParishHoldingId = request.CountyParishHoldingId;
-                    delegation.DelegatingUserId = request.DelegatingUserId;
-                    delegation.DelegatedUserId = delegatedUser.Id;
-                    delegation.DelegatedUserEmail = request.DelegatedUserEmail;
-                    delegation.DelegatedUserRoleId = request.DelegatedUserRoleId;
+                    await messagingFactory
+                        .QueueDelegationEmailAsync(
+                            new DelegationEmailMessage(entity.Id, MessageTemplateTypes.Delegation.DelegationInvitee)
+                            {
+                                Recipient = entity.DelegatedUserEmail,
+                            },
+                            cancellationToken)
+                        .ConfigureAwait(false);
                 })
             .ExecuteAndMap(MapCphDelegationEntityToCphDelegation);
     }
@@ -305,7 +254,7 @@ public class CphDelegationsService : ICphDelegationsService
             ExpiresAt = entity.ExpiresAt,
             RevokedById = entity.RevokedById,
             RevokedByName = entity.RevokedByUser?.DisplayName,
-            Active = PermissionsHelper.IsActiveDelegation(entity),
+            Active = DelegationsHelper.IsActiveDelegation(entity),
         };
     }
 }

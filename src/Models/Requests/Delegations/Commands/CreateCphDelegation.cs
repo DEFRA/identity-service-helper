@@ -4,4 +4,22 @@
 
 namespace Defra.Identity.Models.Requests.Delegations.Commands;
 
-public class CreateCphDelegation : CphDelegationWriteOperation;
+using System.ComponentModel;
+
+public class CreateCphDelegation
+{
+    [Description(OpenApiMetadata.Cphs.Id)]
+    public required Guid CountyParishHoldingId { get; set; }
+
+    [Description(OpenApiMetadata.Delegations.DelegatingUserId)]
+    public required Guid DelegatingUserId { get; set; }
+
+    [Description(OpenApiMetadata.Delegations.DelegatedUserId)]
+    public required Guid DelegatedUserId { get; set; }
+
+    [Description(OpenApiMetadata.Delegations.DelegatedUserRoleId)]
+    public required Guid DelegatedUserRoleId { get; set; }
+
+    [Description(OpenApiMetadata.Delegations.DelegatedUserEmail)]
+    public required string DelegatedUserEmail { get; set; }
+}
