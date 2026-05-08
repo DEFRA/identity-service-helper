@@ -21,7 +21,7 @@ public class PostRouteTests(PostgreContainerFixture fixture) : BaseTests(fixture
     public async Task ShouldCreateUserAccount()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<UsersRepository>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<UsersRepository>();
         var repository = new UsersRepository(Context, ReadOnlyContext, logger);
         var adminUser = await repository.GetSingle(
             x =>

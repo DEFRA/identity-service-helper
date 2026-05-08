@@ -21,7 +21,7 @@ public class DeleteByIdRouteTests(PostgreContainerFixture fixture) : BaseTests(f
     public async Task ShouldDeleteApplication()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<ApplicationsRepository>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<ApplicationsRepository>();
         var repository = new ApplicationsRepository(Context, ReadOnlyContext, logger);
 
         var adminUser = Context.UserAccounts.First();
@@ -54,7 +54,7 @@ public class DeleteByIdRouteTests(PostgreContainerFixture fixture) : BaseTests(f
     public async Task ShouldThrowNotFoundExceptionWhenAppDoesNotExist()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<ApplicationsRepository>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<ApplicationsRepository>();
         var repository = new ApplicationsRepository(Context, ReadOnlyContext, logger);
         var adminUser = Context.UserAccounts.First();
         var operatorId = adminUser.Id;

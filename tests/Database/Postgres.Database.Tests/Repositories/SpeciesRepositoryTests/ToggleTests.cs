@@ -19,7 +19,7 @@ public class ToggleTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     public async Task ShouldUpdateSpecies()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<AnimalSpeciesRepository>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<AnimalSpeciesRepository>();
         var repository = new AnimalSpeciesRepository(Context, ReadOnlyContext, logger);
         const string id = "CTT";
 
@@ -49,7 +49,7 @@ public class ToggleTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     public async Task ShouldThrowWhenSpeciesDoesNotExist()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<AnimalSpeciesRepository>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<AnimalSpeciesRepository>();
         var repository = new AnimalSpeciesRepository(Context, ReadOnlyContext, logger);
         const string id = "FAKE";
 

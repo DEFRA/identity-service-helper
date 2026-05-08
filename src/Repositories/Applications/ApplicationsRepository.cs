@@ -10,14 +10,15 @@ using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Common.Exceptions;
 using Microsoft.Extensions.Logging;
 
-public class ApplicationsRepository(
+public partial class ApplicationsRepository(
     PostgresDbContext context,
     ReadOnlyPostgresDbContext readOnlyContext,
-    ILogger<ApplicationsRepository> logger) : IApplicationsRepository
+    ILogger<ApplicationsRepository> logger)
+    : IApplicationsRepository
 {
     public async Task<Applications?> GetSingle(Expression<Func<Applications, bool>> predicate, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Getting single application");
+        LogGettingSingleApplication();
         var query = await readOnlyContext.Applications
             .SingleOrDefaultAsync(predicate, cancellationToken);
 
@@ -26,7 +27,7 @@ public class ApplicationsRepository(
 
     public async Task<List<Applications>> GetList(Expression<Func<Applications, bool>> predicate, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Getting list of applications");
+        LogGettingListOfApplications();
         var query = await readOnlyContext.Applications
             .Where(predicate).ToListAsync<Applications>(cancellationToken);
 
@@ -37,7 +38,7 @@ public class ApplicationsRepository(
     {
         ArgumentNullException.ThrowIfNull(entity);
 
-        logger.LogInformation("Creating application with id {Id}", entity.Id);
+        LogCreatingApplicationWithId(entity.Id);
         var addedEntry = await context.Applications.AddAsync(entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
@@ -48,7 +49,7 @@ public class ApplicationsRepository(
     {
         ArgumentNullException.ThrowIfNull(entity);
 
-        logger.LogInformation("Updating application with id {Id}", entity.Id);
+        LogUpdatingApplicationWithId(entity.Id);
         context.Update(entity);
         await context.SaveChangesAsync(cancellationToken);
         return entity;
@@ -56,13 +57,13 @@ public class ApplicationsRepository(
 
     public async Task<bool> Delete(Expression<Func<Applications, bool>> predicate, Guid operatorId, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Deleting application with operator id {OperatorId}", operatorId);
+        LogDeletingApplicationWithOperatorId(operatorId);
         var application = await context.Applications
             .SingleOrDefaultAsync(predicate, cancellationToken);
 
         if (application == null)
         {
-            logger.LogWarning("Application not found for deletion");
+            LogApplicationNotFoundForDeletion();
             throw new NotFoundException("Application not found");
         }
 

@@ -20,7 +20,7 @@ public class PutByIdRouteTests(PostgreContainerFixture fixture) : BaseTests(fixt
     public async Task ShouldUpdateUserAccount()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<UsersRepository>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<UsersRepository>();
         var repository = new UsersRepository(Context, ReadOnlyContext, logger);
 
         var user = new UserAccounts

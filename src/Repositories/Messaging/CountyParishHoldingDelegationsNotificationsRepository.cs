@@ -10,7 +10,7 @@ using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Common.Exceptions;
 using Microsoft.Extensions.Logging;
 
-public class CountyParishHoldingDelegationsNotificationsRepository(
+public partial class CountyParishHoldingDelegationsNotificationsRepository(
     PostgresDbContext context,
     ReadOnlyPostgresDbContext readOnlyContext,
     ILogger<CountyParishHoldingDelegationsNotificationsRepository> logger)
@@ -20,7 +20,7 @@ public class CountyParishHoldingDelegationsNotificationsRepository(
         Expression<Func<CountyParishHoldingDelegationsNotifications, bool>> predicate,
         CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Getting single delegation notification");
+        LogGettingSingleDelegationNotification();
 
         var result = await readOnlyContext.CountyParishHoldingDelegationsNotifications
             .Include(x => x.Delegation)
@@ -34,7 +34,7 @@ public class CountyParishHoldingDelegationsNotificationsRepository(
         Expression<Func<CountyParishHoldingDelegationsNotifications, bool>> predicate,
         CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Getting list of delegation notifications");
+        LogGettingListOfDelegationNotifications();
 
         var results = await readOnlyContext.CountyParishHoldingDelegationsNotifications
             .Include(x => x.Delegation)
@@ -51,10 +51,7 @@ public class CountyParishHoldingDelegationsNotificationsRepository(
     {
         ArgumentNullException.ThrowIfNull(entity);
 
-        logger.LogInformation(
-            "Creating delegation notification for delegation {DelegationId} and message {MessageId}",
-            entity.DelegationId,
-            entity.MessageId);
+        LogCreatingDelegationNotificationForDelegationAndMessage(entity.DelegationId, entity.MessageId);
 
         var addedEntry = await context.CountyParishHoldingDelegationsNotifications.AddAsync(
             entity,
@@ -78,10 +75,7 @@ public class CountyParishHoldingDelegationsNotificationsRepository(
     {
         ArgumentNullException.ThrowIfNull(entity);
 
-        logger.LogInformation(
-            "Updating delegation notification for delegation {DelegationId} and message {MessageId}",
-            entity.DelegationId,
-            entity.MessageId);
+        LogUpdatingDelegationNotificationForDelegationAndMessage(entity.DelegationId, entity.MessageId);
 
         context.Update(entity);
         await context.SaveChangesAsync(cancellationToken);
@@ -101,16 +95,14 @@ public class CountyParishHoldingDelegationsNotificationsRepository(
         Guid operatorId,
         CancellationToken cancellationToken = default)
     {
-        logger.LogInformation(
-            "Deleting delegation notification with operator id {OperatorId}",
-            operatorId);
+        LogDeletingDelegationNotificationWithOperatorId(operatorId);
 
         var entity = await context.CountyParishHoldingDelegationsNotifications
             .SingleOrDefaultAsync(predicate, cancellationToken);
 
         if (entity == null)
         {
-            logger.LogWarning("Delegation notification not found for deletion");
+            LogDelegationNotificationNotFoundForDeletion();
             throw new NotFoundException("Delegation notification not found");
         }
 

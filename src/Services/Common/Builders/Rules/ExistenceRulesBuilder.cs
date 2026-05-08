@@ -10,7 +10,7 @@ using Defra.Identity.Services.Common.Builders.Predicates;
 using Defra.Identity.Services.Common.Builders.Predicates.Models;
 using Microsoft.Extensions.Logging;
 
-public class ExistenceRulesBuilder<TService, TEntity>
+public partial class ExistenceRulesBuilder<TService, TEntity>
     where TService : class
     where TEntity : class
 {
@@ -38,7 +38,7 @@ public class ExistenceRulesBuilder<TService, TEntity>
 
             if (!validAgainstExistenceRule)
             {
-                logger.LogWarning("{EntityDescription} with id {Id} not found", primaryEntityDescription, request.Id);
+                LogEntityDescriptionWithIdIdNotFound(logger, primaryEntityDescription, request.Id);
 
                 throw new NotFoundException($"{primaryEntityDescription} not found.");
             }

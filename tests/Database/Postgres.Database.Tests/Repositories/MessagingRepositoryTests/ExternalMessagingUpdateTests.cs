@@ -20,7 +20,7 @@ public class ExternalMessagingUpdateTests(PostgreContainerFixture fixture)
     public async Task ShouldUpdateDetachedMessageWhenCreatedByUserAlreadyTracked()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<ExternalMessagingRepository>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<ExternalMessagingRepository>();
         var repository = new ExternalMessagingRepository(Context, ReadOnlyContext, logger);
 
         var trackedUser = await Context.UserAccounts

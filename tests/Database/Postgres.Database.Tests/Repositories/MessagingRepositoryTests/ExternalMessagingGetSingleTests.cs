@@ -21,7 +21,7 @@ public class ExternalMessagingGetSingleTests(PostgreContainerFixture fixture)
     public async Task ShouldGetSingleEntity()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<ExternalMessagingRepository>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<ExternalMessagingRepository>();
         var repository = new ExternalMessagingRepository(Context, ReadOnlyContext, logger);
 
         Expression<Func<ExternalMessaging, bool>> filter = msg => msg.Id == 1;
@@ -30,7 +30,7 @@ public class ExternalMessagingGetSingleTests(PostgreContainerFixture fixture)
         var entity = await repository.GetSingle(filter, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.Received(1).Log(LogLevel.Information, "Getting single external messaging record");
+        logger.VerifyLogContainsOne(LogLevel.Information, "Getting single external messaging record");
 
         entity.ShouldNotBeNull();
 
@@ -54,7 +54,7 @@ public class ExternalMessagingGetSingleTests(PostgreContainerFixture fixture)
     public async Task ShouldReturnNullWhenEntityDoesNotExist()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<ExternalMessagingRepository>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<ExternalMessagingRepository>();
         var repository = new ExternalMessagingRepository(Context, ReadOnlyContext, logger);
 
         Expression<Func<ExternalMessaging, bool>> filter = msg => msg.Id == 9999;
@@ -63,7 +63,7 @@ public class ExternalMessagingGetSingleTests(PostgreContainerFixture fixture)
         var entity = await repository.GetSingle(filter, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.Received(1).Log(LogLevel.Information, "Getting single external messaging record");
+        logger.VerifyLogContainsOne(LogLevel.Information, "Getting single external messaging record");
 
         entity.ShouldBeNull();
     }

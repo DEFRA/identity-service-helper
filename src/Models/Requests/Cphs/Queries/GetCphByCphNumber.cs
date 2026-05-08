@@ -6,6 +6,9 @@ namespace Defra.Identity.Models.Requests.Cphs.Queries;
 
 using Defra.Identity.Models.Requests.Cphs.Common;
 
-public class GetCphByCphNumber : OperationByCphNumber
-{
-}
+#pragma warning disable S2094
+
+public sealed class GetCphByCphNumber
+    : OperationByCphNumber;
+
+#pragma warning restore S2094

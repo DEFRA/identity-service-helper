@@ -12,14 +12,15 @@ using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Shouldly;
 
-public class PostRouteTests(PostgreContainerFixture fixture) : BaseTests(fixture)
+public class PostRouteTests(PostgreContainerFixture fixture)
+    : BaseTests(fixture)
 {
     [Fact]
     [Description("Should create a new delegation")]
     public async Task ShouldCreateDelegation()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<CphDelegationsRepository>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<CphDelegationsRepository>();
         var repository = new CphDelegationsRepository(Context, ReadOnlyContext, logger);
 
         var adminUser = Context.UserAccounts.First();

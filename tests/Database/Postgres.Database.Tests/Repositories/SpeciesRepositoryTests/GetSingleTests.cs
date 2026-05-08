@@ -19,7 +19,7 @@ public class GetSingleTests(PostgreContainerFixture fixture) : BaseTests(fixture
     public async Task ShouldGetSingleSpecies()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<AnimalSpeciesRepository>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<AnimalSpeciesRepository>();
         var repository = new AnimalSpeciesRepository(Context, ReadOnlyContext, logger);
 
         Expression<Func<AnimalSpecies, bool>> filter = species => species.Id == "CTT";
@@ -28,7 +28,7 @@ public class GetSingleTests(PostgreContainerFixture fixture) : BaseTests(fixture
         var entity = await repository.GetSingle(filter, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.Received(1).Log(LogLevel.Information, "Getting single animal species");
+        logger.VerifyLogContainsOne(LogLevel.Information, "Getting single animal species");
 
         entity.ShouldNotBeNull();
 
@@ -42,7 +42,7 @@ public class GetSingleTests(PostgreContainerFixture fixture) : BaseTests(fixture
     public async Task ShouldReturnNullWhenSpeciesDoesNotExist()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<AnimalSpeciesRepository>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<AnimalSpeciesRepository>();
         var repository = new AnimalSpeciesRepository(Context, ReadOnlyContext, logger);
 
         var noneExistingSpecoesId = "FAKE";
@@ -53,7 +53,7 @@ public class GetSingleTests(PostgreContainerFixture fixture) : BaseTests(fixture
         var entity = await repository.GetSingle(filter, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.Received(1).Log(LogLevel.Information, "Getting single animal species");
+        logger.VerifyLogContainsOne(LogLevel.Information, "Getting single animal species");
 
         entity.ShouldBeNull();
     }

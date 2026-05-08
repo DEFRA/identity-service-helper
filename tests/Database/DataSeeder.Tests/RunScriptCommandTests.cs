@@ -53,7 +53,7 @@ public class RunScriptCommandTests
 
         // Assert
         parseResult.Errors.ShouldNotBeEmpty();
-        parseResult.Errors.First().Message.ShouldContain("Script file does not exist");
+        parseResult.Errors[0].Message.ShouldContain("Script file does not exist");
     }
 
     [Fact]

@@ -82,7 +82,6 @@ public static class UsersEndpoints
     }
 
     private static async Task<IResult> GetAllRoute(
-        QueryRequestHeaders headers,
         [AsParameters] GetAllUsers request,
         IUserService service)
     {
@@ -92,7 +91,6 @@ public static class UsersEndpoints
     }
 
     private static async Task<IResult> GetByIdRoute(
-        QueryRequestHeaders headers,
         [AsParameters] GetUserById request,
         IUserService service)
     {

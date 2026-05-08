@@ -21,7 +21,7 @@ using NSubstitute;
 public class CphServiceTests
 {
     private readonly ICphRepository cphRepository = Substitute.For<ICphRepository>();
-    private readonly ILogger<CphService> logger = Substitute.For<ILogger<CphService>>();
+    private readonly ILogger<CphService> logger = DefraLoggerExtensions.CreateNSubstituteLogger<CphService>();
     private readonly ICphService cphService;
 
     public CphServiceTests()
@@ -52,7 +52,7 @@ public class CphServiceTests
         var pagedResults = await cphService.GetAllPaged(request, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.Received(1).Log(LogLevel.Information, "Getting all county parish holdings by page");
+        logger.VerifyLogContainsOne(LogLevel.Information, "Getting all county parish holdings by page");
 
         pagedResults.ShouldSatisfyAllConditions(
             (x) => x.Items.Count().ShouldBe(2),
@@ -102,7 +102,7 @@ public class CphServiceTests
         var pagedResults = await cphService.GetAllPaged(request, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.Received(1).Log(LogLevel.Information, "Getting all county parish holdings by page");
+        logger.VerifyLogContainsOne(LogLevel.Information, "Getting all county parish holdings by page");
 
         pagedResults.ShouldSatisfyAllConditions(
             (x) => x.Items.Count().ShouldBe(1),
@@ -145,7 +145,7 @@ public class CphServiceTests
         var pagedResults = await cphService.GetAllPaged(request, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.Received(1).Log(LogLevel.Information, "Getting all county parish holdings by page");
+        logger.VerifyLogContainsOne(LogLevel.Information, "Getting all county parish holdings by page");
 
         pagedResults.ShouldSatisfyAllConditions(
             (x) => x.Items.Count().ShouldBe(2),
@@ -195,7 +195,7 @@ public class CphServiceTests
         var pagedResults = await cphService.GetAllPaged(request, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.Received(1).Log(LogLevel.Information, "Getting all county parish holdings by page");
+        logger.VerifyLogContainsOne(LogLevel.Information, "Getting all county parish holdings by page");
 
         pagedResults.ShouldSatisfyAllConditions(
             (x) => x.Items.Count().ShouldBe(2),
@@ -245,7 +245,7 @@ public class CphServiceTests
         var pagedResults = await cphService.GetAllPaged(request, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.Received(1).Log(LogLevel.Information, "Getting all county parish holdings by page");
+        logger.VerifyLogContainsOne(LogLevel.Information, "Getting all county parish holdings by page");
 
         pagedResults.ShouldSatisfyAllConditions(
             (x) => x.Items.Count().ShouldBe(2),
@@ -295,7 +295,7 @@ public class CphServiceTests
         var pagedResults = await cphService.GetAllPaged(request, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.Received(1).Log(LogLevel.Information, "Getting all county parish holdings by page");
+        logger.VerifyLogContainsOne(LogLevel.Information, "Getting all county parish holdings by page");
 
         pagedResults.ShouldSatisfyAllConditions(
             (x) => x.Items.Count().ShouldBe(1),
@@ -338,7 +338,7 @@ public class CphServiceTests
         var pagedResults = await cphService.GetAllPaged(request, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.Received(1).Log(LogLevel.Information, "Getting all county parish holdings by page");
+        logger.VerifyLogContainsOne(LogLevel.Information, "Getting all county parish holdings by page");
 
         pagedResults.ShouldSatisfyAllConditions(
             (x) => x.Items.Count().ShouldBe(2),
@@ -388,7 +388,7 @@ public class CphServiceTests
         var pagedResults = await cphService.GetAllPaged(request, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.Received(1).Log(LogLevel.Information, "Getting all county parish holdings by page");
+        logger.VerifyLogContainsOne(LogLevel.Information, "Getting all county parish holdings by page");
 
         pagedResults.ShouldSatisfyAllConditions(
             (x) => x.Items.Count().ShouldBe(2),

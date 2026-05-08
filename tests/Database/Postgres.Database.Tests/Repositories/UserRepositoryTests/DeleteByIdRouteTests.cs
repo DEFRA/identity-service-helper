@@ -22,7 +22,7 @@ public class DeleteByIdRouteTests(PostgreContainerFixture fixture) : BaseTests(f
     public async Task ShouldDeleteUserAccount()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<UsersRepository>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<UsersRepository>();
         var repository = new UsersRepository(Context, ReadOnlyContext, logger);
         var adminUser = await repository
             .GetSingle(x => x.EmailAddress == EmailAddress, TestContext.Current.CancellationToken);
@@ -64,7 +64,7 @@ public class DeleteByIdRouteTests(PostgreContainerFixture fixture) : BaseTests(f
     public async Task ShouldThrowWhenDeletingNonExistentUser()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<UsersRepository>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<UsersRepository>();
         var repository = new UsersRepository(Context, ReadOnlyContext, logger);
         var nonExistentId = Guid.NewGuid();
         var operatorId = Guid.NewGuid();

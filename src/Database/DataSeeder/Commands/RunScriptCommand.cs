@@ -40,7 +40,7 @@ public class RunScriptCommand : BaseCommand
             cancellationToken));
     }
 
-    private async Task<int> ExecuteAsync(
+    private static async Task<int> ExecuteAsync(
         string? databaseUrl,
         string? databaseUserName,
         string? databasePassword,

@@ -42,7 +42,6 @@ public static class AnimalSpeciesEndpoints
     }
 
     private static async Task<IResult> GetAllRoute(
-        QueryRequestHeaders headers,
         [AsParameters] GetAllAnimalSpecies request,
         IAnimalSpeciesService service)
     {
@@ -52,7 +51,6 @@ public static class AnimalSpeciesEndpoints
     }
 
     private static async Task<IResult> GetByIdRoute(
-        QueryRequestHeaders headers,
         [AsParameters] GetAnimalSpecies request,
         IAnimalSpeciesService service)
     {

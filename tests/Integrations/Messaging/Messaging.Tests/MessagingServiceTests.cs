@@ -22,7 +22,7 @@ public class MessagingServiceTests
 
     private const string TestKey = "authtestkey-3f6a9ae4-62d7-48fc-92fa-fb7008e44f9d-b14612fd-e032-4961-9848-cd693b4e8ac7";
 
-    private readonly ILogger<MessagingService> logger = Substitute.For<ILogger<MessagingService>>();
+    private readonly ILogger<MessagingService> logger = DefraLoggerExtensions.CreateNSubstituteLogger<MessagingService>();
     private readonly IOptions<MessagingOptions> options = Substitute.For<IOptions<MessagingOptions>>();
     private readonly IMessagingService service;
 

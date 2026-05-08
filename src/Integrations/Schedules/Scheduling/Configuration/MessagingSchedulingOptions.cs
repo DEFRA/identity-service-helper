@@ -4,4 +4,5 @@
 
 namespace Defra.Identity.Scheduling.Configuration;
 
-public class MessagingSchedulingOptions : BaseSchedulingOptions;
+public class MessagingSchedulingOptions
+    : BaseSchedulingOptions;

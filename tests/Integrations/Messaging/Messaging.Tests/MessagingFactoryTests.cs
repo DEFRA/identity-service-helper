@@ -14,7 +14,7 @@ using NSubstitute;
 
 public class MessagingFactoryTests
 {
-    private readonly ILogger<MessagingFactory> logger = Substitute.For<ILogger<MessagingFactory>>();
+    private readonly ILogger<MessagingFactory> logger = DefraLoggerExtensions.CreateNSubstituteLogger<MessagingFactory>();
     private readonly IMessagingService messagingService = Substitute.For<IMessagingService>();
     private readonly MessagingFactory service;
     private readonly IExternalMessagingRepository msgRepository

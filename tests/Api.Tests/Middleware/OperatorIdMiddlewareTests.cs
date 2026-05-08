@@ -59,7 +59,7 @@ public class OperatorIdMiddlewareTests
     public async Task UseRequests_WithNoEndpoint_ReturnsWithoutProcessing()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<OperatorIdMiddleware>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<OperatorIdMiddleware>();
         var operatorIdService = Substitute.For<IOperatorIdService>();
         var middleware = new OperatorIdMiddleware(operatorIdService, logger);
         var context = new DefaultHttpContext();
@@ -193,12 +193,7 @@ public class OperatorIdMiddlewareTests
         var ex = await Should.ThrowAsync<Exception>(() => middleware.InvokeAsync(context, next));
         ex.ShouldBe(exception);
 
-        logger.Received(1).Log(
-            LogLevel.Error,
-            Arg.Any<EventId>(),
-            Arg.Any<Arg.AnyType>(),
-            exception,
-            Arg.Any<Func<Arg.AnyType, Exception?, string>>());
+        logger.VerifyLogExceptionTypeOne<Exception>(LogLevel.Error);
     }
 
     private static (
@@ -208,7 +203,7 @@ public class OperatorIdMiddlewareTests
         Func<bool> NextCalled,
         ILogger<OperatorIdMiddleware> Logger) CreateContext()
     {
-        var logger = Substitute.For<ILogger<OperatorIdMiddleware>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<OperatorIdMiddleware>();
         var operatorIdService = Substitute.For<IOperatorIdService>();
         var middleware = new OperatorIdMiddleware(operatorIdService, logger);
         var context = new DefaultHttpContext();

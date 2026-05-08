@@ -4,4 +4,8 @@
 
 namespace Defra.Identity.Api.MetaData;
 
+#pragma warning disable S2094
+
 public sealed class RequiresOperatorId;
+
+#pragma warning restore S2094

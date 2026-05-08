@@ -18,7 +18,7 @@ public class KeeperDataImportCompleteHandlerTests
 
     public KeeperDataImportCompleteHandlerTests()
     {
-        logger = Substitute.For<ILogger<KeeperDataImportCompleteHandler>>();
+        logger = DefraLoggerExtensions.CreateNSubstituteLogger<KeeperDataImportCompleteHandler>();
         handler = new KeeperDataImportCompleteHandler(logger);
     }
 

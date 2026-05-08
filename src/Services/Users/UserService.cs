@@ -13,22 +13,14 @@ using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Repositories.Users;
 using Microsoft.Extensions.Logging;
 
-public class UserService : IUserService
+public partial class UserService(
+    IUsersRepository repository,
+    ILogger<UserService> logger)
+    : IUserService
 {
-    private readonly IUsersRepository repository;
-    private readonly ILogger<UserService> logger;
-
-    public UserService(
-        IUsersRepository repository,
-        ILogger<UserService> logger)
-    {
-        this.repository = repository;
-        this.logger = logger;
-    }
-
     public async Task<List<User>> GetAll(GetAllUsers request, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Getting all animal users, includeHidden: {IncludeHidden}", request.IncludeInactive);
+        LogGettingAllUsersIncludeHidden(request.IncludeInactive);
         Expression<Func<UserAccounts, bool>> filter = x => IncludeInactiveInferred(request) || x.DeletedBy == null;
 
         var userAccounts = await repository.GetList(filter, cancellationToken);
@@ -40,14 +32,14 @@ public class UserService : IUserService
 
     public async Task<User> Get(GetUserById request, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Getting user by id {Id}", request.Id);
+        LogGettingUserById(request.Id);
         Expression<Func<UserAccounts, bool>> filter = x => x.Id == request.Id;
 
         var userAccount = await repository.GetSingle(filter, cancellationToken);
 
         if (userAccount == null)
         {
-            logger.LogWarning("User with id {Id} not found", request.Id);
+            LogUserWithIdNotFound(request.Id);
             throw new NotFoundException("user not found.");
         }
 
@@ -58,12 +50,12 @@ public class UserService : IUserService
 
     public async Task<User> Upsert(UpdateUser request, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Upserting user with id {Id}", request.Id);
+        LogUpsertingUserWithId(request.Id);
         var existingUser = await repository.GetSingle(x => x.Id.Equals(request.Id), cancellationToken);
 
         if (existingUser != null)
         {
-            logger.LogInformation("User with id {Id} found, updating", request.Id);
+            LogUserWithIdFoundUpdating(request.Id);
             existingUser.FirstName = request.FirstName;
             existingUser.LastName = request.LastName;
             existingUser.EmailAddress = request.Email;
@@ -72,7 +64,7 @@ public class UserService : IUserService
             return MapUserEntityToUser(updated);
         }
 
-        logger.LogInformation("User with id {Id} not found, creating", request.Id);
+        LogUserWithIdNotFoundCreating(request.Id);
 
         var userAccount = new UserAccounts()
         {
@@ -86,12 +78,12 @@ public class UserService : IUserService
 
     public async Task<User> Update(UpdateUser request, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Updating user with id {Id}", request.Id);
+        LogUpdatingUserWithId(request.Id);
         var existingUser = await repository.GetSingle(x => x.Id.Equals(request.Id), cancellationToken);
 
         if (existingUser == null)
         {
-            logger.LogWarning("User with id {Id} not found for update", request.Id);
+            LogUserWithIdNotFound(request.Id);
             throw new NullReferenceException($"User with id {request.Id} not found.");
         }
 
@@ -107,7 +99,7 @@ public class UserService : IUserService
 
     public async Task<User> Create(CreateUser request, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Creating new user with email {Email}", request.Email);
+        LogCreatingNewUserWithEmail(request.Email);
 
         var newUser = new UserAccounts
         {
@@ -125,7 +117,7 @@ public class UserService : IUserService
 
     public async Task<bool> Delete(DeleteUser request, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Deleting user with id {Id} by operator {OperatorId}", request.Id, request.OperatorId);
+        LogDeletingUserWithIdByOperatorId(request.Id, request.OperatorId);
         return await repository.Delete(x => x.Id == request.Id, request.OperatorId, cancellationToken);
     }
 

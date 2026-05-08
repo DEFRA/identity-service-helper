@@ -18,9 +18,10 @@ using Notify.Client;
 using Notify.Exceptions;
 using Notify.Models.Responses;
 
-public class MessagingService(
+public partial class MessagingService(
     ILogger<MessagingService> logger,
-    IOptions<MessagingOptions> config) : IMessagingService
+    IOptions<MessagingOptions> config)
+    : IMessagingService
 {
     private static readonly TimeSpan RegexTimeout = TimeSpan.FromSeconds(1);
 
@@ -38,7 +39,7 @@ public class MessagingService(
 
     public async Task<MessageStatus> GetNotificationAsync(string id)
     {
-        logger.LogInformation("Get message notification. NotifyId: {NotificationId}", id);
+        LogGetMessageNotificationNotifyId(id);
         var client = new NotificationClient(config.Value.ApiKey);
         var notification = await client.GetNotificationByIdAsync(id);
 
@@ -51,50 +52,11 @@ public class MessagingService(
             Status = notification.status,
         };
 
-        logger.LogInformation(
-            "Get message notification. NotifyId: {NotifyId}, Status: {Status}",
-            result.NotifyId,
-            result.Status);
+        LogGetMessageNotificationNotifyIdStatus(result.NotifyId, result.Status);
         return result;
     }
 
-    private async Task<MessageResponse> SendMessageAsync(Message request, MessageTypes messageType)
-    {
-        logger.LogInformation(
-            "Sending {MessageType} message. Recipient: {Recipient}, TemplateId: {TemplateId}",
-            messageType,
-            request.Recipient,
-            request.TemplateId);
-
-        var client = new NotificationClient(config.Value.ApiKey);
-        try
-        {
-            var response = await InvokeSendAsync(request, client, messageType);
-
-            var result = new MessageResponse()
-            {
-                NotifyId = response.id,
-                Recipient = request.Recipient,
-                MessageType = messageType,
-                TemplateId = request.TemplateId.ToString(),
-                Status = HttpStatusCode.OK,
-            };
-
-            logger.LogInformation(
-                "{MessageType} sent. Recipient: {Recipient}, TemplateId: {TemplateId}, NotifyId: {NotifyId}",
-                messageType,
-                request.Recipient,
-                request.TemplateId,
-                result.NotifyId);
-            return result;
-        }
-        catch (NotifyClientException ex)
-        {
-           return HandleNotifyClientException(ex, request);
-        }
-    }
-
-    private async Task<NotificationResponse> InvokeSendAsync(
+    private static async Task<NotificationResponse> InvokeSendAsync(
         Message request,
         NotificationClient client,
         MessageTypes messageType)
@@ -111,6 +73,33 @@ public class MessagingService(
                 .ConfigureAwait(false),
             _ => throw new ArgumentOutOfRangeException(nameof(messageType), messageType, null),
         };
+    }
+
+    private async Task<MessageResponse> SendMessageAsync(Message request, MessageTypes messageType)
+    {
+        LogSendingMessageType(messageType, request.Recipient, request.TemplateId);
+
+        var client = new NotificationClient(config.Value.ApiKey);
+        try
+        {
+            var response = await InvokeSendAsync(request, client, messageType);
+
+            var result = new MessageResponse()
+            {
+                NotifyId = response.id,
+                Recipient = request.Recipient,
+                MessageType = messageType,
+                TemplateId = request.TemplateId.ToString(),
+                Status = HttpStatusCode.OK,
+            };
+
+            LogMessageTypeSent(messageType, request.Recipient, request.TemplateId, result.NotifyId);
+            return result;
+        }
+        catch (NotifyClientException ex)
+        {
+           return HandleNotifyClientException(ex, request);
+        }
     }
 
     private MessageResponse HandleNotifyClientException(NotifyClientException ex, Message request)
@@ -135,12 +124,7 @@ public class MessagingService(
             result.Errors = tmp.Errors;
         }
 
-        logger.LogError(
-            ex,
-            "Error sending message. Recipient: {Recipient}, TemplateId: {TemplateId}, Reason: {Reason}",
-            request.Recipient,
-            request.TemplateId,
-            result.Errors.First().Message);
+        LogErrorSendingMessage(request.Recipient, request.TemplateId, result.Errors[0].Message, ex);
 
         return result;
     }

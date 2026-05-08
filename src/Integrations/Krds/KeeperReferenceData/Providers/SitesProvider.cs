@@ -9,14 +9,15 @@ using System.Web;
 using Defra.Identity.KeeperReferenceData.Models;
 using Microsoft.Extensions.Logging;
 
-public class SitesProvider(HttpClient client, ILogger<SitesProvider> logger) : ISitesProvider
+public partial class SitesProvider(HttpClient client, ILogger<SitesProvider> logger)
+    : ISitesProvider
 {
     public async Task<List<Site>> Sites(DateTime since, CancellationToken cancellationToken)
     {
-        logger.LogInformation("Getting sites");
+        LogGettingSites();
         var request = string.Concat(client.BaseAddress, GetSitesSince(since));
 
-        logger.LogInformation("Request: {Request}", request);
+        LogRequestRequest(request);
         using var response = await client.GetAsync(request, cancellationToken);
         response.EnsureSuccessStatusCode();
 

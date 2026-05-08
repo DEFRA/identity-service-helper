@@ -10,7 +10,8 @@ using Defra.Identity.Services.Common.Builders.Strategy.Base;
 using Defra.Identity.Services.Common.Builders.Strategy.Constants;
 using Microsoft.Extensions.Logging;
 
-public class CreateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TService, CreateStrategyBuilder<TService, TEntity>>
+public partial class CreateStrategyBuilder<TService, TEntity>
+    : StrategyBuilderBase<TService, CreateStrategyBuilder<TService, TEntity>>
     where TService : class
     where TEntity : class
 {
@@ -88,11 +89,7 @@ public class CreateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
             throw new InvalidOperationException(StrategyBuilderConstants.Errors.CreateActionRequired);
         }
 
-        Logger.LogInformation(
-            "Executing {ActionDescription} [{EntityDescription}] by operator {OperatorId}",
-            ActionDescription.ToLowerInvariant(),
-            EntityDescription.ToLowerInvariant(),
-            OperatorContext.OperatorId);
+        LogExecutingActionEntityWithByOperatorId(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant(), OperatorContext.OperatorId);
 
         ExecuteSetup();
 
@@ -112,11 +109,7 @@ public class CreateStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TSer
             await AfterExecuteAction.Invoke(createdEntity);
         }
 
-        Logger.LogInformation(
-            "Successfully executed {ActionDescription} [{EntityDescription}] by operator {OperatorId}",
-            ActionDescription.ToLowerInvariant(),
-            EntityDescription.ToLowerInvariant(),
-            OperatorContext.OperatorId);
+        LogSuccessfullyExecutedActionEntityByOperatorId(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant(), OperatorContext.OperatorId);
 
         return createdEntity;
     }

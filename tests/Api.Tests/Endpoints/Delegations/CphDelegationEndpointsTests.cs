@@ -49,7 +49,7 @@ public class CphDelegationEndpointsTests
         // Act
         var result = await (Task<IResult>)typeof(CphDelegationEndpoints)
             .GetMethod("GetAllRoute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
-            .Invoke(null, [queryHeaders, request, service])!;
+            .Invoke(null, [request, service])!;
 
         // Assert
         result.ShouldBeOfType<Ok<List<CphDelegation>>>();
@@ -86,7 +86,7 @@ public class CphDelegationEndpointsTests
         // Act
         var result = await (Task<IResult>)typeof(CphDelegationEndpoints)
             .GetMethod("GetByIdRoute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
-            .Invoke(null, [queryHeaders, request, service])!;
+            .Invoke(null, [request, service])!;
 
         // Assert
         result.ShouldBeOfType<Ok<CphDelegation>>();
@@ -125,7 +125,7 @@ public class CphDelegationEndpointsTests
         // Act
         var result = await (Task<IResult>)typeof(CphDelegationEndpoints)
             .GetMethod("PostRoute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
-            .Invoke(null, [commandHeaders, request, service])!;
+            .Invoke(null, [request, service])!;
 
         // Assert
         result.ShouldBeOfType<CreatedAtRoute<CphDelegation>>();
@@ -149,7 +149,7 @@ public class CphDelegationEndpointsTests
         // Act
         var result = await (Task<IResult>)typeof(CphDelegationEndpoints)
             .GetMethod("DeleteByIdRoute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
-            .Invoke(null, [commandHeaders, request, service])!;
+            .Invoke(null, [request, service])!;
 
         // Assert
         result.ShouldBeOfType<NoContent>();

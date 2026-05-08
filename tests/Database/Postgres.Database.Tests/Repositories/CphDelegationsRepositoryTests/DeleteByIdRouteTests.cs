@@ -21,7 +21,7 @@ public class DeleteByIdRouteTests(PostgreContainerFixture fixture) : BaseTests(f
     public async Task ShouldDeleteDelegation()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<CphDelegationsRepository>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<CphDelegationsRepository>();
         var repository = new CphDelegationsRepository(Context, ReadOnlyContext, logger);
 
         var id = Guid.NewGuid();
@@ -72,7 +72,7 @@ public class DeleteByIdRouteTests(PostgreContainerFixture fixture) : BaseTests(f
     public async Task ShouldThrowNotFoundExceptionWhenDelegationDoesNotExist()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<CphDelegationsRepository>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<CphDelegationsRepository>();
         var repository = new CphDelegationsRepository(Context, ReadOnlyContext, logger);
 
         var adminUser = Context.UserAccounts.First();

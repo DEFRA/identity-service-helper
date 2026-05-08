@@ -9,7 +9,7 @@ using Defra.Identity.Postgres.Database;
 using Defra.Identity.Postgres.Database.Entities;
 using Microsoft.Extensions.Logging;
 
-public class AnimalSpeciesRepository(
+public partial class AnimalSpeciesRepository(
     PostgresDbContext context,
     ReadOnlyPostgresDbContext readOnlyContext,
     ILogger<AnimalSpeciesRepository> logger)
@@ -19,7 +19,7 @@ public class AnimalSpeciesRepository(
         Expression<Func<AnimalSpecies, bool>> predicate,
         CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Getting single animal species");
+        LogGettingSingleAnimalSpecies();
         var query = await readOnlyContext.AnimalSpecies
             .SingleOrDefaultAsync(predicate, cancellationToken);
 
@@ -30,7 +30,7 @@ public class AnimalSpeciesRepository(
         Expression<Func<AnimalSpecies, bool>> predicate,
         CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Getting list of animal species");
+        LogGettingListOfAnimalSpecies();
         var query = await readOnlyContext.AnimalSpecies
             .Where(predicate)
             .ToListAsync(cancellationToken);
@@ -44,7 +44,7 @@ public class AnimalSpeciesRepository(
     {
         ArgumentNullException.ThrowIfNull(entity);
 
-        logger.LogInformation("Updating animal species with id {Id}", entity.Id);
+        LogUpdatingAnimalSpeciesWithId(entity.Id);
         context.Update(entity);
         await context.SaveChangesAsync(cancellationToken);
         return entity;

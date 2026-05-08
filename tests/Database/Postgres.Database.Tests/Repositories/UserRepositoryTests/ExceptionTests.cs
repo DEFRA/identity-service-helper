@@ -23,7 +23,7 @@ public class ExceptionTests(PostgreContainerFixture fixture)
     public async Task ShouldThrowDuplicateException()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<UsersRepository>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<UsersRepository>();
         var repository = new UsersRepository(Context, ReadOnlyContext, logger);
 
         var adminUser = await repository

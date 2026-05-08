@@ -93,7 +93,6 @@ public static class CphDelegationEndpoints
     }
 
     private static async Task<IResult> GetByIdRoute(
-        QueryRequestHeaders headers,
         [AsParameters] GetCphDelegationById request,
         ICphDelegationsService service)
     {
@@ -103,7 +102,6 @@ public static class CphDelegationEndpoints
     }
 
     private static async Task<IResult> GetAllRoute(
-        QueryRequestHeaders headers,
         [AsParameters] GetCphDelegations request,
         ICphDelegationsService service)
     {
@@ -113,7 +111,6 @@ public static class CphDelegationEndpoints
     }
 
     private static async Task<IResult> PostRoute(
-        CommandRequestHeaders headers,
         [FromBody] CreateCphDelegation request,
         ICphDelegationsService service)
     {
@@ -129,7 +126,6 @@ public static class CphDelegationEndpoints
     }
 
     private static async Task<IResult> AcceptByIdRoute(
-        CommandRequestHeaders headers,
         [AsParameters] AcceptCphDelegationById request,
         ICphDelegationsService service)
     {
@@ -139,7 +135,6 @@ public static class CphDelegationEndpoints
     }
 
     private static async Task<IResult> RejectByIdRoute(
-        CommandRequestHeaders headers,
         [AsParameters] RejectCphDelegationById request,
         ICphDelegationsService service)
     {
@@ -149,7 +144,6 @@ public static class CphDelegationEndpoints
     }
 
     private static async Task<IResult> RevokeByIdRoute(
-        CommandRequestHeaders headers,
         [AsParameters] RevokeCphDelegationById request,
         ICphDelegationsService service)
     {
@@ -159,7 +153,6 @@ public static class CphDelegationEndpoints
     }
 
     private static async Task<IResult> ExpireByIdRoute(
-        CommandRequestHeaders headers,
         [AsParameters] ExpireCphDelegationById request,
         ICphDelegationsService service)
     {
@@ -169,7 +162,6 @@ public static class CphDelegationEndpoints
     }
 
     private static async Task<IResult> DeleteByIdRoute(
-        CommandRequestHeaders headers,
         [AsParameters] DeleteCphDelegationById request,
         ICphDelegationsService service)
     {

@@ -8,11 +8,15 @@ using AWS.Messaging;
 using Defra.Identity.KeeperReferenceData.Messages;
 using Microsoft.Extensions.Logging;
 
-public class KeeperDataImportCompleteHandler(ILogger<KeeperDataImportCompleteHandler> logger) : IMessageHandler<KeeperDataImportComplete>
+public partial class KeeperDataImportCompleteHandler(
+    ILogger<KeeperDataImportCompleteHandler> logger)
+    : IMessageHandler<KeeperDataImportComplete>
 {
-    public Task<MessageProcessStatus> HandleAsync(MessageEnvelope<KeeperDataImportComplete> messageEnvelope, CancellationToken cancellationToken = default)
+    public Task<MessageProcessStatus> HandleAsync(
+        MessageEnvelope<KeeperDataImportComplete> messageEnvelope,
+        CancellationToken token = default)
     {
-        logger.LogInformation("Processing KeeperDataImportComplete message.");
+        LogProcessingKeeperDataImportCompleteMessage();
 
         // TODO: Implement actual logic to handle the message.
         return Task.FromResult(MessageProcessStatus.Success());

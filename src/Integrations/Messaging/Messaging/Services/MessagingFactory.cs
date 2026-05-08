@@ -13,19 +13,16 @@ using Defra.Identity.Repositories.Messaging;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-public class MessagingFactory(
+public partial class MessagingFactory(
     ILogger<MessagingFactory> logger,
     IMessagingService messagingService,
     IExternalMessagingRepository externalMessagingRepository,
-    ICountyParishHoldingDelegationsNotificationsRepository notificationRepository) : IMessagingFactory
+    ICountyParishHoldingDelegationsNotificationsRepository notificationRepository)
+    : IMessagingFactory
 {
     public async Task<MessageResponse> SendDelegationEmailAsync(DelegationEmailMessage request, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation(
-            "Starting to send delegation email. CphDelegationId: {CphDelegationId}, Recipient: {Recipient}, TemplateId: {TemplateId}",
-            request.CphDelegationId,
-            request.Recipient,
-            request.TemplateId);
+        LogStartingToSendDelegationEmail(request.CphDelegationId, request.Recipient, request.TemplateId);
 
         var message = await InternalQueueDelegationEmailAsync(request, cancellationToken);
         var result = await messagingService
@@ -38,10 +35,7 @@ public class MessagingFactory(
 
         await externalMessagingRepository.Update(message, cancellationToken);
 
-        logger.LogInformation(
-            "Delegation email send operation completed successfully. CphDelegationId: {CphDelegationId}, NotifyId: {NotifyId}",
-            request.CphDelegationId,
-            result.NotifyId);
+        LogDelegationEmailSendOperationCompleted(request.CphDelegationId, result.NotifyId);
         return result;
     }
 
@@ -49,18 +43,14 @@ public class MessagingFactory(
         DelegationEmailMessage request,
         CancellationToken cancellationToken = default)
     {
-        logger.LogInformation(
-            "Pushing message to database for processing. CphDelegationId: {CphDelegationId}, Recipient: {Recipient}, TemplateId: {TemplateId}",
-            request.CphDelegationId,
-            request.Recipient,
-            request.TemplateId);
+        LogPushingMessageToDatabaseForProcessing(request.CphDelegationId, request.Recipient, request.TemplateId);
 
         await InternalQueueDelegationEmailAsync(request, cancellationToken);
     }
 
     private async Task<ExternalMessaging> InternalQueueDelegationEmailAsync(DelegationEmailMessage request, CancellationToken cancellationToken)
     {
-        logger.LogInformation("Pushing message to database for processing. CphDelegationId: {CphDelegationId}, Recipient: {Recipient}, TemplateId: {TemplateId}", request.CphDelegationId, request.Recipient, request.TemplateId);
+        LogPushingMessageToDatabaseForProcessing(request.CphDelegationId, request.Recipient, request.TemplateId);
 
         var message = await externalMessagingRepository.Create(
             new ExternalMessaging()

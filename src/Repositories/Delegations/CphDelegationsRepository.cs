@@ -10,11 +10,17 @@ using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Common.Exceptions;
 using Microsoft.Extensions.Logging;
 
-public class CphDelegationsRepository(PostgresDbContext context, ReadOnlyPostgresDbContext readOnlyContext, ILogger<CphDelegationsRepository> logger) : ICphDelegationsRepository
+public partial class CphDelegationsRepository(
+    PostgresDbContext context,
+    ReadOnlyPostgresDbContext readOnlyContext,
+    ILogger<CphDelegationsRepository> logger)
+    : ICphDelegationsRepository
 {
-    public async Task<CountyParishHoldingDelegations?> GetSingle(Expression<Func<CountyParishHoldingDelegations, bool>> predicate, CancellationToken cancellationToken = default)
+    public async Task<CountyParishHoldingDelegations?> GetSingle(
+        Expression<Func<CountyParishHoldingDelegations, bool>> predicate,
+        CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Getting single delegation");
+        LogGettingSingleDelegation();
 
         var result = await readOnlyContext.CountyParishHoldingDelegations
             .Include(p => p.CountyParishHolding)
@@ -26,9 +32,11 @@ public class CphDelegationsRepository(PostgresDbContext context, ReadOnlyPostgre
         return result;
     }
 
-    public async Task<List<CountyParishHoldingDelegations>> GetList(Expression<Func<CountyParishHoldingDelegations, bool>> predicate, CancellationToken cancellationToken = default)
+    public async Task<List<CountyParishHoldingDelegations>> GetList(
+        Expression<Func<CountyParishHoldingDelegations, bool>> predicate,
+        CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Getting list of county parish holding delegations");
+        LogGettingListOfCountyParishHoldingDelegations();
 
         var results = await readOnlyContext.CountyParishHoldingDelegations
             .Include(p => p.CountyParishHolding)
@@ -42,11 +50,13 @@ public class CphDelegationsRepository(PostgresDbContext context, ReadOnlyPostgre
         return results;
     }
 
-    public async Task<CountyParishHoldingDelegations> Create(CountyParishHoldingDelegations entity, CancellationToken cancellationToken = default)
+    public async Task<CountyParishHoldingDelegations> Create(
+        CountyParishHoldingDelegations entity,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entity);
 
-        logger.LogInformation("Creating delegation with id {Id}", entity.Id);
+        LogCreatingDelegationWithId(entity.Id);
         var addedEntry = await context.CountyParishHoldingDelegations.AddAsync(entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
@@ -60,11 +70,13 @@ public class CphDelegationsRepository(PostgresDbContext context, ReadOnlyPostgre
         return result;
     }
 
-    public async Task<CountyParishHoldingDelegations> Update(CountyParishHoldingDelegations entity, CancellationToken cancellationToken = default)
+    public async Task<CountyParishHoldingDelegations> Update(
+        CountyParishHoldingDelegations entity,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entity);
 
-        logger.LogInformation("Updating delegation with id {Id}", entity.Id);
+        LogUpdatingDelegationWithId(entity.Id);
         context.Update(entity);
         await context.SaveChangesAsync(cancellationToken);
 
@@ -78,16 +90,19 @@ public class CphDelegationsRepository(PostgresDbContext context, ReadOnlyPostgre
         return result;
     }
 
-    public async Task<bool> Delete(Expression<Func<CountyParishHoldingDelegations, bool>> predicate, Guid operatorId, CancellationToken cancellationToken = default)
+    public async Task<bool> Delete(
+        Expression<Func<CountyParishHoldingDelegations, bool>> predicate,
+        Guid operatorId,
+        CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Deleting delegation with operator id {OperatorId}", operatorId);
+        LogDeletingDelegationWithOperatorId(operatorId);
 
         var delegation = await context.CountyParishHoldingDelegations
             .SingleOrDefaultAsync(predicate, cancellationToken);
 
         if (delegation == null)
         {
-            logger.LogWarning("Delegation not found for deletion");
+            LogDelegationNotFoundForDeletion();
             throw new NotFoundException("Delegation not found");
         }
 

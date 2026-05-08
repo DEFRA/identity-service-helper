@@ -8,19 +8,26 @@ using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Services.Common.Builders.Rules.Models;
 using Microsoft.Extensions.Logging;
 
-public class ReferenceRulesBuilder<TService>
+public partial class ReferenceRulesBuilder<TService>
     where TService : class
 {
     private List<ReferenceRule> ReferenceRules { get; } = [];
 
-    public ReferenceRulesBuilder<TService> Add(IReference repository, Guid id, string description)
+    public ReferenceRulesBuilder<TService> Add(
+        IReference repository,
+        Guid id,
+        string description)
     {
         ReferenceRules.Add(new ReferenceRule(repository, id, description));
 
         return this;
     }
 
-    public async Task Validate(string actionDescription, string primaryEntityDescription, ILogger<TService> logger, CancellationToken cancellationToken)
+    public async Task Validate(
+        string actionDescription,
+        string primaryEntityDescription,
+        ILogger<TService> logger,
+        CancellationToken cancellationToken)
     {
         foreach (var rule in ReferenceRules)
         {
@@ -28,8 +35,8 @@ public class ReferenceRulesBuilder<TService>
 
             if (!validAgainstReferenceRule)
             {
-                logger.LogWarning(
-                    "Execute {ActionDescription} [{EntityDescription}] failed reference rule '{Description}'",
+                LogExecuteActionEntityFailedReferenceRule(
+                    logger,
                     actionDescription.ToLowerInvariant(),
                     primaryEntityDescription.ToLowerInvariant(),
                     rule.Description);

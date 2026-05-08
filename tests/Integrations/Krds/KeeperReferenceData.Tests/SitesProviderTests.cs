@@ -36,12 +36,14 @@ public class SitesProviderTests
 
         var result = await sut.Sites(DateTime.UtcNow, CancellationToken.None);
 
-        Assert.NotNull(result);
-        Assert.IsType<List<Site>>(result);
-        Assert.Equal(3, result.Count);
+        result.ShouldNotBeNull();
+        result.ShouldBeOfType<List<Site>>();
+        result.Count.ShouldBe(3);
 
         // Verify the request path was called at least once
-        Assert.True(server.LogEntries.Count(le => le.RequestMessage.Path == "/sites" && le.RequestMessage.Method == "GET") >= 1);
+        server.LogEntries
+            .Count(le => le.RequestMessage.Path == "/sites" && le.RequestMessage.Method == "GET")
+            .ShouldBeGreaterThanOrEqualTo(1);
     }
 
     [Fact]
@@ -60,10 +62,13 @@ public class SitesProviderTests
         using var sut = new SitesProvider(httpClient, logger);
 
         var result = await sut.Sites(DateTime.UtcNow, CancellationToken.None);
+        result.ShouldNotBeNull();
+        result.ShouldBeEmpty();
 
-        Assert.NotNull(result);
-        Assert.Empty(result);
-        Assert.True(server.LogEntries.Count(le => le.RequestMessage.Path == "/sites" && le.RequestMessage.Method == "GET") >= 1);
+        // Verify the request path was called at least once
+        server.LogEntries
+            .Count(le => le.RequestMessage.Path == "/sites" && le.RequestMessage.Method == "GET")
+            .ShouldBeGreaterThanOrEqualTo(1);
     }
 
     [Fact]
@@ -80,6 +85,10 @@ public class SitesProviderTests
         using var sut = new SitesProvider(httpClient, logger);
 
         await Assert.ThrowsAsync<HttpRequestException>(() => sut.Sites(DateTime.UtcNow, CancellationToken.None));
-        Assert.True(server.LogEntries.Count(le => le.RequestMessage.Path == "/sites" && le.RequestMessage.Method == "GET") >= 1);
+
+        // Verify the request path was called at least once
+        server.LogEntries
+            .Count(le => le.RequestMessage.Path == "/sites" && le.RequestMessage.Method == "GET")
+            .ShouldBeGreaterThanOrEqualTo(1);
     }
 }

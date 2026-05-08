@@ -21,7 +21,7 @@ public class ApiExceptionHandlerTests
 
     public ApiExceptionHandlerTests()
     {
-        logger = Substitute.For<ILogger<ApiExceptionHandler>>();
+        logger = DefraLoggerExtensions.CreateNSubstituteLogger<ApiExceptionHandler>();
         handler = new ApiExceptionHandler(logger);
     }
 
@@ -116,12 +116,7 @@ public class ApiExceptionHandlerTests
         problem.Type.ShouldBe("https://httpstatuses.com/500");
         problem.Detail.ShouldBe(exception.Message);
 
-        logger.Received(1).Log(
-            LogLevel.Error,
-            Arg.Any<EventId>(),
-            Arg.Any<Arg.AnyType>(),
-            exception,
-            Arg.Any<Func<Arg.AnyType, Exception?, string>>());
+        logger.VerifyLogExceptionTypeOne<Exception>(LogLevel.Error);
     }
 
     [Fact]
@@ -137,12 +132,7 @@ public class ApiExceptionHandlerTests
         await handler.TryHandleAsync(context, exception, cancellationToken);
 
         // Assert
-        logger.Received(1).Log(
-            LogLevel.Warning,
-            Arg.Any<EventId>(),
-            Arg.Any<Arg.AnyType>(),
-            exception,
-            Arg.Any<Func<Arg.AnyType, Exception?, string>>());
+        logger.VerifyLogExceptionTypeOne<NotFoundException>(LogLevel.Warning);
     }
 
     [Fact]

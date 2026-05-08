@@ -19,7 +19,7 @@ using Xunit;
 public class ApplicationServiceTests
 {
     private readonly IApplicationsRepository repository = Substitute.For<IApplicationsRepository>();
-    private readonly ILogger<ApplicationService> logger = Substitute.For<ILogger<ApplicationService>>();
+    private readonly ILogger<ApplicationService> logger = DefraLoggerExtensions.CreateNSubstituteLogger<ApplicationService>();
     private readonly ApplicationService applicationService;
 
     public ApplicationServiceTests()

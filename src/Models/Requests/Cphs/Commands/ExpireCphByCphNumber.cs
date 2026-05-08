@@ -6,6 +6,9 @@ namespace Defra.Identity.Models.Requests.Cphs.Commands;
 
 using Defra.Identity.Models.Requests.Cphs.Common;
 
-public class ExpireCphByCphNumber : OperationByCphNumber
-{
-}
+#pragma warning disable S2094
+
+public sealed class ExpireCphByCphNumber
+    : OperationByCphNumber;
+
+#pragma warning restore S2094

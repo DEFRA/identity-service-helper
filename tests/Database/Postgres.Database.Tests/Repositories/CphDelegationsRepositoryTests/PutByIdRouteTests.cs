@@ -19,7 +19,7 @@ public class PutByIdRouteTests(PostgreContainerFixture fixture) : BaseTests(fixt
     public async Task ShouldUpdateDelegation()
     {
         // Arrange
-        var logger = Substitute.For<ILogger<CphDelegationsRepository>>();
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<CphDelegationsRepository>();
         var repository = new CphDelegationsRepository(Context, ReadOnlyContext, logger);
 
         var id = Guid.NewGuid();

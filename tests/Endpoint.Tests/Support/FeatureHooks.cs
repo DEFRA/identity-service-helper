@@ -10,6 +10,10 @@ using Reqnroll;
 [Binding]
 public class FeatureHooks
 {
+    protected FeatureHooks()
+    {
+    }
+
     [BeforeFeature]
     public static async Task RegisterFeatureDependencies(FeatureContext featureContext)
     {

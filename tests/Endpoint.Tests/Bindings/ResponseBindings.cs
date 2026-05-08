@@ -7,6 +7,7 @@ namespace Defra.Identity.Endpoint.Tests.Bindings;
 using System.Net;
 using Defra.Identity.Endpoint.Tests.Contexts;
 using Defra.Identity.Endpoint.Tests.Support;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Reqnroll;
 
@@ -40,9 +41,9 @@ public class ResponseBindings(
         var tmp = executionContext.ResponseContent.ToString()!.Trim();
         executionContext.ResponseContent = tmp[0] switch
         {
-            '{' => executionContext.ResponseContent = JObject.Parse(tmp),
-            '[' => executionContext.ResponseContent = JArray.Parse(tmp),
-            _ => throw new ArgumentOutOfRangeException(),
+            '{' => JObject.Parse(tmp),
+            '[' => JArray.Parse(tmp),
+            _ => throw new JsonException("Received unexpected response format."),
         };
     }
 
@@ -50,20 +51,6 @@ public class ResponseBindings(
     public void ThenIHaveAnEmptyResponse()
     {
         executionContext.ResponseContent.ShouldNotBeNull();
-    }
-
-    [Then("I have received an error response")]
-    public void ThenIHaveReceivedAnErrorResponse()
-    {
-        executionContext.ResponseContent.ShouldNotBeNull();
-
-        var tmp = executionContext.ResponseContent.ToString()!.Trim();
-        executionContext.ResponseContent = tmp[0] switch
-        {
-            '{' => executionContext.ResponseContent = JObject.Parse(tmp),
-            '[' => executionContext.ResponseContent = JArray.Parse(tmp),
-            _ => throw new ArgumentOutOfRangeException(),
-        };
     }
 
     [Then("I save the value of property {string} to the context using name {string}")]

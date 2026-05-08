@@ -8,7 +8,8 @@ using Defra.Identity.Models.Requests.Common;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-public class OperationByIdMappingFilter<T> : IEndpointFilter
+public class OperationByIdMappingFilter<T>
+    : IEndpointFilter
     where T : class, IOperationById
 {
     public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
