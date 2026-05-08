@@ -6,24 +6,13 @@ namespace Defra.Identity.Api.Endpoints.Profiles;
 
 public static class OpenApiMetadata
 {
-    // GetUsersById endpoint
-    public static class GetCphAssignmentsByIdRoute
+    //GetUserProfileById endpoint
+    public static class GetUserProfileByIdRoute
     {
-        public const string Name = "GetCountyParishHoldingUsersById";
-        public const string Summary = "Get users for a County Parish Holding by its internal identitifer";
+        public const string Name = "GetUserProfileById";
+        public const string Summary = "Get a user profile by the associated user account id";
 
         public const string Description =
-            "Retrieves a paged list of users associated with a specific County Parish Holding by its internal identifier";
-    }
-
-    // GetUsersByNumber endpoint
-    public static class GetCphAssignmentsByCphNumberRoute
-    {
-        public const string Name = "GetCountyParishHoldingUsersByNumber";
-
-        public const string Summary = "Get users for a County Parish Holding by its County Parish Holding identifier";
-
-        public const string Description =
-            "Retrieves a paged list of users associated with a specific Holding by its County Parish Holding identifier";
+            "Retrieves a user profile containing user details, cph assignments and cph delegations given the id of the associated user account";
     }
 }
