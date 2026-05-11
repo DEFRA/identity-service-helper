@@ -5,6 +5,7 @@
 namespace Defra.Identity.Postgres.Database.Tests.Repositories.CphRepositoryTests;
 
 using System.ComponentModel;
+using System.Globalization;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
 using Defra.Identity.Repositories.Cphs;
@@ -22,7 +23,7 @@ public class PutByIdRouteTests(PostgreContainerFixture fixture) : BaseTests(fixt
         var repository = new CphRepository(Context, ReadOnlyContext, logger);
         var id = Guid.NewGuid();
         const string identifier = "44/001/0001";
-        var createAtDate = DateTime.Parse("2026-02-20").ToUniversalTime();
+        var createAtDate = DateTime.Parse("2026-02-20", new DateTimeFormatInfo()).ToUniversalTime();
         var createdById = AdminUserId;
 
         var newEntity = new CountyParishHoldings
@@ -39,8 +40,8 @@ public class PutByIdRouteTests(PostgreContainerFixture fixture) : BaseTests(fixt
         entityToUpdate.ShouldNotBeNull();
 
         // Act
-        entityToUpdate.ExpiredAt = DateTime.Parse("2026-03-21").ToUniversalTime();
-        entityToUpdate.DeletedAt = DateTime.Parse("2026-03-22").ToUniversalTime();
+        entityToUpdate.ExpiredAt = DateTime.Parse("2026-03-21", new DateTimeFormatInfo()).ToUniversalTime();
+        entityToUpdate.DeletedAt = DateTime.Parse("2026-03-22", new DateTimeFormatInfo()).ToUniversalTime();
         entityToUpdate.DeletedById = AdminUserId;
 
         var updatedEntityReturnedFromUpdate = await repository.Update(entityToUpdate, TestContext.Current.CancellationToken);
@@ -55,8 +56,8 @@ public class PutByIdRouteTests(PostgreContainerFixture fixture) : BaseTests(fixt
             (x) => x.Identifier.ShouldBe(identifier),
             (x) => x.CreatedAt.ShouldBe(createAtDate),
             (x) => x.CreatedById.ShouldBe(createdById),
-            (x) => x.ExpiredAt.ShouldBe(DateTime.Parse("2026-03-21").ToUniversalTime()),
-            (x) => x.DeletedAt.ShouldBe(DateTime.Parse("2026-03-22").ToUniversalTime()),
+            (x) => x.ExpiredAt.ShouldBe(DateTime.Parse("2026-03-21", new DateTimeFormatInfo()).ToUniversalTime()),
+            (x) => x.DeletedAt.ShouldBe(DateTime.Parse("2026-03-22", new DateTimeFormatInfo()).ToUniversalTime()),
             (x) => x.DeletedById.ShouldBe(AdminUserId));
 
         updatedEntityReturnedFromRequery.ShouldSatisfyAllConditions(
@@ -64,8 +65,8 @@ public class PutByIdRouteTests(PostgreContainerFixture fixture) : BaseTests(fixt
             (x) => x.Identifier.ShouldBe(identifier),
             (x) => x.CreatedAt.ShouldBe(createAtDate),
             (x) => x.CreatedById.ShouldBe(createdById),
-            (x) => x.ExpiredAt.ShouldBe(DateTime.Parse("2026-03-21").ToUniversalTime()),
-            (x) => x.DeletedAt.ShouldBe(DateTime.Parse("2026-03-22").ToUniversalTime()),
+            (x) => x.ExpiredAt.ShouldBe(DateTime.Parse("2026-03-21", new DateTimeFormatInfo()).ToUniversalTime()),
+            (x) => x.DeletedAt.ShouldBe(DateTime.Parse("2026-03-22", new DateTimeFormatInfo()).ToUniversalTime()),
             (x) => x.DeletedById.ShouldBe(AdminUserId));
     }
 }

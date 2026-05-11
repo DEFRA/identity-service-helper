@@ -5,6 +5,7 @@
 namespace Defra.Identity.Postgres.Database.Tests.Repositories.MessagingRepositoryTests;
 
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq.Expressions;
 using System.Net;
 using Defra.Identity.Postgres.Database.Entities;
@@ -41,11 +42,11 @@ public class ExternalMessagingGetSingleTests(PostgreContainerFixture fixture)
             (x) => x.TemplateId.ShouldBe(Guid.Parse("9edac4c9-9b29-4ea6-9e37-6ed32776a943")),
             (x) => x.NotifyId.ShouldBe(Guid.Parse("550e8400-e29b-41d4-a716-446655440001")),
             (x) => x.RequestPayload.ShouldBe("""{ "message": "test message" }"""),
-            (x) => x.SentAt.ShouldBe(DateTime.Parse("2020-01-01").ToUniversalTime()),
+            (x) => x.SentAt.ShouldBe(DateTime.Parse("2020-01-01", new DateTimeFormatInfo()).ToUniversalTime()),
             (x) => x.ResponseCode.ShouldBe(HttpStatusCode.OK),
             (x) => x.ResponseMessage.ShouldBe("OK"),
             (x) => x.ExceptionMessage.ShouldBeEmpty(),
-            (x) => x.CreatedAt.ShouldBe(DateTime.Parse("2020-01-01").ToUniversalTime()),
+            (x) => x.CreatedAt.ShouldBe(DateTime.Parse("2020-01-01", new DateTimeFormatInfo()).ToUniversalTime()),
             (x) => x.CreatedById.ShouldBe(AdminUserId));
     }
 

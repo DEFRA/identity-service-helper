@@ -19,8 +19,6 @@ using Xunit;
 public class CphDelegationEndpointsTests
 {
     private readonly ICphDelegationsService service = Substitute.For<ICphDelegationsService>();
-    private readonly CommandRequestHeaders commandHeaders = new(Guid.NewGuid(), Guid.NewGuid(), "test-api-key");
-    private readonly QueryRequestHeaders queryHeaders = new(Guid.NewGuid(), "test-api-key");
 
     [Fact]
     public async Task GetAll_ReturnsOk()

@@ -77,7 +77,7 @@ public class ApiKeyValidationMiddlewareTests
         var logger = DefraLoggerExtensions.CreateNSubstituteLogger<ApiKeyValidationMiddleware>();
         var middleware = new ApiKeyValidationMiddleware("test-key", logger);
         var endpoint = Substitute.For<IEndpointFeature>();
-        endpoint.Endpoint = new Endpoint(null, new EndpointMetadataCollection([new IgnoreApiKeyCheck()]), "fake endpoint");
+        endpoint.Endpoint = new Endpoint(null, new EndpointMetadataCollection(new IgnoreApiKeyCheck()), "fake endpoint");
         var context = new DefaultHttpContext();
         context.Request.Headers[RequestHeaderNames.ApiKey] = "test-key";
         context.Features.Set(endpoint);
@@ -122,7 +122,7 @@ public class ApiKeyValidationMiddlewareTests
         var middleware = new ApiKeyValidationMiddleware("test-key", logger);
 
         var endpoint = Substitute.For<IEndpointFeature>();
-        endpoint.Endpoint = new Endpoint(null, new EndpointMetadataCollection([new RequiresOperatorId()]), "fake endpoint");
+        endpoint.Endpoint = new Endpoint(null, new EndpointMetadataCollection(new RequiresOperatorId()), "fake endpoint");
 
         var context = new DefaultHttpContext();
         context.Request.Headers[RequestHeaderNames.ApiKey] = "test-key";

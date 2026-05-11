@@ -5,6 +5,7 @@
 namespace Defra.Identity.Services.Tests.Extensions;
 
 using System.ComponentModel;
+using System.Globalization;
 using Defra.Identity.Models.Responses.Cphs;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Common;
@@ -20,7 +21,7 @@ public class PagedEntitiesExtensionTests
             [
                 new CountyParishHoldings
                 {
-                    Id = new Guid("34b4e480-8bd4-438e-b279-d0398a65a3a5"), Identifier = $"44/100/0001", ExpiredAt = DateTime.Parse("2026-02-12").ToUniversalTime(),
+                    Id = new Guid("34b4e480-8bd4-438e-b279-d0398a65a3a5"), Identifier = $"44/100/0001", ExpiredAt = DateTime.Parse("2026-02-12", new DateTimeFormatInfo()).ToUniversalTime(),
                 },
                 new CountyParishHoldings
                 {
@@ -57,7 +58,7 @@ public class PagedEntitiesExtensionTests
             (x) => x.Id.ShouldBe(new Guid("34b4e480-8bd4-438e-b279-d0398a65a3a5")),
             (x) => x.CountyParishHoldingNumber.ShouldBe("44/100/0001"),
             (x) => x.Expired.ShouldBe(true),
-            (x) => x.ExpiredAt.ShouldBe(DateTime.Parse("2026-02-12").ToUniversalTime()));
+            (x) => x.ExpiredAt.ShouldBe(DateTime.Parse("2026-02-12", new DateTimeFormatInfo()).ToUniversalTime()));
 
         secondItem.ShouldSatisfyAllConditions(
             (x) => x.Id.ShouldBe(new Guid("9928bbc3-ddd4-488a-a620-7850bcc653d7")),

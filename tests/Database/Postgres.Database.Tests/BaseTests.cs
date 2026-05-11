@@ -26,7 +26,7 @@ public abstract partial class BaseTests(PostgreContainerFixture fixture) : IAsyn
 
     protected ReadOnlyPostgresDbContext ReadOnlyContext { get; private set; } = null!;
 
-    private Dictionary<string, string> ConnectionStringConfiguration => new()
+    private static Dictionary<string, string> ConnectionStringConfiguration => new()
     {
         { $"ConnectionStrings:{DatabaseConstants.ConnectionStringName}", $"{PostgreContainerFixture.ConnectionString}" },
         { $"ConnectionStrings:{DatabaseConstants.ReadOnlyConnectionStringName}", $"{PostgreContainerFixture.ConnectionString}" },

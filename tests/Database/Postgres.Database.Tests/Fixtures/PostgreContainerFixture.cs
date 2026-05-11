@@ -21,8 +21,7 @@ public class PostgreContainerFixture
     private static readonly INetwork Network = new NetworkBuilder()
         .Build();
 
-    private static readonly PostgreSqlContainer Db = new PostgreSqlBuilder()
-        .WithImage("postgres:16")
+    private static readonly PostgreSqlContainer Db = new PostgreSqlBuilder("postgres:16")
         .WithDatabase("appdb")
         .WithUsername("identity_service_helper_ddl")
         .WithPassword("app")
@@ -30,8 +29,7 @@ public class PostgreContainerFixture
         .WithNetworkAliases("pg")
         .Build();
 
-    private static readonly IContainer Liquibase = new ContainerBuilder()
-        .WithImage("liquibase/liquibase:5.0.1")
+    private static readonly IContainer Liquibase = new ContainerBuilder("liquibase/liquibase:5.0.1")
         .WithNetwork(Network)
         .WithBindMount(
             Path.GetFullPath("changelog"), // folder containing master changelog + scripts

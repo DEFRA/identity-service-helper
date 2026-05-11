@@ -115,8 +115,8 @@ public class GetTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         results.ShouldNotBeNull();
         results.Count.ShouldBe(6);
 
-        var firstDelegation = results.First();
-        var secondDelegation = results.Last();
+        var firstDelegation = results[0];
+        var secondDelegation = results[^1];
 
         firstDelegation.ShouldSatisfyAllConditions(
             x => x.ShouldNotBeNull(),

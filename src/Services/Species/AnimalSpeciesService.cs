@@ -23,7 +23,7 @@ public partial class AnimalSpeciesService(
         CancellationToken cancellationToken = default)
     {
         LogGettingAllAnimalSpeciesIncludeHidden(request.IncludeInactive);
-        Expression<Func<ModelAnimalSpecies, bool>> filter = x => IncludeInactiveInferred(request) || x.IsActive == true;
+        Expression<Func<ModelAnimalSpecies, bool>> filter = x => IncludeInactiveInferred(request) || x.IsActive;
 
         var result = await repository.GetList(filter, cancellationToken);
 

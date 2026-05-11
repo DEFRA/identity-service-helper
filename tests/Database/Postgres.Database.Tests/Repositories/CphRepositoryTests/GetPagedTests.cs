@@ -5,6 +5,7 @@
 namespace Defra.Identity.Postgres.Database.Tests.Repositories.CphRepositoryTests;
 
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
@@ -49,7 +50,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         firstItem.ShouldSatisfyAllConditions(
             (x) => x.Id.ShouldBe(new Guid("4435a146-d0ac-4260-8a27-c550e0ed9563")),
             (x) => x.Identifier.ShouldBe("44/000/0001"),
-            (x) => x.CreatedAt.ShouldBe(DateTime.Parse("2026-02-01").ToUniversalTime()),
+            (x) => x.CreatedAt.ShouldBe(DateTime.Parse("2026-02-01", new DateTimeFormatInfo()).ToUniversalTime()),
             (x) => x.CreatedById.ShouldBe(AdminUserId),
             (x) => x.ExpiredAt.ShouldBeNull(),
             (x) => x.DeletedAt.ShouldBeNull(),
@@ -58,7 +59,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         secondItem.ShouldSatisfyAllConditions(
             (x) => x.Id.ShouldBe(new Guid("204459b1-3a07-4e65-9122-91c1699e3d3f")),
             (x) => x.Identifier.ShouldBe("44/000/0002"),
-            (x) => x.CreatedAt.ShouldBe(DateTime.Parse("2026-02-02").ToUniversalTime()),
+            (x) => x.CreatedAt.ShouldBe(DateTime.Parse("2026-02-02", new DateTimeFormatInfo()).ToUniversalTime()),
             (x) => x.CreatedById.ShouldBe(AdminUserId),
             (x) => x.ExpiredAt.ShouldBeNull(),
             (x) => x.DeletedAt.ShouldBeNull(),
@@ -67,7 +68,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         thirdItem.ShouldSatisfyAllConditions(
             (x) => x.Id.ShouldBe(new Guid("1eb0f2fb-a332-4cd5-8a20-02d7adfd7156")),
             (x) => x.Identifier.ShouldBe("44/000/0003"),
-            (x) => x.CreatedAt.ShouldBe(DateTime.Parse("2026-02-03").ToUniversalTime()),
+            (x) => x.CreatedAt.ShouldBe(DateTime.Parse("2026-02-03", new DateTimeFormatInfo()).ToUniversalTime()),
             (x) => x.CreatedById.ShouldBe(AdminUserId),
             (x) => x.ExpiredAt.ShouldBeNull(),
             (x) => x.DeletedAt.ShouldBeNull(),
@@ -109,7 +110,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         firstItem.ShouldSatisfyAllConditions(
             (x) => x.Id.ShouldBe(new Guid("ab820006-0000-4000-8000-000000000006")),
             (x) => x.Identifier.ShouldBe("44/082/0006"),
-            (x) => x.CreatedAt.ShouldBe(DateTime.Parse("2026-04-16")),
+            (x) => x.CreatedAt.ShouldBe(DateTime.Parse("2026-04-16", new DateTimeFormatInfo())),
             (x) => x.CreatedById.ShouldBe(AdminUserId),
             (x) => x.ExpiredAt.ShouldBeNull(),
             (x) => x.DeletedAt.ShouldBeNull(),
@@ -118,7 +119,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         secondItem.ShouldSatisfyAllConditions(
             (x) => x.Id.ShouldBe(new Guid("ab820005-0000-4000-8000-000000000005")),
             (x) => x.Identifier.ShouldBe("44/082/0005"),
-            (x) => x.CreatedAt.ShouldBe(DateTime.Parse("2026-04-16")),
+            (x) => x.CreatedAt.ShouldBe(DateTime.Parse("2026-04-16", new DateTimeFormatInfo())),
             (x) => x.CreatedById.ShouldBe(AdminUserId),
             (x) => x.ExpiredAt.ShouldBeNull(),
             (x) => x.DeletedAt.ShouldBeNull(),
@@ -127,7 +128,7 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         thirdItem.ShouldSatisfyAllConditions(
             (x) => x.Id.ShouldBe(new Guid("ab820004-0000-4000-8000-000000000004")),
             (x) => x.Identifier.ShouldBe("44/082/0004"),
-            (x) => x.CreatedAt.ShouldBe(DateTime.Parse("2026-04-16")),
+            (x) => x.CreatedAt.ShouldBe(DateTime.Parse("2026-04-16", new DateTimeFormatInfo())),
             (x) => x.CreatedById.ShouldBe(AdminUserId),
             (x) => x.ExpiredAt.ShouldBeNull(),
             (x) => x.DeletedAt.ShouldBeNull(),

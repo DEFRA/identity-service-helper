@@ -24,7 +24,7 @@ public class DeleteByIdRouteTests(PostgreContainerFixture fixture) : BaseTests(f
         var logger = DefraLoggerExtensions.CreateNSubstituteLogger<ApplicationsRepository>();
         var repository = new ApplicationsRepository(Context, ReadOnlyContext, logger);
 
-        var adminUser = Context.UserAccounts.First();
+        var adminUser = await Context.UserAccounts.FirstAsync(TestContext.Current.CancellationToken);
 
         var application = new Applications
         {
@@ -56,7 +56,7 @@ public class DeleteByIdRouteTests(PostgreContainerFixture fixture) : BaseTests(f
         // Arrange
         var logger = DefraLoggerExtensions.CreateNSubstituteLogger<ApplicationsRepository>();
         var repository = new ApplicationsRepository(Context, ReadOnlyContext, logger);
-        var adminUser = Context.UserAccounts.First();
+        var adminUser = await Context.UserAccounts.FirstAsync(TestContext.Current.CancellationToken);
         var operatorId = adminUser.Id;
 
         // Act & Assert

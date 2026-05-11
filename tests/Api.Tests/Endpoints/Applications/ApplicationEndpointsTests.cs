@@ -9,6 +9,7 @@ using Defra.Identity.Api.Middleware.Headers;
 using Defra.Identity.Models.Requests.Applications.Commands;
 using Defra.Identity.Models.Requests.Applications.Queries;
 using Defra.Identity.Models.Responses.Applications;
+using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Services.Applications;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -110,13 +111,13 @@ public class ApplicationEndpointsTests
     }
 
     [Fact]
-    public async Task Put_ReturnsNotFound_WhenNullReferenceException()
+    public async Task Put_ReturnsNotFound_WhenNotFoundException()
     {
         // Arrange
         var id = Guid.NewGuid();
         var request = new UpdateApplicationById { Id = id };
         var payload = new UpdateApplication();
-        service.Update(payload, Arg.Any<CancellationToken>()).Returns(Task.FromException<Application>(new NullReferenceException("Not found")));
+        service.Update(payload, Arg.Any<CancellationToken>()).Returns(Task.FromException<Application>(new NotFoundException("Not found")));
 
         // Act
         var result = await (Task<IResult>)typeof(ApplicationEndpoints)

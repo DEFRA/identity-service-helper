@@ -24,7 +24,7 @@ public static class DefraLoggerExtensions
     {
         var matchingCalls = logger.ReceivedCalls()
             .Where(call => call.GetMethodInfo().Name == nameof(ILogger.Log))
-            .Where(call => (LogLevel)call.GetArguments()[0] == logLevel)
+            .Where(call => (LogLevel)(call.GetArguments()[0] ?? LogLevel.None) == logLevel)
             .Where(call => call.GetArguments()[3] is TException)
             .ToList();
 
@@ -36,7 +36,7 @@ public static class DefraLoggerExtensions
     {
         var matchingCalls = logger.ReceivedCalls()
             .Where(call => call.GetMethodInfo().Name == nameof(ILogger.Log))
-            .Where(call => (LogLevel)call.GetArguments()[0] == logLevel)
+            .Where(call => (LogLevel)(call.GetArguments()[0] ?? LogLevel.None) == logLevel)
             .Where(call => (call.GetArguments()[2]?.ToString() ?? string.Empty).Contains(message, StringComparison.Ordinal))
             .Where(call => call.GetArguments()[3] is TException)
             .ToList();
@@ -53,7 +53,7 @@ public static class DefraLoggerExtensions
     {
         var matchingCalls = logger.ReceivedCalls()
             .Where(IsLoggerLogCall)
-            .Where(call => (LogLevel)call.GetArguments()[0] == logLevel)
+            .Where(call => (LogLevel)(call.GetArguments()[0] ?? LogLevel.None) == logLevel)
             .Where(call => (call.GetArguments()[2]?.ToString() ?? string.Empty).Contains(message, StringComparison.Ordinal))
             .ToList();
 
@@ -64,7 +64,7 @@ public static class DefraLoggerExtensions
     {
         var matchingCalls = logger.ReceivedCalls()
             .Where(IsLoggerLogCall)
-            .Where(call => (LogLevel)call.GetArguments()[0] == logLevel)
+            .Where(call => (LogLevel)(call.GetArguments()[0] ?? LogLevel.None) == logLevel)
             .Where(call => HasOriginalFormat(call, originalFormat))
             .ToList();
 
