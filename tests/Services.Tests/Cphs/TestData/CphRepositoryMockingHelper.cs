@@ -4,6 +4,7 @@
 
 namespace Defra.Identity.Services.Tests.Cphs.TestData;
 
+using System.Globalization;
 using Defra.Identity.Postgres.Database.Entities;
 
 public static class CphRepositoryMockingHelper
@@ -12,11 +13,11 @@ public static class CphRepositoryMockingHelper
     [
         new()
         {
-            Id = new Guid("68625a5c-7999-4394-836f-9ee55cac0a21"), Identifier = $"01/028/0001", ExpiredAt = null, DeletedAt = null,
+            Id = new Guid("68625a5c-7999-4394-836f-9ee55cac0a21"), Identifier = "01/028/0001", ExpiredAt = null, DeletedAt = null,
         },
         new()
         {
-            Id = new Guid("335c9de9-a516-4fc6-98ab-8ccfa9f015de"), Identifier = $"01/028/0002", ExpiredAt = null, DeletedAt = DateTime.Parse("2026-02-12").ToUniversalTime(),
+            Id = new Guid("335c9de9-a516-4fc6-98ab-8ccfa9f015de"), Identifier = "01/028/0002", ExpiredAt = null, DeletedAt = DateTime.Parse("2026-02-12", new DateTimeFormatInfo()).ToUniversalTime(),
         },
     ];
 
@@ -32,15 +33,15 @@ public static class CphRepositoryMockingHelper
         },
         new()
         {
-            Id = new Guid("a4343f59-011c-46dc-a9fe-553923338e0a"), Identifier = "44/100/0003", ExpiredAt = null, DeletedAt = DateTime.Parse("2026-02-13").ToUniversalTime(),
+            Id = new Guid("a4343f59-011c-46dc-a9fe-553923338e0a"), Identifier = "44/100/0003", ExpiredAt = null, DeletedAt = DateTime.Parse("2026-02-13", new DateTimeFormatInfo()).ToUniversalTime(),
         },
         new()
         {
-            Id = new Guid("e7009d6d-0a29-4e3f-ac0b-7bf0c7497f46"), Identifier = "44/100/0002", ExpiredAt = DateTime.Parse("2026-02-12").ToUniversalTime(), DeletedAt = null,
+            Id = new Guid("e7009d6d-0a29-4e3f-ac0b-7bf0c7497f46"), Identifier = "44/100/0002", ExpiredAt = DateTime.Parse("2026-02-12", new DateTimeFormatInfo()).ToUniversalTime(), DeletedAt = null,
         },
         new()
         {
-            Id = new Guid("5bc8f1a5-2d44-40b5-93e4-52b613bf099f"), Identifier = "44/100/0006", ExpiredAt = null, DeletedAt = DateTime.Parse("2026-02-11").ToUniversalTime(),
+            Id = new Guid("5bc8f1a5-2d44-40b5-93e4-52b613bf099f"), Identifier = "44/100/0006", ExpiredAt = null, DeletedAt = DateTime.Parse("2026-02-11", new DateTimeFormatInfo()).ToUniversalTime(),
         },
         new()
         {
@@ -48,7 +49,7 @@ public static class CphRepositoryMockingHelper
         },
         new()
         {
-            Id = new Guid("802428bd-0411-451b-b75c-2fb6c037f271"), Identifier = "44/100/0005", ExpiredAt = DateTime.Parse("2026-02-10").ToUniversalTime(), DeletedAt = null,
+            Id = new Guid("802428bd-0411-451b-b75c-2fb6c037f271"), Identifier = "44/100/0005", ExpiredAt = DateTime.Parse("2026-02-10", new DateTimeFormatInfo()).ToUniversalTime(), DeletedAt = null,
         },
     ];
 
@@ -115,7 +116,7 @@ public static class CphRepositoryMockingHelper
             {
                 Name = "Role 1",
             },
-            DeletedAt = DateTime.Parse("2026-03-03").ToUniversalTime(),
+            DeletedAt = DateTime.Parse("2026-03-03", new DateTimeFormatInfo()).ToUniversalTime(),
         },
         new()
         {

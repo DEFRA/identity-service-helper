@@ -11,6 +11,7 @@ using Defra.Identity.Api.Middleware.Headers;
 using Defra.Identity.Models.Requests.Users.Commands;
 using Defra.Identity.Models.Requests.Users.Queries;
 using Defra.Identity.Models.Responses.Users;
+using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Services.Users;
 using Microsoft.AspNetCore.Mvc;
 
@@ -114,7 +115,7 @@ public static class UsersEndpoints
 
             return Results.Ok(result);
         }
-        catch (NullReferenceException nex)
+        catch (NotFoundException nex)
         {
             return Results.NotFound(nex.Message);
         }

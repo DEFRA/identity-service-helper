@@ -11,6 +11,7 @@ using Defra.Identity.Api.Middleware.Headers;
 using Defra.Identity.Models.Requests.Applications.Commands;
 using Defra.Identity.Models.Requests.Applications.Queries;
 using Defra.Identity.Models.Responses.Applications;
+using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Services.Applications;
 using Microsoft.AspNetCore.Mvc;
 
@@ -111,7 +112,7 @@ public static class ApplicationEndpoints
             var result = await service.Update(payload);
             return Results.Ok(result);
         }
-        catch (NullReferenceException nex)
+        catch (NotFoundException nex)
         {
             return Results.NotFound(nex.Message);
         }

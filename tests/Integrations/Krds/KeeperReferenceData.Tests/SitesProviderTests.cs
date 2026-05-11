@@ -42,7 +42,7 @@ public class SitesProviderTests
 
         // Verify the request path was called at least once
         server.LogEntries
-            .Count(le => le.RequestMessage.Path == "/sites" && le.RequestMessage.Method == "GET")
+            .Count(le => le.RequestMessage is { Path: "/sites", Method: "GET" })
             .ShouldBeGreaterThanOrEqualTo(1);
     }
 
@@ -67,7 +67,7 @@ public class SitesProviderTests
 
         // Verify the request path was called at least once
         server.LogEntries
-            .Count(le => le.RequestMessage.Path == "/sites" && le.RequestMessage.Method == "GET")
+            .Count(le => le.RequestMessage is { Path: "/sites", Method: "GET" })
             .ShouldBeGreaterThanOrEqualTo(1);
     }
 
@@ -88,7 +88,7 @@ public class SitesProviderTests
 
         // Verify the request path was called at least once
         server.LogEntries
-            .Count(le => le.RequestMessage.Path == "/sites" && le.RequestMessage.Method == "GET")
+            .Count(le => le.RequestMessage is { Path: "/sites", Method: "GET" })
             .ShouldBeGreaterThanOrEqualTo(1);
     }
 }

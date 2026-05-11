@@ -5,15 +5,12 @@
 namespace Defra.Identity.Scheduling.Jobs;
 
 using Defra.Identity.Messaging;
-using Defra.Identity.Scheduling.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Quartz;
 
 [DisallowConcurrentExecution]
 public class MessagingJob(
     ILogger<MessagingJob> logger,
-    IOptions<MessagingSchedulingOptions> options,
     IMessageQueueProcessor messageQueueProcessor)
     : IJob
 {

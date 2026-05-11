@@ -84,7 +84,7 @@ public partial class UserService(
         if (existingUser == null)
         {
             LogUserWithIdNotFound(request.Id);
-            throw new NullReferenceException($"User with id {request.Id} not found.");
+            throw new NotFoundException($"User with id {request.Id} not found.");
         }
 
         existingUser.FirstName = request.FirstName;

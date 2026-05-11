@@ -25,7 +25,7 @@ public class DeleteByIdRouteTests(PostgreContainerFixture fixture) : BaseTests(f
         var repository = new CphDelegationsRepository(Context, ReadOnlyContext, logger);
 
         var id = Guid.NewGuid();
-        var adminUser = Context.UserAccounts.First();
+        var adminUser = await Context.UserAccounts.FirstAsync(TestContext.Current.CancellationToken);
         var cphId = new Guid("4435a146-d0ac-4260-8a27-c550e0ed9563");
         var delegatingUserId = new Guid("0a629f9f-2d25-4ac5-afbf-e821f5c6e7d1");
         var delegatedUserId = new Guid("42bde7a0-9efe-402a-a7c3-9161be7b00ba");
@@ -75,7 +75,7 @@ public class DeleteByIdRouteTests(PostgreContainerFixture fixture) : BaseTests(f
         var logger = DefraLoggerExtensions.CreateNSubstituteLogger<CphDelegationsRepository>();
         var repository = new CphDelegationsRepository(Context, ReadOnlyContext, logger);
 
-        var adminUser = Context.UserAccounts.First();
+        var adminUser = await Context.UserAccounts.FirstAsync(TestContext.Current.CancellationToken);
         var operatorId = adminUser.Id;
 
         // Act & Assert

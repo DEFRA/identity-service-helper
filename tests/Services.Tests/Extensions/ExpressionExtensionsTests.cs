@@ -58,8 +58,8 @@ public class ExpressionExtensionsTests
     public void AndAlso_ComplexExpressions_CombinesThem()
     {
         // Arrange
-        Expression<Func<TestEntity, bool>> left = x => x.Id > 10 && x.Name.StartsWith("A");
-        Expression<Func<TestEntity, bool>> right = x => x.Id < 20 || x.Name.EndsWith("Z");
+        Expression<Func<TestEntity, bool>> left = x => x.Id > 10 && x.Name.StartsWith('A');
+        Expression<Func<TestEntity, bool>> right = x => x.Id < 20 || x.Name.EndsWith('Z');
 
         // Act
         var combined = left.AndAlso(right);

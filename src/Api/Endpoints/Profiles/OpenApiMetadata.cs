@@ -6,7 +6,7 @@ namespace Defra.Identity.Api.Endpoints.Profiles;
 
 public static class OpenApiMetadata
 {
-    //GetUserProfileById endpoint
+    // GetUserProfileById endpoint
     public static class GetUserProfileByIdRoute
     {
         public const string Name = "GetUserProfileById";

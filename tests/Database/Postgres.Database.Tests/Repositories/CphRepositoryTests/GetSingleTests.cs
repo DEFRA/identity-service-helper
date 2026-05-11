@@ -5,6 +5,7 @@
 namespace Defra.Identity.Postgres.Database.Tests.Repositories.CphRepositoryTests;
 
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
@@ -35,10 +36,10 @@ public class GetSingleTests(PostgreContainerFixture fixture) : BaseTests(fixture
         entity.ShouldSatisfyAllConditions(
             (x) => x.Id.ShouldBe(new Guid("088967e7-71b8-457a-9001-5b71f24798fd")),
             (x) => x.Identifier.ShouldBe("44/000/0007"),
-            (x) => x.CreatedAt.ShouldBe(DateTime.Parse("2026-02-07").ToUniversalTime()),
+            (x) => x.CreatedAt.ShouldBe(DateTime.Parse("2026-02-07", new DateTimeFormatInfo()).ToUniversalTime()),
             (x) => x.CreatedById.ShouldBe(AdminUserId),
-            (x) => x.ExpiredAt.ShouldBe(DateTime.Parse("2026-02-12").ToUniversalTime()),
-            (x) => x.DeletedAt.ShouldBe(DateTime.Parse("2026-02-13").ToUniversalTime()),
+            (x) => x.ExpiredAt.ShouldBe(DateTime.Parse("2026-02-12", new DateTimeFormatInfo()).ToUniversalTime()),
+            (x) => x.DeletedAt.ShouldBe(DateTime.Parse("2026-02-13", new DateTimeFormatInfo()).ToUniversalTime()),
             (x) => x.DeletedById.ShouldBe(AdminUserId));
     }
 

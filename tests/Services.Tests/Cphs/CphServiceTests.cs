@@ -5,6 +5,7 @@
 namespace Defra.Identity.Services.Tests.Cphs;
 
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq.Expressions;
 using Defra.Identity.Models.Requests.Cphs.Commands;
 using Defra.Identity.Models.Requests.Cphs.Queries;
@@ -169,7 +170,7 @@ public class CphServiceTests
             (x) => x.Id.ShouldBe(new Guid("e7009d6d-0a29-4e3f-ac0b-7bf0c7497f46")),
             (x) => x.CountyParishHoldingNumber.ShouldBe("44/100/0002"),
             (x) => x.Expired.ShouldBe(true),
-            (x) => x.ExpiredAt.ShouldBe(DateTime.Parse("2026-02-12").ToUniversalTime()));
+            (x) => x.ExpiredAt.ShouldBe(DateTime.Parse("2026-02-12", new DateTimeFormatInfo()).ToUniversalTime()));
     }
 
     [Fact]
@@ -219,7 +220,7 @@ public class CphServiceTests
             (x) => x.Id.ShouldBe(new Guid("802428bd-0411-451b-b75c-2fb6c037f271")),
             (x) => x.CountyParishHoldingNumber.ShouldBe("44/100/0005"),
             (x) => x.Expired.ShouldBe(true),
-            (x) => x.ExpiredAt.ShouldBe(DateTime.Parse("2026-02-10").ToUniversalTime()));
+            (x) => x.ExpiredAt.ShouldBe(DateTime.Parse("2026-02-10", new DateTimeFormatInfo()).ToUniversalTime()));
     }
 
     [Fact]
@@ -362,7 +363,7 @@ public class CphServiceTests
             (x) => x.Id.ShouldBe(new Guid("802428bd-0411-451b-b75c-2fb6c037f271")),
             (x) => x.CountyParishHoldingNumber.ShouldBe("44/100/0005"),
             (x) => x.Expired.ShouldBe(true),
-            (x) => x.ExpiredAt.ShouldBe(DateTime.Parse("2026-02-10").ToUniversalTime()));
+            (x) => x.ExpiredAt.ShouldBe(DateTime.Parse("2026-02-10", new DateTimeFormatInfo()).ToUniversalTime()));
     }
 
     [Fact]
@@ -412,7 +413,7 @@ public class CphServiceTests
             (x) => x.Id.ShouldBe(new Guid("e7009d6d-0a29-4e3f-ac0b-7bf0c7497f46")),
             (x) => x.CountyParishHoldingNumber.ShouldBe("44/100/0002"),
             (x) => x.Expired.ShouldBe(true),
-            (x) => x.ExpiredAt.ShouldBe(DateTime.Parse("2026-02-12").ToUniversalTime()));
+            (x) => x.ExpiredAt.ShouldBe(DateTime.Parse("2026-02-12", new DateTimeFormatInfo()).ToUniversalTime()));
     }
 
     [Fact]
@@ -464,7 +465,7 @@ public class CphServiceTests
             (x) => x.Id.ShouldBe(new Guid("e7009d6d-0a29-4e3f-ac0b-7bf0c7497f46")),
             (x) => x.CountyParishHoldingNumber.ShouldBe("44/100/0002"),
             (x) => x.Expired.ShouldBe(true),
-            (x) => x.ExpiredAt.ShouldBe(DateTime.Parse("2026-02-12").ToUniversalTime()));
+            (x) => x.ExpiredAt.ShouldBe(DateTime.Parse("2026-02-12", new DateTimeFormatInfo()).ToUniversalTime()));
     }
 
     [Fact]
@@ -476,7 +477,7 @@ public class CphServiceTests
             .Returns(
                 new CountyParishHoldings()
                 {
-                    Id = new Guid("5bc8f1a5-2d44-40b5-93e4-52b613bf099f"), DeletedAt = DateTime.Parse("2026-02-13").ToUniversalTime(),
+                    Id = new Guid("5bc8f1a5-2d44-40b5-93e4-52b613bf099f"), DeletedAt = DateTime.Parse("2026-02-13", new DateTimeFormatInfo()).ToUniversalTime(),
                 });
 
         var request = new GetCphByCphId
@@ -553,7 +554,8 @@ public class CphServiceTests
         var operatorId = new Guid("a4ae3558-90b7-48a4-90c4-a32c086ff769");
 
         // Act & Assert
-        Should.Throw<ConflictException>(async () => await cphService.Expire(request, operatorId, TestContext.Current.CancellationToken));
+        await Should.ThrowAsync<ConflictException>(() =>
+            cphService.Expire(request, operatorId, TestContext.Current.CancellationToken));
 
         logger.VerifyLogContainsOne(LogLevel.Information, $"Expiring county parish holding with id {request.Id.ToString()} by operator {operatorId}");
         logger.VerifyLogContainsOne(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} is already expired");
@@ -570,7 +572,7 @@ public class CphServiceTests
             .Returns(
                 new CountyParishHoldings()
                 {
-                    Id = new Guid("a4343f59-011c-46dc-a9fe-553923338e0a"), DeletedAt = DateTime.Parse("2026-02-13").ToUniversalTime(),
+                    Id = new Guid("a4343f59-011c-46dc-a9fe-553923338e0a"), DeletedAt = DateTime.Parse("2026-02-13", new DateTimeFormatInfo()).ToUniversalTime(),
                 });
 
         var request = new ExpireCphByCphId
@@ -581,7 +583,8 @@ public class CphServiceTests
         var operatorId = new Guid("a4ae3558-90b7-48a4-90c4-a32c086ff769");
 
         // Act & Assert
-        Should.Throw<NotFoundException>(async () => await cphService.Expire(request, operatorId, TestContext.Current.CancellationToken));
+        await Should.ThrowAsync<NotFoundException>(() =>
+            cphService.Expire(request, operatorId, TestContext.Current.CancellationToken));
 
         logger.VerifyLogContainsOne(LogLevel.Information, $"Expiring county parish holding with id {request.Id.ToString()} by operator {operatorId}");
         logger.VerifyLogContainsOne(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");
@@ -607,7 +610,8 @@ public class CphServiceTests
         var operatorId = new Guid("a4ae3558-90b7-48a4-90c4-a32c086ff769");
 
         // Act & Assert
-        Should.Throw<NotFoundException>(async () => await cphService.Expire(request, operatorId, TestContext.Current.CancellationToken));
+        await Should.ThrowAsync<NotFoundException>(() =>
+            cphService.Expire(request, operatorId, TestContext.Current.CancellationToken));
 
         logger.VerifyLogContainsOne(LogLevel.Information, $"Expiring county parish holding with id {request.Id.ToString()} by operator {operatorId}");
         logger.VerifyLogContainsOne(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");
@@ -648,7 +652,7 @@ public class CphServiceTests
             .Returns(
                 new CountyParishHoldings()
                 {
-                    Id = new Guid("a4343f59-011c-46dc-a9fe-553923338e0a"), DeletedAt = DateTime.Parse("2026-02-13").ToUniversalTime(),
+                    Id = new Guid("a4343f59-011c-46dc-a9fe-553923338e0a"), DeletedAt = DateTime.Parse("2026-02-13", new DateTimeFormatInfo()).ToUniversalTime(),
                 });
 
         var request = new DeleteCphByCphId
@@ -659,7 +663,8 @@ public class CphServiceTests
         var operatorId = new Guid("a4ae3558-90b7-48a4-90c4-a32c086ff769");
 
         // Act & Assert
-        Should.Throw<NotFoundException>(async () => await cphService.Delete(request, operatorId, TestContext.Current.CancellationToken));
+        await Should.ThrowAsync<NotFoundException>(() =>
+            cphService.Delete(request, operatorId, TestContext.Current.CancellationToken));
 
         logger.VerifyLogContainsOne(LogLevel.Information, $"Deleting county parish holding with id {request.Id.ToString()} by operator {operatorId}");
         logger.VerifyLogContainsOne(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");
@@ -685,7 +690,8 @@ public class CphServiceTests
         var operatorId = new Guid("a4ae3558-90b7-48a4-90c4-a32c086ff769");
 
         // Act & Assert
-        Should.Throw<NotFoundException>(async () => await cphService.Delete(request, operatorId, TestContext.Current.CancellationToken));
+        await Should.ThrowAsync<NotFoundException>(() =>
+            cphService.Delete(request, operatorId, TestContext.Current.CancellationToken));
 
         logger.VerifyLogContainsOne(LogLevel.Information, $"Deleting county parish holding with id {request.Id.ToString()} by operator {operatorId}");
         logger.VerifyLogContainsOne(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");

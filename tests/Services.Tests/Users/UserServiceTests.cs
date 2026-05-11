@@ -312,7 +312,7 @@ public class UserServiceTests
     }
 
     [Fact]
-    public async Task Update_UserDoesNotExist_ThrowsNullReferenceException()
+    public async Task Update_UserDoesNotExist_ThrowsNotFoundException()
     {
         // Arrange
         var updateUser = new UpdateUser
@@ -324,7 +324,7 @@ public class UserServiceTests
             .Returns((UserAccounts)null!);
 
         // Act & Assert
-        await Should.ThrowAsync<NullReferenceException>(
+        await Should.ThrowAsync<NotFoundException>(
             async () =>
                 await userService.Update(updateUser, TestContext.Current.CancellationToken));
 

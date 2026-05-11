@@ -80,7 +80,7 @@ public class CorrelationIdMiddlewareTests
         var middleware = new CorrelationIdMiddleware(logger);
 
         var endpoint = Substitute.For<IEndpointFeature>();
-        endpoint.Endpoint = new Endpoint(null, new EndpointMetadataCollection([new IgnoreCorrelationIdCheck()]), "fake endpoint");
+        endpoint.Endpoint = new Endpoint(null, new EndpointMetadataCollection(new IgnoreCorrelationIdCheck()), "fake endpoint");
 
         var context = new DefaultHttpContext();
         context.Features.Set(endpoint);

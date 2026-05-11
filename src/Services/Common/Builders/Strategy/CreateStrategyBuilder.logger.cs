@@ -1,4 +1,4 @@
-// <copyright file="CreateStrategyBuilder`2.logger.cs" company="Defra">
+// <copyright file="CreateStrategyBuilder.logger.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
