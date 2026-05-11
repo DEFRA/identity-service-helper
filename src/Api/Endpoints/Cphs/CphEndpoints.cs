@@ -5,38 +5,57 @@
 namespace Defra.Identity.Api.Endpoints.Cphs;
 
 using System.Net.Mime;
-using Defra.Identity.Api.Endpoints.Cphs.Factories;
-using Defra.Identity.Requests;
-using Defra.Identity.Requests.Common.Queries;
-using Defra.Identity.Requests.Cphs.Commands;
-using Defra.Identity.Requests.Cphs.Common;
-using Defra.Identity.Requests.Cphs.Queries;
-using Defra.Identity.Requests.Filters;
-using Defra.Identity.Requests.MetaData;
-using Defra.Identity.Responses.Common;
-using Defra.Identity.Responses.Cphs;
+using Defra.Identity.Api.Common.Factories;
+using Defra.Identity.Api.Filters;
+using Defra.Identity.Api.MetaData;
+using Defra.Identity.Api.Middleware.Headers;
+using Defra.Identity.Models.Requests.Common.Queries;
+using Defra.Identity.Models.Requests.Cphs.Commands;
+using Defra.Identity.Models.Requests.Cphs.Common;
+using Defra.Identity.Models.Requests.Cphs.Queries;
+using Defra.Identity.Models.Responses.Common;
+using Defra.Identity.Models.Responses.Cphs;
 using Defra.Identity.Services.Cphs;
 
 public static class CphEndpoints
 {
     public static void UseCphEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapGet(RouteNames.CountyParishHoldings, GetAllPaged)
+        var scope = app.ServiceProvider.CreateScope();
+        var cphNumberHandlerFactory = GetCphNumberHandlerFactory(scope);
+
+        app.MapGet(RouteNames.CountyParishHoldings, GetAllPagedRoute)
+            .WithName(OpenApiMetadata.GetAllPagedRoute.Name)
+            .WithTags(OpenApiMetadata.Tag)
+            .WithSummary(OpenApiMetadata.GetAllPagedRoute.Summary)
+            .WithDescription(OpenApiMetadata.GetAllPagedRoute.Description)
             .AddEndpointFilter<ValidationFilter<PagedQuery>>()
             .Produces<PagedResults<Cph>>(StatusCodes.Status200OK, MediaTypeNames.Application.Json);
 
-        app.MapGet(RouteNames.CountyParishHoldings + "/{id:guid}", Get)
+        app.MapGet(RouteNames.CountyParishHoldings + "/{id:guid}", GetByIdRoute)
+            .WithName(OpenApiMetadata.GetByIdRoute.Name)
+            .WithTags(OpenApiMetadata.Tag)
+            .WithSummary(OpenApiMetadata.GetByIdRoute.Summary)
+            .WithDescription(OpenApiMetadata.GetByIdRoute.Description)
             .Produces<Cph>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
             .Produces(StatusCodes.Status404NotFound);
 
         app.MapGet(
                 RouteNames.CountyParishHoldings + "/{county:int}/{parish:int}/{holding:int}",
-                CphHandlerFactory.CreateCphNumberRerouteHandler<GetCphByCphId, GetCphByCphNumber>(Get))
+                cphNumberHandlerFactory.CreateRerouteHandler<GetCphByCphId, GetCphByCphNumber>(GetByIdRoute))
+            .WithName(OpenApiMetadata.GetByNumberRoute.Name)
+            .WithTags(OpenApiMetadata.Tag)
+            .WithSummary(OpenApiMetadata.GetByNumberRoute.Summary)
+            .WithDescription(OpenApiMetadata.GetByNumberRoute.Description)
             .AddEndpointFilter<ValidationFilter<IOperationByCphNumber>>()
             .Produces<Cph>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
             .Produces(StatusCodes.Status404NotFound);
 
-        app.MapPost(RouteNames.CountyParishHoldings + "/{id:guid}:expire", Expire)
+        app.MapPost(RouteNames.CountyParishHoldings + "/{id:guid}:expire", ExpireByIdRoute)
+            .WithName(OpenApiMetadata.ExpireByIdRoute.Name)
+            .WithTags(OpenApiMetadata.Tag)
+            .WithSummary(OpenApiMetadata.ExpireByIdRoute.Summary)
+            .WithDescription(OpenApiMetadata.ExpireByIdRoute.Description)
             .WithMetadata(new RequiresOperatorId())
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status404NotFound)
@@ -44,42 +63,40 @@ public static class CphEndpoints
 
         app.MapPost(
                 RouteNames.CountyParishHoldings + "/{county:int}/{parish:int}/{holding:int}:expire",
-                CphHandlerFactory.CreateCphNumberRerouteHandler<ExpireCphByCphId, ExpireCphByCphNumber>(Expire))
+                cphNumberHandlerFactory.CreateRerouteHandler<ExpireCphByCphId, ExpireCphByCphNumber>(ExpireByIdRoute))
+            .WithName(OpenApiMetadata.ExpireByNumberRoute.Name)
+            .WithTags(OpenApiMetadata.Tag)
+            .WithSummary(OpenApiMetadata.ExpireByNumberRoute.Summary)
+            .WithDescription(OpenApiMetadata.ExpireByNumberRoute.Description)
             .WithMetadata(new RequiresOperatorId())
             .AddEndpointFilter<ValidationFilter<IOperationByCphNumber>>()
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status409Conflict);
 
-        app.MapDelete(RouteNames.CountyParishHoldings + "/{id:guid}", Delete)
+        app.MapDelete(RouteNames.CountyParishHoldings + "/{id:guid}", DeleteByIdRoute)
+            .WithName(OpenApiMetadata.DeleteByIdRoute.Name)
+            .WithTags(OpenApiMetadata.Tag)
+            .WithSummary(OpenApiMetadata.DeleteByIdRoute.Summary)
+            .WithDescription(OpenApiMetadata.DeleteByIdRoute.Description)
             .WithMetadata(new RequiresOperatorId())
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status404NotFound);
 
         app.MapDelete(
                 RouteNames.CountyParishHoldings + "/{county:int}/{parish:int}/{holding:int}",
-                CphHandlerFactory.CreateCphNumberRerouteHandler<DeleteCphByCphId, DeleteCphByCphNumber>(Delete))
+                cphNumberHandlerFactory.CreateRerouteHandler<DeleteCphByCphId, DeleteCphByCphNumber>(DeleteByIdRoute))
+            .WithName(OpenApiMetadata.DeleteByNumberRoute.Name)
+            .WithTags(OpenApiMetadata.Tag)
+            .WithSummary(OpenApiMetadata.DeleteByNumberRoute.Summary)
+            .WithDescription(OpenApiMetadata.DeleteByNumberRoute.Description)
             .WithMetadata(new RequiresOperatorId())
             .AddEndpointFilter<ValidationFilter<IOperationByCphNumber>>()
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status404NotFound);
-
-        app.MapGet(RouteNames.CountyParishHoldings + "/{id:guid}/users", GetAllCphUsersPaged)
-            .AddEndpointFilter<ValidationFilter<PagedQuery>>()
-            .Produces<PagedResults<CphUser>>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
-            .Produces(StatusCodes.Status404NotFound);
-
-        app.MapGet(
-                RouteNames.CountyParishHoldings + "/{county:int}/{parish:int}/{holding:int}/users",
-                CphHandlerFactory.CreateCphNumberRerouteHandler<GetCphUsersByCphId, GetCphUsersByCphNumber>(GetAllCphUsersPaged))
-            .AddEndpointFilter<ValidationFilter<IOperationByCphNumber>>()
-            .AddEndpointFilter<ValidationFilter<PagedQuery>>()
-            .Produces<PagedResults<CphUser>>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
-            .Produces(StatusCodes.Status404NotFound);
     }
 
-    private static async Task<IResult> GetAllPaged(
-        QueryRequestHeaders headers,
+    private static async Task<IResult> GetAllPagedRoute(
         [AsParameters] GetCphs request,
         ICphService service)
     {
@@ -88,7 +105,7 @@ public static class CphEndpoints
         return Results.Ok(pagedCphResults);
     }
 
-    private static async Task<IResult> Get(
+    private static async Task<IResult> GetByIdRoute(
         QueryRequestHeaders headers,
         [AsParameters] GetCphByCphId request,
         ICphService service)
@@ -98,7 +115,7 @@ public static class CphEndpoints
         return Results.Ok(cph);
     }
 
-    private static async Task<IResult> Expire(
+    private static async Task<IResult> ExpireByIdRoute(
         CommandRequestHeaders headers,
         [AsParameters] ExpireCphByCphId request,
         ICphService service)
@@ -108,7 +125,7 @@ public static class CphEndpoints
         return Results.NoContent();
     }
 
-    private static async Task<IResult> Delete(
+    private static async Task<IResult> DeleteByIdRoute(
         CommandRequestHeaders headers,
         [AsParameters] DeleteCphByCphId request,
         ICphService service)
@@ -118,13 +135,6 @@ public static class CphEndpoints
         return Results.NoContent();
     }
 
-    private static async Task<IResult> GetAllCphUsersPaged(
-        QueryRequestHeaders headers,
-        [AsParameters] GetCphUsersByCphId request,
-        ICphService service)
-    {
-        var pagedCphUsersResults = await service.GetAllCphUsersPaged(request);
-
-        return Results.Ok(pagedCphUsersResults);
-    }
+    private static ICphNumberHandlerFactory<ICphService> GetCphNumberHandlerFactory(IServiceScope scope)
+        => scope.ServiceProvider.GetService<ICphNumberHandlerFactory<ICphService>>() ?? throw new InvalidOperationException("CphNumberHandlerFactory is not registered.");
 }

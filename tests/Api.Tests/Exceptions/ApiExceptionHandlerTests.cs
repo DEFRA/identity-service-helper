@@ -6,8 +6,8 @@ namespace Defra.Identity.Api.Tests.Exceptions;
 
 using System.Text.Json;
 using Defra.Identity.Api.Exceptions;
-using Defra.Identity.Repositories.Exceptions;
-using Defra.Identity.Requests;
+using Defra.Identity.Api.Middleware.Headers;
+using Defra.Identity.Repositories.Common.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -21,7 +21,7 @@ public class ApiExceptionHandlerTests
 
     public ApiExceptionHandlerTests()
     {
-        logger = Substitute.For<ILogger<ApiExceptionHandler>>();
+        logger = DefraLoggerExtensions.CreateNSubstituteLogger<ApiExceptionHandler>();
         handler = new ApiExceptionHandler(logger);
     }
 
@@ -116,12 +116,7 @@ public class ApiExceptionHandlerTests
         problem.Type.ShouldBe("https://httpstatuses.com/500");
         problem.Detail.ShouldBe(exception.Message);
 
-        logger.Received(1).Log(
-            LogLevel.Error,
-            Arg.Any<EventId>(),
-            Arg.Any<Arg.AnyType>(),
-            exception,
-            Arg.Any<Func<Arg.AnyType, Exception?, string>>());
+        logger.VerifyLogExceptionTypeOne<Exception>(LogLevel.Error);
     }
 
     [Fact]
@@ -137,12 +132,7 @@ public class ApiExceptionHandlerTests
         await handler.TryHandleAsync(context, exception, cancellationToken);
 
         // Assert
-        logger.Received(1).Log(
-            LogLevel.Warning,
-            Arg.Any<EventId>(),
-            Arg.Any<Arg.AnyType>(),
-            exception,
-            Arg.Any<Func<Arg.AnyType, Exception?, string>>());
+        logger.VerifyLogExceptionTypeOne<NotFoundException>(LogLevel.Warning);
     }
 
     [Fact]

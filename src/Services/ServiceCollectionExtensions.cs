@@ -5,8 +5,11 @@
 namespace Defra.Identity.Services;
 
 using Defra.Identity.Services.Applications;
+using Defra.Identity.Services.Common.Builders.Strategy.Factories;
+using Defra.Identity.Services.Common.Context;
 using Defra.Identity.Services.Cphs;
 using Defra.Identity.Services.Delegations;
+using Defra.Identity.Services.Profiles;
 using Defra.Identity.Services.Species;
 using Defra.Identity.Services.Users;
 using Microsoft.Extensions.Configuration;
@@ -14,16 +17,34 @@ using Microsoft.Extensions.DependencyInjection;
 
 public static class ServiceCollectionExtensions
 {
-    public static string? GlobalConfigValue { get; private set; }
-
-    public static IServiceCollection AddDataServices(this IServiceCollection services, IConfigurationRoot config)
+    extension(IServiceCollection services)
     {
-        services.AddTransient<IUserService, UserService>();
-        services.AddTransient<IApplicationService, ApplicationService>();
-        services.AddTransient<ICphDelegationsService, CphDelegationsService>();
-        services.AddTransient<ICphService, CphService>();
-        services.AddTransient<IAnimalSpeciesService, AnimalSpeciesService>();
+        public IServiceCollection AddDataServices(IConfigurationRoot config)
+        {
+            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IProfileService, ProfileService>();
+            services.AddTransient<IApplicationService, ApplicationService>();
+            services.AddTransient<ICphDelegationsService, CphDelegationsService>();
+            services.AddTransient<ICphService, CphService>();
+            services.AddTransient<ICphNumberService, CphNumberService>();
+            services.AddTransient<IAnimalSpeciesService, AnimalSpeciesService>();
 
-        return services;
+            return services;
+        }
+
+        public IServiceCollection AddOperatorContext(IConfigurationRoot config)
+        {
+            services.AddScoped<IOperatorContext, OperatorContext>();
+
+            return services;
+        }
+
+        public IServiceCollection AddStrategies(IConfigurationRoot config)
+        {
+            services.AddTransient<IStrategyBuilderFactory<ProfileService>, StrategyBuilderFactory<ProfileService>>();
+            services.AddTransient<IStrategyBuilderFactory<CphDelegationsService>, StrategyBuilderFactory<CphDelegationsService>>();
+
+            return services;
+        }
     }
 }

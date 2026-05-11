@@ -5,155 +5,138 @@
 namespace Defra.Identity.Services.Users;
 
 using System.Linq.Expressions;
+using Defra.Identity.Models.Requests.Users.Commands;
+using Defra.Identity.Models.Requests.Users.Queries;
+using Defra.Identity.Models.Responses.Users;
 using Defra.Identity.Postgres.Database.Entities;
-using Defra.Identity.Repositories.Exceptions;
+using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Repositories.Users;
-using Defra.Identity.Requests.Users.Commands.Create;
-using Defra.Identity.Requests.Users.Commands.Update;
-using Defra.Identity.Requests.Users.Queries;
-using Defra.Identity.Responses.Users;
 using Microsoft.Extensions.Logging;
 
-public class UserService : IUserService
+public partial class UserService(
+    IUsersRepository repository,
+    ILogger<UserService> logger)
+    : IUserService
 {
-    private readonly IUsersRepository repository;
-    private readonly ILogger<UserService> logger;
-
-    public UserService(IUsersRepository repository, ILogger<UserService> logger)
+    public async Task<List<User>> GetAll(GetAllUsers request, CancellationToken cancellationToken = default)
     {
-        this.repository = repository;
-        this.logger = logger;
-    }
+        LogGettingAllUsersIncludeHidden(request.IncludeInactive);
+        Expression<Func<UserAccounts, bool>> filter = x => IncludeInactiveInferred(request) || x.DeletedBy == null;
 
-    public async Task<List<User>> GetAll(GetUsers request, CancellationToken cancellationToken = default)
-    {
-        logger.LogInformation("Getting all users");
-        var userAccounts = await repository.GetList(x => true, cancellationToken);
+        var userAccounts = await repository.GetList(filter, cancellationToken);
 
-        var users = userAccounts.Select(userAccount => new User()
-        {
-            Id = userAccount.Id,
-            Email = userAccount.EmailAddress,
-            FirstName = userAccount.FirstName,
-            LastName = userAccount.LastName,
-            DisplayName = userAccount.DisplayName,
-        }).ToList();
+        var users = userAccounts.Select(MapUserEntityToUser).ToList();
 
         return users;
     }
 
     public async Task<User> Get(GetUserById request, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Getting user by id {Id}", request.Id);
+        LogGettingUserById(request.Id);
         Expression<Func<UserAccounts, bool>> filter = x => x.Id == request.Id;
 
         var userAccount = await repository.GetSingle(filter, cancellationToken);
 
         if (userAccount == null)
         {
-            logger.LogWarning("User with id {Id} not found", request.Id);
+            LogUserWithIdNotFound(request.Id);
             throw new NotFoundException("user not found.");
         }
 
-        var user = new User()
-        {
-            Id = userAccount.Id,
-            Email = userAccount.EmailAddress,
-            FirstName = userAccount.FirstName,
-            LastName = userAccount.LastName,
-        };
+        var user = MapUserEntityToUser(userAccount);
 
         return user;
     }
 
-    public async Task<User> Upsert(Requests.Users.Commands.Update.UpdateUser user, CancellationToken cancellationToken = default)
+    public async Task<User> Upsert(UpdateUser request, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Upserting user with id {Id}", user.Id);
-        var existingUser = await repository.GetSingle(x => x.Id.Equals(user.Id), cancellationToken);
+        LogUpsertingUserWithId(request.Id);
+        var existingUser = await repository.GetSingle(x => x.Id.Equals(request.Id), cancellationToken);
 
         if (existingUser != null)
         {
-            logger.LogInformation("User with id {Id} found, updating", user.Id);
-            existingUser.FirstName = user.FirstName;
-            existingUser.LastName = user.LastName;
-            existingUser.EmailAddress = user.Email;
+            LogUserWithIdFoundUpdating(request.Id);
+            existingUser.FirstName = request.FirstName;
+            existingUser.LastName = request.LastName;
+            existingUser.EmailAddress = request.Email;
             var updated = await repository.Update(existingUser, cancellationToken);
 
-            return new User()
-           {
-               Id = updated.Id,
-               Email = updated.EmailAddress,
-               FirstName = updated.FirstName,
-               LastName = updated.LastName,
-           };
+            return MapUserEntityToUser(updated);
         }
 
-        logger.LogInformation("User with id {Id} not found, creating", user.Id);
-        var userAccount = new UserAccounts() { Id = user.Id, EmailAddress = user.Email, FirstName = user.FirstName, LastName = user.LastName };
-        var result = await repository.Create(userAccount, cancellationToken);
-        return new User()
+        LogUserWithIdNotFoundCreating(request.Id);
+
+        var userAccount = new UserAccounts()
         {
-            Id = result.Id,
-            Email = result.EmailAddress,
-            FirstName = result.FirstName,
-            LastName = result.LastName,
+            Id = request.Id, EmailAddress = request.Email, FirstName = request.FirstName, LastName = request.LastName,
         };
+
+        var result = await repository.Create(userAccount, cancellationToken);
+
+        return MapUserEntityToUser(result);
     }
 
-    public async Task<User> Update(UpdateUser user, CancellationToken cancellationToken = default)
+    public async Task<User> Update(UpdateUser request, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Updating user with id {Id}", user.Id);
-        var existingUser = await repository.GetSingle(x => x.Id.Equals(user.Id), cancellationToken);
+        LogUpdatingUserWithId(request.Id);
+        var existingUser = await repository.GetSingle(x => x.Id.Equals(request.Id), cancellationToken);
 
         if (existingUser == null)
         {
-            logger.LogWarning("User with id {Id} not found for update", user.Id);
-            throw new NullReferenceException($"User with id {user.Id} not found.");
+            LogUserWithIdNotFound(request.Id);
+            throw new NotFoundException($"User with id {request.Id} not found.");
         }
 
-        existingUser.FirstName = user.FirstName;
-        existingUser.LastName = user.LastName;
-        existingUser.EmailAddress = user.Email;
-        existingUser.DisplayName = user.DisplayName;
+        existingUser.FirstName = request.FirstName;
+        existingUser.LastName = request.LastName;
+        existingUser.EmailAddress = request.Email;
+        existingUser.DisplayName = request.DisplayName;
 
         var updated = await repository.Update(existingUser, cancellationToken);
 
-        return new User
-        {
-            Id = updated.Id,
-            Email = updated.EmailAddress,
-            FirstName = updated.FirstName,
-            LastName = updated.LastName,
-            DisplayName = updated.DisplayName,
-        };
+        return MapUserEntityToUser(updated);
     }
 
-    public async Task<User> Create(CreateUser user, CancellationToken cancellationToken = default)
+    public async Task<User> Create(CreateUser request, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Creating new user with email {Email}", user.Email);
+        LogCreatingNewUserWithEmail(request.Email);
+
         var newUser = new UserAccounts
         {
-            EmailAddress = user.Email,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            DisplayName = user.DisplayName,
-            CreatedById = user.OperatorId,
+            EmailAddress = request.Email,
+            FirstName = request.FirstName,
+            LastName = request.LastName,
+            DisplayName = request.DisplayName,
+            CreatedById = request.OperatorId,
         };
 
         var createdUser = await repository.Create(newUser, cancellationToken);
+
+        return MapUserEntityToUser(createdUser);
+    }
+
+    public async Task<bool> Delete(DeleteUser request, CancellationToken cancellationToken = default)
+    {
+        LogDeletingUserWithIdByOperatorId(request.Id, request.OperatorId);
+        return await repository.Delete(x => x.Id == request.Id, request.OperatorId, cancellationToken);
+    }
+
+    private static User MapUserEntityToUser(UserAccounts userEntity)
+    {
         return new User()
         {
-            Id = createdUser.Id,
-            Email = createdUser.EmailAddress,
-            FirstName = createdUser.FirstName,
-            LastName = createdUser.LastName,
-            DisplayName = createdUser.DisplayName,
+            Id = userEntity.Id,
+            Email = userEntity.EmailAddress,
+            FirstName = userEntity.FirstName,
+            LastName = userEntity.LastName,
+            DisplayName = userEntity.DisplayName,
         };
     }
 
-    public async Task<bool> Delete(Guid id, Guid operatorId, CancellationToken cancellationToken = default)
+    private static bool IncludeInactiveInferred(GetAllUsers request)
     {
-        logger.LogInformation("Deleting user with id {Id} by operator {OperatorId}", id, operatorId);
-        return await repository.Delete(x => x.Id == id, operatorId, cancellationToken);
+        return request.IncludeInactive != null &&
+               (request.IncludeInactive == string.Empty ||
+                request.IncludeInactive.Equals("true", StringComparison.InvariantCultureIgnoreCase));
     }
 }

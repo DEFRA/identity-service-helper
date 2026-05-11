@@ -5,8 +5,10 @@
 namespace Defra.Identity.Repositories;
 
 using Defra.Identity.Repositories.Applications;
+using Defra.Identity.Repositories.Assignments;
 using Defra.Identity.Repositories.Cphs;
 using Defra.Identity.Repositories.Delegations;
+using Defra.Identity.Repositories.Messaging;
 using Defra.Identity.Repositories.Roles;
 using Defra.Identity.Repositories.Species;
 using Defra.Identity.Repositories.Users;
@@ -17,13 +19,15 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddRepositories(this IServiceCollection services, IConfigurationRoot config)
     {
-        services.AddTransient<IAnimalSpeciesRepository, AnimalSpeciesRepository>();
         services.AddTransient<IUsersRepository, UsersRepository>();
-        services.AddTransient<IApplicationsRepository, ApplicationsRepository>();
-        services.AddTransient<ICphDelegationsRepository, CphDelegationsRepository>();
-        services.AddTransient<ICphRepository, CphRepository>();
-        services.AddTransient<ICphUsersRepository, CphUsersRepository>();
         services.AddTransient<IRoleRepository, RoleRepository>();
+        services.AddTransient<IApplicationsRepository, ApplicationsRepository>();
+        services.AddTransient<IAnimalSpeciesRepository, AnimalSpeciesRepository>();
+        services.AddTransient<ICphRepository, CphRepository>();
+        services.AddTransient<ICphDelegationsRepository, CphDelegationsRepository>();
+        services.AddTransient<ICphAssignmentsRepository, CphAssignmentsRepository>();
+        services.AddTransient<IExternalMessagingRepository, ExternalMessagingRepository>();
+        services.AddTransient<ICountyParishHoldingDelegationsNotificationsRepository, CountyParishHoldingDelegationsNotificationsRepository>();
 
         return services;
     }

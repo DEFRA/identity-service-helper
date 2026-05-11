@@ -10,15 +10,25 @@ using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Common;
 using Microsoft.Extensions.Logging;
 
-public class CphRepository(
+public partial class CphRepository(
     PostgresDbContext context,
     ReadOnlyPostgresDbContext readOnlyContext,
     ILogger<CphRepository> logger)
     : ICphRepository
 {
+    public async Task<bool> ValidateReferenceById(Guid id, CancellationToken cancellationToken = default)
+    {
+        LogValidatingCountyParishHoldingReferenceWithId(logger, id);
+
+        var entity = await readOnlyContext.CountyParishHoldings
+            .SingleOrDefaultAsync((entity) => entity.Id == id, cancellationToken);
+
+        return entity is { DeletedAt: null } && (entity.ExpiredAt == null || DateTime.UtcNow < entity.ExpiredAt);
+    }
+
     public async Task<CountyParishHoldings?> GetSingle(Expression<Func<CountyParishHoldings, bool>> predicate, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Getting single county parish holding");
+        LogGettingSingleCountyParishHolding();
 
         var result = await readOnlyContext.CountyParishHoldings
             .SingleOrDefaultAsync(predicate, cancellationToken);
@@ -34,7 +44,7 @@ public class CphRepository(
         bool orderByDescending,
         CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Getting list of county parish holdings");
+        LogGettingListOfCountyParishHoldings();
 
         var results = await readOnlyContext.CountyParishHoldings
             .Where(predicate)
@@ -47,7 +57,7 @@ public class CphRepository(
     {
         ArgumentNullException.ThrowIfNull(entity);
 
-        logger.LogInformation("Updating county parish holding with id {Id}", entity.Id);
+        LogUpdatingCountyParishHoldingWithId(entity.Id);
 
         context.Update(entity);
 

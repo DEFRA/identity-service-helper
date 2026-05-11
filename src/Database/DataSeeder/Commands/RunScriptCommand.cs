@@ -14,7 +14,7 @@ public class RunScriptCommand : BaseCommand
     public RunScriptCommand()
         : base("RunScriptDatabase", "Run a script on the specified database.")
     {
-        this.Aliases.Add("run");
+        Aliases.Add("run");
 
         Option<string> scriptFileOption = new("-script")
         {
@@ -28,11 +28,11 @@ public class RunScriptCommand : BaseCommand
             }
         });
 
-        this.Add(DatabaseUrlOption);
-        this.Add(DatabaseUserNameOption);
-        this.Add(DatabasePasswordOption);
-        this.Add(scriptFileOption);
-        this.SetAction((parsedResult, cancellationToken) => ExecuteAsync(
+        Add(DatabaseUrlOption);
+        Add(DatabaseUserNameOption);
+        Add(DatabasePasswordOption);
+        Add(scriptFileOption);
+        SetAction((parsedResult, cancellationToken) => ExecuteAsync(
             parsedResult.GetValue(DatabaseUrlOption),
             parsedResult.GetValue(DatabaseUserNameOption),
             parsedResult.GetValue(DatabasePasswordOption),
@@ -40,7 +40,7 @@ public class RunScriptCommand : BaseCommand
             cancellationToken));
     }
 
-    private async Task<int> ExecuteAsync(
+    private static async Task<int> ExecuteAsync(
         string? databaseUrl,
         string? databaseUserName,
         string? databasePassword,
@@ -48,12 +48,6 @@ public class RunScriptCommand : BaseCommand
         CancellationToken cancellationToken)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(scriptFile);
-
-        if (!File.Exists(scriptFile))
-        {
-            Console.Error.WriteLine($"The script file '{scriptFile}' could not be found.");
-            return 1;
-        }
 
         var connectionString = BuildConnectionString(databaseUrl, databaseUserName, databasePassword);
         var sql = await File.ReadAllTextAsync(scriptFile, cancellationToken);
@@ -63,7 +57,9 @@ public class RunScriptCommand : BaseCommand
         }
         catch (Exception e)
         {
-            Console.Error.WriteLine($"Error running script: {e.Message}");
+            await Console.Error
+                .WriteLineAsync($"Error running script: {e.Message}")
+                .ConfigureAwait(false);
             return 1;
         }
 

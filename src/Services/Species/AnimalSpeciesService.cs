@@ -5,32 +5,25 @@
 namespace Defra.Identity.Services.Species;
 
 using System.Linq.Expressions;
-using Defra.Identity.Repositories.Exceptions;
+using Defra.Identity.Models.Requests.Species.Commands;
+using Defra.Identity.Models.Requests.Species.Queries;
+using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Repositories.Species;
-using Defra.Identity.Requests.Species.Commands;
-using Defra.Identity.Requests.Species.Queries;
 using Microsoft.Extensions.Logging;
 using ModelAnimalSpecies = Defra.Identity.Postgres.Database.Entities.AnimalSpecies;
-using ResponseAnimalSpecies = Defra.Identity.Responses.Species.AnimalSpecies;
+using ResponseAnimalSpecies = Defra.Identity.Models.Responses.Species.AnimalSpecies;
 
-public class AnimalSpeciesService
+public partial class AnimalSpeciesService(
+    IAnimalSpeciesRepository repository,
+    ILogger<AnimalSpeciesService> logger)
     : IAnimalSpeciesService
 {
-    private readonly IAnimalSpeciesRepository repository;
-    private readonly ILogger<AnimalSpeciesService> logger;
-
-    public AnimalSpeciesService(IAnimalSpeciesRepository repository, ILogger<AnimalSpeciesService> logger)
-    {
-        this.repository = repository;
-        this.logger = logger;
-    }
-
     public async Task<List<ResponseAnimalSpecies>> GetAll(
         GetAllAnimalSpecies request,
         CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Getting all animal species, includeHidden: {IncludeHidden}", request.IncludeInactive);
-        Expression<Func<ModelAnimalSpecies, bool>> filter = x => IncludeInactiveInferred(request) || x.IsActive == true;
+        LogGettingAllAnimalSpeciesIncludeHidden(request.IncludeInactive);
+        Expression<Func<ModelAnimalSpecies, bool>> filter = x => IncludeInactiveInferred(request) || x.IsActive;
 
         var result = await repository.GetList(filter, cancellationToken);
 
@@ -47,13 +40,13 @@ public class AnimalSpeciesService
 
     public async Task<ResponseAnimalSpecies> Get(GetAnimalSpecies request, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Getting animal species by id {Id}", request.Id);
+        LogGettingAnimalSpeciesById(request.Id);
         Expression<Func<ModelAnimalSpecies, bool>> filter = x => x.Id == request.Id;
 
         var animalSpecies = await repository.GetSingle(filter, cancellationToken);
         if (animalSpecies == null)
         {
-            logger.LogWarning("Animal species with id {Id} not found", request.Id);
+            LogAnimalSpeciesWithIdNotFound(request.Id);
             throw new NotFoundException("Animal species not found.");
         }
 
@@ -67,11 +60,11 @@ public class AnimalSpeciesService
 
     public async Task<ResponseAnimalSpecies> Toggle(ToggleAnimalSpecies request, Guid operatorId, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Updating animal species with id {Id}", request.Id);
+        LogUpdatingAnimalSpeciesWithId(request.Id);
         var animalSpecies = await repository.GetSingle(x => x.Id.Equals(request.Id), cancellationToken);
         if (animalSpecies == null)
         {
-            logger.LogWarning("Animal species with id {Id} not found for update", request.Id);
+            LogAnimalSpeciesWithIdNotFoundForUpdate(request.Id);
             throw new NotFoundException($"Animal species with id {request.Id} not found.");
         }
 

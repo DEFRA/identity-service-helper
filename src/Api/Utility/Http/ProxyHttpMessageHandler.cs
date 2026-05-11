@@ -7,7 +7,8 @@ namespace Defra.Identity.Api.Utility.Http;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 
-public class ProxyHttpMessageHandler : HttpClientHandler
+public class ProxyHttpMessageHandler
+    : HttpClientHandler
 {
     [ExcludeFromCodeCoverage]
     public ProxyHttpMessageHandler()

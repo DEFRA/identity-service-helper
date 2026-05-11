@@ -5,7 +5,7 @@
 namespace Defra.Identity.Api.Tests.Config;
 
 using Microsoft.AspNetCore.Builder;
-using Environment = Defra.Identity.Api.Config.Environment;
+using Environment = Defra.Identity.Api.Configuration.Environment;
 
 public class EnvironmentTest
 {

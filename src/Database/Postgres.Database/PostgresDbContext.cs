@@ -12,24 +12,8 @@ using Defra.Identity.Postgres.Database.Entities.Base;
 /// </summary>
 /// <param name="options">options to apply to the context.</param>
 public class PostgresDbContext(DbContextOptions<PostgresDbContext> options)
-    : DbContext(options)
+    : PostgresDbContextBase<PostgresDbContext>(options)
 {
-    public virtual DbSet<AnimalSpecies> AnimalSpecies { get; set; }
-
-    public virtual DbSet<Applications> Applications { get; set; }
-
-    public virtual DbSet<KrdsSyncLogs> KrdsSyncLogs { get; set; }
-
-    public virtual DbSet<UserAccounts> UserAccounts { get; set; }
-
-    public virtual DbSet<Roles> Roles { get; set; }
-
-    public virtual DbSet<ApplicationRoles> ApplicationRoles { get; set; }
-
-    public virtual DbSet<CountyParishHoldings> CountyParishHoldings { get; set; }
-
-    public virtual DbSet<CountyParishHoldingDelegations> CountyParishHoldingDelegations { get; set; }
-
     public override int SaveChanges()
     {
         SetProcessingDateTimes();
@@ -41,11 +25,6 @@ public class PostgresDbContext(DbContextOptions<PostgresDbContext> options)
         SetProcessingDateTimes();
 
         return base.SaveChangesAsync(cancellationToken);
-    }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        base.OnConfiguring(optionsBuilder);
     }
 
     protected virtual void ConfigureModel(ModelBuilder modelBuilder)
@@ -91,7 +70,7 @@ public class PostgresDbContext(DbContextOptions<PostgresDbContext> options)
         if (defaultCreatorId.HasValue)
         {
             foreach (var entry in ChangeTracker.Entries<BaseAuditEntity>()
-                         .Where(e => e.State == EntityState.Added && e.Entity.CreatedById == default))
+                         .Where(e => e.State == EntityState.Added && e.Entity.CreatedById == Guid.Empty))
             {
                 entry.Entity.CreatedById = defaultCreatorId.Value;
             }

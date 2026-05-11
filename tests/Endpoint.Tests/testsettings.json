@@ -1,0 +1,10 @@
+{
+  "ApiConfiguration": {
+    "ApiKey": "test",
+    "OperatorId": "0a629f9f-2d25-4ac5-afbf-e821f5c6e7d1",
+    "CorrelationId": "FCA7DB1B-81F6-4042-9E8F-5953F471F768",
+    "DefraUserId": "9944EF07-AE70-4237-B147-0EE30C7BC14B",
+    "OwnerUserId": "385C7179-EA1F-4EEF-910B-04654A8D2EDE",
+    "KeeperUserId": "E7F3345B-D2FD-4EFE-9A22-87611771A1D1"
+  }
+}

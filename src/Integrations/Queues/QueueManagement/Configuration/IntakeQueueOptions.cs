@@ -4,13 +4,13 @@
 
 namespace Defra.Identity.QueueManagement.Configuration;
 
-public class IntakeQueueOptions
+public class IntakeQueueOptions()
 {
-    public string Url { get; set; }
+    public string? Url { get; set; }
 
     public int WaitTimeSeconds { get; set; } = 20;
 
     public int MaxNumberOfMessages { get; set; } = 1;
 
-    public List<string> SupportedMessageTypes { get; set; } = new();
+    public List<string> SupportedMessageTypes { get; set; } = [];
 }

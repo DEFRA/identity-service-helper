@@ -4,10 +4,9 @@
 
 namespace Defra.Identity.Services.Applications;
 
-using Defra.Identity.Requests.Applications.Commands.Create;
-using Defra.Identity.Requests.Applications.Commands.Update;
-using Defra.Identity.Requests.Applications.Queries;
-using Defra.Identity.Responses.Applications;
+using Defra.Identity.Models.Requests.Applications.Commands;
+using Defra.Identity.Models.Requests.Applications.Queries;
+using Defra.Identity.Models.Responses.Applications;
 
 public interface IApplicationService
 {

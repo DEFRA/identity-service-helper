@@ -17,7 +17,7 @@ internal class ApplicationUserAccountHoldingAssignmentsConfiguration
             .HasColumnType(ColumnTypes.UniqueIdentifier)
             .IsRequired();
 
-        builder.HasOne(x => x.Type)
+        builder.HasOne(x => x.CountyParishHolding)
             .WithMany(x => x.ApplicationUserAccountHoldingAssignments)
             .HasForeignKey(x => x.CountyParishHoldingId);
 

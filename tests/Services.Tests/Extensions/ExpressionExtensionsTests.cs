@@ -6,7 +6,7 @@ namespace Defra.Identity.Services.Tests.Extensions;
 
 using System;
 using System.Linq.Expressions;
-using Defra.Identity.Services.Extensions;
+using Defra.Identity.Services.Common.Extensions;
 using Shouldly;
 using Xunit;
 
@@ -58,8 +58,8 @@ public class ExpressionExtensionsTests
     public void AndAlso_ComplexExpressions_CombinesThem()
     {
         // Arrange
-        Expression<Func<TestEntity, bool>> left = x => x.Id > 10 && x.Name.StartsWith("A");
-        Expression<Func<TestEntity, bool>> right = x => x.Id < 20 || x.Name.EndsWith("Z");
+        Expression<Func<TestEntity, bool>> left = x => x.Id > 10 && x.Name.StartsWith('A');
+        Expression<Func<TestEntity, bool>> right = x => x.Id < 20 || x.Name.EndsWith('Z');
 
         // Act
         var combined = left.AndAlso(right);
