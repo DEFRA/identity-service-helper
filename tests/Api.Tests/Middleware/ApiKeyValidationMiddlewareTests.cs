@@ -45,6 +45,7 @@ public class ApiKeyValidationMiddlewareTests
     {
         // Arrange
         var builder = WebApplication.CreateBuilder();
+        builder.Configuration["DefraIdentityApiKey"] = "test-api-key";
         builder.Services.AddLogging();
         builder.Services.AddRequests(builder.Configuration);
         var app = builder.Build();

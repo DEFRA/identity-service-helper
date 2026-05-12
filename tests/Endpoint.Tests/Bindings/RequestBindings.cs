@@ -100,6 +100,7 @@ public class RequestBindings(
         }
         catch (Exception e)
         {
+            outputHelper.WriteLine($"Exception occurred: {e}");
             exceptionContext.CaughtException = e;
             exceptionContext.ExceptionType = e.GetType();
         }

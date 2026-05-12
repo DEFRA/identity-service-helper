@@ -9,7 +9,7 @@ using Defra.Identity.Postgres.Database;
 using Defra.Identity.Postgres.Database.Entities;
 using Microsoft.Extensions.Logging;
 
-public class RoleRepository(PostgresDbContext context, ILogger<RoleRepository> logger) : IRoleRepository, IRepository<Roles>
+public partial class RoleRepository(PostgresDbContext context, ILogger<RoleRepository> logger) : IRoleRepository, IRepository<Roles>
 {
     public async Task<Roles?> GetSingle(Expression<Func<Roles, bool>> predicate, CancellationToken cancellationToken = default)
     {
@@ -61,5 +61,10 @@ public class RoleRepository(PostgresDbContext context, ILogger<RoleRepository> l
         context.Roles.RemoveRange(entities);
         await context.SaveChangesAsync(cancellationToken);
         return true;
+    }
+
+    public Task<bool> ValidateReferenceById(Guid id, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
     }
 }

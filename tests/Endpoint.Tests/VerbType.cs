@@ -4,6 +4,7 @@
 
 namespace Defra.Identity.Endpoint.Tests;
 
+#pragma warning disable SA1602
 public enum VerbType
 {
     GET,

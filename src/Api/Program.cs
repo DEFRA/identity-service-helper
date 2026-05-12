@@ -13,14 +13,15 @@ using Defra.Identity.Api.Endpoints.Health;
 using Defra.Identity.Api.Endpoints.Species;
 using Defra.Identity.Api.Endpoints.Users;
 using Defra.Identity.Api.Exceptions;
+using Defra.Identity.Api.Extensions;
 using Defra.Identity.Api.Utility.Http;
 using Defra.Identity.Api.Utility.Logging;
 using Defra.Identity.Ingest;
 using Defra.Identity.KeeperReferenceData;
+using Defra.Identity.Messaging.Extensions;
 using Defra.Identity.Postgres.Database;
 using Defra.Identity.QueueManagement;
 using Defra.Identity.Repositories;
-using Defra.Identity.Requests;
 using Defra.Identity.Scheduling;
 using Defra.Identity.Services;
 using FluentValidation;
@@ -104,6 +105,10 @@ public class Program
 
         // Set up the endpoints and their dependencies
         builder.Services.AddRepositories(configuration);
+        builder.Services.AddOperatorContext(configuration);
+        builder.Services.AddStrategies(configuration);
+        builder.Services.AddMessagingIntegrationService(configuration);
+        builder.Services.AddCphNumberRerouting(configuration);
         builder.Services.AddDataServices(configuration);
         builder.Services.AddScheduling(configuration);
         builder.Services.AddDataIngestServices(configuration);
@@ -125,7 +130,6 @@ public class Program
         app.UseHealthEndpoints();
         app.UseUsersEndpoints();
         app.UseApplicationEndpoints();
-        app.UseDelegationEndpoints();
         app.UseCphEndpoints();
         app.UseAnimalSpeciesEndpoints();
 

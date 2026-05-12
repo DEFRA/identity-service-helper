@@ -25,7 +25,7 @@
   <Folder Name="/src/Models/">
     <Project Path="src/Models/Models.csproj" />
   </Folder>
-  <Folder Name="/src/Models/" />
+
   <Folder Name="/src/Repositories/">
     <Project Path="src/Repositories/Repositories.csproj" />
   </Folder>
@@ -54,8 +54,5 @@
   </Folder>
   <Folder Name="/tests/Utilities/">
     <Project Path="tests/Test.Utilities/Test.Utilities.csproj" />
-  </Folder>
-  <Folder Name="/tools/">
-    <Project Path="tools/SqsMessageSender/SqsMessageSender.csproj" />
   </Folder>
 </Solution>

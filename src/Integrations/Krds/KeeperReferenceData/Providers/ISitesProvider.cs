@@ -2,6 +2,8 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
+using Defra.Identity.KeeperReferenceData.Models.Parties;
+
 namespace Defra.Identity.KeeperReferenceData.Providers;
 
 using Defra.Identity.KeeperReferenceData.Models;

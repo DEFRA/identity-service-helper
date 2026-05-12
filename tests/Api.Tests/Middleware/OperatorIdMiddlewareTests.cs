@@ -48,6 +48,7 @@ public class OperatorIdMiddlewareTests
     {
         // Arrange
         var builder = WebApplication.CreateBuilder();
+        builder.Configuration["DefraIdentityApiKey"] = "test-api-key";
         builder.Services.AddRequests(builder.Configuration);
         var app = builder.Build();
 

@@ -15,7 +15,7 @@ using Microsoft.Extensions.Logging;
 using Party = Defra.Identity.KeeperReferenceData.Models.Parties.Party;
 using Site = Defra.Identity.KeeperReferenceData.Models.Sites.Site;
 
-public class KrdsProvider(HttpClient client, ILogger<KrdsProvider> logger) : IKrdsProvider
+public partial class KrdsProvider(HttpClient client, ILogger<KrdsProvider> logger) : IKrdsProvider
 {
     public async Task<SiteResponse> Sites(DateTime since, CancellationToken cancellationToken)
     {
@@ -56,10 +56,10 @@ public class KrdsProvider(HttpClient client, ILogger<KrdsProvider> logger) : IKr
 
     public async Task<PartyResponse> Parties(DateTime since, CancellationToken cancellationToken)
     {
-        logger.LogInformation("Getting parties");
+        LogGettingParties();
         var request = string.Concat(client.BaseAddress, GetPartiesSince(since));
 
-        logger.LogInformation("Request: {Request}", request);
+        LogRequestRequest(request);
         using var response = await client.GetAsync(request, cancellationToken);
         response.EnsureSuccessStatusCode();
 
@@ -86,7 +86,7 @@ public class KrdsProvider(HttpClient client, ILogger<KrdsProvider> logger) : IKr
         }
         catch (JsonException jsonException)
         {
-            logger.LogError(jsonException, "Error deserializing parties. Body: {ResponseBody}", result);
+            LogErrorDeserializingPartiesBodyResponsebody(result, jsonException);
             throw;
         }
     }
@@ -140,7 +140,7 @@ public class KrdsProvider(HttpClient client, ILogger<KrdsProvider> logger) : IKr
         }
 
         var schema = LoadSchemaFromResource();
-        var jsonNode = JsonNode.Parse(json);
+        var jsonNode = JsonElement.Parse(json);
         var validationResults = schema.Evaluate(jsonNode);
 
         if (!validationResults.IsValid)
@@ -166,7 +166,7 @@ public class KrdsProvider(HttpClient client, ILogger<KrdsProvider> logger) : IKr
         }
 
         var schema = LoadPartiesSchemaFromResource();
-        var jsonNode = JsonNode.Parse(json);
+        var jsonNode = JsonElement.Parse(json);
         var validationResults = schema.Evaluate(jsonNode);
 
         if (!validationResults.IsValid)

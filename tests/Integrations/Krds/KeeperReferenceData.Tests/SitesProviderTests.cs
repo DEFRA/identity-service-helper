@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Defra.Identity.KeeperReferenceData.Models;
+using Defra.Identity.KeeperReferenceData.Models.Parties;
 using Defra.Identity.KeeperReferenceData.Providers;
 using Microsoft.Extensions.Logging.Abstractions;
 using WireMock.RequestBuilders;

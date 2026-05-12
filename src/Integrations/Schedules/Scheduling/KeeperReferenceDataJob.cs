@@ -10,35 +10,32 @@ using Microsoft.Extensions.Options;
 using Quartz;
 
 [DisallowConcurrentExecution]
-public class KeeperReferenceDataJob(
+public partial class KeeperReferenceDataJob(
     IKrdsProvider krdsService,
-    ILogger<KeeperReferenceDataJob> logger,
-    IOptions<KeeperReferenceDataOptions> options)
+    ILogger<KeeperReferenceDataJob> logger)
     : IJob
 {
-    private readonly KeeperReferenceDataOptions options = options.Value;
-
     public async Task Execute(IJobExecutionContext context)
     {
         try
         {
-            logger.LogInformation("{Job} starting {Date}", context.JobDetail.Key.Name, DateTime.UtcNow);
+            LogJobStartingDate(context.JobDetail.Key.Name, DateTime.UtcNow);
 
             // We fetch since 24 hours ago as a default, or we could add it to options
             var since = DateTime.UtcNow.AddDays(-1);
-            logger.LogInformation("Fetching sites since {Date}", since);
+            LogFetchingSitesSinceDate(since);
             var sites = await krdsService.Sites(since, context.CancellationToken);
 
-            logger.LogInformation("{Job} succeeded. Found {Count} sites.", context.JobDetail.Key.Name, sites.Count);
+            LogJobSucceededFoundCountSites(context.JobDetail.Key.Name, sites.Count);
         }
         catch (OperationCanceledException)
         {
-            logger.LogWarning("{Job} cancelled.", context.JobDetail.Key.Name);
+            LogJobCancelled(context.JobDetail.Key.Name);
             throw;
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "{Job} failed", context.JobDetail.Key.Name);
+            LogJobFailed(context.JobDetail.Key.Name, ex);
             throw;
         }
     }
