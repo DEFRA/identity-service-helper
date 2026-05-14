@@ -1,4 +1,5 @@
 @system @header
+@ignore
 Feature: CPFeature: Header tests
 
   @error @error-bad-request

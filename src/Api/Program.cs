@@ -10,18 +10,17 @@ using Defra.Identity.Api.Endpoints.Applications;
 using Defra.Identity.Api.Endpoints.Cphs;
 using Defra.Identity.Api.Endpoints.Delegations;
 using Defra.Identity.Api.Endpoints.Health;
-using Defra.Identity.Api.Endpoints.Profiles;
 using Defra.Identity.Api.Endpoints.Species;
 using Defra.Identity.Api.Endpoints.Users;
 using Defra.Identity.Api.Exceptions;
 using Defra.Identity.Api.Extensions;
-using Defra.Identity.Api.MetaData;
 using Defra.Identity.Api.Utility.Http;
 using Defra.Identity.Api.Utility.Logging;
-using Defra.Identity.Api.Utility.OpenApi;
+using Defra.Identity.Ingest;
 using Defra.Identity.KeeperReferenceData;
 using Defra.Identity.Messaging.Extensions;
 using Defra.Identity.Postgres.Database;
+using Defra.Identity.QueueManagement;
 using Defra.Identity.Repositories;
 using Defra.Identity.Scheduling;
 using Defra.Identity.Services;
@@ -34,6 +33,7 @@ public class Program
     {
         var app = CreateWebApplication(args);
         await app.RunAsync();
+        return;
     }
 
     [ExcludeFromCodeCoverage]
@@ -95,28 +95,27 @@ public class Program
             }
         });
 
-        builder.Services.AddOpenApi(options =>
-        {
-            options.AddSchemaTransformer<SchemaTransformer>();
-        });
-
         // Add custom services
-        builder.Services.AddPostgresDatabase(configuration);
+        builder.Services
+            .AddPostgresDatabase(configuration);
 
         // Add support services
         builder.Services.AddValidatorsFromAssemblyContaining<Program>();
         builder.Services.AddRequests(configuration);
-        builder.Services.AddCphNumberRerouting(configuration);
 
         // Set up the endpoints and their dependencies
         builder.Services.AddRepositories(configuration);
-        builder.Services.AddDataServices(configuration);
         builder.Services.AddOperatorContext(configuration);
         builder.Services.AddStrategies(configuration);
-        builder.Services.AddScheduling(configuration);
-
-        // builder.Services.AddKeeperReferenceDataQueueIntegration(configuration);
         builder.Services.AddMessagingIntegrationService(configuration);
+        builder.Services.AddCphNumberRerouting(configuration);
+        builder.Services.AddDataServices(configuration);
+        builder.Services.AddScheduling(configuration);
+        builder.Services.AddDataIngestServices(configuration);
+        builder.Services.AddKeeperRecordsDataIntegrationService(configuration);
+
+        // intentionally commented out until we get a queue to interact with  -- Gary Woodfine
+        builder.Services.AddKeeperReferenceDataQueueIntegration(configuration);
     }
 
     [ExcludeFromCodeCoverage]
@@ -128,15 +127,9 @@ public class Program
         app.UseRouting();
         app.UseRequests();
 
-        app.MapOpenApi()
-            .WithMetadata(new IgnoreCorrelationIdCheck())
-            .WithMetadata(new IgnoreApiKeyCheck());
-
         app.UseHealthEndpoints();
         app.UseUsersEndpoints();
-        app.UseProfileEndpoints();
         app.UseApplicationEndpoints();
-        app.UseCphDelegationEndpoints();
         app.UseCphEndpoints();
         app.UseAnimalSpeciesEndpoints();
 

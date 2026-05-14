@@ -1,0 +1,6 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\Ingest\Ingest\Ingest.csproj" />
+    <ProjectReference Include="..\..\Krds\KeeperReferenceData\KeeperReferenceData.csproj" />
+  </ItemGroup>
+</Project>

@@ -5,6 +5,7 @@
 namespace Defra.Identity.KeeperReferenceData.Providers;
 
 using Defra.Identity.KeeperReferenceData.Models;
+using Defra.Identity.KeeperReferenceData.Models.Parties;
 
 public interface ISitesProvider : IDisposable
 {

@@ -7,6 +7,7 @@ namespace Defra.Identity.KeeperReferenceData.Providers;
 using System.Text.Json;
 using System.Web;
 using Defra.Identity.KeeperReferenceData.Models;
+using Defra.Identity.KeeperReferenceData.Models.Parties;
 using Microsoft.Extensions.Logging;
 
 public partial class SitesProvider(HttpClient client, ILogger<SitesProvider> logger)

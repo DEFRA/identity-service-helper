@@ -21,6 +21,7 @@ public class EndpointTestApplicationFactory : WebApplicationFactory<Defra.Identi
             {
                 ["ConnectionStrings:PostgresConnection"] = cs,
                 ["ConnectionStrings:ReadOnlyPostgresConnection"] = cs,
+                ["DefraIdentityApiKey"] = "test",
             });
         });
     }

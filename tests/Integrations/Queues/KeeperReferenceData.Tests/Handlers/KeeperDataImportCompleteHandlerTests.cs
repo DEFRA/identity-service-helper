@@ -5,8 +5,10 @@
 namespace Defra.Identity.KeeperReferenceData.Tests.Handlers;
 
 using AWS.Messaging;
-using Defra.Identity.KeeperReferenceData.Handlers;
-using Defra.Identity.KeeperReferenceData.Messages;
+using Defra.Identity.Ingest;
+using Defra.Identity.Postgres.Database.Entities;
+using Defra.Identity.QueueManagement.Handlers;
+using Defra.Identity.QueueManagement.Messages;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Xunit;
@@ -15,15 +17,19 @@ public class KeeperDataImportCompleteHandlerTests
 {
     private readonly ILogger<KeeperDataImportCompleteHandler> logger;
     private readonly KeeperDataImportCompleteHandler handler;
+    private readonly IIngestService<CountyParishHoldings> ingestService;
+    private readonly IIngestService<Roles> roleIngestService;
 
     public KeeperDataImportCompleteHandlerTests()
     {
-        logger = DefraLoggerExtensions.CreateNSubstituteLogger<KeeperDataImportCompleteHandler>();
-        handler = new KeeperDataImportCompleteHandler(logger);
+        logger = Substitute.For<ILogger<KeeperDataImportCompleteHandler>>();
+        ingestService = Substitute.For<IIngestService<CountyParishHoldings>>();
+        roleIngestService = Substitute.For<IIngestService<Roles>>();
+        handler = new KeeperDataImportCompleteHandler(logger, ingestService, roleIngestService);
     }
 
     [Fact]
-    public async Task HandleAsync_LogsInformationAndReturnsSuccess()
+    public async Task HandleAsync_ReturnsSuccess_WhenServiceSucceeds()
     {
         // Arrange
         var message = new KeeperDataImportComplete();
@@ -32,12 +38,35 @@ public class KeeperDataImportCompleteHandlerTests
             Message = message,
         };
 
+        ingestService.Execute().Returns(true);
+
         // Act
         var result = await handler.HandleAsync(messageEnvelope, CancellationToken.None);
 
         // Assert
         Assert.NotNull(result);
         Assert.Equal(MessageProcessStatus.Success().ToString(), result.ToString());
+        logger.VerifyLogContainsOne(LogLevel.Information, "Processing KeeperDataImportComplete message.");
+    }
+
+    [Fact]
+    public async Task HandleAsync_ReturnsFailed_WhenServiceFails()
+    {
+        // Arrange
+        var message = new KeeperDataImportComplete();
+        var messageEnvelope = new MessageEnvelope<KeeperDataImportComplete>
+        {
+            Message = message,
+        };
+
+        ingestService.Execute().Returns(false);
+
+        // Act
+        var result = await handler.HandleAsync(messageEnvelope, CancellationToken.None);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(MessageProcessStatus.Failed().ToString(), result.ToString());
         logger.VerifyLogContainsOne(LogLevel.Information, "Processing KeeperDataImportComplete message.");
     }
 }

@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <ItemGroup>
+    <Compile Remove="Exceptions\**" />
+    </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Remove="Exceptions\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Exceptions\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Roles\" />
+  </ItemGroup>
+</Project>

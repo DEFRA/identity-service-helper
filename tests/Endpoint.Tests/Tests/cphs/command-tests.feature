@@ -1,4 +1,4 @@
-@ignore @cph @command
+@cph @command
 Feature: CPH command tests
 
   @single-result @command-expire

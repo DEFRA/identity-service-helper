@@ -3,7 +3,5 @@
     <ProjectReference Include="..\..\src\Services\Services.csproj" />
     <ProjectReference Include="..\Test.Utilities\Test.Utilities.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Profiles\" />
-  </ItemGroup>
+ 
 </Project>

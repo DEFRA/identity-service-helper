@@ -5,8 +5,10 @@
 namespace Defra.Identity.KeeperReferenceData;
 
 using System.Net;
+using System.Net.Http.Headers;
 using Defra.Identity.KeeperReferenceData.Configuration;
 using Defra.Identity.KeeperReferenceData.Exceptions;
+using Defra.Identity.KeeperReferenceData.Handlers;
 using Defra.Identity.KeeperReferenceData.Providers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,12 +28,19 @@ public static class ServiceCollectionExtensions
             throw new KeeperReferenceDataConfigurationException($"Configuration section '{nameof(KrdsApi)}' not found.");
         }
 
-        services.Configure<KrdsApi>(configuration.GetSection(nameof(KrdsApi)))
-            .AddHttpClient<ISitesProvider, SitesProvider>()
+        services.Configure<KrdsApi>(configuration.GetSection(nameof(KrdsApi)));
+
+        services.AddTransient<KrdsAuthorizationHandler>();
+        services.AddHttpClient<IKrdsTokenProvider, KrdsTokenProvider>()
+            .AddPolicyHandler(GetRetryPolicy());
+
+        services.AddHttpClient<IKrdsProvider, KrdsProvider>()
             .ConfigureHttpClient(client =>
             {
                 client.BaseAddress = new Uri(krdsApi.Url);
-            }).SetHandlerLifetime(TimeSpan.FromMinutes(5))
+            })
+            .AddHttpMessageHandler<KrdsAuthorizationHandler>()
+            .SetHandlerLifetime(TimeSpan.FromMinutes(5))
             .AddPolicyHandler(GetRetryPolicy());
 
         return services;
@@ -43,6 +52,6 @@ public static class ServiceCollectionExtensions
             .HandleTransientHttpError()
             .OrResult(msg => msg.StatusCode == HttpStatusCode.NotFound)
             .OrResult(msg => (int)msg.StatusCode == 429)
-            .WaitAndRetryAsync(6, retryAttempt => TimeSpan.FromMilliseconds(150 * retryAttempt));
+            .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
     }
 }

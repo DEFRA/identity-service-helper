@@ -127,6 +127,8 @@ ij_xml_space_inside_empty_tag = true
 
 [*.json]
 indent_size = 2
+[*.props]
+indent_size = 2
 
 [*.feature]
 indent_size = 2

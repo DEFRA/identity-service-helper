@@ -1,2 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Json\sites_response.schema.json" />
+    <EmbeddedResource Include="Json\sites_response.schema.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Json\parties_response.schema.json" />
+    <EmbeddedResource Include="Json\parties_response.schema.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+ 
 </Project>

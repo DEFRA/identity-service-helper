@@ -1,12 +1,15 @@
 <Project>
-  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))"/>
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Http" />
     <PackageReference Include="Microsoft.Extensions.Http.Polly" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
-    <PackageReference Include="Quartz"/>
-    <PackageReference Include="Quartz.Extensions.DependencyInjection"/>
-    <PackageReference Include="Quartz.Extensions.Hosting"/>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="JsonSchema.Net" />
+    <PackageReference Include="Quartz" />
+    <PackageReference Include="Quartz.Extensions.DependencyInjection" />
+    <PackageReference Include="Quartz.Extensions.Hosting" />
   </ItemGroup>
 </Project>
