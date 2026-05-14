@@ -29,6 +29,8 @@ public class KrdsTokenProviderTests
         server
             .Given(Request.Create()
                 .WithPath("/oauth2/token")
+                // Not a real token being used for testing purposes it just the encrypted value of the values
+                // on lines 25,26,27
                 .WithHeader("Authorization", "Basic dGVzdC1jbGllbnQtaWQ6dGVzdC1jbGllbnQtc2VjcmV0")
                 .WithBody("grant_type=client_credentials")
                 .UsingPost())
@@ -39,29 +41,29 @@ public class KrdsTokenProviderTests
                 {
                     access_token = expectedToken,
                     expires_in = 3600,
-                    token_type = "Bearer"
+                    token_type = "Bearer",
                 })));
 
         var options = Options.Create(new KrdsApi
         {
             TokenUrl = tokenUrl,
             ClientId = clientId,
-            ClientSecret = clientSecret
+            ClientSecret = clientSecret,
         });
 
         var httpClient = new HttpClient();
         var sut = new KrdsTokenProvider(httpClient, options);
 
         // Act
-        var token1 = await sut.GetTokenAsync();
-        var token2 = await sut.GetTokenAsync();
+        var token1 = await sut.GetTokenAsync(TestContext.Current.CancellationToken);
+        var token2 = await sut.GetTokenAsync(TestContext.Current.CancellationToken);
 
         // Assert
         Assert.Equal(expectedToken, token1);
         Assert.Equal(expectedToken, token2);
 
         // Verify only one call was made to the server (caching works)
-        Assert.Equal(1, server.LogEntries.Count(le => le.RequestMessage.Path == "/oauth2/token"));
+        Assert.Equal(1, server.LogEntries.Count(le => le?.RequestMessage?.Path == "/oauth2/token"));
     }
 
     [Fact]
@@ -78,13 +80,13 @@ public class KrdsTokenProviderTests
         {
             TokenUrl = tokenUrl,
             ClientId = "id",
-            ClientSecret = "secret"
+            ClientSecret = "secret",
         });
 
         var httpClient = new HttpClient();
         var sut = new KrdsTokenProvider(httpClient, options);
 
         // Act & Assert
-        await Assert.ThrowsAsync<HttpRequestException>(() => sut.GetTokenAsync());
+        await Assert.ThrowsAsync<HttpRequestException>(() => sut.GetTokenAsync(TestContext.Current.CancellationToken));
     }
 }
