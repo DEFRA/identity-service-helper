@@ -9,9 +9,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="Json\parties_response.schema.json" />
-    <Resource Include="Json\parties_response.schema.json">
+    <EmbeddedResource Include="Json\parties_response.schema.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    </EmbeddedResource>
   </ItemGroup>
  
 </Project>
