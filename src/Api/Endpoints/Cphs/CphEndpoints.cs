@@ -8,7 +8,6 @@ using System.Net.Mime;
 using Defra.Identity.Api.Common.Factories;
 using Defra.Identity.Api.Filters;
 using Defra.Identity.Api.MetaData;
-using Defra.Identity.Api.Middleware.Headers;
 using Defra.Identity.Models.Requests.Common.Queries;
 using Defra.Identity.Models.Requests.Cphs.Commands;
 using Defra.Identity.Models.Requests.Cphs.Common;
@@ -106,7 +105,6 @@ public static class CphEndpoints
     }
 
     private static async Task<IResult> GetByIdRoute(
-        QueryRequestHeaders headers,
         [AsParameters] GetCphByCphId request,
         ICphService service)
     {
@@ -116,21 +114,19 @@ public static class CphEndpoints
     }
 
     private static async Task<IResult> ExpireByIdRoute(
-        CommandRequestHeaders headers,
         [AsParameters] ExpireCphByCphId request,
         ICphService service)
     {
-        await service.Expire(request, headers.OperatorId);
+        await service.Expire(request);
 
         return Results.NoContent();
     }
 
     private static async Task<IResult> DeleteByIdRoute(
-        CommandRequestHeaders headers,
         [AsParameters] DeleteCphByCphId request,
         ICphService service)
     {
-        await service.Delete(request, headers.OperatorId);
+        await service.Delete(request);
 
         return Results.NoContent();
     }

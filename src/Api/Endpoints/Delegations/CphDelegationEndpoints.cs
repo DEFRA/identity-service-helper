@@ -7,7 +7,6 @@ namespace Defra.Identity.Api.Endpoints.Delegations;
 using System.Net.Mime;
 using Defra.Identity.Api.Filters;
 using Defra.Identity.Api.MetaData;
-using Defra.Identity.Api.Middleware.Headers;
 using Defra.Identity.Models.Requests.Delegations.Commands;
 using Defra.Identity.Models.Requests.Delegations.Queries;
 using Defra.Identity.Services.Delegations;
@@ -102,10 +101,9 @@ public static class CphDelegationEndpoints
     }
 
     private static async Task<IResult> GetAllRoute(
-        [AsParameters] GetCphDelegations request,
         ICphDelegationsService service)
     {
-        var delegations = await service.GetAll(request);
+        var delegations = await service.GetAll();
 
         return Results.Ok(delegations);
     }

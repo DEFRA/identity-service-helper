@@ -9,16 +9,15 @@ using Defra.Identity.Models.Requests.Common.Queries;
 using Defra.Identity.Models.Requests.Cphs.Common;
 using Defra.Identity.Services.Cphs;
 
-public class CphNumberRerouteHandler<TTarget, TSource, TService, THeaders>
-    where TTarget : IOperationById, new()
+public class CphNumberRerouteHandler<TTarget, TSource, TService>
+    where TTarget : IOperationById<Guid>, new()
     where TSource : IOperationByCphNumber
     where TService : class
-    where THeaders : class
 {
     private readonly ICphNumberService cphNumberService;
-    private readonly Func<THeaders, TTarget, TService, Task<IResult>> action;
+    private readonly Func<TTarget, TService, Task<IResult>> action;
 
-    public CphNumberRerouteHandler(ICphNumberService cphNumberService, Func<THeaders, TTarget, TService, Task<IResult>> action)
+    public CphNumberRerouteHandler(ICphNumberService cphNumberService, Func<TTarget, TService, Task<IResult>> action)
     {
         ArgumentNullException.ThrowIfNull(cphNumberService);
         ArgumentNullException.ThrowIfNull(action);
@@ -28,7 +27,6 @@ public class CphNumberRerouteHandler<TTarget, TSource, TService, THeaders>
     }
 
     public async Task<IResult> Handler(
-        THeaders headers,
         [AsParameters] TSource sourceRequest,
         TService service)
     {
@@ -37,7 +35,7 @@ public class CphNumberRerouteHandler<TTarget, TSource, TService, THeaders>
 
         MapPagingQueryToTargetRequest(targetRequest, sourceRequest);
 
-        return await this.action(headers, targetRequest, service);
+        return await this.action(targetRequest, service);
     }
 
     private static TTarget CreateTargetRequestWithId(Guid id)

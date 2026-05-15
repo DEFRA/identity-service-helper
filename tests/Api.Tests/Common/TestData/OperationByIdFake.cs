@@ -6,7 +6,4 @@ namespace Defra.Identity.Api.Tests.Common.TestData;
 
 using Defra.Identity.Models.Requests.Common;
 
-public class OperationByIdFake : IOperationById
-{
-    public Guid Id { get; set; }
-}
+public class OperationByIdFake : OperationById<Guid>;

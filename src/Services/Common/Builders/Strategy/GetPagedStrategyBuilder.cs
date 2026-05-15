@@ -5,14 +5,12 @@
 namespace Defra.Identity.Services.Common.Builders.Strategy;
 
 using System.Linq.Expressions;
-using Defra.Identity.Models.Requests.Common;
 using Defra.Identity.Models.Requests.Common.Queries;
 using Defra.Identity.Models.Responses.Common;
 using Defra.Identity.Repositories.Common;
 using Defra.Identity.Repositories.Common.Composites;
 using Defra.Identity.Services.Common.Builders.Strategy.Base;
 using Defra.Identity.Services.Common.Builders.Strategy.Constants;
-using Microsoft.Extensions.Logging;
 
 public partial class GetPagedStrategyBuilder<TService, TEntity> : StrategyBuilderBase<TService,
     GetPagedStrategyBuilder<TService, TEntity>>
@@ -32,12 +30,15 @@ public partial class GetPagedStrategyBuilder<TService, TEntity> : StrategyBuilde
         return this;
     }
 
-    public GetPagedStrategyBuilder<TService, TEntity> WithRequestAndEntityFilter<TRequest>(
-        TRequest request,
-        Expression<Func<TEntity, bool>> entityFilter)
-        where TRequest : PagedQuery, IOperationById
+    public GetPagedStrategyBuilder<TService, TEntity> WithRequest<TRequest>(TRequest request)
+        where TRequest : PagedQuery
     {
         Request = request;
+        return this;
+    }
+
+    public GetPagedStrategyBuilder<TService, TEntity> WithEntityFilter(Expression<Func<TEntity, bool>> entityFilter)
+    {
         EntityFilter = entityFilter;
         return this;
     }
@@ -75,9 +76,9 @@ public partial class GetPagedStrategyBuilder<TService, TEntity> : StrategyBuilde
             throw new InvalidOperationException(StrategyBuilderConstants.Errors.RequestAndEntityFilterRequired);
         }
 
-        LogExecutingActionEntity(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant());
+        LogExecutingAction(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant());
 
-        ExecuteSetup();
+        InvokeBeforeExecuteAction();
 
         await ExecuteRequestValidation();
 
@@ -91,7 +92,7 @@ public partial class GetPagedStrategyBuilder<TService, TEntity> : StrategyBuilde
 
         var associatedPagedResults = pagedEntities.ToPagedResults(map);
 
-        LogSuccessfullyExecutedActionEntity(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant());
+        LogSuccessfullyExecutedAction(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant());
 
         return associatedPagedResults;
     }

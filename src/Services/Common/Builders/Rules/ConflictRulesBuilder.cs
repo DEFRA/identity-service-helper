@@ -30,7 +30,7 @@ public class ConflictRulesBuilder<TService, TEntity>
         return this;
     }
 
-    public void Validate(IOperationById request, TEntity entityToValidate, string actionDescription, string primaryEntityDescription, ILogger<TService> logger)
+    public void Validate(ILoggableById request, TEntity entityToValidate, string actionDescription, string primaryEntityDescription, ILogger<TService> logger)
     {
         foreach (var rule in entityPredicatesBuilder.Predicates)
         {
@@ -42,7 +42,7 @@ public class ConflictRulesBuilder<TService, TEntity>
                     "Execute {ActionDescription} [{EntityDescription}] with id {Id} failed conflict rule '{Description}'",
                     actionDescription.ToLowerInvariant(),
                     primaryEntityDescription.ToLowerInvariant(),
-                    request.Id,
+                    request.GetLoggableId(),
                     rule.Description);
 
                 throw new ConflictException(rule.Description);

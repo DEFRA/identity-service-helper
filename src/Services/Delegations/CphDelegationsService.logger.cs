@@ -8,15 +8,6 @@ using Microsoft.Extensions.Logging;
 
 public partial class CphDelegationsService
 {
-    [LoggerMessage(LogLevel.Information, "Getting all delegations")]
-    partial void LogGettingAllDelegations();
-
-    [LoggerMessage(LogLevel.Information, "Getting delegation by id {Id}")]
-    partial void LogGettingDelegationById(Guid id);
-
-    [LoggerMessage(LogLevel.Warning, "Delegation with id {Id} not found")]
-    partial void LogDelegationWithIdNotFound(Guid id);
-
-    [LoggerMessage(LogLevel.Information, "Deleting delegation with id {Id} by operator {OperatorId}")]
-    partial void LogDeletingDelegationWithIdByOperatorId(Guid id, Guid operatorId);
+    [LoggerMessage(LogLevel.Warning, "Execute {ActionDescription} {EntityDescription} failed reference rule '{Description}'")]
+    static partial void LogDelegatedUserNotFound(ILogger<CphDelegationsService> logger, string actionDescription, string entityDescription, string description);
 }

@@ -14,9 +14,14 @@ public static class OpenApiMetadata
     public const string HoldingElement = "Holding part of the CPH (last 4 digits)";
 
     public const string IncludeInactive = "Whether to include inactive objects in the response";
-    public const string Expired = "Is the object expired";
-    public const string ExpiresAt = "When the object expires at";
     private const string BaseId = "The internal identifier of the";
+
+    public static class Generic
+    {
+        public const string Id = $"{OpenApiMetadata.BaseId} object";
+        public const string Expired = "Is the object expired";
+        public const string ExpiresAt = "When the object expires at";
+    }
 
     public static class Applications
     {
@@ -57,6 +62,7 @@ public static class OpenApiMetadata
         public const string InvitationExpiresAt = "The invitation expiration date";
         public const string InvitationAcceptedAt = "The invitation acceptance date";
         public const string InvitationRejectedAt = "The invitation rejection date";
+        public const string RevokedById = $"{OpenApiMetadata.BaseId} RevokedById";
         public const string RevokedAt = "The revocation date";
         public const string RevokedByName = "The revoker's name";
     }

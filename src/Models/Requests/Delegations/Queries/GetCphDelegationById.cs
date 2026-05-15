@@ -4,10 +4,6 @@
 
 namespace Defra.Identity.Models.Requests.Delegations.Queries;
 
-using System.ComponentModel;
+using Defra.Identity.Models.Requests.Common;
 
-public class GetCphDelegationById
-{
-    [Description(OpenApiMetadata.Delegations.Id)]
-    public Guid Id { get; set; }
-}
+public class GetCphDelegationById : OperationById<Guid>;

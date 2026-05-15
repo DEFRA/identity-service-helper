@@ -14,9 +14,6 @@ public class CreateCphDelegation
     [Description(OpenApiMetadata.Delegations.DelegatingUserId)]
     public required Guid DelegatingUserId { get; set; }
 
-    [Description(OpenApiMetadata.Delegations.DelegatedUserId)]
-    public required Guid DelegatedUserId { get; set; }
-
     [Description(OpenApiMetadata.Delegations.DelegatedUserRoleId)]
     public required Guid DelegatedUserRoleId { get; set; }
 

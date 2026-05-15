@@ -24,7 +24,6 @@ public class CphDelegationEndpointsTests
     public async Task GetAll_ReturnsOk()
     {
         // Arrange
-        var request = new GetCphDelegations();
         var delegations = new List<CphDelegation>
         {
             new()
@@ -39,15 +38,16 @@ public class CphDelegationEndpointsTests
                 DelegatedUserEmail = "test200@test.com",
                 DelegatedUserRoleId = Guid.NewGuid(),
                 DelegatedUserRoleName = "Test Role 100",
+                Active = false,
             },
         };
 
-        service.GetAll(request, Arg.Any<CancellationToken>()).Returns(delegations);
+        service.GetAll(Arg.Any<CancellationToken>()).Returns(delegations);
 
         // Act
         var result = await (Task<IResult>)typeof(CphDelegationEndpoints)
             .GetMethod("GetAllRoute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
-            .Invoke(null, [request, service])!;
+            .Invoke(null, [service])!;
 
         // Assert
         result.ShouldBeOfType<Ok<List<CphDelegation>>>();
@@ -77,6 +77,7 @@ public class CphDelegationEndpointsTests
             DelegatedUserEmail = "test200@test.com",
             DelegatedUserRoleId = Guid.NewGuid(),
             DelegatedUserRoleName = "Test Role 100",
+            Active = false,
         };
 
         service.Get(Arg.Any<GetCphDelegationById>(), Arg.Any<CancellationToken>()).Returns(delegation);
@@ -97,11 +98,7 @@ public class CphDelegationEndpointsTests
         // Arrange
         var request = new CreateCphDelegation
         {
-            CountyParishHoldingId = Guid.NewGuid(),
-            DelegatingUserId = Guid.NewGuid(),
-            DelegatedUserId = Guid.NewGuid(),
-            DelegatedUserEmail = "test200@test.com",
-            DelegatedUserRoleId = Guid.NewGuid(),
+            CountyParishHoldingId = Guid.NewGuid(), DelegatingUserId = Guid.NewGuid(), DelegatedUserEmail = "test200@test.com", DelegatedUserRoleId = Guid.NewGuid(),
         };
 
         var delegation = new CphDelegation()
@@ -116,6 +113,7 @@ public class CphDelegationEndpointsTests
             DelegatedUserEmail = request.DelegatedUserEmail,
             DelegatedUserRoleId = request.DelegatedUserRoleId,
             DelegatedUserRoleName = "Test Role 100",
+            Active = false,
         };
 
         service.Create(request, Arg.Any<CancellationToken>()).Returns(delegation);
@@ -141,8 +139,6 @@ public class CphDelegationEndpointsTests
         {
             Id = Guid.NewGuid(),
         };
-
-        service.Delete(Arg.Any<DeleteCphDelegationById>(), Arg.Any<CancellationToken>()).Returns(true);
 
         // Act
         var result = await (Task<IResult>)typeof(CphDelegationEndpoints)

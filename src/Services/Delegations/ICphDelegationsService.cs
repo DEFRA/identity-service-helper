@@ -10,7 +10,7 @@ using Defra.Identity.Models.Responses.Delegations;
 
 public interface ICphDelegationsService
 {
-    Task<List<CphDelegation>> GetAll(GetCphDelegations request, CancellationToken cancellationToken = default);
+    Task<List<CphDelegation>> GetAll(CancellationToken cancellationToken = default);
 
     Task<CphDelegation> Get(GetCphDelegationById request, CancellationToken cancellationToken = default);
 
@@ -24,5 +24,5 @@ public interface ICphDelegationsService
 
     Task Expire(ExpireCphDelegationById request, CancellationToken cancellationToken = default);
 
-    Task<bool> Delete(DeleteCphDelegationById request, CancellationToken cancellationToken = default);
+    Task Delete(DeleteCphDelegationById request, CancellationToken cancellationToken = default);
 }

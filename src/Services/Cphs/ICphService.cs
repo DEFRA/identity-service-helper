@@ -15,7 +15,7 @@ public interface ICphService
 
     Task<Cph> Get(GetCphByCphId request, CancellationToken cancellationToken = default);
 
-    Task Expire(ExpireCphByCphId request, Guid operatorId, CancellationToken cancellationToken = default);
+    Task Expire(ExpireCphByCphId request, CancellationToken cancellationToken = default);
 
-    Task Delete(DeleteCphByCphId request, Guid operatorId, CancellationToken cancellationToken = default);
+    Task Delete(DeleteCphByCphId request, CancellationToken cancellationToken = default);
 }

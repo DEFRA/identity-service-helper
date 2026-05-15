@@ -16,8 +16,6 @@ public class EndpointFake<TRequest>
         this.result = result;
     }
 
-    public HeadersFake? CapturedHeaders { get; private set; }
-
     public TRequest? CapturedRequest { get; private set; }
 
     public ServiceFake? CapturedService { get; private set; }
@@ -30,11 +28,9 @@ public class EndpointFake<TRequest>
     }
 
     public async Task<IResult> FakeHandlerMethod(
-        HeadersFake headers,
         [AsParameters] TRequest request,
         ServiceFake service)
     {
-        this.CapturedHeaders = headers;
         this.CapturedRequest = request;
         this.CapturedService = service;
         this.CapturedCallCount += 1;

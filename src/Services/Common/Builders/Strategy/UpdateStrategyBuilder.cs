@@ -11,7 +11,6 @@ using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Services.Common.Builders.Rules;
 using Defra.Identity.Services.Common.Builders.Strategy.Base;
 using Defra.Identity.Services.Common.Builders.Strategy.Constants;
-using Microsoft.Extensions.Logging;
 
 public partial class UpdateStrategyBuilder<TService, TEntity>
     : StrategyBuilderBase<TService, UpdateStrategyBuilder<TService, TEntity>>
@@ -22,7 +21,7 @@ public partial class UpdateStrategyBuilder<TService, TEntity>
 
     private IUpdatable<TEntity>? UpdateableRepository { get; set; }
 
-    private IOperationById? Request { get; set; }
+    private ILoggableById? Request { get; set; }
 
     private Expression<Func<TEntity, bool>>? EntityFilter { get; set; }
 
@@ -44,9 +43,14 @@ public partial class UpdateStrategyBuilder<TService, TEntity>
         return this;
     }
 
-    public UpdateStrategyBuilder<TService, TEntity> WithRequestAndEntityFilter(IOperationById request, Expression<Func<TEntity, bool>> entityFilter)
+    public UpdateStrategyBuilder<TService, TEntity> WithRequest(ILoggableById request)
     {
         Request = request;
+        return this;
+    }
+
+    public UpdateStrategyBuilder<TService, TEntity> WithEntityFilter(Expression<Func<TEntity, bool>> entityFilter)
+    {
         EntityFilter = entityFilter;
         return this;
     }
@@ -141,9 +145,9 @@ public partial class UpdateStrategyBuilder<TService, TEntity>
             throw new InvalidOperationException(StrategyBuilderConstants.Errors.UpdateActionRequired);
         }
 
-        LogExecutingActionEntityWithIdByOperatorid(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant(), Request.Id, OperatorContext.OperatorId);
+        LogExecutingAction(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant(), Request.GetLoggableId(), OperatorContext.OperatorId);
 
-        ExecuteSetup();
+        InvokeBeforeExecuteAction();
 
         await ExecuteRequestValidation();
 
@@ -156,7 +160,7 @@ public partial class UpdateStrategyBuilder<TService, TEntity>
 
         if (entityToUpdate == null)
         {
-            LogEntityWithIdNotFound(Logger, EntityDescription, Request.Id);
+            LogEntityWithIdNotFound(Logger, EntityDescription, Request.GetLoggableId());
 
             throw new NotFoundException($"{EntityDescription} not found.");
         }
@@ -169,7 +173,7 @@ public partial class UpdateStrategyBuilder<TService, TEntity>
 
         var updatedEntity = await UpdateableRepository.Update(entityToUpdate, CancellationToken.Value);
 
-        LogSuccessfullyExecutedActionEntityWithIdByOperatorid(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant(), Request.Id, OperatorContext.OperatorId);
+        LogSuccessfullyExecutedAction(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant(), Request.GetLoggableId(), OperatorContext.OperatorId);
 
         return updatedEntity;
     }

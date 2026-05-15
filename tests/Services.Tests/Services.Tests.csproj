@@ -3,5 +3,4 @@
     <ProjectReference Include="..\..\src\Services\Services.csproj" />
     <ProjectReference Include="..\Test.Utilities\Test.Utilities.csproj" />
   </ItemGroup>
- 
 </Project>
