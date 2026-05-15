@@ -7,7 +7,6 @@ namespace Defra.Identity.Repositories.Delegations;
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database;
 using Defra.Identity.Postgres.Database.Entities;
-using Defra.Identity.Repositories.Common.Exceptions;
 using Microsoft.Extensions.Logging;
 
 public partial class CphDelegationsRepository(
@@ -57,7 +56,9 @@ public partial class CphDelegationsRepository(
         ArgumentNullException.ThrowIfNull(entity);
 
         LogCreatingDelegationWithId(entity.Id);
+
         var addedEntry = await context.CountyParishHoldingDelegations.AddAsync(entity, cancellationToken);
+
         await context.SaveChangesAsync(cancellationToken);
 
         var result = await readOnlyContext.CountyParishHoldingDelegations
@@ -77,7 +78,9 @@ public partial class CphDelegationsRepository(
         ArgumentNullException.ThrowIfNull(entity);
 
         LogUpdatingDelegationWithId(entity.Id);
+
         context.Update(entity);
+
         await context.SaveChangesAsync(cancellationToken);
 
         var result = await readOnlyContext.CountyParishHoldingDelegations
@@ -88,27 +91,5 @@ public partial class CphDelegationsRepository(
             .SingleAsync(c => c.Id == entity.Id, cancellationToken);
 
         return result;
-    }
-
-    public async Task<bool> Delete(
-        Expression<Func<CountyParishHoldingDelegations, bool>> predicate,
-        Guid operatorId,
-        CancellationToken cancellationToken = default)
-    {
-        LogDeletingDelegationWithOperatorId(operatorId);
-
-        var delegation = await context.CountyParishHoldingDelegations
-            .SingleOrDefaultAsync(predicate, cancellationToken);
-
-        if (delegation == null)
-        {
-            LogDelegationNotFoundForDeletion();
-            throw new NotFoundException("Delegation not found");
-        }
-
-        delegation.DeletedById = operatorId;
-        delegation.DeletedAt = DateTime.UtcNow;
-        context.CountyParishHoldingDelegations.Update(delegation);
-        return await context.SaveChangesAsync(cancellationToken) > 0;
     }
 }

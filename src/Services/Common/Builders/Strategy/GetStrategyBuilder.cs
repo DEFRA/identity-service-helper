@@ -11,7 +11,6 @@ using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Services.Common.Builders.Rules;
 using Defra.Identity.Services.Common.Builders.Strategy.Base;
 using Defra.Identity.Services.Common.Builders.Strategy.Constants;
-using Microsoft.Extensions.Logging;
 
 public partial class GetStrategyBuilder<TService, TEntity>
     : StrategyBuilderBase<TService, GetStrategyBuilder<TService, TEntity>>
@@ -20,7 +19,7 @@ public partial class GetStrategyBuilder<TService, TEntity>
 {
     private IGettable<TEntity>? GettableRepository { get; set; }
 
-    private IOperationById? Request { get; set; }
+    private ILoggableById? Request { get; set; }
 
     private Expression<Func<TEntity, bool>>? EntityFilter { get; set; }
 
@@ -33,9 +32,14 @@ public partial class GetStrategyBuilder<TService, TEntity>
         return this;
     }
 
-    public GetStrategyBuilder<TService, TEntity> WithRequestAndEntityFilter(IOperationById request, Expression<Func<TEntity, bool>> entityFilter)
+    public GetStrategyBuilder<TService, TEntity> WithRequest(ILoggableById request)
     {
         Request = request;
+        return this;
+    }
+
+    public GetStrategyBuilder<TService, TEntity> WithEntityFilter(Expression<Func<TEntity, bool>> entityFilter)
+    {
         EntityFilter = entityFilter;
         return this;
     }
@@ -82,9 +86,9 @@ public partial class GetStrategyBuilder<TService, TEntity>
             throw new InvalidOperationException(StrategyBuilderConstants.Errors.RequestAndEntityFilterRequired);
         }
 
-        LogExecutingActiondescriptionEntitydescriptionWithIdId(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant(), Request.Id);
+        LogExecutingAction(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant(), Request.GetLoggableId());
 
-        ExecuteSetup();
+        InvokeBeforeExecuteAction();
 
         await ExecuteRequestValidation();
 
@@ -92,7 +96,7 @@ public partial class GetStrategyBuilder<TService, TEntity>
 
         if (entity == null)
         {
-            LogEntitydescriptionWithIdIdNotFound(Logger, EntityDescription, Request.Id);
+            LogEntityWithIdNotFound(Logger, EntityDescription, Request.GetLoggableId());
 
             throw new NotFoundException($"{EntityDescription} not found.");
         }
@@ -101,7 +105,7 @@ public partial class GetStrategyBuilder<TService, TEntity>
 
         var mappedEntity = map(entity);
 
-        LogSuccessfullyExecutedActiondescriptionEntitydescriptionWithIdId(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant(), Request.Id);
+        LogSuccessfullyExecutedAction(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant(), Request.GetLoggableId());
 
         return mappedEntity;
     }

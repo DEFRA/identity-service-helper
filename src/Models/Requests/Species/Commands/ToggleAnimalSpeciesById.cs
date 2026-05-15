@@ -5,9 +5,10 @@
 namespace Defra.Identity.Models.Requests.Species.Commands;
 
 using System.ComponentModel;
+using Defra.Identity.Models.Requests.Common;
 
-public class ToggleAnimalSpeciesById
+public class ToggleAnimalSpeciesById : OperationById<string>
 {
-    [Description(OpenApiMetadata.AnimalSpecies.Id)]
-    public string? Id { get; set; }
+    [Description(OpenApiMetadata.AnimalSpecies.IsActive)]
+    public bool IsActive { get; set; }
 }

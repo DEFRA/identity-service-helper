@@ -19,10 +19,4 @@ public partial class CphDelegationsRepository
 
     [LoggerMessage(LogLevel.Information, "Updating delegation with id {Id}")]
     partial void LogUpdatingDelegationWithId(Guid id);
-
-    [LoggerMessage(LogLevel.Information, "Deleting delegation with operator id {OperatorId}")]
-    partial void LogDeletingDelegationWithOperatorId(Guid operatorId);
-
-    [LoggerMessage(LogLevel.Warning, "Delegation not found for deletion")]
-    partial void LogDelegationNotFoundForDeletion();
 }

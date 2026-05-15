@@ -30,7 +30,7 @@ public partial class ExistenceRulesBuilder<TService, TEntity>
         return this;
     }
 
-    public void Validate(IOperationById request, TEntity entityToValidate, string primaryEntityDescription, ILogger<TService> logger)
+    public void Validate(ILoggableById request, TEntity entityToValidate, string primaryEntityDescription, ILogger<TService> logger)
     {
         foreach (var rule in entityPredicatesBuilder.Predicates)
         {
@@ -38,7 +38,7 @@ public partial class ExistenceRulesBuilder<TService, TEntity>
 
             if (!validAgainstExistenceRule)
             {
-                LogEntityDescriptionWithIdIdNotFound(logger, primaryEntityDescription, request.Id);
+                LogEntityWithIdNotFound(logger, primaryEntityDescription, request.GetLoggableId());
 
                 throw new NotFoundException($"{primaryEntityDescription} not found.");
             }

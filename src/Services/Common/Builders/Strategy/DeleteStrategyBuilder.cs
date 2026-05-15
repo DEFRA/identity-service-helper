@@ -21,7 +21,7 @@ public partial class DeleteStrategyBuilder<TService, TEntity>
 
     private IDeletable<TEntity>? DeletableRepository { get; set; }
 
-    private IOperationById? Request { get; set; }
+    private ILoggableById? Request { get; set; }
 
     private Expression<Func<TEntity, bool>>? EntityFilter { get; set; }
 
@@ -35,9 +35,14 @@ public partial class DeleteStrategyBuilder<TService, TEntity>
         return this;
     }
 
-    public DeleteStrategyBuilder<TService, TEntity> WithRequestAndEntityFilter(IOperationById request, Expression<Func<TEntity, bool>> entityFilter)
+    public DeleteStrategyBuilder<TService, TEntity> WithRequest(ILoggableById request)
     {
         Request = request;
+        return this;
+    }
+
+    public DeleteStrategyBuilder<TService, TEntity> WithEntityFilter(Expression<Func<TEntity, bool>> entityFilter)
+    {
         EntityFilter = entityFilter;
         return this;
     }
@@ -93,9 +98,9 @@ public partial class DeleteStrategyBuilder<TService, TEntity>
             throw new InvalidOperationException(StrategyBuilderConstants.Errors.RequestAndEntityFilterRequired);
         }
 
-        LogExecutingActionEntityWithIdByOperatorid(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant(), Request.Id, OperatorContext.OperatorId);
+        LogExecutingAction(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant(), Request.GetLoggableId(), OperatorContext.OperatorId);
 
-        ExecuteSetup();
+        InvokeBeforeExecuteAction();
 
         await ExecuteRequestValidation();
 
@@ -103,7 +108,7 @@ public partial class DeleteStrategyBuilder<TService, TEntity>
 
         if (entityToDelete == null)
         {
-            LogEntityWithIdNotFound(Logger, EntityDescription, Request.Id);
+            LogEntityWithIdNotFound(Logger, EntityDescription, Request.GetLoggableId());
 
             throw new NotFoundException($"{EntityDescription} not found.");
         }
@@ -112,7 +117,7 @@ public partial class DeleteStrategyBuilder<TService, TEntity>
 
         var successfullyDeleted = await DeletableRepository.Delete(EntityFilter, OperatorContext.OperatorId, CancellationToken.Value);
 
-        LogSuccessfullyExecutedActionEntityWithIdIdByOperatorId(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant(), Request.Id, OperatorContext.OperatorId);
+        LogSuccessfullyExecutedAction(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant(), Request.GetLoggableId(), OperatorContext.OperatorId);
 
         return successfullyDeleted;
     }

@@ -4,7 +4,6 @@
 
 namespace Defra.Identity.Services.Delegations;
 
-using System.Linq.Expressions;
 using Defra.Identity.Messaging;
 using Defra.Identity.Messaging.Models.Request;
 using Defra.Identity.Messaging.Services;
@@ -20,13 +19,17 @@ using Defra.Identity.Repositories.Users;
 using Defra.Identity.Services.Common;
 using Defra.Identity.Services.Common.Builders.Strategy.Factories;
 using Defra.Identity.Services.Common.Context;
-using Defra.Identity.Services.Delegations.Helpers;
+using Defra.Identity.Services.Common.Extensions;
+using Defra.Identity.Services.Common.Filters;
+using Defra.Identity.Services.Common.Mappers;
 using Defra.Identity.Services.Delegations.Rules;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
 
 public partial class CphDelegationsService : ICphDelegationsService
 {
+    private const string CreateDelegationActionDescription = "Create county parish holding delegation";
+
     private readonly ICphDelegationsRepository repository;
     private readonly IUsersRepository usersRepository;
     private readonly ICphRepository cphRepository;
@@ -64,45 +67,36 @@ public partial class CphDelegationsService : ICphDelegationsService
             .WithDefaultEntityDescription(EntityDescriptions.CphDelegation);
     }
 
-    public async Task<List<CphDelegation>> GetAll(GetCphDelegations request, CancellationToken cancellationToken = default)
+    public async Task<List<CphDelegation>> GetAll(CancellationToken cancellationToken = default)
     {
-        LogGettingAllDelegations();
-
-        var entities = await repository.GetList(entity => entity.DeletedAt == null && (entity.ExpiresAt == null || DateTime.UtcNow < entity.ExpiresAt), cancellationToken);
-
-        return entities.Select(MapCphDelegationEntityToCphDelegation).ToList();
+        return await strategyBuilderFactory.BuildGetListStrategy<CountyParishHoldingDelegations>()
+            .WithActionDescription("Get all county parish holding delegations")
+            .WithRepository(repository)
+            .WithCancellationToken(cancellationToken)
+            .WithEntityFilter(FilterLibrary.CphDelegations.NotSoftDeletedOrExpiredAndValidRefs)
+            .ExecuteAndMap(DelegationMapper.MapCphDelegationEntityToCphDelegation);
     }
 
     public async Task<CphDelegation> Get(GetCphDelegationById request, CancellationToken cancellationToken = default)
     {
-        LogGettingDelegationById(request.Id);
-        Expression<Func<CountyParishHoldingDelegations, bool>> filter = x => x.Id == request.Id;
+        var delegationFilter = FilterLibrary.CphDelegations.NotSoftDeletedOrExpiredAndValidRefs
+            .AndAlso(delegation => request.Id == delegation.Id);
 
-        var entity = await repository.GetSingle(filter, cancellationToken);
-
-        if (entity is not { DeletedAt: null } || (entity.ExpiresAt != null && DateTime.UtcNow < entity.ExpiresAt))
-        {
-            LogDelegationWithIdNotFound(request.Id);
-
-            throw new NotFoundException("Delegation not found.");
-        }
-
-        return MapCphDelegationEntityToCphDelegation(entity);
+        return await strategyBuilderFactory.BuildGetStrategy<CountyParishHoldingDelegations>()
+            .WithActionDescription("Get county parish holding delegation")
+            .WithRepository(repository)
+            .WithCancellationToken(cancellationToken)
+            .WithRequest(request)
+            .WithEntityFilter(delegationFilter)
+            .ExecuteAndMap(DelegationMapper.MapCphDelegationEntityToCphDelegation);
     }
 
     public async Task<CphDelegation> Create(CreateCphDelegation request, CancellationToken cancellationToken = default)
     {
-        var delegatedUser = request.DelegatedUserId == new Guid("00000000-0000-0000-0000-000000000001")
-            ? await usersRepository.GetSingle(user => user.EmailAddress == request.DelegatedUserEmail, cancellationToken)
-            : await usersRepository.GetSingle(user => user.Id == request.DelegatedUserId, cancellationToken);
-
-        if (delegatedUser is not { DeletedAt: null })
-        {
-            throw new NotFoundException("Delegated user not found");
-        }
+        var delegatedUser = await GetDelegatedUserByEmailAddress(request, cancellationToken);
 
         return await strategyBuilderFactory.BuildCreateStrategy<CountyParishHoldingDelegations>()
-            .WithActionDescription("Create")
+            .WithActionDescription("Create county parish holding delegation")
             .WithRepository(repository)
             .WithCancellationToken(cancellationToken)
             .WithRequestValidation(() => createCphDelegationValidator.ValidateAsync(request, cancellationToken))
@@ -114,19 +108,18 @@ public partial class CphDelegationsService : ICphDelegationsService
                     rules.Add(roleRepository, request.DelegatedUserRoleId, RulesLibrary.Reference.Descriptions.DelegatedUserRoleMustExistNotDeleted);
                 })
             .WithCreate(
-                () =>
-                    new CountyParishHoldingDelegations
-                    {
-                        CountyParishHoldingId = request.CountyParishHoldingId,
-                        DelegatingUserId = request.DelegatingUserId,
-                        DelegatedUserId = delegatedUser.Id,
-                        DelegatedUserEmail = request.DelegatedUserEmail,
-                        DelegatedUserRoleId = request.DelegatedUserRoleId,
-                        InvitationToken = string.Empty,
-                        InvitationExpiresAt = DateTime.Now.AddDays(2).ToUniversalTime(),
-                        CreatedAt = DateTime.UtcNow,
-                        CreatedById = operatorContext.OperatorId,
-                    })
+                () => new CountyParishHoldingDelegations
+                {
+                    CountyParishHoldingId = request.CountyParishHoldingId,
+                    DelegatingUserId = request.DelegatingUserId,
+                    DelegatedUserId = delegatedUser.Id,
+                    DelegatedUserEmail = delegatedUser.EmailAddress,
+                    DelegatedUserRoleId = request.DelegatedUserRoleId,
+                    InvitationToken = string.Empty,
+                    InvitationExpiresAt = DateTime.Now.AddDays(2).ToUniversalTime(),
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedById = operatorContext.OperatorId,
+                })
             .WithAfterExecute(
                 async entity =>
                 {
@@ -139,16 +132,17 @@ public partial class CphDelegationsService : ICphDelegationsService
                             cancellationToken)
                         .ConfigureAwait(false);
                 })
-            .ExecuteAndMap(MapCphDelegationEntityToCphDelegation);
+            .ExecuteAndMap(DelegationMapper.MapCphDelegationEntityToCphDelegation);
     }
 
     public async Task Accept(AcceptCphDelegationById request, CancellationToken cancellationToken = default)
     {
         await strategyBuilderFactory.BuildUpdateStrategy<CountyParishHoldingDelegations>()
-            .WithActionDescription("Accept")
+            .WithActionDescription("Accept county parish holding delegation invite")
             .WithRepository(repository)
             .WithCancellationToken(cancellationToken)
-            .WithRequestAndEntityFilter(request, delegation => request.Id == delegation.Id)
+            .WithRequest(request)
+            .WithEntityFilter(delegation => request.Id == delegation.Id)
             .WithExistenceRules(
                 rules =>
                 {
@@ -170,10 +164,11 @@ public partial class CphDelegationsService : ICphDelegationsService
     public async Task Reject(RejectCphDelegationById request, CancellationToken cancellationToken = default)
     {
         await strategyBuilderFactory.BuildUpdateStrategy<CountyParishHoldingDelegations>()
-            .WithActionDescription("Reject")
+            .WithActionDescription("Reject county parish holding delegation invite")
             .WithRepository(repository)
             .WithCancellationToken(cancellationToken)
-            .WithRequestAndEntityFilter(request, delegation => request.Id == delegation.Id)
+            .WithRequest(request)
+            .WithEntityFilter(delegation => request.Id == delegation.Id)
             .WithExistenceRules(
                 rules =>
                 {
@@ -195,10 +190,11 @@ public partial class CphDelegationsService : ICphDelegationsService
     public async Task Revoke(RevokeCphDelegationById request, CancellationToken cancellationToken = default)
     {
         await strategyBuilderFactory.BuildUpdateStrategy<CountyParishHoldingDelegations>()
-            .WithActionDescription("Revoke")
+            .WithActionDescription("Revoke county parish holding delegation")
             .WithRepository(repository)
             .WithCancellationToken(cancellationToken)
-            .WithRequestAndEntityFilter(request, delegation => request.Id == delegation.Id)
+            .WithRequest(request)
+            .WithEntityFilter(delegation => request.Id == delegation.Id)
             .WithExistenceRules(rules => { rules.Add(RulesLibrary.Existence.NotSoftDeleted); })
             .WithBusinessRules(rules => { rules.Add(RulesLibrary.Business.NotRevoked); })
             .WithUpdate(
@@ -213,10 +209,11 @@ public partial class CphDelegationsService : ICphDelegationsService
     public async Task Expire(ExpireCphDelegationById request, CancellationToken cancellationToken = default)
     {
         await strategyBuilderFactory.BuildUpdateStrategy<CountyParishHoldingDelegations>()
-            .WithActionDescription("Expire")
+            .WithActionDescription("Expire county parish holding delegation")
             .WithRepository(repository)
             .WithCancellationToken(cancellationToken)
-            .WithRequestAndEntityFilter(request, delegation => request.Id == delegation.Id)
+            .WithRequest(request)
+            .WithEntityFilter(delegation => request.Id == delegation.Id)
             .WithExistenceRules(
                 rules =>
                 {
@@ -227,34 +224,37 @@ public partial class CphDelegationsService : ICphDelegationsService
             .Execute();
     }
 
-    public async Task<bool> Delete(DeleteCphDelegationById request, CancellationToken cancellationToken = default)
+    public async Task Delete(DeleteCphDelegationById request, CancellationToken cancellationToken = default)
     {
-        LogDeletingDelegationWithIdByOperatorId(request.Id, operatorContext.OperatorId);
-        return await repository.Delete(x => x.Id == request.Id, operatorContext.OperatorId, cancellationToken);
+        var delegationFilter = FilterLibrary.CphDelegations.NotSoftDeleted
+            .AndAlso(delegation => request.Id == delegation.Id);
+
+        await strategyBuilderFactory.BuildUpdateStrategy<CountyParishHoldingDelegations>()
+            .WithActionDescription("Delete county parish holding delegation")
+            .WithRepository(repository)
+            .WithCancellationToken(cancellationToken)
+            .WithRequest(request)
+            .WithEntityFilter(delegationFilter)
+            .WithUpdate(
+                cph =>
+                {
+                    cph.DeletedAt = DateTime.UtcNow;
+                    cph.DeletedById = operatorContext.OperatorId;
+                })
+            .Execute();
     }
 
-    private static CphDelegation MapCphDelegationEntityToCphDelegation(CountyParishHoldingDelegations entity)
+    private async Task<UserAccounts> GetDelegatedUserByEmailAddress(CreateCphDelegation request, CancellationToken cancellationToken)
     {
-        return new CphDelegation
+        var delegatedUser = await usersRepository.GetSingle(user => user.EmailAddress == request.DelegatedUserEmail, cancellationToken);
+
+        if (delegatedUser is { DeletedAt: null })
         {
-            Id = entity.Id,
-            CountyParishHoldingId = entity.CountyParishHoldingId,
-            CountyParishHoldingNumber = entity.CountyParishHolding.Identifier,
-            DelegatingUserId = entity.DelegatingUserId,
-            DelegatingUserName = entity.DelegatingUser.DisplayName,
-            DelegatedUserId = entity.DelegatedUserId,
-            DelegatedUserName = entity.DelegatedUser?.DisplayName,
-            DelegatedUserEmail = entity.DelegatedUserEmail,
-            DelegatedUserRoleId = entity.DelegatedUserRoleId,
-            DelegatedUserRoleName = entity.DelegatedUserRole.Name,
-            InvitationExpiresAt = entity.InvitationExpiresAt,
-            InvitationAcceptedAt = entity.InvitationAcceptedAt,
-            InvitationRejectedAt = entity.InvitationRejectedAt,
-            RevokedAt = entity.RevokedAt,
-            ExpiresAt = entity.ExpiresAt,
-            RevokedById = entity.RevokedById,
-            RevokedByName = entity.RevokedByUser?.DisplayName,
-            Active = DelegationsHelper.IsActiveDelegation(entity),
-        };
+            return delegatedUser;
+        }
+
+        LogDelegatedUserNotFound(logger, CreateDelegationActionDescription, EntityDescriptions.CphDelegation, RulesLibrary.Reference.Descriptions.DelegatedUserMustExistNotDeleted);
+
+        throw new NotFoundException(RulesLibrary.Reference.Descriptions.DelegatedUserMustExistNotDeleted);
     }
 }

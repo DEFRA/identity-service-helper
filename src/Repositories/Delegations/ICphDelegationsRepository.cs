@@ -5,6 +5,10 @@
 namespace Defra.Identity.Repositories.Delegations;
 
 using Defra.Identity.Postgres.Database.Entities;
+using Defra.Identity.Repositories.Common.Composites;
 
 public interface ICphDelegationsRepository :
-    IRepository<CountyParishHoldingDelegations>;
+    IGettable<CountyParishHoldingDelegations>,
+    IListable<CountyParishHoldingDelegations>,
+    ICreatable<CountyParishHoldingDelegations>,
+    IUpdatable<CountyParishHoldingDelegations>;

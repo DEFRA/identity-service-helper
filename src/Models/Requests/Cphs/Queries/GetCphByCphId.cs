@@ -6,6 +6,4 @@ namespace Defra.Identity.Models.Requests.Cphs.Queries;
 
 using Defra.Identity.Models.Requests.Common;
 
-public class GetCphByCphId : OperationById
-{
-}
+public class GetCphByCphId : OperationById<Guid>;

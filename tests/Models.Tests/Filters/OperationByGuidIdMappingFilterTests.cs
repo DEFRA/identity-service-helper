@@ -12,9 +12,9 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Routing;
 using NSubstitute;
 
-public class OperationByIdMappingFilterTests
+public class OperationByGuidIdMappingFilterTests
 {
-    private readonly OperationByIdMappingFilter<TestModel> filter = new();
+    private readonly OperationByGuidIdMappingFilter<TestModel> filter = new();
 
     [Fact]
     public async Task InvokeAsync_Returns_BadRequest_When_Argument_Missing()
@@ -36,10 +36,18 @@ public class OperationByIdMappingFilterTests
     {
         // Arrange
         var guid = "2e35b982-e427-4917-8b9d-454220553a1e";
-        var model = new TestModel { Id = Guid.Parse(guid) };
+        var model = new TestModel
+        {
+            Id = Guid.Parse(guid)
+        };
         var context = Substitute.For<EndpointFilterInvocationContext>();
         var routeValue = Substitute.For<IRouteValuesFeature>();
-        routeValue.RouteValues = new RouteValueDictionary { { "id2", "2e35b982-e427-4917-8b9d-454220553a1d" } };
+        routeValue.RouteValues = new RouteValueDictionary
+        {
+            {
+                "id2", "2e35b982-e427-4917-8b9d-454220553a1d"
+            }
+        };
         var httpContext = new DefaultHttpContext();
         httpContext.Features.Set(routeValue);
         context.Arguments.Returns([model]);
@@ -62,10 +70,18 @@ public class OperationByIdMappingFilterTests
     {
         // Arrange
         var guid = "2e35b982-e427-4917-8b9d-454220553a1d";
-        var model = new TestModel { Id = Guid.Parse(guid) };
+        var model = new TestModel
+        {
+            Id = Guid.Parse(guid)
+        };
         var context = Substitute.For<EndpointFilterInvocationContext>();
         var routeValue = Substitute.For<IRouteValuesFeature>();
-        routeValue.RouteValues = new RouteValueDictionary { { "id", guid } };
+        routeValue.RouteValues = new RouteValueDictionary
+        {
+            {
+                "id", guid
+            }
+        };
         var httpContext = new DefaultHttpContext();
         httpContext.Features.Set(routeValue);
         context.Arguments.Returns([model]);
@@ -86,8 +102,5 @@ public class OperationByIdMappingFilterTests
         result.ShouldBeOfType<Ok>();
     }
 
-    public class TestModel : IOperationById
-    {
-        public Guid Id { get; set; }
-    }
+    private class TestModel : OperationById<Guid>;
 }
