@@ -143,10 +143,7 @@ public class CphDelegationsServiceTests
 
         var request = new CreateCphDelegation
         {
-            CountyParishHoldingId = mockCphId,
-            DelegatingUserId = mockDelegatingUserEntity.Id,
-            DelegatedUserEmail = mockDelegatedUserEmail,
-            DelegatedUserRoleId = mockDelegatedUserRoleId,
+            CountyParishHoldingId = mockCphId, DelegatingUserId = mockDelegatingUserEntity.Id, DelegatedUserEmail = mockDelegatedUserEmail, DelegatedUserRoleId = mockDelegatedUserRoleId,
         };
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
@@ -396,10 +393,18 @@ public class CphDelegationsServiceTests
     public async Task Delete_CallsRepository()
     {
         // Arrange
+        var id = Guid.NewGuid();
+
         var request = new DeleteCphDelegationById()
         {
-            Id = Guid.NewGuid(),
+            Id = id,
         };
+
+        repository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldingDelegations, bool>>>(), Arg.Any<CancellationToken>()).Returns(
+            new CountyParishHoldingDelegations()
+            {
+                Id = id, DelegatedUserEmail = "test@test.com",
+            });
 
         // Act
         await service.Delete(request, TestContext.Current.CancellationToken);
