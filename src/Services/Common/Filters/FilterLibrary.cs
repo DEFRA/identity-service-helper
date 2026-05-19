@@ -8,15 +8,22 @@ using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Services.Common.Extensions;
 using ModelAnimalSpecies = Defra.Identity.Postgres.Database.Entities.AnimalSpecies;
+using ModelApplications = Defra.Identity.Postgres.Database.Entities.Applications;
 
 #pragma warning disable SA1202 // ordering of the public and privates is important here
 public static class FilterLibrary
 {
+    public static class Applications
+    {
+        public static readonly Expression<Func<ModelApplications, bool>> NotSoftDeleted = application => application.DeletedAt == null;
+    }
+
     public static class Users
     {
-        private static readonly Expression<Func<UserAccounts, bool>> NotSoftDeleted = holdingAssignment => holdingAssignment.DeletedAt == null;
+        public static readonly Expression<Func<UserAccounts, bool>> NotSoftDeleted = user => user.DeletedAt == null;
 
-        public static readonly Expression<Func<UserAccounts, bool>> Active = NotSoftDeleted;
+        public static readonly Expression<Func<UserAccounts, bool>> All = user
+            => true;
     }
 
     public static class Cphs

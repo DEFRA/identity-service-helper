@@ -4,140 +4,144 @@
 
 namespace Defra.Identity.Services.Applications;
 
-using System.Linq.Expressions;
 using Defra.Identity.Models.Requests.Applications.Commands;
 using Defra.Identity.Models.Requests.Applications.Queries;
 using Defra.Identity.Models.Responses.Applications;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Applications;
-using Defra.Identity.Repositories.Common.Exceptions;
+using Defra.Identity.Services.Common;
+using Defra.Identity.Services.Common.Builders.Strategy.Factories;
+using Defra.Identity.Services.Common.Context;
+using Defra.Identity.Services.Common.Extensions;
+using Defra.Identity.Services.Common.Filters;
+using Defra.Identity.Services.Common.Mappers;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 
-public partial class ApplicationService(
-    IApplicationsRepository repository,
-    ILogger<ApplicationService> logger)
-    : IApplicationService
+public class ApplicationService : IApplicationService
 {
-    private const string Separator = ";";
+    private readonly IApplicationsRepository repository;
+    private readonly IOperatorContext operatorContext;
+    private readonly IStrategyBuilderFactory<ApplicationService> strategyBuilderFactory;
+    private readonly IValidator<CreateApplication> createApplicationValidator;
+    private readonly IValidator<UpdateApplicationByClientId> updateApplicationValidator;
+
+    public ApplicationService(
+        IApplicationsRepository repository,
+        IOperatorContext operatorContext,
+        IStrategyBuilderFactory<ApplicationService> strategyBuilderFactory,
+        IValidator<CreateApplication> createApplicationValidator,
+        IValidator<UpdateApplicationByClientId> updateApplicationValidator,
+        ILogger<ApplicationService> logger)
+    {
+        this.repository = repository;
+        this.operatorContext = operatorContext;
+        this.strategyBuilderFactory = strategyBuilderFactory;
+        this.createApplicationValidator = createApplicationValidator;
+        this.updateApplicationValidator = updateApplicationValidator;
+
+        this.strategyBuilderFactory
+            .WithDefaultLogger(logger)
+            .WithDefaultOperatorContext(operatorContext)
+            .WithDefaultEntityDescription(EntityDescriptions.Application);
+    }
 
     public async Task<List<Application>> GetAll(
         GetApplications request,
         CancellationToken cancellationToken = default)
     {
-        LogGettingAllApplications();
-        var applicationEntities = await repository.GetList(x => true, cancellationToken);
-
-        var applications = applicationEntities.Select(app => new Application()
-        {
-            Id = app.ClientId,
-            Name = app.Name,
-            TenantName = app.TenantName,
-            Description = app.Description,
-            Secret = app.Secret,
-            Scopes = app.Scopes.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
-            RedirectUris = app.RedirectUris.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
-        }).ToList();
-
-        return applications;
+        return await strategyBuilderFactory.BuildGetListStrategy<Applications>()
+            .WithActionDescription("Get all applications")
+            .WithRepository(repository)
+            .WithCancellationToken(cancellationToken)
+            .WithEntityFilter(FilterLibrary.Applications.NotSoftDeleted)
+            .ExecuteAndMap(ApplicationMapper.MapApplicationEntityToApplication);
     }
 
     public async Task<Application> Get(
-        GetApplicationById request,
+        GetApplicationByClientId request,
         CancellationToken cancellationToken = default)
     {
-        LogGettingApplicationById(request.Id);
-        Expression<Func<Applications, bool>> filter = x => x.ClientId == request.Id;
+        var applicationFilter = FilterLibrary.Applications.NotSoftDeleted
+            .AndAlso(application => request.Id == application.ClientId);
 
-        var application = await repository.GetSingle(filter, cancellationToken);
-
-        if (application == null)
-        {
-            LogApplicationWithIdNotFound(request.Id);
-            throw new NotFoundException("Application not found.");
-        }
-
-        return new Application()
-        {
-            Id = application.ClientId,
-            Name = application.Name,
-            TenantName = application.TenantName,
-            Secret = application.Secret,
-            Description = application.Description,
-            Scopes = application.Scopes.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
-            RedirectUris = application.RedirectUris.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
-        };
-    }
-
-    public async Task<Application> Update(
-        UpdateApplication application,
-        CancellationToken cancellationToken = default)
-    {
-        LogUpdatingApplicationWithId(application.Id);
-        var existingApplication = await repository.GetSingle(x => x.ClientId.Equals(application.Id), cancellationToken);
-
-        if (existingApplication == null)
-        {
-            LogApplicationWithIdNotFoundForUpdate(application.Id);
-            throw new NotFoundException($"Application with id {application.Id} not found.");
-        }
-
-        existingApplication.Name = application.Name;
-        existingApplication.TenantName = application.TenantName;
-        existingApplication.Description = application.Description;
-        existingApplication.Scopes = string.Join(Separator, application.Scopes);
-        existingApplication.RedirectUris = string.Join(Separator, application.RedirectUris);
-        existingApplication.Secret = application.Secret;
-
-        var updated = await repository.Update(existingApplication, cancellationToken);
-
-        return new Application
-        {
-            Id = updated.ClientId,
-            Name = updated.Name,
-            TenantName = updated.TenantName,
-            Description = updated.Description,
-            Secret = updated.Secret,
-            Scopes = updated.Scopes.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
-            RedirectUris = updated.RedirectUris.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
-        };
+        return await strategyBuilderFactory.BuildGetStrategy<Applications>()
+            .WithActionDescription("Get application")
+            .WithRepository(repository)
+            .WithCancellationToken(cancellationToken)
+            .WithRequest(request)
+            .WithEntityFilter(applicationFilter)
+            .ExecuteAndMap(ApplicationMapper.MapApplicationEntityToApplication);
     }
 
     public async Task<Application> Create(
-        CreateApplication application,
+        CreateApplication request,
         CancellationToken cancellationToken = default)
     {
-        LogCreatingNewApplicationWithName(application.Name);
-
-        var newApplication = new Applications
-        {
-            Name = application.Name,
-            ClientId = application.Id,
-            TenantName = application.TenantName,
-            Description = application.Description,
-            CreatedById = application.OperatorId,
-            Scopes = string.Join(Separator, application.Scopes),
-            Secret = application.Secret,
-            RedirectUris = string.Join(Separator, application.RedirectUris),
-        };
-
-        var createdApplication = await repository.Create(newApplication, cancellationToken);
-        return new Application
-        {
-            Id = createdApplication.ClientId,
-            Name = createdApplication.Name,
-            TenantName = createdApplication.TenantName,
-            Description = createdApplication.Description,
-            Scopes = createdApplication.Scopes.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
-            RedirectUris = createdApplication.RedirectUris.Split(Separator, StringSplitOptions.RemoveEmptyEntries).ToList(),
-        };
+        return await strategyBuilderFactory.BuildCreateStrategy<Applications>()
+            .WithActionDescription("Create application")
+            .WithRepository(repository)
+            .WithCancellationToken(cancellationToken)
+            .WithRequestValidation(() => createApplicationValidator.ValidateAsync(request, cancellationToken))
+            .WithCreate(
+                () => new Applications
+                {
+                    Name = request.Name,
+                    ClientId = request.Id,
+                    TenantName = request.TenantName,
+                    Description = request.Description,
+                    CreatedById = operatorContext.OperatorId,
+                    Scopes = string.Join(ApplicationMapper.ScopeSeparator, request.Scopes),
+                    Secret = request.Secret,
+                    RedirectUris = string.Join(ApplicationMapper.RedirectUriSeparator, request.RedirectUris),
+                })
+            .ExecuteAndMap(ApplicationMapper.MapApplicationEntityToApplication);
     }
 
-    public async Task<bool> Delete(
-        Guid id,
-        Guid operatorId,
+    public async Task<Application> Update(
+        UpdateApplicationByClientId request,
         CancellationToken cancellationToken = default)
     {
-        LogDeletingApplicationWithIdByOperator(id, operatorId);
-        return await repository.Delete(x => x.ClientId.Equals(id), operatorId, cancellationToken);
+        var applicationFilter = FilterLibrary.Applications.NotSoftDeleted
+            .AndAlso(application => request.Id == application.ClientId);
+
+        return await strategyBuilderFactory.BuildUpdateStrategy<Applications>()
+            .WithActionDescription("Update application")
+            .WithRepository(repository)
+            .WithCancellationToken(cancellationToken)
+            .WithRequestValidation(() => updateApplicationValidator.ValidateAsync(request, cancellationToken))
+            .WithRequest(request)
+            .WithEntityFilter(applicationFilter)
+            .WithUpdate(
+                application =>
+                {
+                    application.Name = request.Name;
+                    application.TenantName = request.TenantName;
+                    application.Description = request.Description;
+                    application.Scopes = string.Join(ApplicationMapper.ScopeSeparator, request.Scopes);
+                    application.RedirectUris = string.Join(ApplicationMapper.RedirectUriSeparator, request.RedirectUris);
+                    application.Secret = request.Secret;
+                })
+            .ExecuteAndMap(ApplicationMapper.MapApplicationEntityToApplication);
+    }
+
+    public async Task Delete(DeleteApplicationByClientId request, CancellationToken cancellationToken = default)
+    {
+        var applicationFilter = FilterLibrary.Applications.NotSoftDeleted
+            .AndAlso(application => request.Id == application.ClientId);
+
+        await strategyBuilderFactory.BuildUpdateStrategy<Applications>()
+            .WithActionDescription("Delete application")
+            .WithRepository(repository)
+            .WithCancellationToken(cancellationToken)
+            .WithRequest(request)
+            .WithEntityFilter(applicationFilter)
+            .WithUpdate(
+                application =>
+                {
+                    application.DeletedAt = DateTime.UtcNow;
+                    application.DeletedById = operatorContext.OperatorId;
+                })
+            .Execute();
     }
 }

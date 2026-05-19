@@ -65,6 +65,7 @@ public static class OpenApiMetadata
         public const string RevokedById = $"{OpenApiMetadata.BaseId} RevokedById";
         public const string RevokedAt = "The revocation date";
         public const string RevokedByName = "The revoker's name";
+        public const string Active = "The active state of the delegation";
     }
 
     public static class Paging
@@ -90,6 +91,7 @@ public static class OpenApiMetadata
         public const string DisplayName = "The displayed name of the user";
         public const string FirstName = "The first name of the user";
         public const string LastName = "The last name of the user";
+        public const string Active = "The active state of the user";
     }
 
     public static class Roles

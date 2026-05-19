@@ -6,7 +6,6 @@ namespace Defra.Identity.Api.Endpoints.Species;
 
 using Defra.Identity.Api.Filters;
 using Defra.Identity.Api.MetaData;
-using Defra.Identity.Api.Middleware.Headers;
 using Defra.Identity.Models.Requests.Species.Commands;
 using Defra.Identity.Models.Requests.Species.Queries;
 using Defra.Identity.Services.Species;

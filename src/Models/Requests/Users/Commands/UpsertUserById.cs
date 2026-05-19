@@ -1,4 +1,4 @@
-// <copyright file="UpdateUserById.cs" company="Defra">
+// <copyright file="UpsertUserById.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
@@ -8,13 +8,13 @@ using System.ComponentModel;
 using Defra.Identity.Models.Requests.Common;
 using Defra.Identity.Models.Requests.Users.Commands.Base;
 
-public class UpdateUserById : UserWriteOperationBase, IOperationById<Guid>
+public class UpsertUserById : UserWriteOperationBase, IOperationById<Guid>
 {
     [Description(OpenApiMetadata.Users.Id)]
-    public Guid Id { get; set; }
+    public Guid Id { get; set; } = Guid.Empty;
 
     public string GetLoggableId()
     {
-        throw new NotImplementedException();
+        return Id.ToString() ?? throw new InvalidOperationException("Id has not been set");
     }
 }

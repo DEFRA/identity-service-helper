@@ -18,6 +18,7 @@ public static class UserMapper
             FirstName = userEntity.FirstName,
             LastName = userEntity.LastName,
             DisplayName = userEntity.DisplayName,
+            Active = userEntity.DeletedAt == null,
         };
     }
 }
