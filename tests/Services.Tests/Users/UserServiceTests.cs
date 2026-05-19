@@ -117,6 +117,14 @@ public class UserServiceTests
         // Arrange
         var userId = Guid.NewGuid();
 
+        var userAccount = new UserAccounts
+        {
+            Id = userId, EmailAddress = "test@example.com", FirstName = "John", LastName = "Doe",
+        };
+
+        repository.GetSingle(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns(userAccount);
+
         // Act
         await userService.Delete(
             new DeleteUserById()
@@ -167,12 +175,16 @@ public class UserServiceTests
         // Arrange
         var updateUser = new UpsertUserById()
         {
-            Email = "test@example.com", FirstName = "UpdatedFirstName", LastName = "UpdatedLastName",
+            Email = "test@example.com", FirstName = "UpdatedFirstName", LastName = "UpdatedLastName", DisplayName = "UpdatedFirstName UpdatedLastName",
         };
 
         var existingUser = new UserAccounts
         {
-            Id = Guid.NewGuid(), EmailAddress = "test@example.com", FirstName = "OldFirstName", LastName = "OldLastName",
+            Id = Guid.NewGuid(),
+            EmailAddress = "test@example.com",
+            FirstName = "OldFirstName",
+            LastName = "OldLastName",
+            DisplayName = "OldFirstName OldLastName",
         };
 
         repository.GetSingle(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<CancellationToken>())
@@ -214,7 +226,7 @@ public class UserServiceTests
         // Arrange
         var updateUser = new UpsertUserById()
         {
-            Email = "new@example.com", FirstName = "NewFirstName", LastName = "NewLastName",
+            Email = "new@example.com", FirstName = "NewFirstName", LastName = "NewLastName", DisplayName = "NewFirstName NewLastName",
         };
 
         repository.GetSingle(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<CancellationToken>())
@@ -224,7 +236,11 @@ public class UserServiceTests
             .Returns(
                 new UserAccounts
                 {
-                    Id = Guid.NewGuid(), EmailAddress = updateUser.Email, FirstName = updateUser.FirstName, LastName = updateUser.LastName,
+                    Id = Guid.NewGuid(),
+                    EmailAddress = updateUser.Email,
+                    FirstName = updateUser.FirstName,
+                    LastName = updateUser.LastName,
+                    DisplayName = updateUser.DisplayName,
                 });
 
         // Act
@@ -319,7 +335,11 @@ public class UserServiceTests
         // Arrange
         var updateUser = new UpdateUserById
         {
-            Id = Guid.NewGuid(), Email = "new@example.com", FirstName = "NewFirstName", LastName = "NewLastName",
+            Id = Guid.NewGuid(),
+            Email = "new@example.com",
+            FirstName = "NewFirstName",
+            LastName = "NewLastName",
+            DisplayName = "NewFirstName NewLastName",
         };
 
         repository.GetSingle(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<CancellationToken>())

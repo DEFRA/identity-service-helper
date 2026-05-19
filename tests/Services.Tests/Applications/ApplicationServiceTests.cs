@@ -238,6 +238,19 @@ public class ApplicationServiceTests
             Id = Guid.NewGuid(),
         };
 
+        repository.GetSingle(Arg.Any<Expression<Func<Applications, bool>>>(), Arg.Any<CancellationToken>()).Returns(
+            new Applications()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Old App",
+                ClientId = request.Id,
+                TenantName = "Old Tenant",
+                Description = "Old Description",
+                Scopes = "oldScope",
+                RedirectUris = "https://old/callback",
+                Secret = "oldSecret",
+            });
+
         // Act
         await applicationService.Delete(request, TestContext.Current.CancellationToken);
 

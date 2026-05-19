@@ -32,9 +32,13 @@ public class CphServiceTests
     private readonly ILogger<CphService> logger = DefraLoggerExtensions.CreateNSubstituteLogger<CphService>();
     private readonly ICphService cphService;
 
+    private readonly Guid operatorId = new Guid("a4ae3558-90b7-48a4-90c4-a32c086ff769");
+
     public CphServiceTests()
     {
         cphService = new CphService(cphRepository, operatorContext, strategyBuilderFactory, pagedQueryValidator, logger);
+
+        operatorContext.OperatorId.Returns(operatorId);
     }
 
     [Fact]
@@ -60,7 +64,7 @@ public class CphServiceTests
         var pagedResults = await cphService.GetAllPaged(request, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.VerifyLogContainsOne(LogLevel.Information, "Getting all county parish holdings by page");
+        logger.VerifyLogContainsOne(LogLevel.Information, "Executing get all county parish holdings paged [county parish holding]");
 
         pagedResults.ShouldSatisfyAllConditions(
             (x) => x.Items.Count().ShouldBe(2),
@@ -110,7 +114,7 @@ public class CphServiceTests
         var pagedResults = await cphService.GetAllPaged(request, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.VerifyLogContainsOne(LogLevel.Information, "Getting all county parish holdings by page");
+        logger.VerifyLogContainsOne(LogLevel.Information, "Executing get all county parish holdings paged [county parish holding]");
 
         pagedResults.ShouldSatisfyAllConditions(
             (x) => x.Items.Count().ShouldBe(1),
@@ -153,7 +157,7 @@ public class CphServiceTests
         var pagedResults = await cphService.GetAllPaged(request, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.VerifyLogContainsOne(LogLevel.Information, "Getting all county parish holdings by page");
+        logger.VerifyLogContainsOne(LogLevel.Information, "Executing get all county parish holdings paged [county parish holding]");
 
         pagedResults.ShouldSatisfyAllConditions(
             (x) => x.Items.Count().ShouldBe(2),
@@ -203,7 +207,7 @@ public class CphServiceTests
         var pagedResults = await cphService.GetAllPaged(request, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.VerifyLogContainsOne(LogLevel.Information, "Getting all county parish holdings by page");
+        logger.VerifyLogContainsOne(LogLevel.Information, "Executing get all county parish holdings paged [county parish holding]");
 
         pagedResults.ShouldSatisfyAllConditions(
             (x) => x.Items.Count().ShouldBe(2),
@@ -253,7 +257,7 @@ public class CphServiceTests
         var pagedResults = await cphService.GetAllPaged(request, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.VerifyLogContainsOne(LogLevel.Information, "Getting all county parish holdings by page");
+        logger.VerifyLogContainsOne(LogLevel.Information, "Executing get all county parish holdings paged [county parish holding]");
 
         pagedResults.ShouldSatisfyAllConditions(
             (x) => x.Items.Count().ShouldBe(2),
@@ -303,7 +307,7 @@ public class CphServiceTests
         var pagedResults = await cphService.GetAllPaged(request, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.VerifyLogContainsOne(LogLevel.Information, "Getting all county parish holdings by page");
+        logger.VerifyLogContainsOne(LogLevel.Information, "Executing get all county parish holdings paged [county parish holding]");
 
         pagedResults.ShouldSatisfyAllConditions(
             (x) => x.Items.Count().ShouldBe(1),
@@ -346,7 +350,7 @@ public class CphServiceTests
         var pagedResults = await cphService.GetAllPaged(request, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.VerifyLogContainsOne(LogLevel.Information, "Getting all county parish holdings by page");
+        logger.VerifyLogContainsOne(LogLevel.Information, "Executing get all county parish holdings paged [county parish holding]");
 
         pagedResults.ShouldSatisfyAllConditions(
             (x) => x.Items.Count().ShouldBe(2),
@@ -396,7 +400,7 @@ public class CphServiceTests
         var pagedResults = await cphService.GetAllPaged(request, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.VerifyLogContainsOne(LogLevel.Information, "Getting all county parish holdings by page");
+        logger.VerifyLogContainsOne(LogLevel.Information, "Executing get all county parish holdings paged [county parish holding]");
 
         pagedResults.ShouldSatisfyAllConditions(
             (x) => x.Items.Count().ShouldBe(2),
@@ -440,7 +444,7 @@ public class CphServiceTests
         var result = await cphService.Get(request, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.VerifyLogContainsOne(LogLevel.Information, $"Getting county parish holding by id {request.Id.ToString()}");
+        logger.VerifyLogContainsOne(LogLevel.Information, $"Executing get county parish holding [county parish holding] with id {request.Id.ToString()}");
 
         result.ShouldSatisfyAllConditions(
             (x) => x.Id.ShouldBe(new Guid("77b9c956-2780-4b48-9abc-71bf505466f9")),
@@ -466,7 +470,7 @@ public class CphServiceTests
         var result = await cphService.Get(request, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.VerifyLogContainsOne(LogLevel.Information, $"Getting county parish holding by id {request.Id.ToString()}");
+        logger.VerifyLogContainsOne(LogLevel.Information, $"Executing get county parish holding [county parish holding] with id {request.Id.ToString()}");
 
         result.ShouldSatisfyAllConditions(
             (x) => x.Id.ShouldBe(new Guid("e7009d6d-0a29-4e3f-ac0b-7bf0c7497f46")),
@@ -517,7 +521,7 @@ public class CphServiceTests
         // Act & Assert
         Should.Throw<NotFoundException>(async () => await cphService.Get(request, TestContext.Current.CancellationToken));
 
-        logger.VerifyLogContainsOne(LogLevel.Information, $"Getting county parish holding by id {request.Id.ToString()}");
+        logger.VerifyLogContainsOne(LogLevel.Information, $"Executing get county parish holding [county parish holding] with id {request.Id.ToString()}");
         logger.VerifyLogContainsOne(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");
     }
 
@@ -534,13 +538,11 @@ public class CphServiceTests
             Id = new Guid("1cd09a5b-6b00-4f30-b03e-8de45130cad6"),
         };
 
-        var operatorId = new Guid("a4ae3558-90b7-48a4-90c4-a32c086ff769");
-
         // Act
         await cphService.Expire(request, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.VerifyLogContainsOne(LogLevel.Information, $"Expiring county parish holding with id {request.Id.ToString()} by operator {operatorId}");
+        logger.VerifyLogContainsOne(LogLevel.Information, $"Executing expire county parish holding [county parish holding] with id {request.Id.ToString()} by operator {operatorId}");
 
         await cphRepository.Received(1).Update(Arg.Is<CountyParishHoldings>(v => v.ExpiredAt != null), Arg.Any<CancellationToken>());
     }
@@ -558,15 +560,13 @@ public class CphServiceTests
             Id = new Guid("802428bd-0411-451b-b75c-2fb6c037f271"),
         };
 
-        var operatorId = new Guid("a4ae3558-90b7-48a4-90c4-a32c086ff769");
-
         // Act & Assert
         await Should.ThrowAsync<ConflictException>(
             () =>
                 cphService.Expire(request, TestContext.Current.CancellationToken));
 
-        logger.VerifyLogContainsOne(LogLevel.Information, $"Expiring county parish holding with id {request.Id.ToString()} by operator {operatorId}");
-        logger.VerifyLogContainsOne(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} is already expired");
+        logger.VerifyLogContainsOne(LogLevel.Information, $"Executing expire county parish holding [county parish holding] with id {request.Id.ToString()} by operator {operatorId}");
+        logger.VerifyLogContainsOne(LogLevel.Warning, $"Execute expire county parish holding [county parish holding] with id {request.Id.ToString()} failed conflict rule 'County parish holding must not have already expired'");
 
         await cphRepository.DidNotReceive().Update(Arg.Any<CountyParishHoldings>(), Arg.Any<CancellationToken>());
     }
@@ -587,8 +587,6 @@ public class CphServiceTests
         {
             Id = new Guid("a4343f59-011c-46dc-a9fe-553923338e0a"),
         };
-
-        var operatorId = new Guid("a4ae3558-90b7-48a4-90c4-a32c086ff769");
 
         // Act & Assert
         await Should.ThrowAsync<NotFoundException>(
@@ -616,14 +614,12 @@ public class CphServiceTests
             Id = nonExistingEntityId,
         };
 
-        var operatorId = new Guid("a4ae3558-90b7-48a4-90c4-a32c086ff769");
-
         // Act & Assert
         await Should.ThrowAsync<NotFoundException>(
             () =>
                 cphService.Expire(request, TestContext.Current.CancellationToken));
 
-        logger.VerifyLogContainsOne(LogLevel.Information, $"Expiring county parish holding with id {request.Id.ToString()} by operator {operatorId}");
+        logger.VerifyLogContainsOne(LogLevel.Information, $"Executing expire county parish holding [county parish holding] with id {request.Id.ToString()} by operator {operatorId}");
         logger.VerifyLogContainsOne(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");
 
         await cphRepository.DidNotReceive().Update(Arg.Any<CountyParishHoldings>(), Arg.Any<CancellationToken>());
@@ -642,15 +638,11 @@ public class CphServiceTests
             Id = new Guid("1cd09a5b-6b00-4f30-b03e-8de45130cad6"),
         };
 
-        var operatorId = new Guid("a4ae3558-90b7-48a4-90c4-a32c086ff769");
-
         // Act
         await cphService.Delete(request, TestContext.Current.CancellationToken);
 
-        Console.Write(logger.ReceivedCalls());
-
         // Assert
-        logger.VerifyLogContainsOne(LogLevel.Information, $"Executing delete county parish holding [county parish holdings] with id {request.Id.ToString()} by operator {operatorId}");
+        logger.VerifyLogContainsOne(LogLevel.Information, $"Executing delete county parish holding [county parish holding] with id {request.Id.ToString()} by operator {operatorId}");
 
         await cphRepository.Received(1).Update(Arg.Is<CountyParishHoldings>(v => v.DeletedAt != null && v.DeletedById == operatorId), Arg.Any<CancellationToken>());
     }
@@ -671,8 +663,6 @@ public class CphServiceTests
         {
             Id = new Guid("a4343f59-011c-46dc-a9fe-553923338e0a"),
         };
-
-        var operatorId = new Guid("a4ae3558-90b7-48a4-90c4-a32c086ff769");
 
         // Act & Assert
         await Should.ThrowAsync<NotFoundException>(
@@ -700,14 +690,12 @@ public class CphServiceTests
             Id = nonExistingEntityId,
         };
 
-        var operatorId = new Guid("a4ae3558-90b7-48a4-90c4-a32c086ff769");
-
         // Act & Assert
         await Should.ThrowAsync<NotFoundException>(
             () =>
                 cphService.Delete(request, TestContext.Current.CancellationToken));
 
-        logger.VerifyLogContainsOne(LogLevel.Information, $"Deleting county parish holding with id {request.Id.ToString()} by operator {operatorId}");
+        logger.VerifyLogContainsOne(LogLevel.Information, $"Executing delete county parish holding [county parish holding] with id {request.Id.ToString()} by operator {operatorId}");
         logger.VerifyLogContainsOne(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");
 
         await cphRepository.DidNotReceive().Update(Arg.Any<CountyParishHoldings>(), Arg.Any<CancellationToken>());

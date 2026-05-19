@@ -15,6 +15,6 @@ public class UpdateUserById : UserWriteOperationBase, IOperationById<Guid>
 
     public string GetLoggableId()
     {
-        throw new NotImplementedException();
+        return Id.ToString() ?? throw new InvalidOperationException("Id has not been set");
     }
 }

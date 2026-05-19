@@ -15,6 +15,7 @@ using Defra.Identity.Services.Common.Context;
 using Defra.Identity.Services.Common.Extensions;
 using Defra.Identity.Services.Common.Filters;
 using Defra.Identity.Services.Common.Mappers;
+using Defra.Identity.Services.Users.Rules;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
 
@@ -126,6 +127,7 @@ public class UserService : IUserService
             .WithRequestValidation(() => upsertUserValidator.ValidateAsync(request, cancellationToken))
             .WithRequest(request)
             .WithEntityFilter(user => request.Id == user.Id)
+            .WithExistenceRules(rules => rules.Add(RulesLibrary.Existence.NotSoftDeleted))
             .WithCreate(
                 () => new UserAccounts
                 {
