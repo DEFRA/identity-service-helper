@@ -103,7 +103,6 @@ public class ApplicationEndpointsTests
         createdResult.Value.ShouldBe(application);
         createdResult.RouteName.ShouldBe(RouteNames.Applications);
         createdResult.RouteValues["id"].ShouldBe(application.Id);
-        request.OperatorId.ShouldBe(commandHeaders.OperatorId);
     }
 
     [Fact]
@@ -111,30 +110,28 @@ public class ApplicationEndpointsTests
     {
         // Arrange
         var id = Guid.NewGuid();
-        var request = new UpdateApplicationById
+
+        var request = new UpdateApplicationByClientId
         {
-            Id = id
+            Id = id, Name = "Updated App",
         };
-        var payload = new UpdateApplicationByClientId
-        {
-            Id = id, Name = "Updated App"
-        };
+
         var application = new Application
         {
-            Id = id, Name = "Updated App"
+            Id = id, Name = "Updated App",
         };
-        service.Update(payload, Arg.Any<CancellationToken>()).Returns(application);
+
+        service.Update(request, Arg.Any<CancellationToken>()).Returns(application);
 
         // Act
         var result = await (Task<IResult>)typeof(ApplicationEndpoints)
             .GetMethod("PutByIdRoute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
-            .Invoke(null, [commandHeaders, request, payload, service])!;
+            .Invoke(null, [request, service])!;
 
         // Assert
         result.ShouldBeOfType<Ok<Application>>();
         ((Ok<Application>)result).Value.ShouldBe(application);
-        payload.Id.ShouldBe(id);
-        payload.OperatorId.ShouldBe(commandHeaders.OperatorId);
+        request.Id.ShouldBe(id);
     }
 
     [Fact]
@@ -142,17 +139,18 @@ public class ApplicationEndpointsTests
     {
         // Arrange
         var id = Guid.NewGuid();
-        var request = new UpdateApplicationById
+
+        var request = new UpdateApplicationByClientId()
         {
-            Id = id
+            Id = id,
         };
-        var payload = new UpdateApplicationByClientId();
-        service.Update(payload, Arg.Any<CancellationToken>()).Returns(Task.FromException<Application>(new NotFoundException("Not found")));
+
+        service.Update(request, Arg.Any<CancellationToken>()).Returns(Task.FromException<Application>(new NotFoundException("Not found")));
 
         // Act
         var result = await (Task<IResult>)typeof(ApplicationEndpoints)
             .GetMethod("PutByIdRoute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
-            .Invoke(null, [commandHeaders, request, payload, service])!;
+            .Invoke(null, [request, service])!;
 
         // Assert
         result.ShouldBeOfType<NotFound<string>>();
@@ -164,9 +162,9 @@ public class ApplicationEndpointsTests
     {
         // Arrange
         var id = Guid.NewGuid();
-        var request = new UpdateApplicationById()
+        var request = new UpdateApplicationByClientId()
         {
-            Id = id
+            Id = id,
         };
         var payload = new UpdateApplicationByClientId();
         service.Update(payload, Arg.Any<CancellationToken>()).Returns(Task.FromException<Application>(new Exception("Error")));
@@ -186,19 +184,19 @@ public class ApplicationEndpointsTests
     {
         // Arrange
         var id = Guid.NewGuid();
+
         var request = new DeleteApplicationByClientId
         {
-            Id = id
+            Id = id,
         };
-        service.Delete(id, commandHeaders.OperatorId, Arg.Any<CancellationToken>()).Returns(true);
 
         // Act
         var result = await (Task<IResult>)typeof(ApplicationEndpoints)
             .GetMethod("DeleteByIdRoute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
-            .Invoke(null, [commandHeaders, request, service])!;
+            .Invoke(null, [request, service])!;
 
         // Assert
         result.ShouldBeOfType<NoContent>();
-        await service.Received(1).Delete(id, commandHeaders.OperatorId, Arg.Any<CancellationToken>());
+        await service.Received(1).Delete(request, Arg.Any<CancellationToken>());
     }
 }
