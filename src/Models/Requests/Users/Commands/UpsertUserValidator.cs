@@ -6,7 +6,7 @@ namespace Defra.Identity.Models.Requests.Users.Commands;
 
 using FluentValidation;
 
-public class UpsertUserValidator : AbstractValidator<UpdateUserById>
+public class UpsertUserValidator : AbstractValidator<UpsertUserById>
 {
     public UpsertUserValidator()
     {
