@@ -55,14 +55,14 @@ public class StrategyBuilderFactory<TService> : IStrategyBuilderFactory<TService
         return updateStrategyBuilder;
     }
 
-    public DeleteStrategyBuilder<TService, TEntity> BuildDeleteStrategy<TEntity>()
+    public UpsertStrategyBuilder<TService, TEntity> BuildUpsertStrategy<TEntity>()
         where TEntity : class
     {
-        var deleteStrategyBuilder = new DeleteStrategyBuilder<TService, TEntity>();
+        var upsertStrategyBuilder = new UpsertStrategyBuilder<TService, TEntity>();
 
-        AttachDefaults(deleteStrategyBuilder);
+        AttachDefaults(upsertStrategyBuilder);
 
-        return deleteStrategyBuilder;
+        return upsertStrategyBuilder;
     }
 
     public GetStrategyBuilder<TService, TEntity> BuildGetStrategy<TEntity>()

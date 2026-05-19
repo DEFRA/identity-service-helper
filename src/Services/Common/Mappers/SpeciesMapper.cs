@@ -1,4 +1,4 @@
-﻿// <copyright file="AnimalSpeciesMapper.cs" company="Defra">
+﻿// <copyright file="SpeciesMapper.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
@@ -7,7 +7,7 @@ namespace Defra.Identity.Services.Common.Mappers;
 using ModelAnimalSpecies = Defra.Identity.Postgres.Database.Entities.AnimalSpecies;
 using ResponseAnimalSpecies = Defra.Identity.Models.Responses.Species.AnimalSpecies;
 
-public static class AnimalSpeciesMapper
+public static class SpeciesMapper
 {
     public static ResponseAnimalSpecies MapAnimalSpeciesEntityToAnimalSpecies(ModelAnimalSpecies animalSpeciesEntity)
     {

@@ -114,7 +114,7 @@ public class UserServiceTests
 
         // Act
         var result = await userService.Delete(
-            new DeleteUser()
+            new DeleteUserById()
             {
                 Id = userId, OperatorId = operatorId,
             },
@@ -161,7 +161,7 @@ public class UserServiceTests
     public async Task Upsert_UserExists_UpdatesAndReturnsUser()
     {
         // Arrange
-        var updateUser = new UpdateUser
+        var updateUser = new UpdateUserById
         {
             Email = "test@example.com", FirstName = "UpdatedFirstName", LastName = "UpdatedLastName",
         };
@@ -208,7 +208,7 @@ public class UserServiceTests
     public async Task Upsert_UserDoesNotExist_CreatesAndReturnsUser()
     {
         // Arrange
-        var updateUser = new UpdateUser
+        var updateUser = new UpdateUserById
         {
             Email = "new@example.com", FirstName = "NewFirstName", LastName = "NewLastName",
         };
@@ -256,7 +256,7 @@ public class UserServiceTests
         // Arrange
         var userId = Guid.NewGuid();
         var operatorId = Guid.NewGuid();
-        var updateUser = new UpdateUser
+        var updateUser = new UpdateUserById
         {
             Id = userId,
             Email = "test@example.com",
@@ -315,7 +315,7 @@ public class UserServiceTests
     public async Task Update_UserDoesNotExist_ThrowsNotFoundException()
     {
         // Arrange
-        var updateUser = new UpdateUser
+        var updateUser = new UpdateUserById
         {
             Id = Guid.NewGuid(), Email = "new@example.com", FirstName = "NewFirstName", LastName = "NewLastName",
         };

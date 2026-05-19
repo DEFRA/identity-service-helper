@@ -22,4 +22,7 @@ public class User
 
     [Description(OpenApiMetadata.Users.DisplayName)]
     public string DisplayName { get; set; } = string.Empty;
+
+    [Description(OpenApiMetadata.Users.Active)]
+    public bool Active { get; set; } = false;
 }

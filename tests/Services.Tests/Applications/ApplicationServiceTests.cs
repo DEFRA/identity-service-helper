@@ -76,7 +76,7 @@ public class ApplicationServiceTests
     {
         // Arrange
         var appId = Guid.NewGuid();
-        var request = new GetApplicationById { Id = appId };
+        var request = new GetApplicationByClientId { Id = appId };
         var applicationEntity = new Applications
         {
             Id = appId,
@@ -105,7 +105,7 @@ public class ApplicationServiceTests
     public async Task Get_ApplicationDoesNotExist_ThrowsNotFoundException()
     {
         // Arrange
-        var request = new GetApplicationById { Id = Guid.NewGuid() };
+        var request = new GetApplicationByClientId { Id = Guid.NewGuid() };
         repository.GetSingle(Arg.Any<Expression<Func<Applications, bool>>>(), Arg.Any<CancellationToken>())
             .Returns((Applications)null!);
 
@@ -169,7 +169,7 @@ public class ApplicationServiceTests
     {
         // Arrange
         var appId = Guid.NewGuid();
-        var request = new UpdateApplication
+        var request = new UpdateApplicationByClientId
         {
             Id = appId,
             Name = "Updated App",

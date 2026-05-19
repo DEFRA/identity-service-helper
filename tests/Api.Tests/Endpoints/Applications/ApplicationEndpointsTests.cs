@@ -34,7 +34,13 @@ public class ApplicationEndpointsTests
     {
         // Arrange
         var request = new GetApplications();
-        var applications = new List<Application> { new() { Id = Guid.NewGuid(), Name = "App1" } };
+        var applications = new List<Application>
+        {
+            new()
+            {
+                Id = Guid.NewGuid(), Name = "App1"
+            }
+        };
         service.GetAll(request, Arg.Any<CancellationToken>()).Returns(applications);
 
         // Act
@@ -52,9 +58,15 @@ public class ApplicationEndpointsTests
     {
         // Arrange
         var id = Guid.NewGuid();
-        var request = new GetApplicationById { Id = id };
-        var application = new Application { Id = id, Name = "App1" };
-        service.Get(Arg.Any<GetApplicationById>(), Arg.Any<CancellationToken>()).Returns(application);
+        var request = new GetApplicationByClientId
+        {
+            Id = id
+        };
+        var application = new Application
+        {
+            Id = id, Name = "App1"
+        };
+        service.Get(Arg.Any<GetApplicationByClientId>(), Arg.Any<CancellationToken>()).Returns(application);
 
         // Act
         var result = await (Task<IResult>)typeof(ApplicationEndpoints)
@@ -70,8 +82,14 @@ public class ApplicationEndpointsTests
     public async Task Post_ReturnsCreatedAtRoute()
     {
         // Arrange
-        var request = new CreateApplication { Name = "New App" };
-        var application = new Application { Id = Guid.NewGuid(), Name = "New App" };
+        var request = new CreateApplication
+        {
+            Name = "New App"
+        };
+        var application = new Application
+        {
+            Id = Guid.NewGuid(), Name = "New App"
+        };
         service.Create(request, Arg.Any<CancellationToken>()).Returns(application);
 
         // Act
@@ -93,9 +111,18 @@ public class ApplicationEndpointsTests
     {
         // Arrange
         var id = Guid.NewGuid();
-        var request = new UpdateApplicationById { Id = id };
-        var payload = new UpdateApplication { Name = "Updated App" };
-        var application = new Application { Id = id, Name = "Updated App" };
+        var request = new UpdateApplicationById
+        {
+            Id = id
+        };
+        var payload = new UpdateApplicationByClientId
+        {
+            Id = id, Name = "Updated App"
+        };
+        var application = new Application
+        {
+            Id = id, Name = "Updated App"
+        };
         service.Update(payload, Arg.Any<CancellationToken>()).Returns(application);
 
         // Act
@@ -115,8 +142,11 @@ public class ApplicationEndpointsTests
     {
         // Arrange
         var id = Guid.NewGuid();
-        var request = new UpdateApplicationById { Id = id };
-        var payload = new UpdateApplication();
+        var request = new UpdateApplicationById
+        {
+            Id = id
+        };
+        var payload = new UpdateApplicationByClientId();
         service.Update(payload, Arg.Any<CancellationToken>()).Returns(Task.FromException<Application>(new NotFoundException("Not found")));
 
         // Act
@@ -134,8 +164,11 @@ public class ApplicationEndpointsTests
     {
         // Arrange
         var id = Guid.NewGuid();
-        var request = new UpdateApplicationById() { Id = id };
-        var payload = new UpdateApplication();
+        var request = new UpdateApplicationById()
+        {
+            Id = id
+        };
+        var payload = new UpdateApplicationByClientId();
         service.Update(payload, Arg.Any<CancellationToken>()).Returns(Task.FromException<Application>(new Exception("Error")));
 
         // Act
@@ -153,7 +186,10 @@ public class ApplicationEndpointsTests
     {
         // Arrange
         var id = Guid.NewGuid();
-        var request = new DeleteApplicationById { Id = id };
+        var request = new DeleteApplicationByClientId
+        {
+            Id = id
+        };
         service.Delete(id, commandHeaders.OperatorId, Arg.Any<CancellationToken>()).Returns(true);
 
         // Act

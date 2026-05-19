@@ -7,7 +7,6 @@ namespace Defra.Identity.Api.Endpoints.Users;
 using System.Net.Mime;
 using Defra.Identity.Api.Filters;
 using Defra.Identity.Api.MetaData;
-using Defra.Identity.Api.Middleware.Headers;
 using Defra.Identity.Models.Requests.Users.Commands;
 using Defra.Identity.Models.Requests.Users.Queries;
 using Defra.Identity.Models.Responses.Users;
@@ -34,17 +33,6 @@ public static class UsersEndpoints
             .Produces<User>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
             .Produces(StatusCodes.Status404NotFound);
 
-        app.MapPut(RouteNames.Users + "/{id:guid}", PutByIdRoute)
-            .WithName(OpenApiMetadata.PutByIdRoute.Name)
-            .WithTags(OpenApiMetadata.Tag)
-            .WithSummary(OpenApiMetadata.PutByIdRoute.Summary)
-            .WithDescription(OpenApiMetadata.PutByIdRoute.Description)
-            .AddEndpointFilter<ValidationFilter<UpdateUser>>()
-            .WithMetadata(new RequiresOperatorId())
-            .Produces(StatusCodes.Status200OK)
-            .ProducesProblem(StatusCodes.Status422UnprocessableEntity)
-            .ProducesProblem(StatusCodes.Status404NotFound);
-
         app.MapPost(RouteNames.Users, PostRoute)
             .WithName(OpenApiMetadata.PostRoute.Name)
             .WithTags(OpenApiMetadata.Tag)
@@ -55,6 +43,18 @@ public static class UsersEndpoints
             .Produces<User>(StatusCodes.Status201Created, MediaTypeNames.Application.Json)
             .ProducesProblem(StatusCodes.Status422UnprocessableEntity);
 
+        app.MapPut(RouteNames.Users + "/{id:guid}", PutByIdRoute)
+            .WithName(OpenApiMetadata.PutByIdRoute.Name)
+            .WithTags(OpenApiMetadata.Tag)
+            .WithSummary(OpenApiMetadata.PutByIdRoute.Summary)
+            .WithDescription(OpenApiMetadata.PutByIdRoute.Description)
+            .AddEndpointFilter<OperationByGuidIdMappingFilter<UpdateUserById>>()
+            .AddEndpointFilter<ValidationFilter<UpdateUserById>>()
+            .WithMetadata(new RequiresOperatorId())
+            .Produces(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status422UnprocessableEntity)
+            .ProducesProblem(StatusCodes.Status404NotFound);
+
         app.MapDelete(RouteNames.Users + "/{id:guid}", DeleteByIdRoute)
             .WithName(OpenApiMetadata.DeleteByIdRoute.Name)
             .WithTags(OpenApiMetadata.Tag)
@@ -63,23 +63,6 @@ public static class UsersEndpoints
             .WithMetadata(new RequiresOperatorId())
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status404NotFound);
-    }
-
-    private static async Task<IResult> PostRoute(
-        CommandRequestHeaders headers,
-        [FromBody] CreateUser user,
-        IUserService service)
-    {
-        user.OperatorId = headers.OperatorId;
-        var result = await service.Create(user);
-
-        return Results.CreatedAtRoute(
-            routeName: RouteNames.Users,
-            routeValues: new
-            {
-                id = result.Id,
-            },
-            value: result);
     }
 
     private static async Task<IResult> GetAllRoute(
@@ -100,18 +83,28 @@ public static class UsersEndpoints
         return Results.Ok(user);
     }
 
+    private static async Task<IResult> PostRoute(
+        [FromBody] CreateUser request,
+        IUserService service)
+    {
+        var result = await service.Create(request);
+
+        return Results.CreatedAtRoute(
+            routeName: RouteNames.Users,
+            routeValues: new
+            {
+                id = result.Id,
+            },
+            value: result);
+    }
+
     private static async Task<IResult> PutByIdRoute(
-        CommandRequestHeaders headers,
-        [AsParameters] UpdateUserById request,
-        [FromBody] UpdateUser payload,
+        [FromBody] UpdateUserById request,
         IUserService service)
     {
         try
         {
-            payload.Id = request.Id;
-            payload.OperatorId = headers.OperatorId;
-
-            var result = await service.Update(payload);
+            var result = await service.Update(request);
 
             return Results.Ok(result);
         }
@@ -126,15 +119,10 @@ public static class UsersEndpoints
     }
 
     private static async Task<IResult> DeleteByIdRoute(
-        CommandRequestHeaders headers,
         [AsParameters] DeleteUserById request,
         IUserService service)
     {
-        await service.Delete(
-            new DeleteUser()
-            {
-                OperatorId = headers.OperatorId, Id = request.Id,
-            });
+        await service.Delete(request);
 
         return Results.NoContent();
     }

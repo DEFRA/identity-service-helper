@@ -49,7 +49,7 @@ public class AnimalSpeciesService : IAnimalSpeciesService
             .WithRepository(repository)
             .WithCancellationToken(cancellationToken)
             .WithEntityFilter(animalSpeciesFilter)
-            .ExecuteAndMap(AnimalSpeciesMapper.MapAnimalSpeciesEntityToAnimalSpecies);
+            .ExecuteAndMap(SpeciesMapper.MapAnimalSpeciesEntityToAnimalSpecies);
     }
 
     public async Task<ResponseAnimalSpecies> Get(GetAnimalSpeciesById request, CancellationToken cancellationToken = default)
@@ -62,7 +62,7 @@ public class AnimalSpeciesService : IAnimalSpeciesService
             .WithCancellationToken(cancellationToken)
             .WithRequest(request)
             .WithEntityFilter(animalSpeciesFilter)
-            .ExecuteAndMap(AnimalSpeciesMapper.MapAnimalSpeciesEntityToAnimalSpecies);
+            .ExecuteAndMap(SpeciesMapper.MapAnimalSpeciesEntityToAnimalSpecies);
     }
 
     public async Task<ResponseAnimalSpecies> Toggle(ToggleAnimalSpeciesById request, CancellationToken cancellationToken = default)
@@ -74,7 +74,7 @@ public class AnimalSpeciesService : IAnimalSpeciesService
             .WithRequest(request)
             .WithEntityFilter(animalSpecies => request.Id == animalSpecies.Id)
             .WithUpdate(animalSpecies => { animalSpecies.IsActive = request.IsActive; })
-            .ExecuteAndMap(AnimalSpeciesMapper.MapAnimalSpeciesEntityToAnimalSpecies);
+            .ExecuteAndMap(SpeciesMapper.MapAnimalSpeciesEntityToAnimalSpecies);
     }
 
     private static bool IncludeInactiveInferred(GetAllAnimalSpecies request)

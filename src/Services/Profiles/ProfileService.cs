@@ -43,7 +43,7 @@ public class ProfileService : IProfileService
     public async Task<UserProfile> GetUserProfile(GetUserProfileByUserId request, CancellationToken cancellationToken = default)
     {
         var userAccountFilter =
-            FilterLibrary.Users.Active
+            FilterLibrary.Users.NotSoftDeleted
                 .AndAlso(userAccount => userAccount.Id == request.Id);
 
         var cphAssignmentsFilter =

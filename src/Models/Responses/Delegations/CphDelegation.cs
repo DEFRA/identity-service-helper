@@ -59,6 +59,6 @@ public class CphDelegation
     [Description(OpenApiMetadata.Generic.ExpiresAt)]
     public DateTime? ExpiresAt { get; init; }
 
-    [Description(OpenApiMetadata.Delegations.DelegatingUserName)]
+    [Description(OpenApiMetadata.Delegations.Active)]
     public required bool Active { get; set; }
 }
