@@ -9,6 +9,6 @@ using Defra.Identity.Models.Requests.Common.Queries;
 
 public class GetCphs : PagedQuery
 {
-    [Description(OpenApiMetadata.Generic.Expired)]
+    [Description(OpenApiMetadata.Cphs.IncludeExpired)]
     public string? Expired { get; init; } = null;
 }

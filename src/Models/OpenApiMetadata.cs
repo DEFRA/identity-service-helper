@@ -20,7 +20,7 @@ public static class OpenApiMetadata
     {
         public const string Id = $"{OpenApiMetadata.BaseId} object";
         public const string Expired = "Is the object expired";
-        public const string ExpiresAt = "When the object expires at";
+        public const string ExpiresAt = "When the object expires";
     }
 
     public static class Applications
@@ -45,7 +45,7 @@ public static class OpenApiMetadata
     public static class Cphs
     {
         public const string Id = $"{OpenApiMetadata.BaseId} CphId";
-        public const string ExpiredDescription = "Whether expired objects should be included in the response";
+        public const string IncludeExpired = "Whether expired objects should be included in the response";
         public const string CphNumber = "The County Parish Holder number";
     }
 
