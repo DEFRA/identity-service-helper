@@ -7,7 +7,6 @@ namespace Defra.Identity.Api.Endpoints.Applications;
 using System.Net.Mime;
 using Defra.Identity.Api.Filters;
 using Defra.Identity.Api.MetaData;
-using Defra.Identity.Api.Middleware.Headers;
 using Defra.Identity.Models.Requests.Applications.Commands;
 using Defra.Identity.Models.Requests.Applications.Queries;
 using Defra.Identity.Models.Responses.Applications;
@@ -34,17 +33,6 @@ public static class ApplicationEndpoints
             .Produces<Application>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
             .Produces(StatusCodes.Status404NotFound);
 
-        app.MapPut(RouteNames.Applications + "/{id:guid}", PutByIdRoute)
-            .WithName(OpenApiMetadata.PutByIdRoute.Name)
-            .WithSummary(OpenApiMetadata.PutByIdRoute.Summary)
-            .WithDescription(OpenApiMetadata.PutByIdRoute.Description)
-            .WithTags(OpenApiMetadata.Tag)
-            .AddEndpointFilter<ValidationFilter<UpdateApplication>>()
-            .WithMetadata(new RequiresOperatorId())
-            .Produces(StatusCodes.Status200OK)
-            .ProducesProblem(StatusCodes.Status422UnprocessableEntity)
-            .ProducesProblem(StatusCodes.Status404NotFound);
-
         app.MapPost(RouteNames.Applications, PostRoute)
             .WithName(OpenApiMetadata.PostRoute.Name)
             .WithSummary(OpenApiMetadata.PostRoute.Summary)
@@ -54,6 +42,18 @@ public static class ApplicationEndpoints
             .WithMetadata(new RequiresOperatorId())
             .Produces<Application>(StatusCodes.Status201Created, MediaTypeNames.Application.Json)
             .ProducesProblem(StatusCodes.Status422UnprocessableEntity);
+
+        app.MapPut(RouteNames.Applications + "/{id:guid}", PutByIdRoute)
+            .WithName(OpenApiMetadata.PutByIdRoute.Name)
+            .WithSummary(OpenApiMetadata.PutByIdRoute.Summary)
+            .WithDescription(OpenApiMetadata.PutByIdRoute.Description)
+            .WithTags(OpenApiMetadata.Tag)
+            .AddEndpointFilter<OperationByGuidIdMappingFilter<UpdateApplicationByClientId>>()
+            .AddEndpointFilter<ValidationFilter<UpdateApplicationByClientId>>()
+            .WithMetadata(new RequiresOperatorId())
+            .Produces(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status422UnprocessableEntity)
+            .ProducesProblem(StatusCodes.Status404NotFound);
 
         app.MapDelete(RouteNames.Applications + "/{id:guid}", DeleteByIdRoute)
             .WithName(OpenApiMetadata.DeleteByIdRoute.Name)
@@ -66,21 +66,21 @@ public static class ApplicationEndpoints
     }
 
     private static async Task<IResult> PostRoute(
-        CommandRequestHeaders headers,
-        [FromBody] CreateApplication payload,
+        [FromBody] CreateApplication request,
         IApplicationService service)
     {
-        payload.OperatorId = headers.OperatorId;
-        var result = await service.Create(payload);
+        var result = await service.Create(request);
 
         return Results.CreatedAtRoute(
-            routeName: RouteNames.Applications,
-            routeValues: new { id = result.Id },
+            routeName: OpenApiMetadata.GetByIdRoute.Name,
+            routeValues: new
+            {
+                id = result.Id,
+            },
             value: result);
     }
 
     private static async Task<IResult> GetAllRoute(
-        QueryRequestHeaders headers,
         [AsParameters] GetApplications request,
         IApplicationService service)
     {
@@ -90,7 +90,7 @@ public static class ApplicationEndpoints
     }
 
     private static async Task<IResult> GetByIdRoute(
-        [AsParameters] GetApplicationById request,
+        [AsParameters] GetApplicationByClientId request,
         IApplicationService service)
     {
         var application = await service.Get(request);
@@ -99,17 +99,13 @@ public static class ApplicationEndpoints
     }
 
     private static async Task<IResult> PutByIdRoute(
-        CommandRequestHeaders headers,
-        [AsParameters] UpdateApplicationById request,
-        [FromBody] UpdateApplication payload,
+        [FromBody] UpdateApplicationByClientId request,
         IApplicationService service)
     {
         try
         {
-            payload.Id = request.Id;
-            payload.OperatorId = headers.OperatorId;
+            var result = await service.Update(request);
 
-            var result = await service.Update(payload);
             return Results.Ok(result);
         }
         catch (NotFoundException nex)
@@ -123,11 +119,10 @@ public static class ApplicationEndpoints
     }
 
     private static async Task<IResult> DeleteByIdRoute(
-        CommandRequestHeaders headers,
-        [AsParameters] DeleteApplicationById request,
+        [AsParameters] DeleteApplicationByClientId request,
         IApplicationService service)
     {
-        await service.Delete(request.Id, headers.OperatorId);
+        await service.Delete(request);
 
         return Results.NoContent();
     }

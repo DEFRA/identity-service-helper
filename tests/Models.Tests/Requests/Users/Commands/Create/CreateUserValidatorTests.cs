@@ -14,7 +14,10 @@ public class CreateUserValidatorTests
     [Fact]
     public void Should_Have_Error_When_DisplayName_Is_Empty()
     {
-        var model = new CreateUser { DisplayName = string.Empty };
+        var model = new CreateUser
+        {
+            DisplayName = string.Empty
+        };
         var result = this.validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.DisplayName);
     }
@@ -22,7 +25,10 @@ public class CreateUserValidatorTests
     [Fact]
     public void Should_Have_Error_When_DisplayName_Exceeds_100_Characters()
     {
-        var model = new CreateUser { DisplayName = new string('a', 101) };
+        var model = new CreateUser
+        {
+            DisplayName = new string('a', 101)
+        };
         var result = this.validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.DisplayName);
     }
@@ -30,7 +36,10 @@ public class CreateUserValidatorTests
     [Fact]
     public void Should_Have_Error_When_FirstName_Is_Empty()
     {
-        var model = new CreateUser { FirstName = string.Empty };
+        var model = new CreateUser
+        {
+            FirstName = string.Empty
+        };
         var result = this.validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.FirstName);
     }
@@ -38,7 +47,10 @@ public class CreateUserValidatorTests
     [Fact]
     public void Should_Have_Error_When_FirstName_Exceeds_50_Characters()
     {
-        var model = new CreateUser { FirstName = new string('a', 51) };
+        var model = new CreateUser
+        {
+            FirstName = new string('a', 51)
+        };
         var result = this.validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.FirstName);
     }
@@ -46,7 +58,10 @@ public class CreateUserValidatorTests
     [Fact]
     public void Should_Have_Error_When_LastName_Is_Empty()
     {
-        var model = new CreateUser { LastName = string.Empty };
+        var model = new CreateUser
+        {
+            LastName = string.Empty
+        };
         var result = this.validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.LastName);
     }
@@ -54,7 +69,10 @@ public class CreateUserValidatorTests
     [Fact]
     public void Should_Have_Error_When_LastName_Exceeds_50_Characters()
     {
-        var model = new CreateUser { LastName = new string('a', 51) };
+        var model = new CreateUser
+        {
+            LastName = new string('a', 51)
+        };
         var result = this.validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.LastName);
     }
@@ -62,7 +80,10 @@ public class CreateUserValidatorTests
     [Fact]
     public void Should_Have_Error_When_EmailAddress_Is_Empty()
     {
-        var model = new CreateUser { Email = string.Empty };
+        var model = new CreateUser
+        {
+            Email = string.Empty
+        };
         var result = this.validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Email);
     }
@@ -70,7 +91,10 @@ public class CreateUserValidatorTests
     [Fact]
     public void Should_Have_Error_When_EmailAddress_Is_Invalid()
     {
-        var model = new CreateUser { Email = "invalid-email" };
+        var model = new CreateUser
+        {
+            Email = "invalid-email"
+        };
         var result = this.validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Email);
     }
@@ -80,11 +104,7 @@ public class CreateUserValidatorTests
     {
         var model = new CreateUser
         {
-            DisplayName = "John Doe",
-            FirstName = "John",
-            LastName = "Doe",
-            Email = "john.doe@example.com",
-            OperatorId = Guid.NewGuid(),
+            DisplayName = "John Doe", FirstName = "John", LastName = "Doe", Email = "john.doe@example.com",
         };
         var result = this.validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();

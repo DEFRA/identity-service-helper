@@ -70,7 +70,7 @@ public abstract partial class StrategyBuilderBase<TService, TBuilder>
         return (TBuilder)this;
     }
 
-    protected void ExecuteSetup()
+    protected void InvokeBeforeExecuteAction()
     {
         BeforeExecuteAction?.Invoke();
     }

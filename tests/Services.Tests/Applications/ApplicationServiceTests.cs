@@ -11,6 +11,9 @@ using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Applications;
 using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Services.Applications;
+using Defra.Identity.Services.Common.Builders.Strategy.Factories;
+using Defra.Identity.Services.Common.Context;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Shouldly;
@@ -19,12 +22,16 @@ using Xunit;
 public class ApplicationServiceTests
 {
     private readonly IApplicationsRepository repository = Substitute.For<IApplicationsRepository>();
+    private readonly IOperatorContext operatorContext = Substitute.For<IOperatorContext>();
+    private readonly IStrategyBuilderFactory<ApplicationService> strategyBuilderFactory = new StrategyBuilderFactory<ApplicationService>();
+    private readonly IValidator<CreateApplication> createApplicationValidator = new CreateApplicationValidator();
+    private readonly IValidator<UpdateApplicationByClientId> updateApplicationValidator = new UpdateApplicationValidator();
     private readonly ILogger<ApplicationService> logger = DefraLoggerExtensions.CreateNSubstituteLogger<ApplicationService>();
     private readonly ApplicationService applicationService;
 
     public ApplicationServiceTests()
     {
-        applicationService = new ApplicationService(repository, logger);
+        applicationService = new ApplicationService(repository, operatorContext, strategyBuilderFactory, createApplicationValidator, updateApplicationValidator, logger);
     }
 
     [Fact]
@@ -76,7 +83,10 @@ public class ApplicationServiceTests
     {
         // Arrange
         var appId = Guid.NewGuid();
-        var request = new GetApplicationById { Id = appId };
+        var request = new GetApplicationByClientId
+        {
+            Id = appId
+        };
         var applicationEntity = new Applications
         {
             Id = appId,
@@ -105,7 +115,10 @@ public class ApplicationServiceTests
     public async Task Get_ApplicationDoesNotExist_ThrowsNotFoundException()
     {
         // Arrange
-        var request = new GetApplicationById { Id = Guid.NewGuid() };
+        var request = new GetApplicationByClientId
+        {
+            Id = Guid.NewGuid()
+        };
         repository.GetSingle(Arg.Any<Expression<Func<Applications, bool>>>(), Arg.Any<CancellationToken>())
             .Returns((Applications)null!);
 
@@ -126,7 +139,6 @@ public class ApplicationServiceTests
             Name = "New App",
             TenantName = "New Tenant",
             Description = "New Description",
-            OperatorId = Guid.NewGuid(),
             Scopes = ["scope1", "scope2"],
             RedirectUris = ["https://localhost/callback"],
             Secret = "secret123",
@@ -156,11 +168,12 @@ public class ApplicationServiceTests
         result.Scopes.ShouldBe(request.Scopes);
         result.RedirectUris.ShouldBe(request.RedirectUris);
         await repository.Received(1).Create(
-            Arg.Is<Applications>(a =>
-                a.Name == request.Name &&
-                a.Scopes == "scope1;scope2" &&
-                a.RedirectUris == "https://localhost/callback" &&
-                a.Secret == "secret123"),
+            Arg.Is<Applications>(
+                a =>
+                    a.Name == request.Name &&
+                    a.Scopes == "scope1;scope2" &&
+                    a.RedirectUris == "https://localhost/callback" &&
+                    a.Secret == "secret123"),
             Arg.Any<CancellationToken>());
     }
 
@@ -169,7 +182,7 @@ public class ApplicationServiceTests
     {
         // Arrange
         var appId = Guid.NewGuid();
-        var request = new UpdateApplication
+        var request = new UpdateApplicationByClientId
         {
             Id = appId,
             Name = "Updated App",
@@ -207,11 +220,12 @@ public class ApplicationServiceTests
         result.Scopes.ShouldBe(request.Scopes);
         result.RedirectUris.ShouldBe(request.RedirectUris);
         await repository.Received(1).Update(
-            Arg.Is<Applications>(a =>
-                a.Name == request.Name &&
-                a.Scopes == "scope1;scope2" &&
-                a.RedirectUris == "https://localhost/callback" &&
-                a.Secret == "updatedSecret"),
+            Arg.Is<Applications>(
+                a =>
+                    a.Name == request.Name &&
+                    a.Scopes == "scope1;scope2" &&
+                    a.RedirectUris == "https://localhost/callback" &&
+                    a.Secret == "updatedSecret"),
             Arg.Any<CancellationToken>());
     }
 
@@ -219,16 +233,28 @@ public class ApplicationServiceTests
     public async Task Delete_CallsRepository()
     {
         // Arrange
-        var appId = Guid.NewGuid();
-        var operatorId = Guid.NewGuid();
-        repository.Delete(Arg.Any<Expression<Func<Applications, bool>>>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>())
-            .Returns(true);
+        var request = new DeleteApplicationByClientId()
+        {
+            Id = Guid.NewGuid(),
+        };
+
+        repository.GetSingle(Arg.Any<Expression<Func<Applications, bool>>>(), Arg.Any<CancellationToken>()).Returns(
+            new Applications()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Old App",
+                ClientId = request.Id,
+                TenantName = "Old Tenant",
+                Description = "Old Description",
+                Scopes = "oldScope",
+                RedirectUris = "https://old/callback",
+                Secret = "oldSecret",
+            });
 
         // Act
-        var result = await applicationService.Delete(appId, operatorId, TestContext.Current.CancellationToken);
+        await applicationService.Delete(request, TestContext.Current.CancellationToken);
 
         // Assert
-        result.ShouldBeTrue();
-        await repository.Received(1).Delete(Arg.Any<Expression<Func<Applications, bool>>>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>());
+        await repository.Received(1).Update(Arg.Any<Applications>(), Arg.Any<CancellationToken>());
     }
 }

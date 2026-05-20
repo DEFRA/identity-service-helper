@@ -4,116 +4,109 @@
 
 namespace Defra.Identity.Services.Cphs;
 
-using System.Linq.Expressions;
+using Defra.Identity.Models.Requests.Common.Queries;
 using Defra.Identity.Models.Requests.Cphs.Commands;
 using Defra.Identity.Models.Requests.Cphs.Queries;
 using Defra.Identity.Models.Responses.Common;
 using Defra.Identity.Models.Responses.Cphs;
 using Defra.Identity.Postgres.Database.Entities;
-using Defra.Identity.Repositories.Common;
-using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Repositories.Cphs;
-using Defra.Identity.Services.Common.Exceptions;
+using Defra.Identity.Services.Common;
+using Defra.Identity.Services.Common.Builders.Strategy.Factories;
+using Defra.Identity.Services.Common.Context;
+using Defra.Identity.Services.Common.Filters;
+using Defra.Identity.Services.Common.Mappers;
+using Defra.Identity.Services.Cphs.Rules;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 
-public partial class CphService(
-    ICphRepository cphRepository,
-    ILogger<CphService> logger)
-    : ICphService
+public class CphService : ICphService
 {
+    private readonly ICphRepository repository;
+    private readonly IOperatorContext operatorContext;
+    private readonly IStrategyBuilderFactory<CphService> strategyBuilderFactory;
+    private readonly IValidator<PagedQuery> pagedQueryValidator;
+
+    public CphService(
+        ICphRepository repository,
+        IOperatorContext operatorContext,
+        IStrategyBuilderFactory<CphService> strategyBuilderFactory,
+        IValidator<PagedQuery> pagedQueryValidator,
+        ILogger<CphService> logger)
+    {
+        this.repository = repository;
+        this.operatorContext = operatorContext;
+        this.strategyBuilderFactory = strategyBuilderFactory;
+        this.pagedQueryValidator = pagedQueryValidator;
+
+        this.strategyBuilderFactory
+            .WithDefaultLogger(logger)
+            .WithDefaultOperatorContext(this.operatorContext)
+            .WithDefaultEntityDescription(EntityDescriptions.Cph);
+    }
+
     public async Task<PagedResults<Cph>> GetAllPaged(GetCphs request, CancellationToken cancellationToken = default)
     {
-        LogGettingAllCountyParishHoldingsByPage();
+        var cphFilter = IncludeExpiredInferred(request) ? FilterLibrary.Cphs.NotSoftDeleted : FilterLibrary.Cphs.NotSoftDeletedOrExpired;
 
-        var includeExpired = IsExpiredInferred(request);
-
-        Expression<Func<CountyParishHoldings, bool>> filter = cph => (includeExpired || cph.ExpiredAt == null) && cph.DeletedAt == null;
-        Expression<Func<CountyParishHoldings, string>> orderBy = cph => cph.Identifier;
-
-        var pagedCphEntities = await cphRepository.GetPaged(filter, request.PageNumber, request.PageSize, orderBy, request.OrderByDescending ?? false, cancellationToken);
-        var pagedCphResults = pagedCphEntities.ToPagedResults(MapCphEntityToCph);
-
-        return pagedCphResults;
+        return await strategyBuilderFactory.BuildGetPagedStrategy<CountyParishHoldings>()
+            .WithActionDescription("Get all county parish holdings paged")
+            .WithRepository(repository)
+            .WithCancellationToken(cancellationToken)
+            .WithRequest(request)
+            .WithRequestValidation(() => pagedQueryValidator.ValidateAsync(request, cancellationToken))
+            .WithEntityFilter(cphFilter)
+            .ExecuteAndMap(CphMapper.MapCphEntityToCph, cph => cph.Identifier);
     }
 
     public async Task<Cph> Get(GetCphByCphId request, CancellationToken cancellationToken = default)
     {
-        LogGettingCountyParishHoldingById(request.Id);
-
-        Expression<Func<CountyParishHoldings, bool>> filter = cph => cph.Id == request.Id;
-
-        var cphEntity = await cphRepository.GetSingle(filter, cancellationToken);
-
-        if (cphEntity is not { DeletedAt: null })
-        {
-            LogCountyParishHoldingWithIdNotFound(request.Id);
-
-            throw new NotFoundException("County parish holding not found.");
-        }
-
-        var cphResult = MapCphEntityToCph(cphEntity);
-
-        return cphResult;
+        return await strategyBuilderFactory.BuildGetStrategy<CountyParishHoldings>()
+            .WithActionDescription("Get county parish holding")
+            .WithRepository(repository)
+            .WithCancellationToken(cancellationToken)
+            .WithRequest(request)
+            .WithEntityFilter(cph => request.Id == cph.Id)
+            .WithExistenceRules(rules => rules.Add(RulesLibrary.Existence.NotSoftDeleted))
+            .ExecuteAndMap(CphMapper.MapCphEntityToCph);
     }
 
-    public async Task Expire(ExpireCphByCphId request, Guid operatorId, CancellationToken cancellationToken = default)
+    public async Task Expire(ExpireCphByCphId request, CancellationToken cancellationToken = default)
     {
-        LogExpiringCountyParishHoldingWithIdByOperatorid(request.Id, operatorId);
-
-        Expression<Func<CountyParishHoldings, bool>> filter = cph => cph.Id == request.Id;
-
-        var cphEntity = await cphRepository.GetSingle(filter, cancellationToken);
-
-        if (cphEntity is not { DeletedAt: null })
-        {
-            LogCountyParishHoldingWithIdNotFound(request.Id);
-
-            throw new NotFoundException("County parish holding not found.");
-        }
-
-        if (cphEntity.ExpiredAt != null)
-        {
-            LogCountyParishHoldingWithIdIsAlreadyExpired(request.Id);
-
-            throw new ConflictException("County parish holding already expired.");
-        }
-
-        cphEntity.ExpiredAt = DateTime.UtcNow;
-
-        await cphRepository.Update(cphEntity, cancellationToken);
+        await strategyBuilderFactory.BuildUpdateStrategy<CountyParishHoldings>()
+            .WithActionDescription("Expire county parish holding")
+            .WithRepository(repository)
+            .WithCancellationToken(cancellationToken)
+            .WithRequest(request)
+            .WithEntityFilter(cph => request.Id == cph.Id)
+            .WithExistenceRules(rules => rules.Add(RulesLibrary.Existence.NotSoftDeleted))
+            .WithConflictRules(rules => rules.Add(RulesLibrary.Conflict.NotAlreadyExpired))
+            .WithUpdate(cph => { cph.ExpiredAt = DateTime.UtcNow; })
+            .Execute();
     }
 
-    public async Task Delete(DeleteCphByCphId request, Guid operatorId, CancellationToken cancellationToken = default)
+    public async Task Delete(DeleteCphByCphId request, CancellationToken cancellationToken = default)
     {
-        LogDeletingCountyParishHoldingWithIdByOperatorid(request.Id, operatorId);
-
-        Expression<Func<CountyParishHoldings, bool>> filter = cph => cph.Id == request.Id;
-
-        var cphEntity = await cphRepository.GetSingle(filter, cancellationToken);
-
-        if (cphEntity is not { DeletedAt: null })
-        {
-            LogCountyParishHoldingWithIdNotFound(request.Id);
-
-            throw new NotFoundException("County parish holding not found.");
-        }
-
-        cphEntity.DeletedById = operatorId;
-        cphEntity.DeletedAt = DateTime.UtcNow;
-
-        await cphRepository.Update(cphEntity, cancellationToken);
+        await strategyBuilderFactory.BuildUpdateStrategy<CountyParishHoldings>()
+            .WithActionDescription("Delete county parish holding")
+            .WithRepository(repository)
+            .WithCancellationToken(cancellationToken)
+            .WithRequest(request)
+            .WithEntityFilter(cph => request.Id == cph.Id)
+            .WithExistenceRules(rules => rules.Add(RulesLibrary.Existence.NotSoftDeleted))
+            .WithUpdate(
+                cph =>
+                {
+                    cph.DeletedAt = DateTime.UtcNow;
+                    cph.DeletedById = operatorContext.OperatorId;
+                })
+            .Execute();
     }
 
-    private static Cph MapCphEntityToCph(CountyParishHoldings cphEntity)
+    private static bool IncludeExpiredInferred(GetCphs request)
     {
-        return new Cph
-        {
-            Id = cphEntity.Id, CountyParishHoldingNumber = cphEntity.Identifier, Expired = cphEntity.ExpiredAt != null, ExpiredAt = cphEntity.ExpiredAt,
-        };
-    }
-
-    private static bool IsExpiredInferred(GetCphs request)
-    {
-        return request.Expired != null && (request.Expired == string.Empty || request.Expired.Equals("true", StringComparison.InvariantCultureIgnoreCase));
+        return request.Expired != null &&
+               (request.Expired == string.Empty ||
+                request.Expired.Equals("true", StringComparison.InvariantCultureIgnoreCase));
     }
 }

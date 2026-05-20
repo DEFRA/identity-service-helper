@@ -4,133 +4,158 @@
 
 namespace Defra.Identity.Services.Users;
 
-using System.Linq.Expressions;
 using Defra.Identity.Models.Requests.Users.Commands;
 using Defra.Identity.Models.Requests.Users.Queries;
 using Defra.Identity.Models.Responses.Users;
 using Defra.Identity.Postgres.Database.Entities;
-using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Repositories.Users;
+using Defra.Identity.Services.Common;
+using Defra.Identity.Services.Common.Builders.Strategy.Factories;
+using Defra.Identity.Services.Common.Context;
+using Defra.Identity.Services.Common.Filters;
+using Defra.Identity.Services.Common.Mappers;
+using Defra.Identity.Services.Users.Rules;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 
-public partial class UserService(
-    IUsersRepository repository,
-    ILogger<UserService> logger)
-    : IUserService
+public class UserService : IUserService
 {
+    private readonly IUsersRepository repository;
+    private readonly IOperatorContext operatorContext;
+    private readonly IStrategyBuilderFactory<UserService> strategyBuilderFactory;
+    private readonly IValidator<CreateUser> createUserValidator;
+    private readonly IValidator<UpdateUserById> updateUserValidator;
+    private readonly IValidator<UpsertUserById> upsertUserValidator;
+
+    public UserService(
+        IUsersRepository repository,
+        IOperatorContext operatorContext,
+        IStrategyBuilderFactory<UserService> strategyBuilderFactory,
+        IValidator<CreateUser> createUserValidator,
+        IValidator<UpdateUserById> updateUserValidator,
+        IValidator<UpsertUserById> upsertUserValidator,
+        ILogger<UserService> logger)
+    {
+        this.repository = repository;
+        this.operatorContext = operatorContext;
+        this.strategyBuilderFactory = strategyBuilderFactory;
+        this.createUserValidator = createUserValidator;
+        this.updateUserValidator = updateUserValidator;
+        this.upsertUserValidator = upsertUserValidator;
+
+        this.strategyBuilderFactory
+            .WithDefaultLogger(logger)
+            .WithDefaultOperatorContext(operatorContext)
+            .WithDefaultEntityDescription(EntityDescriptions.User);
+    }
+
     public async Task<List<User>> GetAll(GetAllUsers request, CancellationToken cancellationToken = default)
     {
-        LogGettingAllUsersIncludeHidden(request.IncludeInactive);
-        Expression<Func<UserAccounts, bool>> filter = x => IncludeInactiveInferred(request) || x.DeletedBy == null;
+        var includeInactiveInferred = IncludeInactiveInferred(request);
+        var userFilter = includeInactiveInferred
+            ? FilterLibrary.Users.All
+            : FilterLibrary.Users.NotSoftDeleted;
 
-        var userAccounts = await repository.GetList(filter, cancellationToken);
-
-        var users = userAccounts.Select(MapUserEntityToUser).ToList();
-
-        return users;
+        return await strategyBuilderFactory.BuildGetListStrategy<UserAccounts>()
+            .WithActionDescription($"Get all users, includeHidden: {includeInactiveInferred}")
+            .WithRepository(repository)
+            .WithCancellationToken(cancellationToken)
+            .WithEntityFilter(userFilter)
+            .ExecuteAndMap(UserMapper.MapUserEntityToUser);
     }
 
     public async Task<User> Get(GetUserById request, CancellationToken cancellationToken = default)
     {
-        LogGettingUserById(request.Id);
-        Expression<Func<UserAccounts, bool>> filter = x => x.Id == request.Id;
-
-        var userAccount = await repository.GetSingle(filter, cancellationToken);
-
-        if (userAccount == null)
-        {
-            LogUserWithIdNotFound(request.Id);
-            throw new NotFoundException("user not found.");
-        }
-
-        var user = MapUserEntityToUser(userAccount);
-
-        return user;
-    }
-
-    public async Task<User> Upsert(UpdateUser request, CancellationToken cancellationToken = default)
-    {
-        LogUpsertingUserWithId(request.Id);
-        var existingUser = await repository.GetSingle(x => x.Id.Equals(request.Id), cancellationToken);
-
-        if (existingUser != null)
-        {
-            LogUserWithIdFoundUpdating(request.Id);
-            existingUser.FirstName = request.FirstName;
-            existingUser.LastName = request.LastName;
-            existingUser.EmailAddress = request.Email;
-            var updated = await repository.Update(existingUser, cancellationToken);
-
-            return MapUserEntityToUser(updated);
-        }
-
-        LogUserWithIdNotFoundCreating(request.Id);
-
-        var userAccount = new UserAccounts()
-        {
-            Id = request.Id, EmailAddress = request.Email, FirstName = request.FirstName, LastName = request.LastName,
-        };
-
-        var result = await repository.Create(userAccount, cancellationToken);
-
-        return MapUserEntityToUser(result);
-    }
-
-    public async Task<User> Update(UpdateUser request, CancellationToken cancellationToken = default)
-    {
-        LogUpdatingUserWithId(request.Id);
-        var existingUser = await repository.GetSingle(x => x.Id.Equals(request.Id), cancellationToken);
-
-        if (existingUser == null)
-        {
-            LogUserWithIdNotFound(request.Id);
-            throw new NotFoundException($"User with id {request.Id} not found.");
-        }
-
-        existingUser.FirstName = request.FirstName;
-        existingUser.LastName = request.LastName;
-        existingUser.EmailAddress = request.Email;
-        existingUser.DisplayName = request.DisplayName;
-
-        var updated = await repository.Update(existingUser, cancellationToken);
-
-        return MapUserEntityToUser(updated);
+        return await strategyBuilderFactory.BuildGetStrategy<UserAccounts>()
+            .WithActionDescription("Get user")
+            .WithRepository(repository)
+            .WithCancellationToken(cancellationToken)
+            .WithRequest(request)
+            .WithEntityFilter(user => request.Id == user.Id)
+            .ExecuteAndMap(UserMapper.MapUserEntityToUser);
     }
 
     public async Task<User> Create(CreateUser request, CancellationToken cancellationToken = default)
     {
-        LogCreatingNewUserWithEmail(request.Email);
-
-        var newUser = new UserAccounts
-        {
-            EmailAddress = request.Email,
-            FirstName = request.FirstName,
-            LastName = request.LastName,
-            DisplayName = request.DisplayName,
-            CreatedById = request.OperatorId,
-        };
-
-        var createdUser = await repository.Create(newUser, cancellationToken);
-
-        return MapUserEntityToUser(createdUser);
+        return await strategyBuilderFactory.BuildCreateStrategy<UserAccounts>()
+            .WithActionDescription("Create user")
+            .WithRepository(repository)
+            .WithCancellationToken(cancellationToken)
+            .WithRequestValidation(() => createUserValidator.ValidateAsync(request, cancellationToken))
+            .WithCreate(
+                () => new UserAccounts()
+                {
+                    EmailAddress = request.Email,
+                    FirstName = request.FirstName,
+                    LastName = request.LastName,
+                    DisplayName = request.DisplayName,
+                    CreatedById = operatorContext.OperatorId,
+                })
+            .ExecuteAndMap(UserMapper.MapUserEntityToUser);
     }
 
-    public async Task<bool> Delete(DeleteUser request, CancellationToken cancellationToken = default)
+    public async Task<User> Update(UpdateUserById request, CancellationToken cancellationToken = default)
     {
-        LogDeletingUserWithIdByOperatorId(request.Id, request.OperatorId);
-        return await repository.Delete(x => x.Id == request.Id, request.OperatorId, cancellationToken);
+        return await strategyBuilderFactory.BuildUpdateStrategy<UserAccounts>()
+            .WithActionDescription("Update user")
+            .WithRepository(repository)
+            .WithCancellationToken(cancellationToken)
+            .WithRequestValidation(() => updateUserValidator.ValidateAsync(request, cancellationToken))
+            .WithRequest(request)
+            .WithEntityFilter(user => request.Id == user.Id)
+            .WithExistenceRules(rules => rules.Add(RulesLibrary.Existence.NotSoftDeleted))
+            .WithUpdate(
+                user =>
+                {
+                    user.FirstName = request.FirstName;
+                    user.LastName = request.LastName;
+                    user.EmailAddress = request.Email;
+                    user.DisplayName = request.DisplayName;
+                })
+            .ExecuteAndMap(UserMapper.MapUserEntityToUser);
     }
 
-    private static User MapUserEntityToUser(UserAccounts userEntity)
+    public async Task<User> Upsert(UpsertUserById request, CancellationToken cancellationToken = default)
     {
-        return new User()
-        {
-            Id = userEntity.Id,
-            Email = userEntity.EmailAddress,
-            FirstName = userEntity.FirstName,
-            LastName = userEntity.LastName,
-            DisplayName = userEntity.DisplayName,
-        };
+        return await strategyBuilderFactory.BuildUpsertStrategy<UserAccounts>()
+            .WithActionDescription("Upsert user")
+            .WithRepository(repository)
+            .WithCancellationToken(cancellationToken)
+            .WithRequestValidation(() => upsertUserValidator.ValidateAsync(request, cancellationToken))
+            .WithRequest(request)
+            .WithEntityFilter(user => request.Id == user.Id)
+            .WithExistenceRules(rules => rules.Add(RulesLibrary.Existence.NotSoftDeleted))
+            .WithCreate(
+                () => new UserAccounts
+                {
+                    Id = request.Id, EmailAddress = request.Email, FirstName = request.FirstName, LastName = request.LastName,
+                })
+            .WithUpdate(
+                user =>
+                {
+                    user.FirstName = request.FirstName;
+                    user.LastName = request.LastName;
+                    user.EmailAddress = request.Email;
+                })
+            .ExecuteAndMap(UserMapper.MapUserEntityToUser);
+    }
+
+    public async Task Delete(DeleteUserById request, CancellationToken cancellationToken = default)
+    {
+        await strategyBuilderFactory.BuildUpdateStrategy<UserAccounts>()
+            .WithActionDescription("Delete user")
+            .WithRepository(repository)
+            .WithCancellationToken(cancellationToken)
+            .WithRequest(request)
+            .WithEntityFilter(user => request.Id == user.Id)
+            .WithExistenceRules(rules => rules.Add(RulesLibrary.Existence.NotSoftDeleted))
+            .WithUpdate(
+                user =>
+                {
+                    user.DeletedAt = DateTime.UtcNow;
+                    user.DeletedById = operatorContext.OperatorId;
+                })
+            .Execute();
     }
 
     private static bool IncludeInactiveInferred(GetAllUsers request)

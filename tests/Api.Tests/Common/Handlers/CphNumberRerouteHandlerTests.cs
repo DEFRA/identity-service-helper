@@ -25,7 +25,7 @@ public class CphNumberRerouteHandlerTests
 
         // Act & Assert
         Should.NotThrow(
-            () => new CphNumberRerouteHandler<OperationByIdFake, OperationByCphNumberFake, ServiceFake, HeadersFake>(
+            () => new CphNumberRerouteHandler<OperationByIdFake, OperationByCphNumberFake, ServiceFake>(
                 cphNumberService,
                 EndpointFake<OperationByIdFake>.Create(Results.Ok(fakeEndpointHandlerResult)).FakeHandlerMethod));
     }
@@ -39,7 +39,7 @@ public class CphNumberRerouteHandlerTests
         var fakeEndpointsHandler = fakeEndpoints.FakeHandlerMethod;
 
         // Arrange, Act & Assert
-        Should.Throw<ArgumentNullException>(() => new CphNumberRerouteHandler<OperationByIdFake, OperationByCphNumberFake, ServiceFake, HeadersFake>(null!, fakeEndpointsHandler));
+        Should.Throw<ArgumentNullException>(() => new CphNumberRerouteHandler<OperationByIdFake, OperationByCphNumberFake, ServiceFake>(null!, fakeEndpointsHandler));
     }
 
     [Fact]
@@ -47,7 +47,7 @@ public class CphNumberRerouteHandlerTests
     public void Should_Throw_Exception_When_Target_Handler_Is_Null()
     {
         // Arrange, Act & Assert
-        Should.Throw<ArgumentNullException>(() => new CphNumberRerouteHandler<OperationByIdFake, OperationByCphNumberFake, ServiceFake, HeadersFake>(cphNumberService, null!));
+        Should.Throw<ArgumentNullException>(() => new CphNumberRerouteHandler<OperationByIdFake, OperationByCphNumberFake, ServiceFake>(cphNumberService, null!));
     }
 
     [Fact]
@@ -56,7 +56,6 @@ public class CphNumberRerouteHandlerTests
     {
         // Arrange
         var sourceRequestToReroute = new OperationByCphNumberFake(44, 001, 9999);
-        var fakeHeaders = new HeadersFake();
         var fakeEndpointHandlerResult = Results.Ok(new OperationByIdResultFake(new Guid("56b21ff8-03e7-4a0d-a923-75d83905310f"), "Testing"));
 
         var fakeEndpoints = EndpointFake<OperationByIdFake>.Create(fakeEndpointHandlerResult);
@@ -68,8 +67,7 @@ public class CphNumberRerouteHandlerTests
 
         // Act
         var rerouteHandlerResult =
-            await new CphNumberRerouteHandler<OperationByIdFake, OperationByCphNumberFake, ServiceFake, HeadersFake>(cphNumberService, fakeEndpointsHandler).Handler(
-                fakeHeaders,
+            await new CphNumberRerouteHandler<OperationByIdFake, OperationByCphNumberFake, ServiceFake>(cphNumberService, fakeEndpointsHandler).Handler(
                 sourceRequestToReroute,
                 fakeService);
 
@@ -81,8 +79,6 @@ public class CphNumberRerouteHandlerTests
             (x) => x.CapturedCallCount.ShouldBe(1),
             (x) => x.CapturedRequest.ShouldNotBeNull(),
             (x) => x.CapturedRequest!.Id.ShouldBe(new Guid("63bd6b64-9d67-4076-9855-507289ba4067")),
-            (x) => x.CapturedHeaders.ShouldNotBeNull(),
-            (x) => x.CapturedHeaders.ShouldBe(fakeHeaders),
             (x) => x.CapturedService.ShouldNotBeNull(),
             (x) => x.CapturedService.ShouldBe(fakeService));
     }
@@ -93,9 +89,7 @@ public class CphNumberRerouteHandlerTests
     {
         // Arrange
         var sourceRequestToReroute = new OperationByCphNumberWithPagingFake(44, 001, 9999, 2, 10, false);
-        var fakeHeaders = new HeadersFake();
         var fakeEndpointHandlerResult = Results.Ok(new OperationByIdResultFake(new Guid("56b21ff8-03e7-4a0d-a923-75d83905310f"), "Testing"));
-
         var fakeEndpoints = EndpointFake<OperationByIdWithPagingFake>.Create(fakeEndpointHandlerResult);
         var fakeEndpointsHandler = fakeEndpoints.FakeHandlerMethod;
         var fakeService = new ServiceFake();
@@ -105,8 +99,7 @@ public class CphNumberRerouteHandlerTests
 
         // Act
         var rerouteHandlerResult =
-            await new CphNumberRerouteHandler<OperationByIdWithPagingFake, OperationByCphNumberWithPagingFake, ServiceFake, HeadersFake>(cphNumberService, fakeEndpointsHandler).Handler(
-                fakeHeaders,
+            await new CphNumberRerouteHandler<OperationByIdWithPagingFake, OperationByCphNumberWithPagingFake, ServiceFake>(cphNumberService, fakeEndpointsHandler).Handler(
                 sourceRequestToReroute,
                 fakeService);
 
@@ -121,8 +114,6 @@ public class CphNumberRerouteHandlerTests
             (x) => x.CapturedRequest!.PageNumber.ShouldBe(2),
             (x) => x.CapturedRequest!.PageSize.ShouldBe(10),
             (x) => x.CapturedRequest!.OrderByDescending.ShouldBe(false),
-            (x) => x.CapturedHeaders.ShouldNotBeNull(),
-            (x) => x.CapturedHeaders.ShouldBe(fakeHeaders),
             (x) => x.CapturedService.ShouldNotBeNull(),
             (x) => x.CapturedService.ShouldBe(fakeService));
     }
@@ -133,7 +124,6 @@ public class CphNumberRerouteHandlerTests
     {
         // Arrange
         var sourceRequestToReroute = new OperationByCphNumberWithPagingFake(55, 002, 8888, 3, 5, true);
-        var fakeHeaders = new HeadersFake();
         var fakeEndpointHandlerResult = Results.Ok(new OperationByIdResultFake(new Guid("56b21ff8-03e7-4a0d-a923-75d83905310f"), "Testing"));
 
         var fakeEndpoints = EndpointFake<OperationByIdWithPagingFake>.Create(fakeEndpointHandlerResult);
@@ -145,8 +135,7 @@ public class CphNumberRerouteHandlerTests
 
         // Act
         var rerouteHandlerResult =
-            await new CphNumberRerouteHandler<OperationByIdWithPagingFake, OperationByCphNumberWithPagingFake, ServiceFake, HeadersFake>(cphNumberService, fakeEndpointsHandler).Handler(
-                fakeHeaders,
+            await new CphNumberRerouteHandler<OperationByIdWithPagingFake, OperationByCphNumberWithPagingFake, ServiceFake>(cphNumberService, fakeEndpointsHandler).Handler(
                 sourceRequestToReroute,
                 fakeService);
 
@@ -161,8 +150,6 @@ public class CphNumberRerouteHandlerTests
             (x) => x.CapturedRequest!.PageNumber.ShouldBe(3),
             (x) => x.CapturedRequest!.PageSize.ShouldBe(5),
             (x) => x.CapturedRequest!.OrderByDescending.ShouldBe(true),
-            (x) => x.CapturedHeaders.ShouldNotBeNull(),
-            (x) => x.CapturedHeaders.ShouldBe(fakeHeaders),
             (x) => x.CapturedService.ShouldNotBeNull(),
             (x) => x.CapturedService.ShouldBe(fakeService));
     }

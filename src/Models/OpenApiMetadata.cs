@@ -14,9 +14,14 @@ public static class OpenApiMetadata
     public const string HoldingElement = "Holding part of the CPH (last 4 digits)";
 
     public const string IncludeInactive = "Whether to include inactive objects in the response";
-    public const string Expired = "Is the object expired";
-    public const string ExpiresAt = "When the object expires at";
     private const string BaseId = "The internal identifier of the";
+
+    public static class Generic
+    {
+        public const string Id = $"{OpenApiMetadata.BaseId} object";
+        public const string Expired = "Is the object expired";
+        public const string ExpiresAt = "When the object expires";
+    }
 
     public static class Applications
     {
@@ -40,7 +45,7 @@ public static class OpenApiMetadata
     public static class Cphs
     {
         public const string Id = $"{OpenApiMetadata.BaseId} CphId";
-        public const string ExpiredDescription = "Whether expired objects should be included in the response";
+        public const string IncludeExpired = "Whether expired objects should be included in the response";
         public const string CphNumber = "The County Parish Holder number";
     }
 
@@ -57,8 +62,10 @@ public static class OpenApiMetadata
         public const string InvitationExpiresAt = "The invitation expiration date";
         public const string InvitationAcceptedAt = "The invitation acceptance date";
         public const string InvitationRejectedAt = "The invitation rejection date";
+        public const string RevokedById = $"{OpenApiMetadata.BaseId} RevokedById";
         public const string RevokedAt = "The revocation date";
         public const string RevokedByName = "The revoker's name";
+        public const string Active = "The active state of the delegation";
     }
 
     public static class Paging
@@ -84,6 +91,7 @@ public static class OpenApiMetadata
         public const string DisplayName = "The displayed name of the user";
         public const string FirstName = "The first name of the user";
         public const string LastName = "The last name of the user";
+        public const string Active = "The active state of the user";
     }
 
     public static class Roles

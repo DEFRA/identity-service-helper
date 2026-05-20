@@ -22,7 +22,7 @@ public interface IStrategyBuilderFactory<TService>
     UpdateStrategyBuilder<TService, TEntity> BuildUpdateStrategy<TEntity>()
         where TEntity : class;
 
-    DeleteStrategyBuilder<TService, TEntity> BuildDeleteStrategy<TEntity>()
+    UpsertStrategyBuilder<TService, TEntity> BuildUpsertStrategy<TEntity>()
         where TEntity : class;
 
     GetStrategyBuilder<TService, TEntity> BuildGetStrategy<TEntity>()

@@ -6,4 +6,4 @@ namespace Defra.Identity.Models.Requests.Users.Queries;
 
 using Defra.Identity.Models.Requests.Common;
 
-public class GetUserById : OperationById;
+public class GetUserById : OperationById<Guid>;

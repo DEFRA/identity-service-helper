@@ -7,26 +7,37 @@ namespace Defra.Identity.Services.Common.Filters;
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Services.Common.Extensions;
+using ModelAnimalSpecies = Defra.Identity.Postgres.Database.Entities.AnimalSpecies;
+using ModelApplications = Defra.Identity.Postgres.Database.Entities.Applications;
 
 #pragma warning disable SA1202 // ordering of the public and privates is important here
 public static class FilterLibrary
 {
+    public static class Applications
+    {
+        public static readonly Expression<Func<ModelApplications, bool>> NotSoftDeleted = application => application.DeletedAt == null;
+    }
+
     public static class Users
     {
-        private static readonly Expression<Func<UserAccounts, bool>> NotSoftDeleted = holdingAssignment => holdingAssignment.DeletedAt == null;
+        public static readonly Expression<Func<UserAccounts, bool>> NotSoftDeleted = user => user.DeletedAt == null;
 
-        public static readonly Expression<Func<UserAccounts, bool>> ActiveUser = NotSoftDeleted;
+        public static readonly Expression<Func<UserAccounts, bool>> All = user
+            => true;
     }
 
     public static class Cphs
     {
+        public static readonly Expression<Func<CountyParishHoldings, bool>> NotSoftDeleted =
+            countyParishHolding => countyParishHolding.DeletedAt == null;
+
         public static readonly Expression<Func<CountyParishHoldings, bool>> NotSoftDeletedOrExpired =
             countyParishHolding => countyParishHolding.DeletedAt == null && countyParishHolding.ExpiredAt == null;
     }
 
     public static class CphAssignments
     {
-        public static readonly Expression<Func<ApplicationUserAccountHoldingAssignments, bool>> NotSoftDeleted = holdingAssignment => holdingAssignment.DeletedAt == null;
+        private static readonly Expression<Func<ApplicationUserAccountHoldingAssignments, bool>> NotSoftDeleted = holdingAssignment => holdingAssignment.DeletedAt == null;
 
         private static readonly Expression<Func<ApplicationUserAccountHoldingAssignments, bool>> CphNotSoftDeletedOrExpired = holdingAssignment
             => holdingAssignment.CountyParishHolding.DeletedAt == null && holdingAssignment.CountyParishHolding.ExpiredAt == null;
@@ -37,7 +48,7 @@ public static class FilterLibrary
         private static readonly Expression<Func<ApplicationUserAccountHoldingAssignments, bool>> ApplicationNotSoftDeleted =
             holdingAssignment => holdingAssignment.Application.DeletedAt == null;
 
-        public static readonly Expression<Func<ApplicationUserAccountHoldingAssignments, bool>> ActiveAssignment =
+        public static readonly Expression<Func<ApplicationUserAccountHoldingAssignments, bool>> Active =
             CphNotSoftDeletedOrExpired
                 .AndAlso(UserAccountNotSoftDeleted)
                 .AndAlso(ApplicationNotSoftDeleted)
@@ -67,14 +78,33 @@ public static class FilterLibrary
         private static readonly Expression<Func<CountyParishHoldingDelegations, bool>> CphNotSoftDeletedOrExpired = delegation
             => delegation.CountyParishHolding.DeletedAt == null && delegation.CountyParishHolding.ExpiredAt == null;
 
-        public static readonly Expression<Func<CountyParishHoldingDelegations, bool>> ActiveDelegation =
-            InvitationNotExpired
-                .AndAlso(InvitationNotRejected)
-                .AndAlso(CphNotSoftDeletedOrExpired)
+        private static readonly Expression<Func<CountyParishHoldingDelegations, bool>> ValidReferences =
+            CphNotSoftDeletedOrExpired
                 .AndAlso(DelegatingUserNotSoftDeleted)
-                .AndAlso(DelegatedUserNotSoftDeleted)
-                .AndAlso(NotRevoked)
-                .AndAlso(NotSoftDeletedOrExpired);
+                .AndAlso(DelegatedUserNotSoftDeleted);
+
+        public static readonly Expression<Func<CountyParishHoldingDelegations, bool>> NotSoftDeleted = delegation
+            => delegation.DeletedAt == null;
+
+        public static readonly Expression<Func<CountyParishHoldingDelegations, bool>> NotSoftDeletedOrExpiredAndValidRefs =
+            NotSoftDeletedOrExpired
+                .AndAlso(ValidReferences);
+
+        public static readonly Expression<Func<CountyParishHoldingDelegations, bool>> ActiveOrPending =
+            NotSoftDeletedOrExpired
+                .AndAlso(ValidReferences)
+                .AndAlso(InvitationNotExpired)
+                .AndAlso(InvitationNotRejected)
+                .AndAlso(NotRevoked);
+    }
+
+    public static class AnimalSpecies
+    {
+        public static readonly Expression<Func<ModelAnimalSpecies, bool>> Active = animalSpecies
+            => animalSpecies.IsActive;
+
+        public static readonly Expression<Func<ModelAnimalSpecies, bool>> All = animalSpecies
+            => true;
     }
 }
 #pragma warning restore SA1202

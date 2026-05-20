@@ -20,6 +20,7 @@ public partial class AnimalSpeciesRepository(
         CancellationToken cancellationToken = default)
     {
         LogGettingSingleAnimalSpecies();
+
         var query = await readOnlyContext.AnimalSpecies
             .SingleOrDefaultAsync(predicate, cancellationToken);
 
@@ -31,6 +32,7 @@ public partial class AnimalSpeciesRepository(
         CancellationToken cancellationToken = default)
     {
         LogGettingListOfAnimalSpecies();
+
         var query = await readOnlyContext.AnimalSpecies
             .Where(predicate)
             .ToListAsync(cancellationToken);
@@ -45,6 +47,7 @@ public partial class AnimalSpeciesRepository(
         ArgumentNullException.ThrowIfNull(entity);
 
         LogUpdatingAnimalSpeciesWithId(entity.Id);
+
         context.Update(entity);
         await context.SaveChangesAsync(cancellationToken);
         return entity;

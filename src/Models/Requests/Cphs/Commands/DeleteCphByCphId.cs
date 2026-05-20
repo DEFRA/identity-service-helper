@@ -6,6 +6,4 @@ namespace Defra.Identity.Models.Requests.Cphs.Commands;
 
 using Defra.Identity.Models.Requests.Common;
 
-public class DeleteCphByCphId : OperationById
-{
-}
+public class DeleteCphByCphId : OperationById<Guid>;

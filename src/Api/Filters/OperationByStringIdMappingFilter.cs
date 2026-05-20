@@ -1,16 +1,14 @@
-﻿// <copyright file="OperationByIdMappingFilter.cs" company="Defra">
+﻿// <copyright file="OperationByStringIdMappingFilter.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
 namespace Defra.Identity.Api.Filters;
 
 using Defra.Identity.Models.Requests.Common;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
 
-public class OperationByIdMappingFilter<T>
+public class OperationByStringIdMappingFilter<T>
     : IEndpointFilter
-    where T : class, IOperationById
+    where T : class, IOperationById<string>
 {
     public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {
@@ -21,10 +19,7 @@ public class OperationByIdMappingFilter<T>
             return Results.BadRequest("Invalid request.");
         }
 
-        if (!Guid.TryParse(context.HttpContext.GetRouteValue("id")?.ToString(), out var id))
-        {
-            throw new InvalidOperationException("Unable to bind id for update");
-        }
+        var id = context.HttpContext.GetRouteValue("id")?.ToString() ?? throw new InvalidOperationException("Unable to bind string id for update");
 
         request.Id = id;
 

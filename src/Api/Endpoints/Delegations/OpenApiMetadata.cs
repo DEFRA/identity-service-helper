@@ -19,7 +19,7 @@ public static class OpenApiMetadata
 
     public static class GetById
     {
-        public const string Name = "delegations";
+        public const string Name = "GetById";
         public const string Summary = "Get CPH delegation by ID";
         public const string Description = "Retrieves a specific CPH delegation by its unique identifier";
     }

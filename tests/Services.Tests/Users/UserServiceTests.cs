@@ -14,7 +14,10 @@ using Defra.Identity.Models.Requests.Users.Queries;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Repositories.Users;
+using Defra.Identity.Services.Common.Builders.Strategy.Factories;
+using Defra.Identity.Services.Common.Context;
 using Defra.Identity.Services.Users;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Shouldly;
@@ -23,12 +26,17 @@ using Xunit;
 public class UserServiceTests
 {
     private readonly IUsersRepository repository = Substitute.For<IUsersRepository>();
+    private readonly IOperatorContext operatorContext = Substitute.For<IOperatorContext>();
+    private readonly IStrategyBuilderFactory<UserService> strategyBuilderFactory = new StrategyBuilderFactory<UserService>();
+    private readonly IValidator<CreateUser> createUserValidator = new CreateUserValidator();
+    private readonly IValidator<UpdateUserById> updateUserValidator = new UpdateUserValidator();
+    private readonly IValidator<UpsertUserById> upsertUserValidator = new UpsertUserValidator();
     private readonly ILogger<UserService> logger = DefraLoggerExtensions.CreateNSubstituteLogger<UserService>();
     private readonly UserService userService;
 
     public UserServiceTests()
     {
-        userService = new UserService(repository, logger);
+        userService = new UserService(repository, operatorContext, strategyBuilderFactory, createUserValidator, updateUserValidator, upsertUserValidator, logger);
     }
 
     [Fact]
@@ -108,21 +116,25 @@ public class UserServiceTests
     {
         // Arrange
         var userId = Guid.NewGuid();
-        var operatorId = Guid.NewGuid();
-        repository.Delete(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>())
-            .Returns(true);
+
+        var userAccount = new UserAccounts
+        {
+            Id = userId, EmailAddress = "test@example.com", FirstName = "John", LastName = "Doe",
+        };
+
+        repository.GetSingle(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns(userAccount);
 
         // Act
-        var result = await userService.Delete(
-            new DeleteUser()
+        await userService.Delete(
+            new DeleteUserById()
             {
-                Id = userId, OperatorId = operatorId,
+                Id = userId,
             },
             TestContext.Current.CancellationToken);
 
         // Assert
-        result.ShouldBeTrue();
-        await repository.Received(1).Delete(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>());
+        await repository.Received(1).Update(Arg.Any<UserAccounts>(), Arg.Any<CancellationToken>());
 
         logger.ReceivedWithAnyArgs().Log(
             LogLevel.Information,
@@ -161,14 +173,18 @@ public class UserServiceTests
     public async Task Upsert_UserExists_UpdatesAndReturnsUser()
     {
         // Arrange
-        var updateUser = new UpdateUser
+        var updateUser = new UpsertUserById()
         {
-            Email = "test@example.com", FirstName = "UpdatedFirstName", LastName = "UpdatedLastName",
+            Email = "test@example.com", FirstName = "UpdatedFirstName", LastName = "UpdatedLastName", DisplayName = "UpdatedFirstName UpdatedLastName",
         };
 
         var existingUser = new UserAccounts
         {
-            Id = Guid.NewGuid(), EmailAddress = "test@example.com", FirstName = "OldFirstName", LastName = "OldLastName",
+            Id = Guid.NewGuid(),
+            EmailAddress = "test@example.com",
+            FirstName = "OldFirstName",
+            LastName = "OldLastName",
+            DisplayName = "OldFirstName OldLastName",
         };
 
         repository.GetSingle(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<CancellationToken>())
@@ -208,9 +224,9 @@ public class UserServiceTests
     public async Task Upsert_UserDoesNotExist_CreatesAndReturnsUser()
     {
         // Arrange
-        var updateUser = new UpdateUser
+        var updateUser = new UpsertUserById()
         {
-            Email = "new@example.com", FirstName = "NewFirstName", LastName = "NewLastName",
+            Email = "new@example.com", FirstName = "NewFirstName", LastName = "NewLastName", DisplayName = "NewFirstName NewLastName",
         };
 
         repository.GetSingle(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<CancellationToken>())
@@ -220,7 +236,11 @@ public class UserServiceTests
             .Returns(
                 new UserAccounts
                 {
-                    Id = Guid.NewGuid(), EmailAddress = updateUser.Email, FirstName = updateUser.FirstName, LastName = updateUser.LastName,
+                    Id = Guid.NewGuid(),
+                    EmailAddress = updateUser.Email,
+                    FirstName = updateUser.FirstName,
+                    LastName = updateUser.LastName,
+                    DisplayName = updateUser.DisplayName,
                 });
 
         // Act
@@ -255,15 +275,13 @@ public class UserServiceTests
     {
         // Arrange
         var userId = Guid.NewGuid();
-        var operatorId = Guid.NewGuid();
-        var updateUser = new UpdateUser
+        var updateUser = new UpdateUserById
         {
             Id = userId,
             Email = "test@example.com",
             FirstName = "UpdatedFirstName",
             LastName = "UpdatedLastName",
             DisplayName = "Updated Display Name",
-            OperatorId = operatorId,
         };
 
         var existingUser = new UserAccounts
@@ -315,9 +333,13 @@ public class UserServiceTests
     public async Task Update_UserDoesNotExist_ThrowsNotFoundException()
     {
         // Arrange
-        var updateUser = new UpdateUser
+        var updateUser = new UpdateUserById
         {
-            Id = Guid.NewGuid(), Email = "new@example.com", FirstName = "NewFirstName", LastName = "NewLastName",
+            Id = Guid.NewGuid(),
+            Email = "new@example.com",
+            FirstName = "NewFirstName",
+            LastName = "NewLastName",
+            DisplayName = "NewFirstName NewLastName",
         };
 
         repository.GetSingle(Arg.Any<Expression<Func<UserAccounts, bool>>>(), Arg.Any<CancellationToken>())

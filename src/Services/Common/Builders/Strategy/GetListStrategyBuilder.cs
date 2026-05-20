@@ -8,7 +8,6 @@ using System.Linq.Expressions;
 using Defra.Identity.Repositories.Common.Composites;
 using Defra.Identity.Services.Common.Builders.Strategy.Base;
 using Defra.Identity.Services.Common.Builders.Strategy.Constants;
-using Microsoft.Extensions.Logging;
 
 public partial class GetListStrategyBuilder<TService, TEntity>
     : StrategyBuilderBase<TService, GetListStrategyBuilder<TService, TEntity>>
@@ -65,9 +64,9 @@ public partial class GetListStrategyBuilder<TService, TEntity>
             throw new InvalidOperationException(StrategyBuilderConstants.Errors.EntityFilterRequired);
         }
 
-        LogExecutingActionEntity(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant());
+        LogExecutingAction(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant());
 
-        ExecuteSetup();
+        InvokeBeforeExecuteAction();
 
         await ExecuteRequestValidation();
 
@@ -75,7 +74,7 @@ public partial class GetListStrategyBuilder<TService, TEntity>
 
         var mappedEntities = entities.Select(map).ToList();
 
-        LogSuccessfullyExecutedActionEntity(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant());
+        LogSuccessfullyExecutedAction(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant());
 
         return mappedEntities;
     }

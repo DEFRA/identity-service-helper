@@ -4,7 +4,14 @@
 
 namespace Defra.Identity.Repositories.Messaging;
 
+using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database.Entities;
 
 public interface IExternalMessagingRepository :
-    IRepository<ExternalMessaging>;
+    IRepository<ExternalMessaging>
+{
+    Task<bool> Delete(
+        Expression<Func<ExternalMessaging, bool>> predicate,
+        Guid operatorId,
+        CancellationToken cancellationToken = default);
+}

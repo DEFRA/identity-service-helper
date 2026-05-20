@@ -7,7 +7,6 @@ namespace Defra.Identity.Repositories.Applications;
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database;
 using Defra.Identity.Postgres.Database.Entities;
-using Defra.Identity.Repositories.Common.Exceptions;
 using Microsoft.Extensions.Logging;
 
 public partial class ApplicationsRepository(
@@ -53,23 +52,5 @@ public partial class ApplicationsRepository(
         context.Update(entity);
         await context.SaveChangesAsync(cancellationToken);
         return entity;
-    }
-
-    public async Task<bool> Delete(Expression<Func<Applications, bool>> predicate, Guid operatorId, CancellationToken cancellationToken = default)
-    {
-        LogDeletingApplicationWithOperatorId(operatorId);
-        var application = await context.Applications
-            .SingleOrDefaultAsync(predicate, cancellationToken);
-
-        if (application == null)
-        {
-            LogApplicationNotFoundForDeletion();
-            throw new NotFoundException("Application not found");
-        }
-
-        application.DeletedById = operatorId;
-        application.DeletedAt = DateTime.UtcNow;
-        context.Applications.Update(application);
-        return await context.SaveChangesAsync(cancellationToken) > 0;
     }
 }
