@@ -5,10 +5,10 @@
 namespace Defra.Identity.Models.Requests.Applications.Commands;
 
 using System.ComponentModel;
-using Defra.Identity.Models.Responses.Applications;
+using Defra.Identity.Models.Requests.Applications.Commands.Base;
 
-public class CreateApplication : Application
+public class CreateApplication : ApplicationWriteOperationBase
 {
-    [Description(OpenApiMetadata.Users.Id)]
-    public Guid OperatorId { get; set; } = Guid.Empty;
+    [Description(OpenApiMetadata.Applications.Id)]
+    public Guid Id { get; init; }
 }

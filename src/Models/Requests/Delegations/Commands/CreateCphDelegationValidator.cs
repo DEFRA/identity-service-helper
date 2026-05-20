@@ -12,7 +12,6 @@ public class CreateCphDelegationValidator : AbstractValidator<CreateCphDelegatio
     {
         RuleFor(x => x.CountyParishHoldingId).NotEmpty();
         RuleFor(x => x.DelegatingUserId).NotEmpty();
-        RuleFor(x => x.DelegatedUserId).NotEmpty();
         RuleFor(x => x.DelegatedUserRoleId).NotEmpty();
         RuleFor(x => x.DelegatedUserEmail).NotEmpty().EmailAddress();
     }

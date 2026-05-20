@@ -9,11 +9,11 @@ using System.ComponentModel;
 public class AnimalSpecies
 {
     [Description(OpenApiMetadata.AnimalSpecies.Id)]
-    public string Id { get; set; }
+    public required string Id { get; set; }
 
     [Description(OpenApiMetadata.AnimalSpecies.Name)]
-    public string Name { get; set; }
+    public required string Name { get; set; }
 
     [Description(OpenApiMetadata.AnimalSpecies.IsActive)]
-    public bool IsActive { get; set; }
+    public required bool IsActive { get; set; }
 }

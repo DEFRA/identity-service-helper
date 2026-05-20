@@ -10,6 +10,5 @@ public interface IRepository<TEntity> :
     IGettable<TEntity>,
     IListable<TEntity>,
     ICreatable<TEntity>,
-    IUpdatable<TEntity>,
-    IDeletable<TEntity>
-where TEntity : class;
+    IUpdatable<TEntity>
+    where TEntity : class;

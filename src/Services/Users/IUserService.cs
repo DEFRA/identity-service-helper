@@ -14,11 +14,11 @@ public interface IUserService
 
     Task<User> Get(GetUserById request, CancellationToken cancellationToken = default);
 
-    Task<User> Upsert(UpdateUser request, CancellationToken cancellationToken = default);
-
-    Task<User> Update(UpdateUser request, CancellationToken cancellationToken = default);
-
     Task<User> Create(CreateUser request, CancellationToken cancellationToken = default);
 
-    Task<bool> Delete(DeleteUser request, CancellationToken cancellationToken = default);
+    Task<User> Update(UpdateUserById request, CancellationToken cancellationToken = default);
+
+    Task<User> Upsert(UpsertUserById request, CancellationToken cancellationToken = default);
+
+    Task Delete(DeleteUserById request, CancellationToken cancellationToken = default);
 }

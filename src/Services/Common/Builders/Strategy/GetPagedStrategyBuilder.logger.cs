@@ -8,14 +8,14 @@ using Microsoft.Extensions.Logging;
 
 public partial class GetPagedStrategyBuilder<TService, TEntity>
 {
-    [LoggerMessage(LogLevel.Information, "Executing {ActionDescription} {EntityDescription}")]
-    static partial void LogExecutingActionEntity(
+    [LoggerMessage(LogLevel.Information, "Executing {ActionDescription} [{EntityDescription}]")]
+    static partial void LogExecutingAction(
         ILogger<TService> logger,
         string actionDescription,
         string entityDescription);
 
-    [LoggerMessage(LogLevel.Information, "Successfully executed {ActionDescription} {EntityDescription}")]
-    static partial void LogSuccessfullyExecutedActionEntity(
+    [LoggerMessage(LogLevel.Information, "Successfully executed {ActionDescription} [{EntityDescription}]")]
+    static partial void LogSuccessfullyExecutedAction(
         ILogger<TService> logger,
         string actionDescription,
         string entityDescription);

@@ -4,7 +4,8 @@
 
 namespace Defra.Identity.Models.Requests.Common;
 
-public interface IOperationById
+public interface IOperationById<T> : ILoggableById
+    where T : IComparable
 {
-    Guid Id { get; set; }
+    T Id { get; set; }
 }

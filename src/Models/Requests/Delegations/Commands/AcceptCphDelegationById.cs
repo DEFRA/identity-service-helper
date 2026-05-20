@@ -6,4 +6,4 @@ namespace Defra.Identity.Models.Requests.Delegations.Commands;
 
 using Defra.Identity.Models.Requests.Common;
 
-public class AcceptCphDelegationById : OperationById;
+public class AcceptCphDelegationById : OperationById<Guid>;

@@ -9,14 +9,14 @@ using System.ComponentModel;
 public class Cph
 {
     [Description(OpenApiMetadata.Cphs.Id)]
-    public Guid Id { get; set; }
+    public required Guid Id { get; init; }
 
     [Description(OpenApiMetadata.Cphs.CphNumber)]
-    public required string CountyParishHoldingNumber { get; set; }
+    public required string CountyParishHoldingNumber { get; init; }
 
-    [Description(OpenApiMetadata.Expired)]
-    public bool Expired { get; set; }
+    [Description(OpenApiMetadata.Generic.Expired)]
+    public required bool Expired { get; init; }
 
-    [Description(OpenApiMetadata.ExpiresAt)]
-    public DateTime? ExpiredAt { get; set; }
+    [Description(OpenApiMetadata.Generic.ExpiresAt)]
+    public DateTime? ExpiredAt { get; init; }
 }

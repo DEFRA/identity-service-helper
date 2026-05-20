@@ -8,7 +8,6 @@ using Defra.Identity.Repositories.Common.Composites;
 using Defra.Identity.Services.Common.Builders.Rules;
 using Defra.Identity.Services.Common.Builders.Strategy.Base;
 using Defra.Identity.Services.Common.Builders.Strategy.Constants;
-using Microsoft.Extensions.Logging;
 
 public partial class CreateStrategyBuilder<TService, TEntity>
     : StrategyBuilderBase<TService, CreateStrategyBuilder<TService, TEntity>>
@@ -89,9 +88,9 @@ public partial class CreateStrategyBuilder<TService, TEntity>
             throw new InvalidOperationException(StrategyBuilderConstants.Errors.CreateActionRequired);
         }
 
-        LogExecutingActionEntityWithByOperatorId(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant(), OperatorContext.OperatorId);
+        LogExecutingAction(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant(), OperatorContext.OperatorId);
 
-        ExecuteSetup();
+        InvokeBeforeExecuteAction();
 
         await ExecuteRequestValidation();
 
@@ -109,7 +108,7 @@ public partial class CreateStrategyBuilder<TService, TEntity>
             await AfterExecuteAction.Invoke(createdEntity);
         }
 
-        LogSuccessfullyExecutedActionEntityByOperatorId(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant(), OperatorContext.OperatorId);
+        LogSuccessfullyExecutedAction(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant(), OperatorContext.OperatorId);
 
         return createdEntity;
     }

@@ -4,13 +4,6 @@
 
 namespace Defra.Identity.Models.Requests.Users.Commands;
 
-using System.ComponentModel;
+using Defra.Identity.Models.Requests.Users.Commands.Base;
 
-public class CreateUser : User
-{
-    [Description(OpenApiMetadata.Users.Id)]
-    public Guid OperatorId { get; set; } = Guid.Empty;
-
-    [Description(OpenApiMetadata.Users.Email)]
-    public string Email { get; set; } = string.Empty;
-}
+public class CreateUser : UserWriteOperationBase;

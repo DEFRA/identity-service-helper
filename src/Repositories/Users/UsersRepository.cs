@@ -7,7 +7,6 @@ namespace Defra.Identity.Repositories.Users;
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database;
 using Defra.Identity.Postgres.Database.Entities;
-using Defra.Identity.Repositories.Common.Exceptions;
 using Microsoft.Extensions.Logging;
 
 public partial class UsersRepository(
@@ -80,26 +79,5 @@ public partial class UsersRepository(
         context.Update(entity);
         await context.SaveChangesAsync(cancellationToken);
         return entity;
-    }
-
-    public async Task<bool> Delete(
-        Expression<Func<UserAccounts, bool>> predicate,
-        Guid operatorId,
-        CancellationToken cancellationToken = default)
-    {
-        LogDeletingUserAccountWithOperatorId(operatorId);
-        var userAccount = await context.UserAccounts
-            .SingleOrDefaultAsync(predicate, cancellationToken);
-
-        if (userAccount == null)
-        {
-            LogUserAccountNotFoundForDeletion();
-            throw new NotFoundException("User account not found");
-        }
-
-        userAccount.DeletedById = operatorId;
-        userAccount.DeletedAt = DateTime.UtcNow;
-        context.UserAccounts.Update(userAccount);
-        return await context.SaveChangesAsync(cancellationToken) > 0;
     }
 }

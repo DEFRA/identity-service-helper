@@ -1,6 +1,7 @@
 ﻿// <copyright file="ReferenceRulesBuilder.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
+
 namespace Defra.Identity.Services.Common.Builders.Rules;
 
 using Defra.Identity.Repositories.Common.Composites;
@@ -35,7 +36,7 @@ public partial class ReferenceRulesBuilder<TService>
 
             if (!validAgainstReferenceRule)
             {
-                LogExecuteActionEntityFailedReferenceRule(
+                LogEntityReferenceNotFound(
                     logger,
                     actionDescription.ToLowerInvariant(),
                     primaryEntityDescription.ToLowerInvariant(),

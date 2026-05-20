@@ -62,13 +62,11 @@ public class CphDelegationsServiceTests
     public async Task GetAll_ReturnsDelegations()
     {
         // Arrange
-        var request = new GetCphDelegations();
-
         repository.GetList(Arg.Any<Expression<Func<CountyParishHoldingDelegations, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(CphDelegationsRepositoryMockingHelper.GetDelegationEntities().ToList());
 
         // Act
-        var result = await service.GetAll(request, TestContext.Current.CancellationToken);
+        var result = await service.GetAll(TestContext.Current.CancellationToken);
 
         // Assert
         result.ShouldNotBeNull();
@@ -145,11 +143,7 @@ public class CphDelegationsServiceTests
 
         var request = new CreateCphDelegation
         {
-            CountyParishHoldingId = mockCphId,
-            DelegatingUserId = mockDelegatingUserEntity.Id,
-            DelegatedUserId = mockDelegatedUserEntity.Id,
-            DelegatedUserEmail = mockDelegatedUserEmail,
-            DelegatedUserRoleId = mockDelegatedUserRoleId,
+            CountyParishHoldingId = mockCphId, DelegatingUserId = mockDelegatingUserEntity.Id, DelegatedUserEmail = mockDelegatedUserEmail, DelegatedUserRoleId = mockDelegatedUserRoleId,
         };
 
         cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
@@ -174,7 +168,7 @@ public class CphDelegationsServiceTests
             CountyParishHolding = mockCphEntity,
             DelegatingUserId = request.DelegatingUserId,
             DelegatingUser = mockDelegatingUserEntity,
-            DelegatedUserId = request.DelegatedUserId,
+            DelegatedUserId = mockDelegatedUserEntity.Id,
             DelegatedUser = mockDelegatedUserEntity,
             DelegatedUserRoleId = mockDelegatedUserRoleEntity.Id,
             DelegatedUserRole = mockDelegatedUserRoleEntity,
@@ -242,7 +236,6 @@ public class CphDelegationsServiceTests
         {
             CountyParishHoldingId = Guid.NewGuid(),
             DelegatingUserId = mockDelegatingUserEntity.Id,
-            DelegatedUserId = mockDelegatedUserEntity.Id,
             DelegatedUserEmail = mockDelegatedUserEntity.EmailAddress,
             DelegatedUserRoleId = mockDelegatedUserRoleEntity.Id,
         };
@@ -287,7 +280,6 @@ public class CphDelegationsServiceTests
         {
             CountyParishHoldingId = mockCphEntity.Id,
             DelegatingUserId = Guid.NewGuid(),
-            DelegatedUserId = mockDelegatedUserEntity.Id,
             DelegatedUserEmail = mockDelegatedUserEntity.EmailAddress,
             DelegatedUserRoleId = mockDelegatedUserRoleEntity.Id,
         };
@@ -332,7 +324,6 @@ public class CphDelegationsServiceTests
         {
             CountyParishHoldingId = mockCphEntity.Id,
             DelegatingUserId = mockDelegatingUserEntity.Id,
-            DelegatedUserId = Guid.NewGuid(),
             DelegatedUserEmail = "test200@test.com",
             DelegatedUserRoleId = mockDelegatedUserRoleEntity.Id,
         };
@@ -377,7 +368,6 @@ public class CphDelegationsServiceTests
         {
             CountyParishHoldingId = mockCphEntity.Id,
             DelegatingUserId = mockDelegatingUserEntity.Id,
-            DelegatedUserId = mockDelegatedUserEntity.Id,
             DelegatedUserEmail = mockDelegatedUserEntity.EmailAddress,
             DelegatedUserRoleId = Guid.NewGuid(),
         };
@@ -403,19 +393,23 @@ public class CphDelegationsServiceTests
     public async Task Delete_CallsRepository()
     {
         // Arrange
+        var id = Guid.NewGuid();
+
         var request = new DeleteCphDelegationById()
         {
-            Id = Guid.NewGuid(),
+            Id = id,
         };
 
-        repository.Delete(Arg.Any<Expression<Func<CountyParishHoldingDelegations, bool>>>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>())
-            .Returns(true);
+        repository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldingDelegations, bool>>>(), Arg.Any<CancellationToken>()).Returns(
+            new CountyParishHoldingDelegations()
+            {
+                Id = id, DelegatedUserEmail = "test@test.com",
+            });
 
         // Act
-        var result = await service.Delete(request, TestContext.Current.CancellationToken);
+        await service.Delete(request, TestContext.Current.CancellationToken);
 
         // Assert
-        result.ShouldBeTrue();
-        await repository.Received(1).Delete(Arg.Any<Expression<Func<CountyParishHoldingDelegations, bool>>>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>());
+        await repository.Received(1).Update(Arg.Any<CountyParishHoldingDelegations>(), Arg.Any<CancellationToken>());
     }
 }

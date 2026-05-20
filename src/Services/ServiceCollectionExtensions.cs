@@ -41,7 +41,11 @@ public static class ServiceCollectionExtensions
 
         public IServiceCollection AddStrategies(IConfigurationRoot config)
         {
+            services.AddTransient<IStrategyBuilderFactory<ApplicationService>, StrategyBuilderFactory<ApplicationService>>();
+            services.AddTransient<IStrategyBuilderFactory<UserService>, StrategyBuilderFactory<UserService>>();
+            services.AddTransient<IStrategyBuilderFactory<CphService>, StrategyBuilderFactory<CphService>>();
             services.AddTransient<IStrategyBuilderFactory<ProfileService>, StrategyBuilderFactory<ProfileService>>();
+            services.AddTransient<IStrategyBuilderFactory<AnimalSpeciesService>, StrategyBuilderFactory<AnimalSpeciesService>>();
             services.AddTransient<IStrategyBuilderFactory<CphDelegationsService>, StrategyBuilderFactory<CphDelegationsService>>();
 
             return services;

@@ -4,8 +4,8 @@
 
 namespace Defra.Identity.Api.Endpoints.Species;
 
+using Defra.Identity.Api.Filters;
 using Defra.Identity.Api.MetaData;
-using Defra.Identity.Api.Middleware.Headers;
 using Defra.Identity.Models.Requests.Species.Commands;
 using Defra.Identity.Models.Requests.Species.Queries;
 using Defra.Identity.Services.Species;
@@ -35,6 +35,7 @@ public static class AnimalSpeciesEndpoints
             .WithTags(OpenApiMetadata.Tag)
             .WithSummary(OpenApiMetadata.ToggleByIdRoute.Summary)
             .WithDescription(OpenApiMetadata.ToggleByIdRoute.Description)
+            .AddEndpointFilter<OperationByStringIdMappingFilter<ToggleAnimalSpeciesById>>()
             .WithMetadata(new RequiresOperatorId())
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status404NotFound)
@@ -51,7 +52,7 @@ public static class AnimalSpeciesEndpoints
     }
 
     private static async Task<IResult> GetByIdRoute(
-        [AsParameters] GetAnimalSpecies request,
+        [AsParameters] GetAnimalSpeciesById request,
         IAnimalSpeciesService service)
     {
         var application = await service.Get(request);
@@ -60,15 +61,10 @@ public static class AnimalSpeciesEndpoints
     }
 
     private static async Task<IResult> ToggleByIdRoute(
-        CommandRequestHeaders headers,
-        [AsParameters] ToggleAnimalSpeciesById request,
-        [FromBody] ToggleAnimalSpecies payload,
+        [FromBody] ToggleAnimalSpeciesById request,
         IAnimalSpeciesService service)
     {
-        payload.Id = request.Id;
-        payload.OperatorId = headers.OperatorId;
-
-        await service.Toggle(payload, headers.OperatorId);
+        await service.Toggle(request);
 
         return Results.NoContent();
     }

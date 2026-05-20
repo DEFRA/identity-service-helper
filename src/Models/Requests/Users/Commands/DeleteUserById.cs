@@ -4,10 +4,6 @@
 
 namespace Defra.Identity.Models.Requests.Users.Commands;
 
-using System.ComponentModel;
+using Defra.Identity.Models.Requests.Common;
 
-public class DeleteUserById : User
-{
-    [Description(OpenApiMetadata.Users.Id)]
-    public Guid Id { get; set; }
-}
+public class DeleteUserById : OperationById<Guid>;

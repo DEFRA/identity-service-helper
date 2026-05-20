@@ -11,6 +11,16 @@ using Microsoft.Extensions.Logging;
 
 public partial class RoleRepository(PostgresDbContext context, ILogger<RoleRepository> logger) : IRoleRepository, IRepository<Roles>
 {
+    public async Task<bool> ValidateReferenceById(Guid id, CancellationToken cancellationToken = default)
+    {
+        LogValidatingCountyParishHoldingReferenceWithId(logger, id);
+
+        var entity = await context.Roles
+            .SingleOrDefaultAsync(entity => entity.Id == id, cancellationToken);
+
+        return entity != null;
+    }
+
     public async Task<Roles?> GetSingle(Expression<Func<Roles, bool>> predicate, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Getting single role");
@@ -48,23 +58,5 @@ public partial class RoleRepository(PostgresDbContext context, ILogger<RoleRepos
     public Task<List<Roles>> GetList(Expression<Func<Roles, bool>> predicate, CancellationToken cancellationToken = default)
     {
         return context.Roles.Where(predicate).ToListAsync(cancellationToken);
-    }
-
-    public async Task<bool> Delete(Expression<Func<Roles, bool>> predicate, Guid operatorId, CancellationToken cancellationToken = default)
-    {
-        var entities = await context.Roles.Where(predicate).ToListAsync(cancellationToken);
-        if (entities.Count == 0)
-        {
-            return false;
-        }
-
-        context.Roles.RemoveRange(entities);
-        await context.SaveChangesAsync(cancellationToken);
-        return true;
-    }
-
-    public Task<bool> ValidateReferenceById(Guid id, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
     }
 }

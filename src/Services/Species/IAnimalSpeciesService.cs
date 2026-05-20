@@ -12,7 +12,7 @@ public interface IAnimalSpeciesService
 {
     Task<List<AnimalSpecies>> GetAll(GetAllAnimalSpecies request, CancellationToken cancellationToken = default);
 
-    Task<AnimalSpecies> Get(GetAnimalSpecies request, CancellationToken cancellationToken = default);
+    Task<AnimalSpecies> Get(GetAnimalSpeciesById request, CancellationToken cancellationToken = default);
 
-    Task<AnimalSpecies> Toggle(ToggleAnimalSpecies request, Guid operatorId, CancellationToken cancellationToken = default);
+    Task<AnimalSpecies> Toggle(ToggleAnimalSpeciesById request, CancellationToken cancellationToken = default);
 }
