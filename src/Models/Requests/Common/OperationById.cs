@@ -2,6 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
+#pragma warning disable CS8618 // Non-nullable field required to allow url route ids to be mapped into body payloads
 namespace Defra.Identity.Models.Requests.Common;
 
 using System.ComponentModel;
