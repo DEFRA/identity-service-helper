@@ -102,7 +102,7 @@ public class ApplicationEndpointsTests
         result.ShouldBeOfType<CreatedAtRoute<Application>>();
         var createdResult = (CreatedAtRoute<Application>)result;
         createdResult.Value.ShouldBe(application);
-        createdResult.RouteName.ShouldBe(RouteNames.Applications);
+        createdResult.RouteName.ShouldBe("GetApplication");
         createdResult.RouteValues["id"].ShouldBe(application.Id);
     }
 

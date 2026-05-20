@@ -115,7 +115,7 @@ public static class CphDelegationEndpoints
         var result = await service.Create(request);
 
         return Results.CreatedAtRoute(
-            routeName: RouteNames.Delegations,
+            routeName: OpenApiMetadata.GetById.Name,
             routeValues: new
             {
                 id = result.Id,

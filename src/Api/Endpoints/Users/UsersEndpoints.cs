@@ -90,7 +90,7 @@ public static class UsersEndpoints
         var result = await service.Create(request);
 
         return Results.CreatedAtRoute(
-            routeName: RouteNames.Users,
+            routeName: OpenApiMetadata.GetByIdRoute.Name,
             routeValues: new
             {
                 id = result.Id,

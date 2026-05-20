@@ -127,7 +127,7 @@ public class CphDelegationEndpointsTests
         result.ShouldBeOfType<CreatedAtRoute<CphDelegation>>();
         var createdResult = (CreatedAtRoute<CphDelegation>)result;
         createdResult.Value.ShouldBe(delegation);
-        createdResult.RouteName.ShouldBe(RouteNames.Delegations);
+        createdResult.RouteName.ShouldBe("GetById");
         createdResult.RouteValues["id"].ShouldBe(delegation.Id);
     }
 
