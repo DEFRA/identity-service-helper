@@ -62,45 +62,39 @@ public class CphService : ICphService
 
     public async Task<Cph> Get(GetCphByCphId request, CancellationToken cancellationToken = default)
     {
-        var cphFilter = FilterLibrary.Cphs.NotSoftDeleted
-            .AndAlso(cph => request.Id == cph.Id);
-
         return await strategyBuilderFactory.BuildGetStrategy<CountyParishHoldings>()
             .WithActionDescription("Get county parish holding")
             .WithRepository(repository)
             .WithCancellationToken(cancellationToken)
             .WithRequest(request)
-            .WithEntityFilter(cphFilter)
+            .WithEntityFilter(cph => request.Id == cph.Id)
+            .WithExistenceRules(rules => rules.Add(RulesLibrary.Existence.NotSoftDeleted))
             .ExecuteAndMap(CphMapper.MapCphEntityToCph);
     }
 
     public async Task Expire(ExpireCphByCphId request, CancellationToken cancellationToken = default)
     {
-        var cphFilter = FilterLibrary.Cphs.NotSoftDeleted
-            .AndAlso(cph => request.Id == cph.Id);
-
         await strategyBuilderFactory.BuildUpdateStrategy<CountyParishHoldings>()
             .WithActionDescription("Expire county parish holding")
             .WithRepository(repository)
             .WithCancellationToken(cancellationToken)
             .WithRequest(request)
-            .WithEntityFilter(cphFilter)
-            .WithConflictRules(rules => { rules.Add(RulesLibrary.Conflict.NotAlreadyExpired); })
+            .WithEntityFilter(cph => request.Id == cph.Id)
+            .WithExistenceRules(rules => rules.Add(RulesLibrary.Existence.NotSoftDeleted))
+            .WithConflictRules(rules => rules.Add(RulesLibrary.Conflict.NotAlreadyExpired))
             .WithUpdate(cph => { cph.ExpiredAt = DateTime.UtcNow; })
             .Execute();
     }
 
     public async Task Delete(DeleteCphByCphId request, CancellationToken cancellationToken = default)
     {
-        var cphFilter = FilterLibrary.Cphs.NotSoftDeleted
-            .AndAlso(cph => request.Id == cph.Id);
-
         await strategyBuilderFactory.BuildUpdateStrategy<CountyParishHoldings>()
             .WithActionDescription("Delete county parish holding")
             .WithRepository(repository)
             .WithCancellationToken(cancellationToken)
             .WithRequest(request)
-            .WithEntityFilter(cphFilter)
+            .WithEntityFilter(cph => request.Id == cph.Id)
+            .WithExistenceRules(rules => rules.Add(RulesLibrary.Existence.NotSoftDeleted))
             .WithUpdate(
                 cph =>
                 {

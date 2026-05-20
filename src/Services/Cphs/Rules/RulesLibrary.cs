@@ -9,6 +9,12 @@ using Defra.Identity.Services.Common.Builders.Predicates.Models;
 
 public static class RulesLibrary
 {
+    public static class Existence
+    {
+        public static readonly EntityPredicate<CountyParishHoldings> NotSoftDeleted =
+            new(user => user.DeletedAt == null, "County parish holding must not be deleted");
+    }
+
     public static class Conflict
     {
         public static readonly EntityPredicate<CountyParishHoldings> NotAlreadyExpired =

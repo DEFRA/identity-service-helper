@@ -499,7 +499,7 @@ public class CphServiceTests
         // Act & Assert
         Should.Throw<NotFoundException>(async () => await cphService.Get(request, TestContext.Current.CancellationToken));
 
-        logger.VerifyLogContainsOne(LogLevel.Information, $"Getting county parish holding by id {request.Id.ToString()}");
+        logger.VerifyLogContainsOne(LogLevel.Information, $"Executing get county parish holding [county parish holding] with id {request.Id.ToString()}");
         logger.VerifyLogContainsOne(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");
     }
 
@@ -593,7 +593,7 @@ public class CphServiceTests
             () =>
                 cphService.Expire(request, TestContext.Current.CancellationToken));
 
-        logger.VerifyLogContainsOne(LogLevel.Information, $"Expiring county parish holding with id {request.Id.ToString()} by operator {operatorId}");
+        logger.VerifyLogContainsOne(LogLevel.Information, $"Executing expire county parish holding [county parish holding] with id {request.Id.ToString()} by operator {operatorId}");
         logger.VerifyLogContainsOne(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");
 
         await cphRepository.DidNotReceive().Update(Arg.Any<CountyParishHoldings>(), Arg.Any<CancellationToken>());
@@ -669,7 +669,7 @@ public class CphServiceTests
             () =>
                 cphService.Delete(request, TestContext.Current.CancellationToken));
 
-        logger.VerifyLogContainsOne(LogLevel.Information, $"Deleting county parish holding with id {request.Id.ToString()} by operator {operatorId}");
+        logger.VerifyLogContainsOne(LogLevel.Information, $"Executing delete county parish holding [county parish holding] with id {request.Id.ToString()} by operator {operatorId}");
         logger.VerifyLogContainsOne(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");
 
         await cphRepository.DidNotReceive().Update(Arg.Any<CountyParishHoldings>(), Arg.Any<CancellationToken>());
