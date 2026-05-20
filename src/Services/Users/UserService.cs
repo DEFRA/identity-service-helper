@@ -12,7 +12,6 @@ using Defra.Identity.Repositories.Users;
 using Defra.Identity.Services.Common;
 using Defra.Identity.Services.Common.Builders.Strategy.Factories;
 using Defra.Identity.Services.Common.Context;
-using Defra.Identity.Services.Common.Extensions;
 using Defra.Identity.Services.Common.Filters;
 using Defra.Identity.Services.Common.Mappers;
 using Defra.Identity.Services.Users.Rules;
@@ -97,16 +96,14 @@ public class UserService : IUserService
 
     public async Task<User> Update(UpdateUserById request, CancellationToken cancellationToken = default)
     {
-        var userFilter = FilterLibrary.Users.NotSoftDeleted
-            .AndAlso(user => request.Id == user.Id);
-
         return await strategyBuilderFactory.BuildUpdateStrategy<UserAccounts>()
             .WithActionDescription("Update user")
             .WithRepository(repository)
             .WithCancellationToken(cancellationToken)
             .WithRequestValidation(() => updateUserValidator.ValidateAsync(request, cancellationToken))
             .WithRequest(request)
-            .WithEntityFilter(userFilter)
+            .WithEntityFilter(user => request.Id == user.Id)
+            .WithExistenceRules(rules => rules.Add(RulesLibrary.Existence.NotSoftDeleted))
             .WithUpdate(
                 user =>
                 {
@@ -145,15 +142,13 @@ public class UserService : IUserService
 
     public async Task Delete(DeleteUserById request, CancellationToken cancellationToken = default)
     {
-        var userFilter = FilterLibrary.Users.NotSoftDeleted
-            .AndAlso(user => request.Id == user.Id);
-
         await strategyBuilderFactory.BuildUpdateStrategy<UserAccounts>()
             .WithActionDescription("Delete user")
             .WithRepository(repository)
             .WithCancellationToken(cancellationToken)
             .WithRequest(request)
-            .WithEntityFilter(userFilter)
+            .WithEntityFilter(user => request.Id == user.Id)
+            .WithExistenceRules(rules => rules.Add(RulesLibrary.Existence.NotSoftDeleted))
             .WithUpdate(
                 user =>
                 {

@@ -14,7 +14,6 @@ using Defra.Identity.Repositories.Cphs;
 using Defra.Identity.Services.Common;
 using Defra.Identity.Services.Common.Builders.Strategy.Factories;
 using Defra.Identity.Services.Common.Context;
-using Defra.Identity.Services.Common.Extensions;
 using Defra.Identity.Services.Common.Filters;
 using Defra.Identity.Services.Common.Mappers;
 using Defra.Identity.Services.Cphs.Rules;

@@ -9,6 +9,7 @@ using Defra.Identity.Models.Requests.Applications.Queries;
 using Defra.Identity.Models.Responses.Applications;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Applications;
+using Defra.Identity.Services.Applications.Rules;
 using Defra.Identity.Services.Common;
 using Defra.Identity.Services.Common.Builders.Strategy.Factories;
 using Defra.Identity.Services.Common.Context;
@@ -62,15 +63,13 @@ public class ApplicationService : IApplicationService
         GetApplicationByClientId request,
         CancellationToken cancellationToken = default)
     {
-        var applicationFilter = FilterLibrary.Applications.NotSoftDeleted
-            .AndAlso(application => request.Id == application.ClientId);
-
         return await strategyBuilderFactory.BuildGetStrategy<Applications>()
             .WithActionDescription("Get application")
             .WithRepository(repository)
             .WithCancellationToken(cancellationToken)
             .WithRequest(request)
-            .WithEntityFilter(applicationFilter)
+            .WithEntityFilter(application => request.Id == application.ClientId)
+            .WithExistenceRules(rules => rules.Add(RulesLibrary.Existence.NotSoftDeleted))
             .ExecuteAndMap(ApplicationMapper.MapApplicationEntityToApplication);
     }
 
@@ -102,16 +101,14 @@ public class ApplicationService : IApplicationService
         UpdateApplicationByClientId request,
         CancellationToken cancellationToken = default)
     {
-        var applicationFilter = FilterLibrary.Applications.NotSoftDeleted
-            .AndAlso(application => request.Id == application.ClientId);
-
         return await strategyBuilderFactory.BuildUpdateStrategy<Applications>()
             .WithActionDescription("Update application")
             .WithRepository(repository)
             .WithCancellationToken(cancellationToken)
             .WithRequestValidation(() => updateApplicationValidator.ValidateAsync(request, cancellationToken))
             .WithRequest(request)
-            .WithEntityFilter(applicationFilter)
+            .WithEntityFilter(application => request.Id == application.ClientId)
+            .WithExistenceRules(rules => rules.Add(RulesLibrary.Existence.NotSoftDeleted))
             .WithUpdate(
                 application =>
                 {
@@ -127,15 +124,13 @@ public class ApplicationService : IApplicationService
 
     public async Task Delete(DeleteApplicationByClientId request, CancellationToken cancellationToken = default)
     {
-        var applicationFilter = FilterLibrary.Applications.NotSoftDeleted
-            .AndAlso(application => request.Id == application.ClientId);
-
         await strategyBuilderFactory.BuildUpdateStrategy<Applications>()
             .WithActionDescription("Delete application")
             .WithRepository(repository)
             .WithCancellationToken(cancellationToken)
             .WithRequest(request)
-            .WithEntityFilter(applicationFilter)
+            .WithEntityFilter(application => request.Id == application.ClientId)
+            .WithExistenceRules(rules => rules.Add(RulesLibrary.Existence.NotSoftDeleted))
             .WithUpdate(
                 application =>
                 {
