@@ -21,6 +21,7 @@ public class MessagingServiceTests
     private const string SuccessEmail = "doesnt-really-matter@simulator.notify";
 
     private const string TestKey = "authtestkey-3f6a9ae4-62d7-48fc-92fa-fb7008e44f9d-b14612fd-e032-4961-9848-cd693b4e8ac7";
+    private readonly Guid pipelineTestMsg = Guid.Parse("d42c86e2-4f6c-4099-a747-428bf8a418a2");
 
     private readonly ILogger<MessagingService> logger = DefraLoggerExtensions.CreateNSubstituteLogger<MessagingService>();
     private readonly IOptions<MessagingOptions> options = Substitute.For<IOptions<MessagingOptions>>();
@@ -42,15 +43,16 @@ public class MessagingServiceTests
     public async Task SendEmailMessageAsync_ReturnsCorrectStatus(string recipient, string response)
     {
         // Arrange
-        var request = new TestMessage(MessageTypes.Email, MessageTemplateTypes.Delegation.DelegationInviteeConfirmation.Value) { Recipient = recipient, };
+        var request =
+            new TestMessage(MessageTypes.Email, pipelineTestMsg) { Recipient = recipient, };
 
-        // Act
+        // Act/Assert
         var result = await service.SendEmailMessageAsync(request);
+        result.ShouldNotBeNull();
+        result.IsSuccess.ShouldBeTrue();
+
         await Task.Delay(1000, TestContext.Current.CancellationToken);
         var notification = await service.GetNotificationAsync(result.NotifyId);
-
-        // Assert
-        result.ShouldNotBeNull();
         notification.ShouldNotBeNull();
         notification.Status.ShouldBe(response);
     }
