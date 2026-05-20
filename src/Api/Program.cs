@@ -133,6 +133,7 @@ public class Program
         app.UseProfileEndpoints();
         app.UseApplicationEndpoints();
         app.UseCphEndpoints();
+        app.UseCphDelegationEndpoints();
         app.UseAnimalSpeciesEndpoints();
 
         return app;
