@@ -26,9 +26,6 @@ public partial class UsersRepository
     [LoggerMessage(LogLevel.Information, "Updating user account with id {Id}")]
     partial void LogUpdatingUserAccountWithId(Guid id);
 
-    [LoggerMessage(LogLevel.Information, "Deleting user account with operator id {OperatorId}")]
-    partial void LogDeletingUserAccountWithOperatorId(Guid operatorId);
-
     [LoggerMessage(LogLevel.Warning, "User account not found for deletion")]
     partial void LogUserAccountNotFoundForDeletion();
 }
