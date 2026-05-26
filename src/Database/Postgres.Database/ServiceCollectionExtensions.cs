@@ -39,14 +39,26 @@ public static class ServiceCollectionExtensions
         services.AddDbContext<PostgresDbContext>((sp, options) =>
         {
             var connectionString = configuration.GetConnectionString(DatabaseConstants.ConnectionStringName);
-            ConfigureNpgsql(sp, options, connectionString!);
+
+            if (string.IsNullOrWhiteSpace(connectionString))
+            {
+                throw new InvalidOperationException($"Connection string '{DatabaseConstants.ConnectionStringName}' is null or empty.");
+            }
+
+            ConfigureNpgsql(sp, options, connectionString);
         });
 
         services.AddDbContext<ReadOnlyPostgresDbContext>((sp, options) =>
         {
             var readOnlyConnectionString = configuration.GetConnectionString(DatabaseConstants.ReadOnlyConnectionStringName) ??
                                            configuration.GetConnectionString(DatabaseConstants.ConnectionStringName);
-            ConfigureNpgsql(sp, options, readOnlyConnectionString!);
+
+            if (string.IsNullOrWhiteSpace(readOnlyConnectionString))
+            {
+                throw new InvalidOperationException($"Read-only connection string is null or empty. Tried '{DatabaseConstants.ReadOnlyConnectionStringName}' and '{DatabaseConstants.ConnectionStringName}'.");
+            }
+
+            ConfigureNpgsql(sp, options, readOnlyConnectionString);
             options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         });
 
