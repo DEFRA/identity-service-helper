@@ -20,9 +20,6 @@ public class CphAssignment
     [Description(OpenApiMetadata.Users.Id)]
     public required Guid UserId { get; init; }
 
-    [Description(OpenApiMetadata.Applications.Id)]
-    public required Guid ApplicationId { get; init; }
-
     [Description(OpenApiMetadata.Roles.Id)]
     public required Guid RoleId { get; init; }
 
@@ -34,4 +31,10 @@ public class CphAssignment
 
     [Description(OpenApiMetadata.Users.DisplayName)]
     public required string DisplayName { get; init; }
+
+    [Description(OpenApiMetadata.AnimalSpecies.Id)]
+    public string SpeciesTypeId { get; set; }
+
+    [Description(OpenApiMetadata.AnimalSpecies.Name)]
+    public string SpeciesTypeName { get; set; }
 }

@@ -42,7 +42,7 @@ public class ServiceCollectionExtensionsTests
         services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
         var mockEnv = new Microsoft.Extensions.Hosting.Internal.HostingEnvironment
         {
-            EnvironmentName = Environments.Development
+            EnvironmentName = Environments.Development,
         };
         services.AddSingleton<IHostEnvironment>(mockEnv);
         services.AddPostgresDatabase(configuration);

@@ -1,4 +1,4 @@
-﻿// <copyright file="IngestCountyParishHoldings.cs" company="Defra">
+﻿// <copyright file="IngestService.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 

@@ -16,7 +16,7 @@ public class CreateUserValidatorTests
     {
         var model = new CreateUser
         {
-            DisplayName = string.Empty
+            DisplayName = string.Empty,
         };
         var result = this.validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.DisplayName);
@@ -27,7 +27,7 @@ public class CreateUserValidatorTests
     {
         var model = new CreateUser
         {
-            DisplayName = new string('a', 101)
+            DisplayName = new string('a', 101),
         };
         var result = this.validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.DisplayName);
@@ -38,7 +38,7 @@ public class CreateUserValidatorTests
     {
         var model = new CreateUser
         {
-            FirstName = string.Empty
+            FirstName = string.Empty,
         };
         var result = this.validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.FirstName);
@@ -49,7 +49,7 @@ public class CreateUserValidatorTests
     {
         var model = new CreateUser
         {
-            FirstName = new string('a', 51)
+            FirstName = new string('a', 51),
         };
         var result = this.validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.FirstName);
@@ -60,7 +60,7 @@ public class CreateUserValidatorTests
     {
         var model = new CreateUser
         {
-            LastName = string.Empty
+            LastName = string.Empty,
         };
         var result = this.validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.LastName);
@@ -71,7 +71,7 @@ public class CreateUserValidatorTests
     {
         var model = new CreateUser
         {
-            LastName = new string('a', 51)
+            LastName = new string('a', 51),
         };
         var result = this.validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.LastName);
@@ -82,7 +82,7 @@ public class CreateUserValidatorTests
     {
         var model = new CreateUser
         {
-            Email = string.Empty
+            Email = string.Empty,
         };
         var result = this.validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Email);
@@ -93,7 +93,7 @@ public class CreateUserValidatorTests
     {
         var model = new CreateUser
         {
-            Email = "invalid-email"
+            Email = "invalid-email",
         };
         var result = this.validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Email);

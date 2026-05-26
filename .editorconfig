@@ -125,8 +125,12 @@ indent_size = 2
 resharper_xml_space_before_self_closing = true
 ij_xml_space_inside_empty_tag = true
 
+[*.sql]
+indent_size = 2
+
 [*.json]
 indent_size = 2
+
 [*.props]
 indent_size = 2
 

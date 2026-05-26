@@ -15,8 +15,8 @@ public partial class CphAssignmentsRepository(
     ILogger<CphAssignmentsRepository> logger)
     : ICphAssignmentsRepository
 {
-    public async Task<List<ApplicationUserAccountHoldingAssignments>> GetList(
-        Expression<Func<ApplicationUserAccountHoldingAssignments, bool>> predicate,
+    public async Task<List<UserAccountCountyParishHoldingAssignments>> GetList(
+        Expression<Func<UserAccountCountyParishHoldingAssignments, bool>> predicate,
         CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Getting list of county parish holding assignments");
@@ -27,11 +27,11 @@ public partial class CphAssignmentsRepository(
         return results;
     }
 
-    public async Task<PagedEntities<ApplicationUserAccountHoldingAssignments>> GetPaged<TOrderBy>(
-        Expression<Func<ApplicationUserAccountHoldingAssignments, bool>> predicate,
+    public async Task<PagedEntities<UserAccountCountyParishHoldingAssignments>> GetPaged<TOrderBy>(
+        Expression<Func<UserAccountCountyParishHoldingAssignments, bool>> predicate,
         int pageNumber,
         int pageSize,
-        Expression<Func<ApplicationUserAccountHoldingAssignments, TOrderBy>> orderBy,
+        Expression<Func<UserAccountCountyParishHoldingAssignments, TOrderBy>> orderBy,
         bool orderByDescending,
         CancellationToken cancellationToken = default)
     {
@@ -43,12 +43,12 @@ public partial class CphAssignmentsRepository(
         return results;
     }
 
-    private IQueryable<ApplicationUserAccountHoldingAssignments> GetQueryable(Expression<Func<ApplicationUserAccountHoldingAssignments, bool>> predicate)
+    private IQueryable<UserAccountCountyParishHoldingAssignments> GetQueryable(Expression<Func<UserAccountCountyParishHoldingAssignments, bool>> predicate)
     {
-        var results = readOnlyContext.ApplicationUserAccountHoldingAssignments
+        var results = readOnlyContext.UserAccountCountyParishHoldingAssignments
             .Include(p => p.CountyParishHolding)
             .Include(p => p.UserAccount)
-            .Include(p => p.Application)
+            .Include(p => p.SpeciesType)
             .Include(p => p.Role)
             .Where(predicate);
 

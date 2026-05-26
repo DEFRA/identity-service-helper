@@ -38,7 +38,7 @@ public class OperationByGuidIdMappingFilterTests
         var guid = "2e35b982-e427-4917-8b9d-454220553a1e";
         var model = new TestModel
         {
-            Id = Guid.Parse(guid)
+            Id = Guid.Parse(guid),
         };
         var context = Substitute.For<EndpointFilterInvocationContext>();
         var routeValue = Substitute.For<IRouteValuesFeature>();
@@ -46,7 +46,7 @@ public class OperationByGuidIdMappingFilterTests
         {
             {
                 "id2", "2e35b982-e427-4917-8b9d-454220553a1d"
-            }
+            },
         };
         var httpContext = new DefaultHttpContext();
         httpContext.Features.Set(routeValue);
@@ -72,7 +72,7 @@ public class OperationByGuidIdMappingFilterTests
         var guid = "2e35b982-e427-4917-8b9d-454220553a1d";
         var model = new TestModel
         {
-            Id = Guid.Parse(guid)
+            Id = Guid.Parse(guid),
         };
         var context = Substitute.For<EndpointFilterInvocationContext>();
         var routeValue = Substitute.For<IRouteValuesFeature>();
@@ -80,7 +80,7 @@ public class OperationByGuidIdMappingFilterTests
         {
             {
                 "id", guid
-            }
+            },
         };
         var httpContext = new DefaultHttpContext();
         httpContext.Features.Set(routeValue);

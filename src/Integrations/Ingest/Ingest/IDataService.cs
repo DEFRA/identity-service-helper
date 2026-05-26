@@ -4,9 +4,7 @@
 
 namespace Defra.Identity.Ingest;
 
-using System.Linq.Expressions;
-
-public interface IDataService<TModel>
+public interface IDataService<in TModel>
 {
     Task Upsert(TModel model, CancellationToken cancellationToken = default);
 }

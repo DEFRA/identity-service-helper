@@ -1,4 +1,4 @@
-// <copyright file="IngestRoles.cs" company="Defra">
+// <copyright file="IngestService.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
@@ -16,12 +16,9 @@ public class IngestService(IKrdsProvider provider, IDataService<Role> service) :
 
        var partyRoles = parties.Values.SelectMany(x => x.PartyRoles).ToList();
 
-       foreach (var role in partyRoles)
+       foreach (var role in partyRoles.Select(x => x.Role))
        {
-           if (role.Role != null)
-           {
-               await service.Upsert(role.Role);
-           }
+           await service.Upsert(role);
        }
 
        return true;

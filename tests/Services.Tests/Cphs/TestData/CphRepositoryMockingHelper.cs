@@ -53,7 +53,7 @@ public static class CphRepositoryMockingHelper
         },
     ];
 
-    public static ApplicationUserAccountHoldingAssignments[] GetCphUserEntities() =>
+    public static UserAccountCountyParishHoldingAssignments[] GetCphUserEntities() =>
     [
         new()
         {
@@ -68,7 +68,6 @@ public static class CphRepositoryMockingHelper
             {
                 DisplayName = "Test 101", EmailAddress = "test101@test.com",
             },
-            ApplicationId = new Guid("0bcd7934-4e18-414a-a6a8-d94d6a45c148"),
             RoleId = new Guid("81b11eb8-2ac7-468f-a80a-cfeb24f70585"),
             Role = new Roles()
             {
@@ -89,7 +88,6 @@ public static class CphRepositoryMockingHelper
             {
                 DisplayName = "Test 102", EmailAddress = "test102@test.com",
             },
-            ApplicationId = new Guid("0bcd7934-4e18-414a-a6a8-d94d6a45c148"),
             RoleId = new Guid("81b11eb8-2ac7-468f-a80a-cfeb24f70585"),
             Role = new Roles()
             {
@@ -110,7 +108,6 @@ public static class CphRepositoryMockingHelper
             {
                 DisplayName = "Test 103", EmailAddress = "test103@test.com",
             },
-            ApplicationId = new Guid("0bcd7934-4e18-414a-a6a8-d94d6a45c148"),
             RoleId = new Guid("81b11eb8-2ac7-468f-a80a-cfeb24f70585"),
             Role = new Roles()
             {
@@ -131,7 +128,6 @@ public static class CphRepositoryMockingHelper
             {
                 DisplayName = "Test 104", EmailAddress = "test104@test.com",
             },
-            ApplicationId = new Guid("f81bbbe9-8eba-4a86-8e65-a08348219f06"),
             RoleId = new Guid("42452ec5-8393-4674-8968-f4929be60099"),
             Role = new Roles()
             {
@@ -152,7 +148,6 @@ public static class CphRepositoryMockingHelper
             {
                 DisplayName = "Test 105", EmailAddress = "test105@test.com",
             },
-            ApplicationId = new Guid("97193f21-877d-4806-9f1b-7ba0730245e4"),
             RoleId = new Guid("b49960ce-5c27-451b-b0f0-bdd297a933ef"),
             Role = new Roles()
             {
@@ -173,7 +168,6 @@ public static class CphRepositoryMockingHelper
             {
                 DisplayName = "Test 106", EmailAddress = "test106@test.com",
             },
-            ApplicationId = new Guid("97193f21-877d-4806-9f1b-7ba0730245e4"),
             RoleId = new Guid("b49960ce-5c27-451b-b0f0-bdd297a933ef"),
             Role = new Roles()
             {

@@ -71,7 +71,7 @@ public class ProfileService : IProfileService
             .WithEntityFilter(userAccountFilter)
             .ExecuteAndMap(UserMapper.MapUserEntityToUser);
 
-        var directAssignments = await strategyBuilderFactory.BuildGetListStrategy<ApplicationUserAccountHoldingAssignments>()
+        var directAssignments = await strategyBuilderFactory.BuildGetListStrategy<UserAccountCountyParishHoldingAssignments>()
             .WithEntityDescription(EntityDescriptions.CphAssignment)
             .WithActionDescription("Get county parish holdings assigned to user")
             .WithRepository(cphAssignmentsRepository)
