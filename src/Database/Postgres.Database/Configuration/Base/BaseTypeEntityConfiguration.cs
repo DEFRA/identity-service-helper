@@ -4,8 +4,10 @@
 
 namespace Defra.Identity.Postgres.Database.Configuration.Base;
 
+using System.Diagnostics.CodeAnalysis;
 using Defra.Identity.Postgres.Database.Entities.Base;
 
+[ExcludeFromCodeCoverage]
 internal abstract class BaseTypeEntityConfiguration<TEntity> : IEntityTypeConfiguration<TEntity>
     where TEntity : BaseTypeEntity
 {

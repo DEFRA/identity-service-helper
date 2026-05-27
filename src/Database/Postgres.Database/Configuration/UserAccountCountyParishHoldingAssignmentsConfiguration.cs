@@ -4,9 +4,11 @@
 
 namespace Defra.Identity.Postgres.Database.Configuration;
 
+using System.Diagnostics.CodeAnalysis;
 using Defra.Identity.Postgres.Database.Configuration.Base;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
+[ExcludeFromCodeCoverage]
 internal class UserAccountCountyParishHoldingAssignmentsConfiguration
     : BaseAuditEntityConfiguration<UserAccountCountyParishHoldingAssignments>
 {

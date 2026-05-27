@@ -4,7 +4,10 @@
 
 namespace Defra.Identity.Postgres.Database.Configuration;
 
-public class AnimalSpeciesConfiguration : IEntityTypeConfiguration<AnimalSpecies>
+using System.Diagnostics.CodeAnalysis;
+
+[ExcludeFromCodeCoverage]
+internal class AnimalSpeciesConfiguration : IEntityTypeConfiguration<AnimalSpecies>
 {
     public void Configure(EntityTypeBuilder<AnimalSpecies> builder)
     {

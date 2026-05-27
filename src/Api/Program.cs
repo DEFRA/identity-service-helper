@@ -34,7 +34,6 @@ public class Program
     {
         var app = CreateWebApplication(args);
         await app.RunAsync();
-        return;
     }
 
     [ExcludeFromCodeCoverage]

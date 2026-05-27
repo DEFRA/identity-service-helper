@@ -13,5 +13,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Humanizer.Core" />
+  </ItemGroup>
  
 </Project>

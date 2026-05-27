@@ -4,8 +4,10 @@
 
 namespace Defra.Identity.Postgres.Database.Configuration;
 
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
+[ExcludeFromCodeCoverage]
 internal class ExternalMessagingConfiguration : IEntityTypeConfiguration<ExternalMessaging>
 {
     public void Configure(EntityTypeBuilder<ExternalMessaging> builder)

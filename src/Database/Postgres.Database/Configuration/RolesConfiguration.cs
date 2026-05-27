@@ -4,8 +4,10 @@
 
 namespace Defra.Identity.Postgres.Database.Configuration;
 
+using System.Diagnostics.CodeAnalysis;
 using Defra.Identity.Postgres.Database.Configuration.Base;
 
+[ExcludeFromCodeCoverage]
 internal class RolesConfiguration : BaseTypeEntityConfiguration<Roles>
 {
     protected override int NameMaxLength => 128;

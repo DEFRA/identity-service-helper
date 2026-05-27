@@ -1,4 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  
   <ItemGroup>
     <ProjectReference Include="../../../../src/Integrations/Krds/KeeperReferenceData/KeeperReferenceData.csproj" />
   </ItemGroup>

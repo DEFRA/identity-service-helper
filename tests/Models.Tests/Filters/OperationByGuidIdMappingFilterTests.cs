@@ -1,4 +1,4 @@
-// <copyright file="OperationByIdMappingFilterTests.cs" company="Defra">
+// <copyright file="OperationByGuidIdMappingFilterTests.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 

@@ -19,16 +19,7 @@ using Shouldly;
 
 public class ApplicationEndpointsTests
 {
-    private readonly IApplicationService service;
-    private readonly CommandRequestHeaders commandHeaders;
-    private readonly QueryRequestHeaders queryHeaders;
-
-    public ApplicationEndpointsTests()
-    {
-        service = Substitute.For<IApplicationService>();
-        commandHeaders = new CommandRequestHeaders(Guid.NewGuid(), Guid.NewGuid(), "test-api-key");
-        queryHeaders = new QueryRequestHeaders(Guid.NewGuid(), "test-api-key");
-    }
+    private readonly IApplicationService service = Substitute.For<IApplicationService>();
 
     [Fact]
     public async Task GetAll_ReturnsOk()

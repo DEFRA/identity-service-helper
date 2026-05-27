@@ -91,6 +91,11 @@ public partial class KrdsProvider(HttpClient client, ILogger<KrdsProvider> logge
         }
     }
 
+    public void Dispose()
+    {
+        client.Dispose();
+    }
+
     private static string GetSitesSince(DateTime since) => $"sites?since={HttpUtility.UrlEncode(since.ToString("yyyy-MM-dd"))}";
 
     private static string GetPartiesSince(DateTime since) => $"parties?since={HttpUtility.UrlEncode(since.ToString("yyyy-MM-dd"))}";
@@ -177,10 +182,5 @@ public partial class KrdsProvider(HttpClient client, ILogger<KrdsProvider> logge
 
         logger.LogInformation("Parties JSON schema validation successful");
         return true;
-    }
-
-    public void Dispose()
-    {
-        client.Dispose();
     }
 }
