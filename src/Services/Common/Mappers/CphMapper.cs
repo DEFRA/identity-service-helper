@@ -13,7 +13,14 @@ public static class CphMapper
     {
         return new Cph
         {
-            Id = cphEntity.Id, CountyParishHoldingNumber = cphEntity.Identifier, Expired = cphEntity.ExpiredAt != null, ExpiredAt = cphEntity.ExpiredAt,
+            Id = cphEntity.Id,
+            CountyParishHoldingNumber = cphEntity.Identifier,
+            AllowedSpecies = cphEntity.CountyParishHoldingAnimalSpecies
+                .Select(x =>
+                    SpeciesMapper.MapAnimalSpeciesEntityToAnimalSpecies(x.AnimalSpecies))
+                .ToList(),
+            Expired = cphEntity.ExpiredAt != null,
+            ExpiredAt = cphEntity.ExpiredAt,
         };
     }
 }

@@ -31,6 +31,7 @@ public partial class CphRepository(
         LogGettingSingleCountyParishHolding();
 
         var result = await readOnlyContext.CountyParishHoldings
+            .Include(p => p.CountyParishHoldingAnimalSpecies)
             .SingleOrDefaultAsync(predicate, cancellationToken);
 
         return result;
@@ -48,6 +49,7 @@ public partial class CphRepository(
 
         var results = await readOnlyContext.CountyParishHoldings
             .Where(predicate)
+            .Include(p => p.CountyParishHoldingAnimalSpecies)
             .ToPaged(pageNumber, pageSize, orderBy, orderByDescending, cancellationToken);
 
         return results;

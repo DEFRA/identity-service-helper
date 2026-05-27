@@ -35,16 +35,6 @@ internal class UserAccountCountyParishHoldingAssignmentsConfiguration
             .HasColumnType(ColumnTypes.UniqueIdentifier)
             .IsRequired();
 
-        builder.Property(x => x.SpeciesTypeId)
-            .HasColumnName(nameof(UserAccountCountyParishHoldingAssignments.SpeciesType).ToSnakeCase())
-            .HasColumnType(ColumnTypes.Char)
-            .HasMaxLength(20)
-            .IsRequired();
-
-        builder.HasOne(x => x.SpeciesType)
-            .WithMany(x => x.ApplicationUserAccountHoldingAssignments)
-            .HasForeignKey(x => x.SpeciesTypeId);
-
         builder.HasOne(x => x.UserAccount)
             .WithMany(x => x.ApplicationUserAccountHoldingAssignments)
             .HasForeignKey(x => x.UserAccountId);

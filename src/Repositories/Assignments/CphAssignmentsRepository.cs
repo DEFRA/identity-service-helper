@@ -48,7 +48,6 @@ public partial class CphAssignmentsRepository(
         var results = readOnlyContext.UserAccountCountyParishHoldingAssignments
             .Include(p => p.CountyParishHolding)
             .Include(p => p.UserAccount)
-            .Include(p => p.SpeciesType)
             .Include(p => p.Role)
             .Where(predicate);
 

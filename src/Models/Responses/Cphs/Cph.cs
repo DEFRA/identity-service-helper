@@ -5,6 +5,7 @@
 namespace Defra.Identity.Models.Responses.Cphs;
 
 using System.ComponentModel;
+using Defra.Identity.Models.Responses.Species;
 
 public class Cph
 {
@@ -19,4 +20,7 @@ public class Cph
 
     [Description(OpenApiMetadata.Generic.ExpiresAt)]
     public DateTime? ExpiredAt { get; init; }
+
+    [Description(OpenApiMetadata.Cphs.AllowedSpecies)]
+    public List<AnimalSpecies> AllowedSpecies { get; init; } = [];
 }

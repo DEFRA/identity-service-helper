@@ -21,8 +21,6 @@ public static class AssignmentMapper
             RoleName = cphAssignmentEntity.Role.Name,
             Email = cphAssignmentEntity.UserAccount.EmailAddress,
             DisplayName = cphAssignmentEntity.UserAccount.DisplayName,
-            SpeciesTypeId = cphAssignmentEntity.SpeciesTypeId,
-            SpeciesTypeName = cphAssignmentEntity.SpeciesType.Name,
         };
     }
 }

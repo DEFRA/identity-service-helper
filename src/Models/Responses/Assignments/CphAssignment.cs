@@ -31,10 +31,4 @@ public class CphAssignment
 
     [Description(OpenApiMetadata.Users.DisplayName)]
     public required string DisplayName { get; init; }
-
-    [Description(OpenApiMetadata.AnimalSpecies.Id)]
-    public string SpeciesTypeId { get; set; }
-
-    [Description(OpenApiMetadata.AnimalSpecies.Name)]
-    public string SpeciesTypeName { get; set; }
 }
