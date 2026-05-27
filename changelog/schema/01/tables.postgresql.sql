@@ -43,7 +43,7 @@ create table user_accounts
     first_name    varchar                                            not null,
     last_name     varchar                                            not null,
     krds_id       uuid,
-    sam_id        uuid,
+    sam_id        varchar,
     created_at    timestamp with time zone default now()             not null,
     created_by_id uuid                                               not null
         constraint "FK_ua_ua_created_by_id"

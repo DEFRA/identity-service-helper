@@ -35,7 +35,7 @@ internal class UserAccountsConfiguration : BaseAuditEntityConfiguration<UserAcco
 
         builder.Property(x => x.SamId)
             .HasColumnName(nameof(UserAccounts.SamId).ToSnakeCase())
-            .HasColumnType(ColumnTypes.UniqueIdentifier)
+            .HasColumnType(ColumnTypes.Varchar)
             .IsRequired(false);
 
         builder.Property(x => x.KrdsId)

@@ -18,7 +18,7 @@ public class UserAccounts : BaseAuditEntity
 
     public Guid? KrdsId { get; set; }
 
-    public Guid? SamId { get; set; }
+    public string? SamId { get; set; }
 
     public UserAccounts? DeletedBy { get; set; }
 
