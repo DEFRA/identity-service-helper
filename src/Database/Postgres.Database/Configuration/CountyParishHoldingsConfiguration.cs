@@ -4,9 +4,11 @@
 
 namespace Defra.Identity.Postgres.Database.Configuration;
 
+using System.Diagnostics.CodeAnalysis;
 using Defra.Identity.Postgres.Database.Configuration.Base;
 
-public class CountyParishHoldingsConfiguration : BaseAuditEntityConfiguration<CountyParishHoldings>
+[ExcludeFromCodeCoverage]
+internal class CountyParishHoldingsConfiguration : BaseAuditEntityConfiguration<CountyParishHoldings>
 {
     public override void Configure(EntityTypeBuilder<CountyParishHoldings> builder)
     {

@@ -17,15 +17,15 @@ public abstract class PostgresDbContextBase<T>(DbContextOptions<T> options) : Db
 
     public virtual DbSet<Roles> Roles { get; set; }
 
-    public virtual DbSet<ApplicationRoles> ApplicationRoles { get; set; }
-
     public virtual DbSet<CountyParishHoldings> CountyParishHoldings { get; set; }
-
-    public virtual DbSet<ApplicationUserAccountHoldingAssignments> ApplicationUserAccountHoldingAssignments { get; set; }
 
     public virtual DbSet<CountyParishHoldingDelegations> CountyParishHoldingDelegations { get; set; }
 
-    public virtual DbSet<ExternalMessaging> ExternalMessaging { get; set; }
+    public virtual DbSet<UserAccountCountyParishHoldingAssignments> UserAccountCountyParishHoldingAssignments { get; set; }
 
     public virtual DbSet<CountyParishHoldingDelegationsNotifications> CountyParishHoldingDelegationsNotifications { get; set; }
+
+    public virtual DbSet<CountyParishHoldingAnimalSpecies> CountyParishHoldingAnimalSpecies { get; set; }
+
+    public virtual DbSet<ExternalMessaging> ExternalMessaging { get; set; }
 }

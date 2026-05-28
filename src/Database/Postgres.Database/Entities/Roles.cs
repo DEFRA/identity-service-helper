@@ -8,9 +8,7 @@ using Defra.Identity.Postgres.Database.Entities.Base;
 
 public class Roles : BaseTypeEntity
 {
-    public ICollection<ApplicationRoles> ApplicationRoles { get; set; } = new List<ApplicationRoles>();
-
     public ICollection<CountyParishHoldingDelegations> CountyParishHoldingDelegationsUserRoles { get; set; } = new List<CountyParishHoldingDelegations>();
 
-    public ICollection<ApplicationUserAccountHoldingAssignments> ApplicationUserAccountHoldingAssignments { get; set; } = new List<ApplicationUserAccountHoldingAssignments>();
+    public ICollection<UserAccountCountyParishHoldingAssignments> ApplicationUserAccountHoldingAssignments { get; set; } = new List<UserAccountCountyParishHoldingAssignments>();
 }

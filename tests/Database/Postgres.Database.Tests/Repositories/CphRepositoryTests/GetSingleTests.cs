@@ -40,7 +40,8 @@ public class GetSingleTests(PostgreContainerFixture fixture) : BaseTests(fixture
             (x) => x.CreatedById.ShouldBe(AdminUserId),
             (x) => x.ExpiredAt.ShouldBe(DateTime.Parse("2026-02-12", new DateTimeFormatInfo()).ToUniversalTime()),
             (x) => x.DeletedAt.ShouldBe(DateTime.Parse("2026-02-13", new DateTimeFormatInfo()).ToUniversalTime()),
-            (x) => x.DeletedById.ShouldBe(AdminUserId));
+            (x) => x.DeletedById.ShouldBe(AdminUserId),
+            (x) => x.CountyParishHoldingAnimalSpecies.Count.ShouldBe(1));
     }
 
     [Fact]

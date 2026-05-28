@@ -4,9 +4,11 @@
 
 namespace Defra.Identity.Postgres.Database.Configuration;
 
+using System.Diagnostics.CodeAnalysis;
 using Defra.Identity.Postgres.Database.Configuration.Base;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
+[ExcludeFromCodeCoverage]
 internal class UserAccountsConfiguration : BaseAuditEntityConfiguration<UserAccounts>
 {
     public override void Configure(EntityTypeBuilder<UserAccounts> builder)
@@ -33,7 +35,7 @@ internal class UserAccountsConfiguration : BaseAuditEntityConfiguration<UserAcco
 
         builder.Property(x => x.SamId)
             .HasColumnName(nameof(UserAccounts.SamId).ToSnakeCase())
-            .HasColumnType(ColumnTypes.UniqueIdentifier)
+            .HasColumnType(ColumnTypes.Varchar)
             .IsRequired(false);
 
         builder.Property(x => x.KrdsId)

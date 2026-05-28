@@ -1,19 +1,21 @@
-// <copyright file="ApplicationUserAccountHoldingAssignmentsConfiguration.cs" company="Defra">
+// <copyright file="UserAccountCountyParishHoldingAssignmentsConfiguration.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
 namespace Defra.Identity.Postgres.Database.Configuration;
 
+using System.Diagnostics.CodeAnalysis;
 using Defra.Identity.Postgres.Database.Configuration.Base;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-internal class ApplicationUserAccountHoldingAssignmentsConfiguration
-    : BaseAuditEntityConfiguration<ApplicationUserAccountHoldingAssignments>
+[ExcludeFromCodeCoverage]
+internal class UserAccountCountyParishHoldingAssignmentsConfiguration
+    : BaseAuditEntityConfiguration<UserAccountCountyParishHoldingAssignments>
 {
-    public override void Configure(EntityTypeBuilder<ApplicationUserAccountHoldingAssignments> builder)
+    public override void Configure(EntityTypeBuilder<UserAccountCountyParishHoldingAssignments> builder)
     {
         builder.Property(x => x.CountyParishHoldingId)
-            .HasColumnName(nameof(ApplicationUserAccountHoldingAssignments.CountyParishHoldingId).ToSnakeCase())
+            .HasColumnName(nameof(UserAccountCountyParishHoldingAssignments.CountyParishHoldingId).ToSnakeCase())
             .HasColumnType(ColumnTypes.UniqueIdentifier)
             .IsRequired();
 
@@ -21,17 +23,8 @@ internal class ApplicationUserAccountHoldingAssignmentsConfiguration
             .WithMany(x => x.ApplicationUserAccountHoldingAssignments)
             .HasForeignKey(x => x.CountyParishHoldingId);
 
-        builder.Property(x => x.ApplicationId)
-            .HasColumnName(nameof(ApplicationUserAccountHoldingAssignments.ApplicationId).ToSnakeCase())
-            .HasColumnType(ColumnTypes.UniqueIdentifier)
-            .IsRequired();
-
-        builder.HasOne(x => x.Application)
-            .WithMany(x => x.ApplicationUserAccountHoldingAssignments)
-            .HasForeignKey(x => x.ApplicationId);
-
         builder.Property(x => x.RoleId)
-            .HasColumnName(nameof(ApplicationUserAccountHoldingAssignments.RoleId).ToSnakeCase())
+            .HasColumnName(nameof(UserAccountCountyParishHoldingAssignments.RoleId).ToSnakeCase())
             .HasColumnType(ColumnTypes.UniqueIdentifier)
             .IsRequired();
 
@@ -40,19 +33,9 @@ internal class ApplicationUserAccountHoldingAssignmentsConfiguration
             .HasForeignKey(x => x.RoleId);
 
         builder.Property(x => x.UserAccountId)
-            .HasColumnName(nameof(ApplicationUserAccountHoldingAssignments.UserAccountId).ToSnakeCase())
+            .HasColumnName(nameof(UserAccountCountyParishHoldingAssignments.UserAccountId).ToSnakeCase())
             .HasColumnType(ColumnTypes.UniqueIdentifier)
             .IsRequired();
-
-        builder.Property(x => x.SpeciesTypeId)
-            .HasColumnName(nameof(ApplicationUserAccountHoldingAssignments.SpeciesType).ToSnakeCase())
-            .HasColumnType(ColumnTypes.Char)
-            .HasMaxLength(20)
-            .IsRequired();
-
-        builder.HasOne(x => x.SpeciesType)
-            .WithMany(x => x.ApplicationUserAccountHoldingAssignments)
-            .HasForeignKey(x => x.SpeciesTypeId);
 
         builder.HasOne(x => x.UserAccount)
             .WithMany(x => x.ApplicationUserAccountHoldingAssignments)

@@ -85,7 +85,7 @@ public class ApplicationServiceTests
         var appId = Guid.NewGuid();
         var request = new GetApplicationByClientId
         {
-            Id = appId
+            Id = appId,
         };
         var applicationEntity = new Applications
         {
@@ -117,7 +117,7 @@ public class ApplicationServiceTests
         // Arrange
         var request = new GetApplicationByClientId
         {
-            Id = Guid.NewGuid()
+            Id = Guid.NewGuid(),
         };
         repository.GetSingle(Arg.Any<Expression<Func<Applications, bool>>>(), Arg.Any<CancellationToken>())
             .Returns((Applications)null!);

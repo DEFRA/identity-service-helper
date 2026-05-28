@@ -9,7 +9,7 @@ using Defra.Identity.Postgres.Database.Entities;
 
 public static class AssignmentMapper
 {
-    public static CphAssignment MapCphAssignmentEntityToCphAssignment(ApplicationUserAccountHoldingAssignments cphAssignmentEntity)
+    public static CphAssignment MapCphAssignmentEntityToCphAssignment(UserAccountCountyParishHoldingAssignments cphAssignmentEntity)
     {
         return new CphAssignment
         {
@@ -17,7 +17,6 @@ public static class AssignmentMapper
             CountyParishHoldingId = cphAssignmentEntity.CountyParishHoldingId,
             CountyParishHoldingNumber = cphAssignmentEntity.CountyParishHolding.Identifier,
             UserId = cphAssignmentEntity.UserAccountId,
-            ApplicationId = cphAssignmentEntity.ApplicationId,
             RoleId = cphAssignmentEntity.RoleId,
             RoleName = cphAssignmentEntity.Role.Name,
             Email = cphAssignmentEntity.UserAccount.EmailAddress,

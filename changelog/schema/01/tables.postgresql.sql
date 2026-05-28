@@ -1,12 +1,10 @@
 ﻿-- liquibase formatted sql
 
--- changeset gary:seeding-2
-SET search_path TO public;
-
+-- changeset system:initial-seed-3
 create table krds_sync_logs
 (
     id              uuid                                   not null
-        constraint "PK_krds_sync_logs"
+        constraint "PK_ksl"
             primary key,
     correlation_id  uuid                                   not null,
     source_endpoint text                                   not null,
@@ -17,53 +15,62 @@ create table krds_sync_logs
     processed_at    timestamp with time zone               not null
 );
 
-create index "IX_krds_sync_logs_received_at"
+alter table krds_sync_logs
+    owner to identity_service_helper_ddl;
+
+create index "IX_ksl_received_at"
     on krds_sync_logs (received_at);
 
 create table roles
 (
     id          uuid default gen_random_uuid() not null
-        constraint "PK_roles"
+        constraint "PK_r"
             primary key,
     name        varchar                        not null,
     description varchar                        not null
 );
 
+alter table roles
+    owner to identity_service_helper_ddl;
+
 create table user_accounts
 (
     id            uuid                     default gen_random_uuid() not null
-        constraint "PK_user_accounts"
+        constraint "PK_ua"
             primary key,
     email_address varchar                                            not null,
     display_name  citext                                             not null,
     first_name    varchar                                            not null,
     last_name     varchar                                            not null,
     krds_id       uuid,
-    sam_id        uuid,
+    sam_id        varchar,
     created_at    timestamp with time zone default now()             not null,
     created_by_id uuid                                               not null
-        constraint "FK_user_accounts_user_accounts_created_by_id"
+        constraint "FK_ua_ua_created_by_id"
             references user_accounts
             on delete cascade,
     deleted_at    timestamp with time zone,
     deleted_by_id uuid
-        constraint "FK_user_accounts_user_accounts_deleted_by_id"
+        constraint "FK_ua_ua_deleted_by_id"
             references user_accounts
 );
 
-create index "IX_user_accounts_created_by_id"
+alter table user_accounts
+    owner to identity_service_helper_ddl;
+
+create index "IX_ua_created_by_id"
     on user_accounts (created_by_id);
 
-create index "IX_user_accounts_deleted_by_id"
+create index "IX_ua_deleted_by_id"
     on user_accounts (deleted_by_id);
 
-create unique index "IX_UserAccounts_EmailAddress"
+create unique index "IX_ua_email_address"
     on user_accounts (email_address);
 
 create table applications
 (
     id            uuid                     default gen_random_uuid() not null
-        constraint "PK_applications"
+        constraint "PK_app"
             primary key,
     name          text                                               not null,
     client_id     uuid                                               not null,
@@ -71,221 +78,211 @@ create table applications
     description   text                                               not null,
     created_at    timestamp with time zone default now()             not null,
     created_by_id uuid                                               not null
-        constraint "FK_applications_user_accounts_created_by_id"
+        constraint "FK_app_ua_created_by_id"
             references user_accounts
             on delete cascade,
     deleted_at    timestamp with time zone,
     deleted_by_id uuid
-        constraint "FK_applications_user_accounts_deleted_by_id"
-            references user_accounts
+        constraint "FK_app_ua_deleted_by_id"
+            references user_accounts,
+    scopes        varchar(500),
+    secret        varchar(74),
+    redirect_uris varchar(1000)
 );
 
-create index "IX_applications_created_by_id"
+alter table applications
+    owner to identity_service_helper_ddl;
+
+create index "IX_app_created_by_id"
     on applications (created_by_id);
 
-create index "IX_applications_deleted_by_id"
+create index "IX_app_deleted_by_id"
     on applications (deleted_by_id);
 
 create table county_parish_holdings
 (
     id            uuid                     default gen_random_uuid() not null
-        constraint "PK_county_parish_holdings"
+        constraint "PK_cph"
             primary key,
     identifier    varchar                                            not null,
     expired_at    timestamp with time zone,
     created_at    timestamp with time zone default now()             not null,
     created_by_id uuid                                               not null
-        constraint "FK_county_parish_holdings_user_accounts_created_by_id"
+        constraint "FK_cph_ua_created_by_id"
             references user_accounts
             on delete cascade,
     deleted_at    timestamp with time zone,
     deleted_by_id uuid
-        constraint "FK_county_parish_holdings_user_accounts_deleted_by_id"
+        constraint "FK_cph_ua_deleted_by_id"
             references user_accounts
 );
 
-create index "IX_county_parish_holdings_created_by_id"
+alter table county_parish_holdings
+    owner to identity_service_helper_ddl;
+
+create index "IX_cph_created_by_id"
     on county_parish_holdings (created_by_id);
 
-create index "IX_county_parish_holdings_deleted_by_id"
+create index "IX_cph_deleted_by_id"
     on county_parish_holdings (deleted_by_id);
 
-create index "IX_county_parish_holdings_identifier"
+create index "IX_cph_identifier"
     on county_parish_holdings (identifier);
 
-create table application_roles
-(
-    application_id uuid not null
-        constraint application_role_mapping_application_id_fk
-            references applications
-            on delete cascade,
-    role_id        uuid not null
-        constraint application_role_mapping_role_id_fk
-            references roles
-            on delete cascade,
-    constraint "PK_application_roles"
-        primary key (application_id, role_id)
-);
 
-create index "IX_application_roles_role_id"
-    on application_roles (role_id);
-
-create table delegations
-(
-    id             uuid                     default gen_random_uuid() not null
-        constraint "PK_delegations"
-            primary key,
-    application_id uuid                                               not null
-        constraint "FK_delegations_applications_application_id"
-            references applications
-            on delete cascade,
-    user_id        uuid                                               not null
-        constraint "FK_delegations_user_accounts_user_id"
-            references user_accounts
-            on delete cascade,
-    created_at     timestamp with time zone default now()             not null,
-    created_by_id  uuid                                               not null,
-    deleted_at     timestamp with time zone,
-    deleted_by_id  uuid
-);
-
-create index "IX_delegations_application_id"
-    on delegations (application_id);
-
-create index "IX_delegations_user_id"
-    on delegations (user_id);
-
-create table application_user_account_holding_assignments
+create table user_account_county_parish_holding_assignments
 (
     id                       uuid                     default gen_random_uuid() not null
-        constraint "PK_application_user_account_holding_assignments"
+        constraint "PK_uacpha"
             primary key,
     county_parish_holding_id uuid                                               not null
-        constraint "FK_application_user_account_holding_assignments_county_parish_~"
+        constraint "FK_uacpha_cph_cph_id"
             references county_parish_holdings
             on delete cascade,
-    application_id           uuid                                               not null
-        constraint "FK_application_user_account_holding_assignments_applications_a~"
-            references applications
-            on delete cascade,
     role_id                  uuid                                               not null
-        constraint "FK_application_user_account_holding_assignments_roles_role_id"
+        constraint "FK_uacpha_r_role_id"
             references roles
             on delete cascade,
     user_account_id          uuid                                               not null
-        constraint "FK_application_user_account_holding_assignments_user_accounts~2"
+        constraint "FK_uacpha_ua_user_account_id"
             references user_accounts
             on delete cascade,
     created_at               timestamp with time zone default now()             not null,
     created_by_id            uuid                                               not null
-        constraint "FK_application_user_account_holding_assignments_user_accounts_~"
+        constraint "FK_uacpha_ua_created_by_id"
             references user_accounts
             on delete cascade,
     deleted_at               timestamp with time zone,
     deleted_by_id            uuid
-        constraint "FK_application_user_account_holding_assignments_user_accounts~1"
+        constraint "FK_uacpha_ua_deleted_by_id"
             references user_accounts
 );
 
-create index "IX_application_user_account_holding_assignments_application_id"
-    on application_user_account_holding_assignments (application_id);
+create index "IX_uacpha_cph_id"
+    on user_account_county_parish_holding_assignments (county_parish_holding_id);
 
-create index "IX_application_user_account_holding_assignments_county_parish_~"
-    on application_user_account_holding_assignments (county_parish_holding_id);
+create index "IX_uacpha_created_by_id"
+    on user_account_county_parish_holding_assignments (created_by_id);
 
-create index "IX_application_user_account_holding_assignments_created_by_id"
-    on application_user_account_holding_assignments (created_by_id);
+create index "IX_uacpha_deleted_by_id"
+    on user_account_county_parish_holding_assignments (deleted_by_id);
 
-create index "IX_application_user_account_holding_assignments_deleted_by_id"
-    on application_user_account_holding_assignments (deleted_by_id);
+create index "IX_uacpha_role_id"
+    on user_account_county_parish_holding_assignments (role_id);
 
-create index "IX_application_user_account_holding_assignments_role_id"
-    on application_user_account_holding_assignments (role_id);
+create index "IX_uacpha_user_account_id"
+    on user_account_county_parish_holding_assignments (user_account_id);
 
-create index "IX_application_user_account_holding_assignments_user_account_id"
-    on application_user_account_holding_assignments (user_account_id);
-
-create table delegation_invitations
+create table animal_species
 (
-    id                    uuid                     default gen_random_uuid() not null
-        constraint "PK_delegation_invitations"
+    id        varchar(20)           not null
+        constraint "PK_as"
             primary key,
-    delegation_id         uuid                                               not null
-        constraint "FK_delegation_invitations_delegations_delegation_id"
-            references delegations
-            on delete cascade,
-    invited_user_id       uuid                                               not null,
-    invited_email         varchar                                            not null,
-    invitation_token      char(64)                                           not null,
-    token_expires_at      timestamp with time zone                           not null,
-    delegated_role_id     uuid                                               not null
-        constraint "FK_delegation_invitations_roles_delegated_role_id"
-            references roles
-            on delete cascade,
-    delegated_permissions jsonb,
-    invited_at            timestamp with time zone                           not null,
-    accepted_at           timestamp with time zone                           not null,
-    registered_at         timestamp with time zone                           not null,
-    activated_at          timestamp with time zone                           not null,
-    revoked_at            timestamp with time zone                           not null,
-    expired_at            timestamp with time zone                           not null,
-    created_at            timestamp with time zone default now()             not null,
-    created_by_id         uuid                                               not null
-        constraint "FK_delegation_invitations_user_accounts_created_by_id"
-            references user_accounts
-            on delete cascade,
-    deleted_at            timestamp with time zone,
-    deleted_by_id         uuid
-        constraint "FK_delegation_invitations_user_accounts_deleted_by_id"
-            references user_accounts
+    name      varchar(128)          not null,
+    is_active boolean default false not null
 );
 
-create index "IX_delegation_invitations_created_by_id"
-    on delegation_invitations (created_by_id);
+alter table animal_species
+    owner to identity_service_helper_ddl;
 
-create index "IX_delegation_invitations_delegated_role_id"
-    on delegation_invitations (delegated_role_id);
-
-create index "IX_delegation_invitations_delegation_id"
-    on delegation_invitations (delegation_id);
-
-create index "IX_delegation_invitations_deleted_by_id"
-    on delegation_invitations (deleted_by_id);
-
-create table delegations_county_parish_holdings
+create table county_parish_holding_delegations
 (
-    id                       uuid                     default gen_random_uuid() not null
-        constraint "PK_delegations_county_parish_holdings"
+    id                       uuid default gen_random_uuid() not null
+        constraint "PK_cphd"
             primary key,
-    delegation_id            uuid                                               not null
-        constraint "FK_delegations_county_parish_holdings_delegations_delegation_id"
-            references delegations
-            on delete cascade,
-    county_parish_holding_id uuid                                               not null
-        constraint "FK_delegations_county_parish_holdings_county_parish_holdings_c~"
-            references county_parish_holdings
-            on delete cascade,
-    created_at               timestamp with time zone default now()             not null,
-    created_by_id            uuid                                               not null
-        constraint "FK_delegations_county_parish_holdings_user_accounts_created_by~"
-            references user_accounts
-            on delete cascade,
+    county_parish_holding_id uuid                           not null
+        constraint "FK_cphd_cph_cph_id"
+            references county_parish_holdings,
+    delegating_user_id       uuid                           not null
+        constraint "FK_cphd_ua_delegating_user_id"
+            references user_accounts,
+    delegated_user_id        uuid
+        constraint "FK_cphd_ua_delegated_user_id"
+            references user_accounts,
+    delegated_user_email     varchar(256)                   not null,
+    delegated_user_role_id   uuid                           not null
+        constraint "FK_cphd_r_role_id"
+            references roles,
+    invitation_token         char(64)                       not null,
+    invitation_expires_at    timestamp with time zone       not null,
+    invitation_accepted_at   timestamp with time zone,
+    invitation_rejected_at   timestamp with time zone,
+    revoked_at               timestamp with time zone,
+    revoked_by_id            uuid
+        constraint "FK_cphd_ua_revoked_by_id"
+            references user_accounts,
+    expires_at               timestamp with time zone,
+    created_at               timestamp with time zone       not null,
+    created_by_id            uuid                           not null
+        constraint "FK_cphd_ua_created_by_id"
+            references user_accounts,
     deleted_at               timestamp with time zone,
     deleted_by_id            uuid
-        constraint "FK_delegations_county_parish_holdings_user_accounts_deleted_by~"
+        constraint "FK_cphd_ua_deleted_by_id"
             references user_accounts
 );
 
-create index "IX_delegations_county_parish_holdings_county_parish_holding_id"
-    on delegations_county_parish_holdings (county_parish_holding_id);
+alter table county_parish_holding_delegations
+    owner to identity_service_helper_ddl;
 
-create index "IX_delegations_county_parish_holdings_created_by_id"
-    on delegations_county_parish_holdings (created_by_id);
+create table external_messaging
+(
+    id                bigint generated by default as identity
+        constraint "PK_em"
+            primary key,
+    message_type      smallint default 1       not null,
+    message_recipient text                     not null,
+    template_id       uuid                     not null,
+    notify_id         uuid                     not null,
+    request_payload   text,
+    sent_at           timestamp with time zone,
+    response_code     integer,
+    response_message  text,
+    exception_message text,
+    created_at        timestamp with time zone not null,
+    created_by_id     uuid
+        constraint "FK_em_ua_created_by_id"
+            references user_accounts
+);
 
-create index "IX_delegations_county_parish_holdings_delegation_id"
-    on delegations_county_parish_holdings (delegation_id);
+alter table external_messaging
+    owner to identity_service_helper_ddl;
 
-create index "IX_delegations_county_parish_holdings_deleted_by_id"
-    on delegations_county_parish_holdings (deleted_by_id);
+create table county_parish_holding_delegations_notifications
+(
+    delegation_id uuid    not null
+        constraint "FK_cphdn_cphd_delegation_id"
+            references county_parish_holding_delegations,
+    message_id    integer not null
+        constraint "FK_cphdn_em_id"
+            references external_messaging,
+    constraint "PK_cphdn"
+        primary key (message_id, delegation_id)
+);
 
+alter table county_parish_holding_delegations_notifications
+    owner to identity_service_helper_ddl;
+
+create table county_parish_holding_animal_species
+(
+    county_parish_holding_id uuid        not null
+        constraint "FK_cphas_cph_id"
+            references county_parish_holdings,
+    animal_species_id        varchar(20) not null
+        constraint "FK_cphas_as_id"
+            references animal_species,
+    created_at               timestamp with time zone       not null,
+    created_by_id            uuid                           not null
+        constraint "FK_cphas_ua_created_by_id"
+            references user_accounts,
+    deleted_at               timestamp with time zone,
+    deleted_by_id            uuid
+        constraint "FK_cphas_ua_deleted_by_id"
+            references user_accounts,
+    constraint "PK_cphas"
+      primary key (county_parish_holding_id, animal_species_id)
+);
+
+alter table county_parish_holding_animal_species
+    owner to identity_service_helper_ddl;
 

@@ -20,9 +20,6 @@ public class CphAssignment
     [Description(OpenApiMetadata.Users.Id)]
     public required Guid UserId { get; init; }
 
-    [Description(OpenApiMetadata.Applications.Id)]
-    public required Guid ApplicationId { get; init; }
-
     [Description(OpenApiMetadata.Roles.Id)]
     public required Guid RoleId { get; init; }
 

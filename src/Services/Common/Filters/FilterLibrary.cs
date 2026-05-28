@@ -37,21 +37,17 @@ public static class FilterLibrary
 
     public static class CphAssignments
     {
-        private static readonly Expression<Func<ApplicationUserAccountHoldingAssignments, bool>> NotSoftDeleted = holdingAssignment => holdingAssignment.DeletedAt == null;
+        private static readonly Expression<Func<UserAccountCountyParishHoldingAssignments, bool>> NotSoftDeleted = holdingAssignment => holdingAssignment.DeletedAt == null;
 
-        private static readonly Expression<Func<ApplicationUserAccountHoldingAssignments, bool>> CphNotSoftDeletedOrExpired = holdingAssignment
+        private static readonly Expression<Func<UserAccountCountyParishHoldingAssignments, bool>> CphNotSoftDeletedOrExpired = holdingAssignment
             => holdingAssignment.CountyParishHolding.DeletedAt == null && holdingAssignment.CountyParishHolding.ExpiredAt == null;
 
-        private static readonly Expression<Func<ApplicationUserAccountHoldingAssignments, bool>> UserAccountNotSoftDeleted =
+        private static readonly Expression<Func<UserAccountCountyParishHoldingAssignments, bool>> UserAccountNotSoftDeleted =
             holdingAssignment => holdingAssignment.UserAccount.DeletedAt == null;
 
-        private static readonly Expression<Func<ApplicationUserAccountHoldingAssignments, bool>> ApplicationNotSoftDeleted =
-            holdingAssignment => holdingAssignment.Application.DeletedAt == null;
-
-        public static readonly Expression<Func<ApplicationUserAccountHoldingAssignments, bool>> Active =
+        public static readonly Expression<Func<UserAccountCountyParishHoldingAssignments, bool>> Active =
             CphNotSoftDeletedOrExpired
                 .AndAlso(UserAccountNotSoftDeleted)
-                .AndAlso(ApplicationNotSoftDeleted)
                 .AndAlso(NotSoftDeleted);
     }
 
