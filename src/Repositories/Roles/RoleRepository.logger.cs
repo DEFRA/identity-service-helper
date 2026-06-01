@@ -11,6 +11,9 @@ public partial class RoleRepository
     [LoggerMessage(LogLevel.Information, "Validating county parish holding reference with id {Id}")]
     static partial void LogValidatingCountyParishHoldingReferenceWithId(ILogger logger, Guid id);
 
+    [LoggerMessage(LogLevel.Information, "Getting all roles")]
+    static partial void LogGettingAllRoles(ILogger logger);
+
     [LoggerMessage(LogLevel.Information, "Getting single role")]
-    partial void LogGettingSingleRole();
+    static partial void LogGettingSingleRole(ILogger logger);
 }

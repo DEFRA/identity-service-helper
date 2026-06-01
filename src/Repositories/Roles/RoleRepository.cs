@@ -9,23 +9,33 @@ using Defra.Identity.Postgres.Database;
 using Defra.Identity.Postgres.Database.Entities;
 using Microsoft.Extensions.Logging;
 
-public partial class RoleRepository(PostgresDbContext context, ILogger<RoleRepository> logger) : IRoleRepository, IRepository<Roles>
+public partial class RoleRepository(
+    PostgresDbContext context,
+    ReadOnlyPostgresDbContext readOnlyContext,
+    ILogger<RoleRepository> logger) : IRoleRepository
 {
     public async Task<bool> ValidateReferenceById(Guid id, CancellationToken cancellationToken = default)
     {
         LogValidatingCountyParishHoldingReferenceWithId(logger, id);
 
-        var entity = await context.Roles
+        var entity = await readOnlyContext.Roles
             .SingleOrDefaultAsync(entity => entity.Id == id, cancellationToken);
 
         return entity != null;
     }
 
+    public Task<List<Roles>> GetList(Expression<Func<Roles, bool>> predicate, CancellationToken cancellationToken = default)
+    {
+        LogGettingAllRoles(logger);
+
+        return readOnlyContext.Roles.Where(predicate).ToListAsync(cancellationToken);
+    }
+
     public async Task<Roles?> GetSingle(Expression<Func<Roles, bool>> predicate, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Getting single role");
+        LogGettingSingleRole(logger);
 
-        var result = await context.Roles
+        var result = await readOnlyContext.Roles
             .SingleOrDefaultAsync(predicate, cancellationToken);
 
         return result;
@@ -42,21 +52,5 @@ public partial class RoleRepository(PostgresDbContext context, ILogger<RoleRepos
     {
         context.Roles.Update(entity);
         return Task.FromResult(entity);
-    }
-
-    public async Task Delete(Roles entity, CancellationToken cancellationToken = default)
-    {
-        context.Roles.Remove(entity);
-        await context.SaveChangesAsync(cancellationToken);
-    }
-
-    public Task<IEnumerable<Roles>> List(Expression<Func<Roles, bool>> predicate, CancellationToken cancellationToken = default)
-    {
-        return Task.FromResult<IEnumerable<Roles>>(context.Roles.Where(predicate).AsEnumerable());
-    }
-
-    public Task<List<Roles>> GetList(Expression<Func<Roles, bool>> predicate, CancellationToken cancellationToken = default)
-    {
-        return context.Roles.Where(predicate).ToListAsync(cancellationToken);
     }
 }
