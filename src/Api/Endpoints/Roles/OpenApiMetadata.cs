@@ -3,7 +3,7 @@
 // </copyright>
 namespace Defra.Identity.Api.Endpoints.Roles;
 
-public class OpenApiMetadata
+public static class OpenApiMetadata
 {
     public const string Tag = nameof(RouteNames.Roles);
 
