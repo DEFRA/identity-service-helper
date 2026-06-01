@@ -91,11 +91,7 @@ public static class ServiceCollectionExtensions
 
         if (isProd)
         {
-            var postgresConfig = configuration
-                                     .GetSection(nameof(PostgresConfiguration))
-                                     .Get<PostgresConfiguration>()
-                                 ?? throw new InvalidOperationException(
-                                     $"Configuration section '{nameof(PostgresConfiguration)}' is missing");
+            var postgresConfig = GetPostgresConfiguration(configuration);
 
             var host = isReadOnly ? postgresConfig.ReadOnlyHost : postgresConfig.DefaultHost;
             connectionString = BuildConnectionString(credentials, region, host, postgresConfig);
@@ -118,6 +114,16 @@ public static class ServiceCollectionExtensions
         }
 
         CreateConnection(sp, options, connectionString, isProd);
+    }
+
+    private static PostgresConfiguration GetPostgresConfiguration(IConfiguration configuration)
+    {
+        var postgresConfig = configuration
+                                 .GetSection(nameof(PostgresConfiguration))
+                                 .Get<PostgresConfiguration>()
+                             ?? throw new InvalidOperationException(
+                                 $"Configuration section '{nameof(PostgresConfiguration)}' is missing");
+        return postgresConfig;
     }
 
     private static string BuildConnectionString(
