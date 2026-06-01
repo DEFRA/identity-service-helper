@@ -4,7 +4,10 @@
 
 namespace Defra.Identity.Postgres.Database;
 
+using Amazon;
 using Amazon.RDS.Util;
+using Amazon.Runtime;
+using Amazon.Runtime.Credentials;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -34,21 +37,19 @@ public static class ServiceCollectionExtensions
     /// 58030: I/O error
     /// 08000/08003/08006/08001/08004/08007/08P01: Connection-related errors (connection exception class 08)
     /// </summary>
-    private static readonly string[] ErrorCodes = ["40001", "40P01", "55P03", "57P03"];
+    private static readonly string[] ErrorCodes =
+    [
+        "40001", "40P01", "55P03", "53300", "57014", "57P01", "57P02", "57P03", "58030",
+        "08000", "08001", "08003", "08004", "08006", "08007", "08P01",
+    ];
 
     public static IServiceCollection AddPostgresDatabase(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDbContext<PostgresDbContext>((sp, options) =>
-        {
-            var connectionString = configuration.GetConnectionString(DatabaseConstants.ConnectionStringName);
-            ConfigureNpgsql(sp, options, connectionString!);
-        });
+        services.AddDbContext<PostgresDbContext>((sp, options) => ConfigureNpgsql(sp, options, configuration));
 
         services.AddDbContext<ReadOnlyPostgresDbContext>((sp, options) =>
         {
-            var readOnlyConnectionString = configuration.GetConnectionString(DatabaseConstants.ReadOnlyConnectionStringName) ??
-                                           configuration.GetConnectionString(DatabaseConstants.ConnectionStringName);
-            ConfigureNpgsql(sp, options, readOnlyConnectionString!);
+            ConfigureNpgsql(sp, options, configuration, true);
             options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         });
 
@@ -73,22 +74,78 @@ public static class ServiceCollectionExtensions
         }
     }
 
-    private static void ConfigureNpgsql(IServiceProvider sp, DbContextOptionsBuilder options, string connectionString)
+    private static void ConfigureNpgsql(
+        IServiceProvider sp,
+        DbContextOptionsBuilder options,
+        IConfiguration configuration,
+        bool isReadOnly = false)
     {
         var env = sp.GetRequiredService<IHostEnvironment>();
         var isProd = env.IsProduction();
+        string? connectionString;
+
+        var credentials = sp.GetService<AWSCredentials>()
+                          ?? DefaultAWSCredentialsIdentityResolver.GetCredentials();
+        var region = RegionEndpoint.GetBySystemName(
+            configuration.GetValue<string>("AWS:Region") ?? "eu-west-2");
 
         if (isProd)
         {
-            var builder = new NpgsqlConnectionStringBuilder(connectionString);
-            if (string.IsNullOrEmpty(builder.Password) || builder.Password == "IAM")
+            var postgresConfig = configuration
+                                     .GetSection(nameof(PostgresConfiguration))
+                                     .Get<PostgresConfiguration>()
+                                 ?? throw new InvalidOperationException(
+                                     $"Configuration section '{nameof(PostgresConfiguration)}' is missing");
+
+            var host = isReadOnly ? postgresConfig.ReadOnlyHost : postgresConfig.DefaultHost;
+            connectionString = BuildConnectionString(credentials, region, host, postgresConfig);
+        }
+        else
+        {
+            connectionString = configuration.GetConnectionString(
+                isReadOnly ? DatabaseConstants.ReadOnlyConnectionStringName : DatabaseConstants.ConnectionStringName);
+
+            if (isReadOnly && string.IsNullOrEmpty(connectionString))
             {
-                var token = RDSAuthTokenGenerator.GenerateAuthToken(builder.Host, builder.Port, builder.Username);
-                builder.Password = token;
-                connectionString = builder.ConnectionString;
+                connectionString = configuration.GetConnectionString(DatabaseConstants.ConnectionStringName);
             }
         }
 
+        if (string.IsNullOrEmpty(connectionString))
+        {
+            throw new InvalidOperationException(
+                $"Connection string for {(isReadOnly ? "read-only " : string.Empty)}Postgres is missing");
+        }
+
+        CreateConnection(sp, options, connectionString, isProd);
+    }
+
+    private static string BuildConnectionString(
+        AWSCredentials credentials,
+        RegionEndpoint region,
+        string host,
+        PostgresConfiguration config)
+    {
+        var token = RDSAuthTokenGenerator.GenerateAuthToken(credentials, region,   host, config.Port, config.User);
+        var builder = new NpgsqlConnectionStringBuilder
+        {
+            Host = host,
+            Port = config.Port,
+            Username = config.User,
+            Database = config.Name,
+            Password = token,
+            SslMode = SslMode.Require,
+        };
+
+        return builder.ConnectionString;
+    }
+
+    private static void CreateConnection(
+        IServiceProvider sp,
+        DbContextOptionsBuilder options,
+        string connectionString,
+        bool isProd)
+    {
         options
             .UseLoggerFactory(sp.GetRequiredService<ILoggerFactory>())
             .ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning))
