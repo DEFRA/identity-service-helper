@@ -10,6 +10,7 @@ using Defra.Identity.Services.Common.Context;
 using Defra.Identity.Services.Cphs;
 using Defra.Identity.Services.Delegations;
 using Defra.Identity.Services.Profiles;
+using Defra.Identity.Services.Roles;
 using Defra.Identity.Services.Species;
 using Defra.Identity.Services.Users;
 using Microsoft.Extensions.Configuration;
@@ -22,6 +23,7 @@ public static class ServiceCollectionExtensions
         public IServiceCollection AddDataServices(IConfigurationRoot config)
         {
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IRoleService, RoleService>();
             services.AddTransient<IProfileService, ProfileService>();
             services.AddTransient<IApplicationService, ApplicationService>();
             services.AddTransient<ICphDelegationsService, CphDelegationsService>();
@@ -43,10 +45,11 @@ public static class ServiceCollectionExtensions
         {
             services.AddTransient<IStrategyBuilderFactory<ApplicationService>, StrategyBuilderFactory<ApplicationService>>();
             services.AddTransient<IStrategyBuilderFactory<UserService>, StrategyBuilderFactory<UserService>>();
+            services.AddTransient<IStrategyBuilderFactory<RoleService>, StrategyBuilderFactory<RoleService>>();
             services.AddTransient<IStrategyBuilderFactory<CphService>, StrategyBuilderFactory<CphService>>();
+            services.AddTransient<IStrategyBuilderFactory<CphDelegationsService>, StrategyBuilderFactory<CphDelegationsService>>();
             services.AddTransient<IStrategyBuilderFactory<ProfileService>, StrategyBuilderFactory<ProfileService>>();
             services.AddTransient<IStrategyBuilderFactory<AnimalSpeciesService>, StrategyBuilderFactory<AnimalSpeciesService>>();
-            services.AddTransient<IStrategyBuilderFactory<CphDelegationsService>, StrategyBuilderFactory<CphDelegationsService>>();
 
             return services;
         }

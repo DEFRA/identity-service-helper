@@ -9,6 +9,7 @@ using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Services.Common.Extensions;
 using ModelAnimalSpecies = Defra.Identity.Postgres.Database.Entities.AnimalSpecies;
 using ModelApplications = Defra.Identity.Postgres.Database.Entities.Applications;
+using ModelRoles = Defra.Identity.Postgres.Database.Entities.Roles;
 
 #pragma warning disable SA1202 // ordering of the public and privates is important here
 public static class FilterLibrary
@@ -23,6 +24,12 @@ public static class FilterLibrary
         public static readonly Expression<Func<UserAccounts, bool>> NotSoftDeleted = user => user.DeletedAt == null;
 
         public static readonly Expression<Func<UserAccounts, bool>> All = user
+            => true;
+    }
+
+    public static class Roles
+    {
+        public static readonly Expression<Func<ModelRoles, bool>> All = role
             => true;
     }
 

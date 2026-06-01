@@ -99,5 +99,6 @@ public static class OpenApiMetadata
     {
         public const string Id = $"{OpenApiMetadata.BaseId} RoleId";
         public const string Name = "The name of the role";
+        public const string Description = "The description of the role";
     }
 }
