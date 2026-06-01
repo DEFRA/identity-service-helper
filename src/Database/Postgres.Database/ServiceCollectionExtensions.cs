@@ -4,6 +4,7 @@
 
 namespace Defra.Identity.Postgres.Database;
 
+using Amazon.RDS.Util;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Npgsql;
 
 public static class ServiceCollectionExtensions
 {
@@ -75,6 +77,18 @@ public static class ServiceCollectionExtensions
     {
         var env = sp.GetRequiredService<IHostEnvironment>();
         var isProd = env.IsProduction();
+
+        if (isProd)
+        {
+            var builder = new NpgsqlConnectionStringBuilder(connectionString);
+            if (string.IsNullOrEmpty(builder.Password) || builder.Password == "IAM")
+            {
+                var token = RDSAuthTokenGenerator.GenerateAuthToken(builder.Host, builder.Port, builder.Username);
+                builder.Password = token;
+                connectionString = builder.ConnectionString;
+            }
+        }
+
         options
             .UseLoggerFactory(sp.GetRequiredService<ILoggerFactory>())
             .ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning))

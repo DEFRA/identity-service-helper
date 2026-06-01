@@ -8,6 +8,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AWSSDK.RDS" />
     <PackageReference Include="Humanizer.Core" />
   </ItemGroup>
 </Project>
