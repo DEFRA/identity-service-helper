@@ -84,13 +84,12 @@ public static class ServiceCollectionExtensions
         var isProd = env.IsProduction();
         string? connectionString;
 
-        var credentials = sp.GetService<AWSCredentials>()
-                          ?? DefaultAWSCredentialsIdentityResolver.GetCredentials();
-        var region = RegionEndpoint.GetBySystemName(
-            configuration.GetValue<string>("AWS:Region") ?? "eu-west-2");
-
         if (isProd)
         {
+            var credentials = sp.GetService<AWSCredentials>()
+                              ?? DefaultAWSCredentialsIdentityResolver.GetCredentials();
+            var region = RegionEndpoint.GetBySystemName(
+                configuration.GetValue<string>("AWS:Region") ?? "eu-west-2");
             var postgresConfig = GetPostgresConfiguration(configuration);
 
             var host = isReadOnly ? postgresConfig.ReadOnlyHost : postgresConfig.DefaultHost;
