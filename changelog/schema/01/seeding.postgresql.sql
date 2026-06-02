@@ -49,7 +49,7 @@ INSERT INTO animal_species (id, name, is_active) VALUES
   ('WLDBR','Wild Boar',false);
 
 INSERT INTO user_accounts (id, email_address, display_name, first_name, last_name, krds_id, sam_id, created_at,
-   created_by_id, deleted_at, deleted_by_id) VALUES 
+   created_by_id) VALUES 
    ('df6990d6-e61a-4e14-aa79-5479dc7b3569',
     'system.admin@defra.gov.uk',
     'System Admin',
