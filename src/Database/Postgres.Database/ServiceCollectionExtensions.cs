@@ -80,17 +80,14 @@ public static class ServiceCollectionExtensions
         IConfiguration configuration,
         bool isReadOnly = false)
     {
-        var env = sp.GetRequiredService<IHostEnvironment>();
-        var isProd = env.IsProduction();
         string? connectionString;
-
-        if (isProd)
+        var postgresConfig = GetPostgresConfiguration(configuration);
+        if (postgresConfig.UseIamAuthentication)
         {
             var credentials = sp.GetService<AWSCredentials>()
                               ?? DefaultAWSCredentialsIdentityResolver.GetCredentials();
             var region = RegionEndpoint.GetBySystemName(
                 configuration.GetValue<string>("AWS:Region") ?? "eu-west-2");
-            var postgresConfig = GetPostgresConfiguration(configuration);
 
             var host = isReadOnly ? postgresConfig.ReadOnlyHost : postgresConfig.DefaultHost;
             connectionString = BuildConnectionString(credentials, region, host, postgresConfig);
@@ -102,7 +99,7 @@ public static class ServiceCollectionExtensions
 
             if (isReadOnly && string.IsNullOrEmpty(connectionString))
             {
-                connectionString = configuration.GetConnectionString(DatabaseConstants.ConnectionStringName);
+                connectionString = configuration.GetConnectionString(DatabaseConstants.ReadOnlyConnectionStringName);
             }
         }
 
@@ -112,7 +109,7 @@ public static class ServiceCollectionExtensions
                 $"Connection string for {(isReadOnly ? "read-only " : string.Empty)}Postgres is missing");
         }
 
-        CreateConnection(sp, options, connectionString, isProd);
+        CreateConnection(sp, options, connectionString, postgresConfig.UseIamAuthentication);
     }
 
     private static PostgresConfiguration GetPostgresConfiguration(IConfiguration configuration)
@@ -120,8 +117,7 @@ public static class ServiceCollectionExtensions
         var postgresConfig = configuration
                                  .GetSection(nameof(PostgresConfiguration))
                                  .Get<PostgresConfiguration>()
-                             ?? throw new InvalidOperationException(
-                                 $"Configuration section '{nameof(PostgresConfiguration)}' is missing");
+                             ?? new PostgresConfiguration();
         return postgresConfig;
     }
 
