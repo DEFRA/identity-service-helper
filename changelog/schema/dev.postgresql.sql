@@ -48,24 +48,24 @@ FROM (VALUES
 WHERE NOT EXISTS (SELECT 1 FROM county_parish_holdings WHERE identifier = v.identifier);
 
 -- Max owns all 00/081/
-INSERT INTO application_user_account_holding_assignments
-    (county_parish_holding_id, species_type, user_account_id, application_id, role_id, created_by_id, created_at)
-SELECT c.id, 'CTT', max_id, app_id, cph_holder_role_id, admin_id, now()
+INSERT INTO user_account_county_parish_holding_assignments
+    (county_parish_holding_id, user_account_id, role_id, created_by_id, created_at)
+SELECT c.id, max_id, cph_holder_role_id, admin_id, now()
 FROM county_parish_holdings c
 WHERE c.identifier IN ('00/081/0001', '00/081/0002', '00/081/0003', '00/081/0004', '00/081/0005', '00/081/0006')
   AND NOT EXISTS (
-      SELECT 1 FROM application_user_account_holding_assignments
+      SELECT 1 FROM user_account_county_parish_holding_assignments
       WHERE county_parish_holding_id = c.id AND user_account_id = max_id
   );
 
 -- Cedric owns all 00/082/
-INSERT INTO application_user_account_holding_assignments
-    (county_parish_holding_id, species_type, user_account_id, application_id, role_id, created_by_id, created_at)
-SELECT c.id, 'CTT', cedric_id, app_id, cph_holder_role_id, admin_id, now()
+INSERT INTO user_account_county_parish_holding_assignments
+    (county_parish_holding_id, user_account_id, role_id, created_by_id, created_at)
+SELECT c.id, cedric_id, cph_holder_role_id, admin_id, now()
 FROM county_parish_holdings c
 WHERE c.identifier IN ('00/082/0001', '00/082/0002', '00/082/0003', '00/082/0004', '00/082/0005', '00/082/0006')
   AND NOT EXISTS (
-      SELECT 1 FROM application_user_account_holding_assignments
+      SELECT 1 FROM user_account_county_parish_holding_assignments
       WHERE county_parish_holding_id = c.id AND user_account_id = cedric_id
   );
 

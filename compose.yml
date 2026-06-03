@@ -79,6 +79,8 @@ services:
         condition: service_healthy
       postgres:
         condition: service_started
+      liquibase:
+        condition: service_completed_successfully
     env_file:
       - 'compose/aws.env'
     environment:
