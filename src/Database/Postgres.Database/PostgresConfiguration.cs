@@ -6,9 +6,11 @@ namespace Defra.Identity.Postgres.Database;
 
 public class PostgresConfiguration
 {
-    public required string DefaultHost { get; init; }
+    public bool UseIamAuthentication { get; init; } = false;
 
-    public required string ReadOnlyHost { get; init; }
+    public string DefaultHost { get; init; } = string.Empty;
+
+    public string ReadOnlyHost { get; init; } = string.Empty;
 
     public int Port { get; init; } = 5432;
 
