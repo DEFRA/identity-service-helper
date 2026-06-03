@@ -13,6 +13,4 @@ public class AnimalSpecies
     public required bool IsActive { get; set; }
 
     public ICollection<CountyParishHoldingAnimalSpecies> CountyParishHoldingAnimalSpecies { get; set; } = new List<CountyParishHoldingAnimalSpecies>();
-
-    public ICollection<UserAccountCountyParishHoldingAssignments> ApplicationUserAccountHoldingAssignments { get; set; } = new List<UserAccountCountyParishHoldingAssignments>();
 }
