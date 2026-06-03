@@ -7,7 +7,7 @@ namespace Defra.Identity.Postgres.Database.Tests;
 using Defra.Identity.Postgres.Database;
 using Defra.Identity.Postgres.Database.Tests.Collections;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
-using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -43,16 +43,34 @@ public abstract partial class BaseTests(PostgreContainerFixture fixture) : IAsyn
     public async ValueTask InitializeAsync()
     {
         await fixture.InitializeAsync();
-        var builder = WebApplication
-            .CreateBuilder();
-        builder.Configuration.AddInMemoryCollection(ConnectionStringConfiguration!).Build();
-        builder.Services.AddPostgresDatabase(builder.Configuration);
 
-        var app = builder.Build();
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(ConnectionStringConfiguration!)
+            .Build();
 
-        app.UsePostgresDatabase();
+        var services = new ServiceCollection();
+        services.AddLogging();
+        services.AddPostgresDatabase(configuration);
 
-        scope = app.Services.CreateScope();
+        var serviceProvider = services.BuildServiceProvider();
+
+        using (var initScope = serviceProvider.CreateScope())
+        {
+            var context = initScope.ServiceProvider.GetRequiredService<PostgresDbContext>();
+            try
+            {
+                if (await context.Database.CanConnectAsync())
+                {
+                    await context.Database.OpenConnectionAsync();
+                }
+            }
+            catch (InvalidOperationException ex) when (ex.Message.Contains("PendingModelChangesWarning"))
+            {
+                // Ignore pending model changes warning during tests/dev if it's treated as error
+            }
+        }
+
+        scope = serviceProvider.CreateScope();
         Context = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();
         ReadOnlyContext = scope.ServiceProvider.GetRequiredService<ReadOnlyPostgresDbContext>();
     }

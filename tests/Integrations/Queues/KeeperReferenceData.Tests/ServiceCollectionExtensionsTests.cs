@@ -35,6 +35,8 @@ public class ServiceCollectionExtensionsTests
                 ["AWS:AccessKey"] = "test",
                 ["AWS:SecretKey"] = "test",
                 ["KrdsApi:Url"] = "http://localhost:5062",
+                ["ConnectionStrings:PostgresConnection"] = "Host=localhost;Database=test;Username=test;Password=test",
+                ["ConnectionStrings:ReadOnlyPostgresConnection"] = "Host=localhost;Database=test;Username=test;Password=test",
             })
             .Build();
 
