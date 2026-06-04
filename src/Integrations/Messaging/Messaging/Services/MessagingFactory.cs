@@ -68,7 +68,7 @@ public partial class MessagingFactory(
         await notificationRepository.Create(
             new CountyParishHoldingDelegationsNotifications()
             {
-                DelegationId = request.CphDelegationId, Message = message,
+                DelegationId = request.CphDelegationId, MessageId = message.Id,
             },
             cancellationToken);
 
