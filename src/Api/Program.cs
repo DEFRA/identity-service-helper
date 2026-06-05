@@ -42,7 +42,7 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        var configuration = builder.Configuration
+        builder.Configuration
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .AddJsonFile(
@@ -52,7 +52,7 @@ public class Program
             .AddEnvironmentVariables()
             .AddCommandLine(args);
 
-        ConfigureBuilder(builder, configuration.Build());
+        ConfigureBuilder(builder, builder.Configuration);
 
         var app = builder.Build();
         return SetupApplication(app);
