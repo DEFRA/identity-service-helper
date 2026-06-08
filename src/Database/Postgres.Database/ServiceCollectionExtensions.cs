@@ -45,11 +45,35 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddPostgresDatabase(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDbContext<PostgresDbContext>((sp, options) => ConfigureNpgsql(sp, options, configuration));
+        var postgresConfig = GetPostgresConfiguration(configuration);
+        services.AddSingleton(postgresConfig);
+
+        if (postgresConfig.UseIamAuthentication)
+        {
+            services.AddSingleton<IPostgresIamTokenGeneratorService>(sp =>
+            {
+                var credentials = sp.GetService<AWSCredentials>()
+                                  ?? DefaultAWSCredentialsIdentityResolver.GetCredentials();
+                var region = RegionEndpoint.GetBySystemName(
+                    configuration.GetValue<string>("AWS:Region") ?? "eu-west-2");
+                return new PostgresIamTokenGeneratorService(credentials, region);
+            });
+        }
+
+        services.AddSingleton<IPostgresDataSourceFactory, PostgresDataSourceFactory>();
+
+        services.AddDbContext<PostgresDbContext>((sp, options) =>
+        {
+            var dataSourceFactory = sp.GetRequiredService<IPostgresDataSourceFactory>();
+            var dataSource = dataSourceFactory.CreateDataSource("Default");
+            ConfigureNpgsql(sp, options, dataSource, postgresConfig.UseIamAuthentication);
+        });
 
         services.AddDbContext<ReadOnlyPostgresDbContext>((sp, options) =>
         {
-            ConfigureNpgsql(sp, options, configuration, true);
+            var dataSourceFactory = sp.GetRequiredService<IPostgresDataSourceFactory>();
+            var dataSource = dataSourceFactory.CreateDataSource("ReadOnly");
+            ConfigureNpgsql(sp, options, dataSource, postgresConfig.UseIamAuthentication);
             options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         });
 
@@ -77,81 +101,14 @@ public static class ServiceCollectionExtensions
     private static void ConfigureNpgsql(
         IServiceProvider sp,
         DbContextOptionsBuilder options,
-        IConfiguration configuration,
-        bool isReadOnly = false)
-    {
-        string? connectionString;
-        var postgresConfig = GetPostgresConfiguration(configuration);
-        if (postgresConfig.UseIamAuthentication)
-        {
-            var credentials = sp.GetService<AWSCredentials>()
-                              ?? DefaultAWSCredentialsIdentityResolver.GetCredentials();
-            var region = RegionEndpoint.GetBySystemName(
-                configuration.GetValue<string>("AWS:Region") ?? "eu-west-2");
-
-            var host = isReadOnly ? postgresConfig.ReadOnlyHost : postgresConfig.DefaultHost;
-            connectionString = BuildConnectionString(credentials, region, host, postgresConfig);
-        }
-        else
-        {
-            connectionString = configuration.GetConnectionString(
-                isReadOnly ? DatabaseConstants.ReadOnlyConnectionStringName : DatabaseConstants.ConnectionStringName);
-
-            if (isReadOnly && string.IsNullOrEmpty(connectionString))
-            {
-                connectionString = configuration.GetConnectionString(DatabaseConstants.ReadOnlyConnectionStringName);
-            }
-        }
-
-        if (string.IsNullOrEmpty(connectionString))
-        {
-            throw new InvalidOperationException(
-                $"Connection string for {(isReadOnly ? "read-only " : string.Empty)}Postgres is missing");
-        }
-
-        CreateConnection(sp, options, connectionString, postgresConfig.UseIamAuthentication);
-    }
-
-    private static PostgresConfiguration GetPostgresConfiguration(IConfiguration configuration)
-    {
-        var postgresConfig = configuration
-                                 .GetSection(nameof(PostgresConfiguration))
-                                 .Get<PostgresConfiguration>()
-                             ?? new PostgresConfiguration();
-        return postgresConfig;
-    }
-
-    private static string BuildConnectionString(
-        AWSCredentials credentials,
-        RegionEndpoint region,
-        string host,
-        PostgresConfiguration config)
-    {
-        var token = RDSAuthTokenGenerator.GenerateAuthToken(credentials, region,   host, config.Port, config.User);
-        var builder = new NpgsqlConnectionStringBuilder
-        {
-            Host = host,
-            Port = config.Port,
-            Username = config.User,
-            Database = config.Name,
-            Password = token,
-            SslMode = SslMode.Require,
-        };
-
-        return builder.ConnectionString;
-    }
-
-    private static void CreateConnection(
-        IServiceProvider sp,
-        DbContextOptionsBuilder options,
-        string connectionString,
-        bool isProd)
+        NpgsqlDataSource dataSource,
+        bool isIamAuth)
     {
         options
             .UseLoggerFactory(sp.GetRequiredService<ILoggerFactory>())
             .ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning))
             .UseNpgsql(
-                connectionString,
+                dataSource,
                 npgsqlOptions =>
                 {
                     npgsqlOptions.EnableRetryOnFailure(
@@ -160,6 +117,19 @@ public static class ServiceCollectionExtensions
                         errorCodesToAdd: ErrorCodes);
                     npgsqlOptions.CommandTimeout(CommandTimeout);
                 })
-            .EnableSensitiveDataLogging(!isProd);
+            .EnableSensitiveDataLogging(!isIamAuth);
+    }
+
+    private static PostgresConfiguration GetPostgresConfiguration(IConfiguration configuration)
+    {
+        var postgresConfig = configuration
+                                 .GetSection(nameof(PostgresConfiguration))
+                                 .Get<PostgresConfiguration>()
+                             ?? new PostgresConfiguration();
+
+        postgresConfig.ConnectionString = configuration.GetConnectionString(DatabaseConstants.ConnectionStringName) ?? string.Empty;
+        postgresConfig.ReadOnlyConnectionString = configuration.GetConnectionString(DatabaseConstants.ReadOnlyConnectionStringName) ?? string.Empty;
+
+        return postgresConfig;
     }
 }

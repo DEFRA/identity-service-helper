@@ -36,7 +36,7 @@ public static class EndpointTestService
             .Build();
 
         services.AddSingleton(testConfiguration);
-        services.AddOptions<ApiConfiguration>().BindConfiguration("ApiConfiguration");
+        services.AddOptions<ApiConfiguration>().BindConfiguration(nameof(ApiConfiguration));
         services.AddSingleton<PostgreContainerFixture>();
         return services.BuildServiceProvider();
     }

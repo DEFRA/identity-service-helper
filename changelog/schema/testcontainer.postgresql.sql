@@ -1,6 +1,6 @@
 -- liquibase formatted sql
 
--- changeset test-container:999-1 runAlways:true context:testcontainer splitStatements:false
+-- changeset test-container:999-1 runAlways:true context:TESTCONTAINER splitStatements:false
 DO $$
   DECLARE
     ADMIN_EMAIL_ADDRESS CONSTANT text := 'system.admin@defra.gov.uk';

@@ -90,19 +90,6 @@ Task("Test")
               };
                  
               ReportGenerator(glob, outputDirectory, reportSettings);
-                  
-              /* if (BuildSystem.AzurePipelines.IsRunningOnAzurePipelines)
-              {
-                var coverageFile = $"coverage/reports/Cobertura.xml";
-                var coverageData = new AzurePipelinesPublishCodeCoverageData
-                {
-                  CodeCoverageTool = AzurePipelinesCodeCoverageToolType.Cobertura,
-                  SummaryFileLocation = coverageFile,
-                  ReportDirectory = "coverage/reports"
-                };
-                Information($"Publishing Test Coverage : {coverageFile}");
-                BuildSystem.AzurePipelines.Commands.PublishCodeCoverage(coverageData);
-              } */
 });
 
 Task("Publish")
