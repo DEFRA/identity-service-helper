@@ -149,4 +149,42 @@ public class CphDelegationEndpointsTests
         result.ShouldBeOfType<NoContent>();
         await service.Received(1).Delete(Arg.Any<DeleteCphDelegationById>(), Arg.Any<CancellationToken>());
     }
+
+    [Fact]
+    public async Task AcceptInvitation_ReturnsOk()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        const string invitationToken = "0000000000000000000000000000000000000000000000000000000000000001";
+
+        // Act
+        var result = await (Task<IResult>)typeof(CphDelegationEndpoints)
+            .GetMethod("AcceptInvitationByIdRoute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
+            .Invoke(null, [id, invitationToken, service])!;
+
+        // Assert
+        result.ShouldBeOfType<Ok>();
+        await service.Received(1).AcceptInvitation(
+            Arg.Is<AcceptInvitationById>(request => request.Id == id && request.InvitationToken == invitationToken),
+            Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task RejectInvitation_ReturnsOk()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        const string invitationToken = "0000000000000000000000000000000000000000000000000000000000000001";
+
+        // Act
+        var result = await (Task<IResult>)typeof(CphDelegationEndpoints)
+            .GetMethod("RejectInvitationByIdRoute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
+            .Invoke(null, [id, invitationToken, service])!;
+
+        // Assert
+        result.ShouldBeOfType<Ok>();
+        await service.Received(1).RejectInvitation(
+            Arg.Is<RejectInvitationById>(request => request.Id == id && request.InvitationToken == invitationToken),
+            Arg.Any<CancellationToken>());
+    }
 }

@@ -18,7 +18,11 @@ public interface ICphDelegationsService
 
     Task Accept(AcceptCphDelegationById request, CancellationToken cancellationToken = default);
 
+    Task AcceptInvitation(AcceptInvitationById request, CancellationToken cancellationToken = default);
+
     Task Reject(RejectCphDelegationById request, CancellationToken cancellationToken = default);
+
+    Task RejectInvitation(RejectInvitationById request, CancellationToken cancellationToken = default);
 
     Task Revoke(RevokeCphDelegationById request, CancellationToken cancellationToken = default);
 

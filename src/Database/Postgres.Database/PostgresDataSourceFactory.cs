@@ -95,6 +95,7 @@ public sealed class PostgresDataSourceFactory(PostgresConfiguration config, IPos
                 Database = config.Name,
                 Username = config.User,
                 SslMode = SslMode.Require, // AWS RDS requires SSL
+                Pooling = true,
             },
         };
 

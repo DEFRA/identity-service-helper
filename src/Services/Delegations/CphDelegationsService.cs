@@ -17,8 +17,10 @@ using Defra.Identity.Repositories.Delegations;
 using Defra.Identity.Repositories.Roles;
 using Defra.Identity.Repositories.Users;
 using Defra.Identity.Services.Common;
+using Defra.Identity.Services.Common.Builders.Predicates.Models;
 using Defra.Identity.Services.Common.Builders.Strategy.Factories;
 using Defra.Identity.Services.Common.Context;
+using Defra.Identity.Services.Common.Exceptions;
 using Defra.Identity.Services.Common.Extensions;
 using Defra.Identity.Services.Common.Filters;
 using Defra.Identity.Services.Common.Mappers;
@@ -161,6 +163,14 @@ public partial class CphDelegationsService : ICphDelegationsService
             .Execute();
     }
 
+    public async Task AcceptInvitation(AcceptInvitationById request, CancellationToken cancellationToken = default)
+    {
+        await ProcessInvitationResponse(
+            request,
+            delegation => { delegation.InvitationAcceptedAt = DateTime.UtcNow; },
+            cancellationToken);
+    }
+
     public async Task Reject(RejectCphDelegationById request, CancellationToken cancellationToken = default)
     {
         await strategyBuilderFactory.BuildUpdateStrategy<CountyParishHoldingDelegations>()
@@ -185,6 +195,14 @@ public partial class CphDelegationsService : ICphDelegationsService
                 })
             .WithUpdate(delegation => { delegation.InvitationRejectedAt = DateTime.UtcNow; })
             .Execute();
+    }
+
+    public async Task RejectInvitation(RejectInvitationById request, CancellationToken cancellationToken = default)
+    {
+        await ProcessInvitationResponse(
+            request,
+            delegation => { delegation.InvitationRejectedAt = DateTime.UtcNow; },
+            cancellationToken);
     }
 
     public async Task Revoke(RevokeCphDelegationById request, CancellationToken cancellationToken = default)
@@ -256,5 +274,86 @@ public partial class CphDelegationsService : ICphDelegationsService
         LogDelegatedUserNotFound(logger, CreateDelegationActionDescription, EntityDescriptions.CphDelegation, RulesLibrary.Reference.Descriptions.DelegatedUserMustExistNotDeleted);
 
         throw new NotFoundException(RulesLibrary.Reference.Descriptions.DelegatedUserMustExistNotDeleted);
+    }
+
+    private async Task ProcessInvitationResponse(
+        InvitationResponseById request,
+        Action<CountyParishHoldingDelegations> responseAction,
+        CancellationToken cancellationToken)
+    {
+        var delegation = await repository.GetSingle(delegation => request.Id == delegation.Id, cancellationToken);
+
+        if (delegation == null)
+        {
+            LogInvitationDelegationNotFound(logger, request.GetLoggableId());
+
+            throw new NotFoundException($"{EntityDescriptions.CphDelegation} not found.");
+        }
+
+        ValidateInvitationToken(request, delegation);
+        ValidateExistenceRule(request, delegation, RulesLibrary.Existence.NotSoftDeleted);
+        ValidateExistenceRule(request, delegation, RulesLibrary.Existence.NotExpired);
+        ValidateBusinessRule(request, delegation, RulesLibrary.Business.InvitationNotExpired);
+        ValidateBusinessRule(request, delegation, RulesLibrary.Business.InvitationNotAccepted);
+        ValidateBusinessRule(request, delegation, RulesLibrary.Business.InvitationNotRejected);
+        ValidateBusinessRule(request, delegation, RulesLibrary.Business.NotRevoked);
+
+        responseAction(delegation);
+        delegation.InvitationToken = string.Empty;
+
+        var updatedDelegation = await repository.Update(delegation, cancellationToken);
+
+        await messagingFactory
+            .QueueDelegationEmailAsync(
+                new DelegationEmailMessage(updatedDelegation.Id, MessageTemplateTypes.Delegation.DelegationInviterConfirmation)
+                {
+                    Recipient = updatedDelegation.DelegatingUser.EmailAddress,
+                },
+                cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    private void ValidateInvitationToken(InvitationResponseById request, CountyParishHoldingDelegations delegation)
+    {
+        if (!string.IsNullOrWhiteSpace(request.InvitationToken)
+            && !string.IsNullOrWhiteSpace(delegation.InvitationToken)
+            && string.Equals(delegation.InvitationToken, request.InvitationToken, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        LogInvitationTokenValidationFailed(logger, request.GetLoggableId());
+
+        throw new BusinessRuleException("Invitation token is invalid");
+    }
+
+    private void ValidateExistenceRule(
+        InvitationResponseById request,
+        CountyParishHoldingDelegations delegation,
+        EntityPredicate<CountyParishHoldingDelegations> rule)
+    {
+        if (rule.Predicate(delegation))
+        {
+            return;
+        }
+
+        LogInvitationDelegationNotFound(logger, request.GetLoggableId());
+
+        throw new NotFoundException($"{EntityDescriptions.CphDelegation} not found.");
+    }
+
+    private void ValidateBusinessRule(
+        InvitationResponseById request,
+        CountyParishHoldingDelegations delegation,
+        EntityPredicate<CountyParishHoldingDelegations> rule)
+    {
+        if (rule.Predicate(delegation))
+        {
+            return;
+        }
+
+        LogInvitationResponseFailedBusinessRule(logger, request.GetLoggableId(), rule.Description);
+
+        throw new BusinessRuleException(rule.Description);
     }
 }

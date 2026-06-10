@@ -5,6 +5,8 @@
 namespace Defra.Identity.Services.Tests.Delegations;
 
 using System.Linq.Expressions;
+using Defra.Identity.Messaging;
+using Defra.Identity.Messaging.Models.Request;
 using Defra.Identity.Messaging.Services;
 using Defra.Identity.Models.Requests.Delegations.Commands;
 using Defra.Identity.Models.Requests.Delegations.Queries;
@@ -16,6 +18,7 @@ using Defra.Identity.Repositories.Roles;
 using Defra.Identity.Repositories.Users;
 using Defra.Identity.Services.Common.Builders.Strategy.Factories;
 using Defra.Identity.Services.Common.Context;
+using Defra.Identity.Services.Common.Exceptions;
 using Defra.Identity.Services.Delegations;
 using Defra.Identity.Services.Tests.Delegations.TestData;
 using Defra.Identity.Test.Utilities.Repository;
@@ -411,5 +414,125 @@ public class CphDelegationsServiceTests
 
         // Assert
         await repository.Received(1).Update(Arg.Any<CountyParishHoldingDelegations>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task AcceptInvitation_WithValidToken_UpdatesInvitationInvalidatesTokenAndEmailsDelegatingUser()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        const string invitationToken = "0000000000000000000000000000000000000000000000000000000000000001";
+        var delegation = CreatePendingInvitation(id, invitationToken);
+
+        repository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldingDelegations, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns(delegation);
+
+        repository.Update(Arg.Any<CountyParishHoldingDelegations>(), Arg.Any<CancellationToken>())
+            .Returns(callInfo => callInfo.Arg<CountyParishHoldingDelegations>());
+
+        // Act
+        await service.AcceptInvitation(
+            new AcceptInvitationById
+            {
+                Id = id,
+                InvitationToken = invitationToken,
+            },
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        await repository.Received(1).Update(
+            Arg.Is<CountyParishHoldingDelegations>(
+                entity => entity.InvitationAcceptedAt != null
+                    && entity.InvitationRejectedAt == null
+                    && entity.InvitationToken == string.Empty),
+            Arg.Any<CancellationToken>());
+
+        await messagingFactory.Received(1).QueueDelegationEmailAsync(
+            Arg.Is<DelegationEmailMessage>(
+                message => message.CphDelegationId == id
+                    && message.TemplateId == MessageTemplateTypes.Delegation.DelegationInviterConfirmation.Value
+                    && message.Recipient == "delegating@test.com"),
+            Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task RejectInvitation_WithValidToken_UpdatesInvitationInvalidatesTokenAndEmailsDelegatingUser()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        const string invitationToken = "0000000000000000000000000000000000000000000000000000000000000001";
+        var delegation = CreatePendingInvitation(id, invitationToken);
+
+        repository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldingDelegations, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns(delegation);
+
+        repository.Update(Arg.Any<CountyParishHoldingDelegations>(), Arg.Any<CancellationToken>())
+            .Returns(callInfo => callInfo.Arg<CountyParishHoldingDelegations>());
+
+        // Act
+        await service.RejectInvitation(
+            new RejectInvitationById
+            {
+                Id = id,
+                InvitationToken = invitationToken,
+            },
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        await repository.Received(1).Update(
+            Arg.Is<CountyParishHoldingDelegations>(
+                entity => entity.InvitationRejectedAt != null
+                    && entity.InvitationAcceptedAt == null
+                    && entity.InvitationToken == string.Empty),
+            Arg.Any<CancellationToken>());
+
+        await messagingFactory.Received(1).QueueDelegationEmailAsync(
+            Arg.Is<DelegationEmailMessage>(
+                message => message.CphDelegationId == id
+                    && message.TemplateId == MessageTemplateTypes.Delegation.DelegationInviterConfirmation.Value
+                    && message.Recipient == "delegating@test.com"),
+            Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task AcceptInvitation_WithInvalidToken_ThrowsBusinessRuleException()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var delegation = CreatePendingInvitation(id, "valid-token");
+
+        repository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldingDelegations, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns(delegation);
+
+        // Act
+        Func<Task> act = async () => await service.AcceptInvitation(
+            new AcceptInvitationById
+            {
+                Id = id,
+                InvitationToken = "invalid-token",
+            },
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        await act.ShouldThrowAsync<BusinessRuleException>();
+        await repository.DidNotReceive().Update(Arg.Any<CountyParishHoldingDelegations>(), Arg.Any<CancellationToken>());
+        await messagingFactory.DidNotReceive().QueueDelegationEmailAsync(Arg.Any<DelegationEmailMessage>(), Arg.Any<CancellationToken>());
+    }
+
+    private static CountyParishHoldingDelegations CreatePendingInvitation(Guid id, string invitationToken)
+    {
+        return new CountyParishHoldingDelegations
+        {
+            Id = id,
+            DelegatedUserEmail = "delegated@test.com",
+            DelegatingUser = new UserAccounts
+            {
+                Id = Guid.NewGuid(),
+                EmailAddress = "delegating@test.com",
+                DisplayName = "Delegating User",
+            },
+            InvitationToken = invitationToken,
+            InvitationExpiresAt = DateTime.UtcNow.AddDays(1),
+        };
     }
 }

@@ -61,6 +61,28 @@ public static class CphDelegationEndpoints
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status400BadRequest);
 
+        app.MapPost(RouteNames.Invitation + "/{id:guid}/{invitation_token}:accept", AcceptInvitationByIdRoute)
+            .WithName(OpenApiMetadata.AcceptInvitation.Name)
+            .WithTags(OpenApiMetadata.Tag)
+            .WithSummary(OpenApiMetadata.AcceptInvitation.Summary)
+            .WithDescription(OpenApiMetadata.AcceptInvitation.Description)
+            .WithMetadata(new IgnoreCorrelationIdCheck())
+            .WithMetadata(new IgnoreApiKeyCheck())
+            .Produces(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status400BadRequest);
+
+        app.MapPost(RouteNames.Invitation + "/{id:guid}/{invitation_token}:reject", RejectInvitationByIdRoute)
+            .WithName(OpenApiMetadata.RejectInvitation.Name)
+            .WithTags(OpenApiMetadata.Tag)
+            .WithSummary(OpenApiMetadata.RejectInvitation.Summary)
+            .WithDescription(OpenApiMetadata.RejectInvitation.Description)
+            .WithMetadata(new IgnoreCorrelationIdCheck())
+            .WithMetadata(new IgnoreApiKeyCheck())
+            .Produces(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status400BadRequest);
+
         app.MapPost(RouteNames.Delegations + "/{id:guid}:revoke", RevokeByIdRoute)
             .WithName(OpenApiMetadata.Revoke.Name)
             .WithTags(OpenApiMetadata.Tag)
@@ -132,6 +154,21 @@ public static class CphDelegationEndpoints
         return Results.NoContent();
     }
 
+    private static async Task<IResult> AcceptInvitationByIdRoute(
+        Guid id,
+        [FromRoute(Name = "invitation_token")] string invitationToken,
+        ICphDelegationsService service)
+    {
+        await service.AcceptInvitation(
+            new AcceptInvitationById
+            {
+                Id = id,
+                InvitationToken = invitationToken,
+            });
+
+        return Results.Ok();
+    }
+
     private static async Task<IResult> RejectByIdRoute(
         [AsParameters] RejectCphDelegationById request,
         ICphDelegationsService service)
@@ -139,6 +176,21 @@ public static class CphDelegationEndpoints
         await service.Reject(request);
 
         return Results.NoContent();
+    }
+
+    private static async Task<IResult> RejectInvitationByIdRoute(
+        Guid id,
+        [FromRoute(Name = "invitation_token")] string invitationToken,
+        ICphDelegationsService service)
+    {
+        await service.RejectInvitation(
+            new RejectInvitationById
+            {
+                Id = id,
+                InvitationToken = invitationToken,
+            });
+
+        return Results.Ok();
     }
 
     private static async Task<IResult> RevokeByIdRoute(
