@@ -3,6 +3,9 @@ DECLARE
     admin_id           uuid;
     max_id             uuid := 'a17a772c-604e-495d-950e-3dbee2ba6e98';
     cedric_id          uuid := 'cd91b1e0-bae4-4cee-becf-3529cc557311';
+    test1_id           uuid := '11111111-0000-4000-a000-000000000001';
+    test2_id           uuid := '22222222-0000-4000-a000-000000000002';
+    test3_id           uuid := '33333333-0000-4000-a000-000000000003';
     app_id             uuid;
     cph_holder_role_id uuid;
     delegation_role_id uuid;
@@ -21,6 +24,83 @@ ON CONFLICT (email_address) DO NOTHING;
 INSERT INTO user_accounts (id, display_name, email_address, first_name, last_name, created_at, created_by_id)
 VALUES (cedric_id, 'Cedric Brasey', 'cedric.brasey@planet-side.co.uk', 'Cedric', 'Brasey', now(), admin_id)
 ON CONFLICT (email_address) DO NOTHING;
+
+-- Test scenario users
+-- test-1: 6 owned CPHs, all delegated to test-3
+INSERT INTO user_accounts (id, display_name, email_address, first_name, last_name, created_at, created_by_id)
+VALUES (test1_id, 'Test User 1', 'test-1@example.defra', 'Test', 'User1', now(), admin_id)
+ON CONFLICT (email_address) DO NOTHING;
+
+-- test-2: 1 owned CPH, delegated to test-3
+INSERT INTO user_accounts (id, display_name, email_address, first_name, last_name, created_at, created_by_id)
+VALUES (test2_id, 'Test User 2', 'test-2@example.defra', 'Test', 'User2', now(), admin_id)
+ON CONFLICT (email_address) DO NOTHING;
+
+-- test-3: no owned CPHs, 7 accepted delegations (6 from test-1 + 1 from test-2)
+INSERT INTO user_accounts (id, display_name, email_address, first_name, last_name, created_at, created_by_id)
+VALUES (test3_id, 'Test User 3', 'test-3@example.defra', 'Test', 'User3', now(), admin_id)
+ON CONFLICT (email_address) DO NOTHING;
+
+-- test-1's CPHs (00/091/)
+INSERT INTO county_parish_holdings (identifier, created_at, created_by_id)
+SELECT v.identifier, now(), admin_id
+FROM (VALUES
+    ('00/091/0001'), ('00/091/0002'), ('00/091/0003'),
+    ('00/091/0004'), ('00/091/0005'), ('00/091/0006')
+) AS v(identifier)
+WHERE NOT EXISTS (SELECT 1 FROM county_parish_holdings WHERE identifier = v.identifier);
+
+-- test-2's CPH (00/092/)
+INSERT INTO county_parish_holdings (identifier, created_at, created_by_id)
+SELECT v.identifier, now(), admin_id
+FROM (VALUES ('00/092/0001')) AS v(identifier)
+WHERE NOT EXISTS (SELECT 1 FROM county_parish_holdings WHERE identifier = v.identifier);
+
+-- test-1 owns all 00/091/
+INSERT INTO user_account_county_parish_holding_assignments
+    (county_parish_holding_id, user_account_id, role_id, created_by_id, created_at)
+SELECT c.id, test1_id, cph_holder_role_id, admin_id, now()
+FROM county_parish_holdings c
+WHERE c.identifier IN ('00/091/0001', '00/091/0002', '00/091/0003', '00/091/0004', '00/091/0005', '00/091/0006')
+  AND NOT EXISTS (
+      SELECT 1 FROM user_account_county_parish_holding_assignments
+      WHERE county_parish_holding_id = c.id AND user_account_id = test1_id
+  );
+
+-- test-2 owns 00/092/0001
+INSERT INTO user_account_county_parish_holding_assignments
+    (county_parish_holding_id, user_account_id, role_id, created_by_id, created_at)
+SELECT c.id, test2_id, cph_holder_role_id, admin_id, now()
+FROM county_parish_holdings c
+WHERE c.identifier = '00/092/0001'
+  AND NOT EXISTS (
+      SELECT 1 FROM user_account_county_parish_holding_assignments
+      WHERE county_parish_holding_id = c.id AND user_account_id = test2_id
+  );
+
+-- test-1 delegates all 6 CPHs to test-3 (pending)
+INSERT INTO county_parish_holding_delegations
+    (county_parish_holding_id, delegating_user_id, delegated_user_id, delegated_user_email, delegated_user_role_id, invitation_token, invitation_expires_at, invitation_accepted_at, created_at, created_by_id)
+SELECT c.id, test1_id, test3_id, 'test-3@example.defra', delegation_role_id,
+       '', now() + interval '2 days', null, now(), test1_id
+FROM county_parish_holdings c
+WHERE c.identifier IN ('00/091/0001', '00/091/0002', '00/091/0003', '00/091/0004', '00/091/0005', '00/091/0006')
+  AND NOT EXISTS (
+      SELECT 1 FROM county_parish_holding_delegations
+      WHERE county_parish_holding_id = c.id AND delegating_user_id = test1_id
+  );
+
+-- test-2 delegates its 1 CPH to test-3 (pending)
+INSERT INTO county_parish_holding_delegations
+    (county_parish_holding_id, delegating_user_id, delegated_user_id, delegated_user_email, delegated_user_role_id, invitation_token, invitation_expires_at, invitation_accepted_at, created_at, created_by_id)
+SELECT c.id, test2_id, test3_id, 'test-3@example.defra', delegation_role_id,
+       '', now() + interval '2 days', null, now(), test2_id
+FROM county_parish_holdings c
+WHERE c.identifier = '00/092/0001'
+  AND NOT EXISTS (
+      SELECT 1 FROM county_parish_holding_delegations
+      WHERE county_parish_holding_id = c.id AND delegating_user_id = test2_id
+  );
 
 -- test application
 INSERT INTO applications (name, client_id, tenant_name, description, created_at, created_by_id, scopes, secret, redirect_uris)
