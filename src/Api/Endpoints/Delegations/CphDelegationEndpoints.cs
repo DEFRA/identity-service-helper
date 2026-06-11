@@ -21,14 +21,16 @@ public static class CphDelegationEndpoints
             .WithTags(OpenApiMetadata.Tag)
             .WithSummary(OpenApiMetadata.GetAll.Summary)
             .WithDescription(OpenApiMetadata.GetAll.Description)
-            .Produces<IEnumerable<Models.Responses.Delegations.CphDelegation>>(StatusCodes.Status200OK, MediaTypeNames.Application.Json);
+            .Produces<IEnumerable<Models.Responses.Delegations.CphDelegation>>(StatusCodes.Status200OK,
+                MediaTypeNames.Application.Json);
 
         app.MapGet(RouteNames.Delegations + "/{id:guid}", GetByIdRoute)
             .WithName(OpenApiMetadata.GetById.Name)
             .WithTags(OpenApiMetadata.Tag)
             .WithSummary(OpenApiMetadata.GetById.Summary)
             .WithDescription(OpenApiMetadata.GetById.Description)
-            .Produces<Models.Responses.Delegations.CphDelegation>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
+            .Produces<Models.Responses.Delegations.CphDelegation>(StatusCodes.Status200OK,
+                MediaTypeNames.Application.Json)
             .ProducesProblem(StatusCodes.Status404NotFound);
 
         app.MapPost(RouteNames.Delegations, PostRoute)
@@ -38,7 +40,8 @@ public static class CphDelegationEndpoints
             .WithDescription(OpenApiMetadata.Create.Description)
             .AddEndpointFilter<ValidationFilter<CreateCphDelegation>>()
             .WithMetadata(new RequiresOperatorId())
-            .Produces<Models.Responses.Delegations.CphDelegation>(StatusCodes.Status201Created, MediaTypeNames.Application.Json)
+            .Produces<Models.Responses.Delegations.CphDelegation>(StatusCodes.Status201Created,
+                MediaTypeNames.Application.Json)
             .ProducesProblem(StatusCodes.Status422UnprocessableEntity);
 
         app.MapPost(RouteNames.Delegations + "/{id:guid}:accept", AcceptByIdRoute)
@@ -49,7 +52,8 @@ public static class CphDelegationEndpoints
             .WithMetadata(new RequiresOperatorId())
             .Produces(StatusCodes.Status204NoContent)
             .ProducesProblem(StatusCodes.Status404NotFound)
-            .ProducesProblem(StatusCodes.Status400BadRequest);
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status403Forbidden);
 
         app.MapPost(RouteNames.Delegations + "/{id:guid}:reject", RejectByIdRoute)
             .WithName(OpenApiMetadata.Reject.Name)
@@ -59,29 +63,8 @@ public static class CphDelegationEndpoints
             .WithMetadata(new RequiresOperatorId())
             .Produces(StatusCodes.Status204NoContent)
             .ProducesProblem(StatusCodes.Status404NotFound)
-            .ProducesProblem(StatusCodes.Status400BadRequest);
-
-        app.MapPost(RouteNames.Invitation + "/{id:guid}/{invitation_token}:accept", AcceptInvitationByIdRoute)
-            .WithName(OpenApiMetadata.AcceptInvitation.Name)
-            .WithTags(OpenApiMetadata.Tag)
-            .WithSummary(OpenApiMetadata.AcceptInvitation.Summary)
-            .WithDescription(OpenApiMetadata.AcceptInvitation.Description)
-            .WithMetadata(new IgnoreCorrelationIdCheck())
-            .WithMetadata(new IgnoreApiKeyCheck())
-            .Produces(StatusCodes.Status200OK)
-            .ProducesProblem(StatusCodes.Status404NotFound)
-            .ProducesProblem(StatusCodes.Status400BadRequest);
-
-        app.MapPost(RouteNames.Invitation + "/{id:guid}/{invitation_token}:reject", RejectInvitationByIdRoute)
-            .WithName(OpenApiMetadata.RejectInvitation.Name)
-            .WithTags(OpenApiMetadata.Tag)
-            .WithSummary(OpenApiMetadata.RejectInvitation.Summary)
-            .WithDescription(OpenApiMetadata.RejectInvitation.Description)
-            .WithMetadata(new IgnoreCorrelationIdCheck())
-            .WithMetadata(new IgnoreApiKeyCheck())
-            .Produces(StatusCodes.Status200OK)
-            .ProducesProblem(StatusCodes.Status404NotFound)
-            .ProducesProblem(StatusCodes.Status400BadRequest);
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status403Forbidden);
 
         app.MapPost(RouteNames.Delegations + "/{id:guid}:revoke", RevokeByIdRoute)
             .WithName(OpenApiMetadata.Revoke.Name)
@@ -138,10 +121,7 @@ public static class CphDelegationEndpoints
 
         return Results.CreatedAtRoute(
             routeName: OpenApiMetadata.GetById.Name,
-            routeValues: new
-            {
-                id = result.Id,
-            },
+            routeValues: new { id = result.Id, },
             value: result);
     }
 
@@ -154,21 +134,6 @@ public static class CphDelegationEndpoints
         return Results.NoContent();
     }
 
-    private static async Task<IResult> AcceptInvitationByIdRoute(
-        Guid id,
-        [FromRoute(Name = "invitation_token")] string invitationToken,
-        ICphDelegationsService service)
-    {
-        await service.AcceptInvitation(
-            new AcceptInvitationById
-            {
-                Id = id,
-                InvitationToken = invitationToken,
-            });
-
-        return Results.Ok();
-    }
-
     private static async Task<IResult> RejectByIdRoute(
         [AsParameters] RejectCphDelegationById request,
         ICphDelegationsService service)
@@ -176,21 +141,6 @@ public static class CphDelegationEndpoints
         await service.Reject(request);
 
         return Results.NoContent();
-    }
-
-    private static async Task<IResult> RejectInvitationByIdRoute(
-        Guid id,
-        [FromRoute(Name = "invitation_token")] string invitationToken,
-        ICphDelegationsService service)
-    {
-        await service.RejectInvitation(
-            new RejectInvitationById
-            {
-                Id = id,
-                InvitationToken = invitationToken,
-            });
-
-        return Results.Ok();
     }
 
     private static async Task<IResult> RevokeByIdRoute(

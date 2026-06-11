@@ -38,25 +38,11 @@ public static class OpenApiMetadata
         public const string Description = "Accepts a pending CPH delegation request by its unique identifier";
     }
 
-    public static class AcceptInvitation
-    {
-        public const string Name = "AcceptCphDelegationInvitation";
-        public const string Summary = "Accept CPH delegation invitation";
-        public const string Description = "Accepts a pending CPH delegation invitation by its unique identifier and invitation token";
-    }
-
     public static class Reject
     {
         public const string Name = "RejectCphDelegation";
         public const string Summary = "Reject CPH delegation";
         public const string Description = "Rejects a pending CPH delegation request by its unique identifier";
-    }
-
-    public static class RejectInvitation
-    {
-        public const string Name = "RejectCphDelegationInvitation";
-        public const string Summary = "Reject CPH delegation invitation";
-        public const string Description = "Rejects a pending CPH delegation invitation by its unique identifier and invitation token";
     }
 
     public static class Revoke

@@ -10,7 +10,6 @@ public static class RouteNames
     public const string Applications = "applications";
     public const string CountyParishHoldings = "cphs";
     public const string Delegations = "delegations";
-    public const string Invitation = "invitation";
     public const string Users = "users";
     public const string Roles = "roles";
     public const string Health = "health";
