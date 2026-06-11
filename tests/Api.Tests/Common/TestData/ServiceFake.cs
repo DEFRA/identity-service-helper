@@ -4,4 +4,7 @@
 
 namespace Defra.Identity.Api.Tests.Common.TestData;
 
-public class ServiceFake;
+public class ServiceFake
+{
+    public string Name { get; set; } = string.Empty;
+}

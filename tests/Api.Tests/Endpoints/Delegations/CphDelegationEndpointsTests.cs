@@ -151,40 +151,40 @@ public class CphDelegationEndpointsTests
     }
 
     [Fact]
-    public async Task AcceptInvitation_ReturnsOk()
+    public async Task AcceptInvitation_ReturnsNoContent()
     {
         // Arrange
-        var id = Guid.NewGuid();
-        const string invitationToken = "0000000000000000000000000000000000000000000000000000000000000001";
+        var request = new AcceptCphDelegationById
+        {
+            Id = Guid.NewGuid(),
+        };
 
         // Act
         var result = await (Task<IResult>)typeof(CphDelegationEndpoints)
-            .GetMethod("AcceptInvitationByIdRoute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
-            .Invoke(null, [id, invitationToken, service])!;
+            .GetMethod("AcceptByIdRoute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
+            .Invoke(null, [request, service])!;
 
         // Assert
-        result.ShouldBeOfType<Ok>();
-        await service.Received(1).AcceptInvitation(
-            Arg.Is<AcceptInvitationById>(request => request.Id == id && request.InvitationToken == invitationToken),
-            Arg.Any<CancellationToken>());
+        result.ShouldBeOfType<NoContent>();
+        await service.Received(1).Accept(request, Arg.Any<CancellationToken>());
     }
 
     [Fact]
-    public async Task RejectInvitation_ReturnsOk()
+    public async Task RejectInvitation_ReturnsNoContent()
     {
         // Arrange
-        var id = Guid.NewGuid();
-        const string invitationToken = "0000000000000000000000000000000000000000000000000000000000000001";
+        var request = new RejectCphDelegationById
+        {
+            Id = Guid.NewGuid(),
+        };
 
         // Act
         var result = await (Task<IResult>)typeof(CphDelegationEndpoints)
-            .GetMethod("RejectInvitationByIdRoute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
-            .Invoke(null, [id, invitationToken, service])!;
+            .GetMethod("RejectByIdRoute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
+            .Invoke(null, [request, service])!;
 
         // Assert
-        result.ShouldBeOfType<Ok>();
-        await service.Received(1).RejectInvitation(
-            Arg.Is<RejectInvitationById>(request => request.Id == id && request.InvitationToken == invitationToken),
-            Arg.Any<CancellationToken>());
+        result.ShouldBeOfType<NoContent>();
+        await service.Received(1).Reject(request, Arg.Any<CancellationToken>());
     }
 }
