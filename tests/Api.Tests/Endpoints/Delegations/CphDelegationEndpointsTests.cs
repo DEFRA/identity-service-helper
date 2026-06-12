@@ -149,4 +149,42 @@ public class CphDelegationEndpointsTests
         result.ShouldBeOfType<NoContent>();
         await service.Received(1).Delete(Arg.Any<DeleteCphDelegationById>(), Arg.Any<CancellationToken>());
     }
+
+    [Fact]
+    public async Task AcceptInvitation_ReturnsNoContent()
+    {
+        // Arrange
+        var request = new AcceptCphDelegationById
+        {
+            Id = Guid.NewGuid(),
+        };
+
+        // Act
+        var result = await (Task<IResult>)typeof(CphDelegationEndpoints)
+            .GetMethod("AcceptByIdRoute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
+            .Invoke(null, [request, service])!;
+
+        // Assert
+        result.ShouldBeOfType<NoContent>();
+        await service.Received(1).Accept(request, Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task RejectInvitation_ReturnsNoContent()
+    {
+        // Arrange
+        var request = new RejectCphDelegationById
+        {
+            Id = Guid.NewGuid(),
+        };
+
+        // Act
+        var result = await (Task<IResult>)typeof(CphDelegationEndpoints)
+            .GetMethod("RejectByIdRoute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
+            .Invoke(null, [request, service])!;
+
+        // Assert
+        result.ShouldBeOfType<NoContent>();
+        await service.Received(1).Reject(request, Arg.Any<CancellationToken>());
+    }
 }

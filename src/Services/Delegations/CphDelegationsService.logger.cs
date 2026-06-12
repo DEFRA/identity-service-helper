@@ -8,6 +8,15 @@ using Microsoft.Extensions.Logging;
 
 public partial class CphDelegationsService
 {
-    [LoggerMessage(LogLevel.Warning, "Execute {ActionDescription} {EntityDescription} failed reference rule '{Description}'")]
-    static partial void LogDelegatedUserNotFound(ILogger<CphDelegationsService> logger, string actionDescription, string entityDescription, string description);
+    [LoggerMessage(LogLevel.Warning,
+        "Execute {ActionDescription} {EntityDescription} failed reference rule '{Description}'")]
+    static partial void LogDelegatedUserNotFound(ILogger<CphDelegationsService> logger, string actionDescription,
+        string entityDescription, string description);
+
+    [LoggerMessage(LogLevel.Warning,
+        "Delegation accept or reject invitation failed authorisation rules for delegation with id {delegationId} and operator {operatorId}")]
+    static partial void LogAcceptOrRejectInvitationFailedAuthorisationRules(
+        ILogger<CphDelegationsService> logger,
+        Guid delegationId,
+        Guid operatorId);
 }

@@ -100,38 +100,44 @@ public partial class CphDelegationsService : ICphDelegationsService
             .WithRepository(repository)
             .WithCancellationToken(cancellationToken)
             .WithRequestValidation(() => createCphDelegationValidator.ValidateAsync(request, cancellationToken))
-            .WithReferenceRules(
-                rules =>
-                {
-                    rules.Add(cphRepository, request.CountyParishHoldingId, RulesLibrary.Reference.Descriptions.CphMustExistNotDeletedOrExpired);
-                    rules.Add(usersRepository, request.DelegatingUserId, RulesLibrary.Reference.Descriptions.DelegatingUserMustExistNotDeleted);
-                    rules.Add(roleRepository, request.DelegatedUserRoleId, RulesLibrary.Reference.Descriptions.DelegatedUserRoleMustExistNotDeleted);
-                })
-            .WithCreate(
-                () => new CountyParishHoldingDelegations
-                {
-                    CountyParishHoldingId = request.CountyParishHoldingId,
-                    DelegatingUserId = request.DelegatingUserId,
-                    DelegatedUserId = delegatedUser.Id,
-                    DelegatedUserEmail = delegatedUser.EmailAddress,
-                    DelegatedUserRoleId = request.DelegatedUserRoleId,
-                    InvitationToken = string.Empty,
-                    InvitationExpiresAt = DateTime.Now.AddDays(2).ToUniversalTime(),
-                    CreatedAt = DateTime.UtcNow,
-                    CreatedById = operatorContext.OperatorId,
-                })
-            .WithAfterExecute(
-                async entity =>
-                {
-                    await messagingFactory
-                        .QueueDelegationEmailAsync(
-                            new DelegationEmailMessage(entity.Id, MessageTemplateTypes.Delegation.DelegationInvitee)
-                            {
-                                Recipient = entity.DelegatedUserEmail,
-                            },
-                            cancellationToken)
-                        .ConfigureAwait(false);
-                })
+            .WithReferenceRules(rules =>
+            {
+                rules.Add(
+                    cphRepository,
+                    request.CountyParishHoldingId,
+                    RulesLibrary.Reference.Descriptions.CphMustExistNotDeletedOrExpired);
+                rules.Add(
+                    usersRepository,
+                    request.DelegatingUserId,
+                    RulesLibrary.Reference.Descriptions.DelegatingUserMustExistNotDeleted);
+                rules.Add(
+                    roleRepository,
+                    request.DelegatedUserRoleId,
+                    RulesLibrary.Reference.Descriptions.DelegatedUserRoleMustExistNotDeleted);
+            })
+            .WithCreate(() => new CountyParishHoldingDelegations
+            {
+                CountyParishHoldingId = request.CountyParishHoldingId,
+                DelegatingUserId = request.DelegatingUserId,
+                DelegatedUserId = delegatedUser.Id,
+                DelegatedUserEmail = delegatedUser.EmailAddress,
+                DelegatedUserRoleId = request.DelegatedUserRoleId,
+                InvitationToken = string.Empty,
+                InvitationExpiresAt = DateTime.Now.AddDays(2).ToUniversalTime(),
+                CreatedAt = DateTime.UtcNow,
+                CreatedById = operatorContext.OperatorId,
+            })
+            .WithAfterExecute(async delegation =>
+            {
+                await messagingFactory
+                    .QueueDelegationEmailAsync(
+                        new DelegationEmailMessage(delegation.Id, MessageTemplateTypes.Delegation.DelegationInvitee)
+                        {
+                            Recipient = delegation.DelegatedUserEmail,
+                        },
+                        cancellationToken)
+                    .ConfigureAwait(false);
+            })
             .ExecuteAndMap(DelegationMapper.MapCphDelegationEntityToCphDelegation);
     }
 
@@ -143,21 +149,31 @@ public partial class CphDelegationsService : ICphDelegationsService
             .WithCancellationToken(cancellationToken)
             .WithRequest(request)
             .WithEntityFilter(delegation => request.Id == delegation.Id)
-            .WithExistenceRules(
-                rules =>
-                {
-                    rules.Add(RulesLibrary.Existence.NotSoftDeleted);
-                    rules.Add(RulesLibrary.Existence.NotExpired);
-                })
-            .WithBusinessRules(
-                rules =>
-                {
-                    rules.Add(RulesLibrary.Business.InvitationNotExpired);
-                    rules.Add(RulesLibrary.Business.InvitationNotAccepted);
-                    rules.Add(RulesLibrary.Business.InvitationNotRejected);
-                    rules.Add(RulesLibrary.Business.NotRevoked);
-                })
+            .WithExistenceRules(rules =>
+            {
+                rules.Add(RulesLibrary.Existence.NotSoftDeleted);
+                rules.Add(RulesLibrary.Existence.NotExpired);
+            })
+            .WithBusinessRules(rules =>
+            {
+                rules.Add(RulesLibrary.Business.InvitationNotExpired);
+                rules.Add(RulesLibrary.Business.InvitationNotAccepted);
+                rules.Add(RulesLibrary.Business.InvitationNotRejected);
+                rules.Add(RulesLibrary.Business.NotRevoked);
+            })
+            .WithBeforeUpdate(ValidateOperatorCanAcceptOrRejectInvitation)
             .WithUpdate(delegation => { delegation.InvitationAcceptedAt = DateTime.UtcNow; })
+            .WithAfterExecute(async delegation =>
+                await messagingFactory
+                    .QueueDelegationEmailAsync(
+                        new DelegationEmailMessage(
+                            delegation.Id,
+                            MessageTemplateTypes.Delegation.DelegationInviterConfirmation)
+                        {
+                            Recipient = delegation.DelegatingUser.EmailAddress,
+                        },
+                        cancellationToken)
+                    .ConfigureAwait(false))
             .Execute();
     }
 
@@ -169,21 +185,31 @@ public partial class CphDelegationsService : ICphDelegationsService
             .WithCancellationToken(cancellationToken)
             .WithRequest(request)
             .WithEntityFilter(delegation => request.Id == delegation.Id)
-            .WithExistenceRules(
-                rules =>
-                {
-                    rules.Add(RulesLibrary.Existence.NotSoftDeleted);
-                    rules.Add(RulesLibrary.Existence.NotExpired);
-                })
-            .WithBusinessRules(
-                rules =>
-                {
-                    rules.Add(RulesLibrary.Business.InvitationNotExpired);
-                    rules.Add(RulesLibrary.Business.InvitationNotAccepted);
-                    rules.Add(RulesLibrary.Business.InvitationNotRejected);
-                    rules.Add(RulesLibrary.Business.NotRevoked);
-                })
+            .WithExistenceRules(rules =>
+            {
+                rules.Add(RulesLibrary.Existence.NotSoftDeleted);
+                rules.Add(RulesLibrary.Existence.NotExpired);
+            })
+            .WithBusinessRules(rules =>
+            {
+                rules.Add(RulesLibrary.Business.InvitationNotExpired);
+                rules.Add(RulesLibrary.Business.InvitationNotAccepted);
+                rules.Add(RulesLibrary.Business.InvitationNotRejected);
+                rules.Add(RulesLibrary.Business.NotRevoked);
+            })
+            .WithBeforeUpdate(ValidateOperatorCanAcceptOrRejectInvitation)
             .WithUpdate(delegation => { delegation.InvitationRejectedAt = DateTime.UtcNow; })
+            .WithAfterExecute(async delegation =>
+                await messagingFactory
+                    .QueueDelegationEmailAsync(
+                        new DelegationEmailMessage(
+                            delegation.Id,
+                            MessageTemplateTypes.Delegation.DelegationInviterConfirmation)
+                        {
+                            Recipient = delegation.DelegatingUser.EmailAddress,
+                        },
+                        cancellationToken)
+                    .ConfigureAwait(false))
             .Execute();
     }
 
@@ -197,12 +223,11 @@ public partial class CphDelegationsService : ICphDelegationsService
             .WithEntityFilter(delegation => request.Id == delegation.Id)
             .WithExistenceRules(rules => { rules.Add(RulesLibrary.Existence.NotSoftDeleted); })
             .WithBusinessRules(rules => { rules.Add(RulesLibrary.Business.NotRevoked); })
-            .WithUpdate(
-                delegation =>
-                {
-                    delegation.RevokedAt = DateTime.UtcNow;
-                    delegation.RevokedById = operatorContext.OperatorId;
-                })
+            .WithUpdate(delegation =>
+            {
+                delegation.RevokedAt = DateTime.UtcNow;
+                delegation.RevokedById = operatorContext.OperatorId;
+            })
             .Execute();
     }
 
@@ -214,12 +239,11 @@ public partial class CphDelegationsService : ICphDelegationsService
             .WithCancellationToken(cancellationToken)
             .WithRequest(request)
             .WithEntityFilter(delegation => request.Id == delegation.Id)
-            .WithExistenceRules(
-                rules =>
-                {
-                    rules.Add(RulesLibrary.Existence.NotSoftDeleted);
-                    rules.Add(RulesLibrary.Existence.NotExpired);
-                })
+            .WithExistenceRules(rules =>
+            {
+                rules.Add(RulesLibrary.Existence.NotSoftDeleted);
+                rules.Add(RulesLibrary.Existence.NotExpired);
+            })
             .WithUpdate(delegation => { delegation.ExpiresAt = DateTime.UtcNow; })
             .Execute();
     }
@@ -235,26 +259,52 @@ public partial class CphDelegationsService : ICphDelegationsService
             .WithCancellationToken(cancellationToken)
             .WithRequest(request)
             .WithEntityFilter(delegationFilter)
-            .WithUpdate(
-                cph =>
-                {
-                    cph.DeletedAt = DateTime.UtcNow;
-                    cph.DeletedById = operatorContext.OperatorId;
-                })
+            .WithUpdate(cph =>
+            {
+                cph.DeletedAt = DateTime.UtcNow;
+                cph.DeletedById = operatorContext.OperatorId;
+            })
             .Execute();
     }
 
-    private async Task<UserAccounts> GetDelegatedUserByEmailAddress(CreateCphDelegation request, CancellationToken cancellationToken)
+    private async Task<UserAccounts> GetDelegatedUserByEmailAddress(
+        CreateCphDelegation request,
+        CancellationToken cancellationToken)
     {
-        var delegatedUser = await usersRepository.GetSingle(user => user.EmailAddress == request.DelegatedUserEmail, cancellationToken);
+        var delegatedUser = await usersRepository.GetSingle(
+            user => user.EmailAddress == request.DelegatedUserEmail,
+            cancellationToken);
 
         if (delegatedUser is { DeletedAt: null })
         {
             return delegatedUser;
         }
 
-        LogDelegatedUserNotFound(logger, CreateDelegationActionDescription, EntityDescriptions.CphDelegation, RulesLibrary.Reference.Descriptions.DelegatedUserMustExistNotDeleted);
+        LogDelegatedUserNotFound(
+            logger,
+            CreateDelegationActionDescription,
+            EntityDescriptions.CphDelegation,
+            RulesLibrary.Reference.Descriptions.DelegatedUserMustExistNotDeleted);
 
         throw new NotFoundException(RulesLibrary.Reference.Descriptions.DelegatedUserMustExistNotDeleted);
+    }
+
+    private Task ValidateOperatorCanAcceptOrRejectInvitation(CountyParishHoldingDelegations delegation)
+    {
+        try
+        {
+            if (delegation.DelegatedUserId.HasValue && delegation.DelegatedUserId == operatorContext.OperatorId)
+            {
+                return Task.CompletedTask;
+            }
+
+            LogAcceptOrRejectInvitationFailedAuthorisationRules(logger, delegation.Id, operatorContext.OperatorId);
+
+            throw new UnauthorizedAccessException("Operator cannot accept or reject this delegation");
+        }
+        catch (Exception exception)
+        {
+            return Task.FromException(exception);
+        }
     }
 }

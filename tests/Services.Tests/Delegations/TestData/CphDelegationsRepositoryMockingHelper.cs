@@ -6,7 +6,7 @@ namespace Defra.Identity.Services.Tests.Delegations.TestData;
 
 using Defra.Identity.Postgres.Database.Entities;
 
-public class CphDelegationsRepositoryMockingHelper
+public static class CphDelegationsRepositoryMockingHelper
 {
     public static CountyParishHoldingDelegations[] GetDelegationEntities()
     {

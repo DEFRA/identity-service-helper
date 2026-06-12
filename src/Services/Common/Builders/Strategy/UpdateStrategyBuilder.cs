@@ -27,6 +27,10 @@ public partial class UpdateStrategyBuilder<TService, TEntity>
 
     private Action<TEntity>? UpdateAction { get; set; }
 
+    private Func<TEntity, Task>? BeforeUpdateAction { get; set; }
+
+    private Func<TEntity, Task>? AfterExecuteAction { get; set; }
+
     private ExistenceRulesBuilder<TService, TEntity>? ExistenceRulesBuilder { get; set; }
 
     private ReferenceRulesBuilder<TService>? ReferenceRulesBuilder { get; set; }
@@ -55,7 +59,8 @@ public partial class UpdateStrategyBuilder<TService, TEntity>
         return this;
     }
 
-    public UpdateStrategyBuilder<TService, TEntity> WithExistenceRules(Action<ExistenceRulesBuilder<TService, TEntity>> builder)
+    public UpdateStrategyBuilder<TService, TEntity> WithExistenceRules(
+        Action<ExistenceRulesBuilder<TService, TEntity>> builder)
     {
         ExistenceRulesBuilder = new ExistenceRulesBuilder<TService, TEntity>();
 
@@ -73,7 +78,8 @@ public partial class UpdateStrategyBuilder<TService, TEntity>
         return this;
     }
 
-    public UpdateStrategyBuilder<TService, TEntity> WithConflictRules(Action<ConflictRulesBuilder<TService, TEntity>> builder)
+    public UpdateStrategyBuilder<TService, TEntity> WithConflictRules(
+        Action<ConflictRulesBuilder<TService, TEntity>> builder)
     {
         ConflictRulesBuilder = new ConflictRulesBuilder<TService, TEntity>();
 
@@ -82,7 +88,8 @@ public partial class UpdateStrategyBuilder<TService, TEntity>
         return this;
     }
 
-    public UpdateStrategyBuilder<TService, TEntity> WithBusinessRules(Action<BusinessRulesBuilder<TService, TEntity>> builder)
+    public UpdateStrategyBuilder<TService, TEntity> WithBusinessRules(
+        Action<BusinessRulesBuilder<TService, TEntity>> builder)
     {
         BusinessRulesBuilder = new BusinessRulesBuilder<TService, TEntity>();
 
@@ -94,6 +101,20 @@ public partial class UpdateStrategyBuilder<TService, TEntity>
     public UpdateStrategyBuilder<TService, TEntity> WithUpdate(Action<TEntity> updateAction)
     {
         UpdateAction = updateAction;
+
+        return this;
+    }
+
+    public UpdateStrategyBuilder<TService, TEntity> WithBeforeUpdate(Func<TEntity, Task> beforeUpdateAction)
+    {
+        BeforeUpdateAction = beforeUpdateAction;
+
+        return this;
+    }
+
+    public UpdateStrategyBuilder<TService, TEntity> WithAfterExecute(Func<TEntity, Task> afterExecuteAction)
+    {
+        AfterExecuteAction = afterExecuteAction;
 
         return this;
     }
@@ -145,7 +166,12 @@ public partial class UpdateStrategyBuilder<TService, TEntity>
             throw new InvalidOperationException(StrategyBuilderConstants.Errors.UpdateActionRequired);
         }
 
-        LogExecutingAction(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant(), Request.GetLoggableId(), OperatorContext.OperatorId);
+        LogExecutingAction(
+            Logger,
+            ActionDescription.ToLowerInvariant(),
+            EntityDescription.ToLowerInvariant(),
+            Request.GetLoggableId(),
+            OperatorContext.OperatorId);
 
         InvokeBeforeExecuteAction();
 
@@ -169,11 +195,26 @@ public partial class UpdateStrategyBuilder<TService, TEntity>
         ConflictRulesBuilder?.Validate(Request, entityToUpdate, ActionDescription, EntityDescription, Logger);
         BusinessRulesBuilder?.Validate(Request, entityToUpdate, ActionDescription, EntityDescription, Logger);
 
+        if (BeforeUpdateAction != null)
+        {
+            await BeforeUpdateAction.Invoke(entityToUpdate);
+        }
+
         UpdateAction(entityToUpdate);
 
         var updatedEntity = await UpdateableRepository.Update(entityToUpdate, CancellationToken.Value);
 
-        LogSuccessfullyExecutedAction(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant(), Request.GetLoggableId(), OperatorContext.OperatorId);
+        if (AfterExecuteAction != null)
+        {
+            await AfterExecuteAction.Invoke(updatedEntity);
+        }
+
+        LogSuccessfullyExecutedAction(
+            Logger,
+            ActionDescription.ToLowerInvariant(),
+            EntityDescription.ToLowerInvariant(),
+            Request.GetLoggableId(),
+            OperatorContext.OperatorId);
 
         return updatedEntity;
     }
