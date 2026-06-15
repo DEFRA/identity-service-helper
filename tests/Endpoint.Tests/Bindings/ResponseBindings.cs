@@ -53,6 +53,16 @@ public class ResponseBindings(
         executionContext.ResponseContent.ShouldNotBeNull();
     }
 
+    [Then("the response array contains {int} objects")]
+    public void ThenTheResponseArrayContainsIntObjects(int objectCount)
+    {
+        objectCount.ShouldBeGreaterThanOrEqualTo(0);
+
+        var tmp = executionContext.ResponseContent as JArray;
+        tmp.ShouldNotBeNull();
+        tmp.Count.ShouldBe(objectCount);
+    }
+
     [Then("I save the value of property {string} to the context using name {string}")]
     public void ThenISaveThePropertyToTheContext(string propertyName, string storageName)
     {
