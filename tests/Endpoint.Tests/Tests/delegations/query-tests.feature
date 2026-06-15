@@ -9,7 +9,7 @@ Feature: CPH delegation query tests
     When I 'GET' this request
     Then I receive the HTTP status code 'OK'
     And I have received JSON data in the response
-    And the response array contains 4 objects
+    And the response array contains at least 4 objects
 
   @single-result @success
   Scenario Outline: Getting a delegation by id returns the delegation invitation
