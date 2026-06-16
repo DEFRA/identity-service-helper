@@ -233,7 +233,7 @@ Feature: CPH delegation command tests
     Given the request url is '/delegations/<expire_delegation_id>:expire'
     And I am using the default header settings
     When I 'POST' this request
-    Then I receive the HTTP status code 'NotFound'
+    Then I receive the HTTP status code 'BadRequest'
     Given the request url is '/delegations/<expire_delegation_id>'
     And I am using the default header settings
     When I 'DELETE' this request
@@ -241,7 +241,7 @@ Feature: CPH delegation command tests
     Given the request url is '/delegations/<expire_delegation_id>'
     And I am using the default header settings
     When I 'DELETE' this request
-    Then I receive the HTTP status code 'NotFound'
+    Then I receive the HTTP status code 'BadRequest'
 
   @single-result @error @error-not-found
   Scenario Outline: Performing an action on an unknown delegation returns a 404
