@@ -22,6 +22,7 @@ using Defra.Identity.Services.Common.Extensions;
 using Defra.Identity.Services.Common.Filters;
 using Defra.Identity.Services.Common.Mappers;
 using Defra.Identity.Services.Common.Strategy.Factories;
+using Defra.Identity.Services.Delegations.Injection;
 using Defra.Identity.Services.Delegations.Rules;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
@@ -30,7 +31,7 @@ public partial class CphDelegationService : ICphDelegationService
 {
     private const string CreateDelegationActionDescription = "Create county parish holding delegation";
 
-    private readonly ICphDelegationsRepository repository;
+    private readonly ICphDelegationsRepository delegationRepository;
     private readonly IUserRepository userRepository;
     private readonly ICphRepository cphRepository;
     private readonly IRoleRepository roleRepository;
@@ -41,20 +42,17 @@ public partial class CphDelegationService : ICphDelegationService
     private readonly IMessagingFactory messagingFactory;
 
     public CphDelegationService(
-        ICphDelegationsRepository repository,
-        IUserRepository userRepository,
-        ICphRepository cphRepository,
-        IRoleRepository roleRepository,
+        ICphDelegationSvcRepoContext repoContext,
         IOperatorContext operatorContext,
         IMessagingFactory messagingFactory,
         IStrategyBuilderFactory<CphDelegationService> strategyBuilderFactory,
         IValidator<CreateCphDelegation> createCphDelegationValidator,
         ILogger<CphDelegationService> logger)
     {
-        this.repository = repository;
-        this.userRepository = userRepository;
-        this.cphRepository = cphRepository;
-        this.roleRepository = roleRepository;
+        this.delegationRepository = repoContext.DelegationRepository;
+        this.userRepository = repoContext.UserRepository;
+        this.cphRepository = repoContext.CphRepository;
+        this.roleRepository = repoContext.RoleRepository;
         this.operatorContext = operatorContext;
         this.messagingFactory = messagingFactory;
         this.strategyBuilderFactory = strategyBuilderFactory;
@@ -71,7 +69,7 @@ public partial class CphDelegationService : ICphDelegationService
     {
         return await strategyBuilderFactory.BuildGetListStrategy<CountyParishHoldingDelegations>()
             .WithActionDescription("Get all county parish holding delegations")
-            .WithRepository(repository)
+            .WithRepository(delegationRepository)
             .WithCancellationToken(cancellationToken)
             .WithEntityFilter(FilterLibrary.CphDelegations
                 .NotSoftDeletedOrExpiredAndValidRefsAndHasValidCphOwnerAssignment)
@@ -86,7 +84,7 @@ public partial class CphDelegationService : ICphDelegationService
 
         return await strategyBuilderFactory.BuildGetStrategy<CountyParishHoldingDelegations>()
             .WithActionDescription("Get county parish holding delegation")
-            .WithRepository(repository)
+            .WithRepository(delegationRepository)
             .WithCancellationToken(cancellationToken)
             .WithRequest(request)
             .WithEntityFilter(delegationFilter)
@@ -99,7 +97,7 @@ public partial class CphDelegationService : ICphDelegationService
 
         return await strategyBuilderFactory.BuildCreateStrategy<CountyParishHoldingDelegations>()
             .WithActionDescription("Create county parish holding delegation")
-            .WithRepository(repository)
+            .WithRepository(delegationRepository)
             .WithCancellationToken(cancellationToken)
             .WithRequestValidation(() => createCphDelegationValidator.ValidateAsync(request, cancellationToken))
             .WithReferenceRules(rules =>
@@ -148,7 +146,7 @@ public partial class CphDelegationService : ICphDelegationService
     {
         await strategyBuilderFactory.BuildUpdateStrategy<CountyParishHoldingDelegations>()
             .WithActionDescription("Accept county parish holding delegation invite")
-            .WithRepository(repository)
+            .WithRepository(delegationRepository)
             .WithCancellationToken(cancellationToken)
             .WithRequest(request)
             .WithEntityFilter(delegation => request.Id == delegation.Id)
@@ -181,7 +179,7 @@ public partial class CphDelegationService : ICphDelegationService
     {
         await strategyBuilderFactory.BuildUpdateStrategy<CountyParishHoldingDelegations>()
             .WithActionDescription("Reject county parish holding delegation invite")
-            .WithRepository(repository)
+            .WithRepository(delegationRepository)
             .WithCancellationToken(cancellationToken)
             .WithRequest(request)
             .WithEntityFilter(delegation => request.Id == delegation.Id)
@@ -214,7 +212,7 @@ public partial class CphDelegationService : ICphDelegationService
     {
         await strategyBuilderFactory.BuildUpdateStrategy<CountyParishHoldingDelegations>()
             .WithActionDescription("Revoke county parish holding delegation")
-            .WithRepository(repository)
+            .WithRepository(delegationRepository)
             .WithCancellationToken(cancellationToken)
             .WithRequest(request)
             .WithEntityFilter(delegation => request.Id == delegation.Id)
@@ -235,7 +233,7 @@ public partial class CphDelegationService : ICphDelegationService
     {
         await strategyBuilderFactory.BuildUpdateStrategy<CountyParishHoldingDelegations>()
             .WithActionDescription("Expire county parish holding delegation")
-            .WithRepository(repository)
+            .WithRepository(delegationRepository)
             .WithCancellationToken(cancellationToken)
             .WithRequest(request)
             .WithEntityFilter(delegation => request.Id == delegation.Id)
@@ -252,7 +250,7 @@ public partial class CphDelegationService : ICphDelegationService
     {
         await strategyBuilderFactory.BuildUpdateStrategy<CountyParishHoldingDelegations>()
             .WithActionDescription("Delete county parish holding delegation")
-            .WithRepository(repository)
+            .WithRepository(delegationRepository)
             .WithCancellationToken(cancellationToken)
             .WithRequest(request)
             .WithEntityFilter(delegation => request.Id == delegation.Id)

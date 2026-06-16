@@ -9,6 +9,7 @@ using Defra.Identity.Services.Common.Context;
 using Defra.Identity.Services.Common.Strategy.Factories;
 using Defra.Identity.Services.Cphs;
 using Defra.Identity.Services.Delegations;
+using Defra.Identity.Services.Delegations.Injection;
 using Defra.Identity.Services.Profiles;
 using Defra.Identity.Services.Roles;
 using Defra.Identity.Services.Species;
@@ -22,6 +23,8 @@ public static class ServiceCollectionExtensions
     {
         public IServiceCollection AddDataServices(IConfigurationRoot config)
         {
+            services.AddTransient<ICphDelegationSvcRepoContext, CphDelegationSvcRepoContext>();
+
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IRoleService, RoleService>();
             services.AddTransient<IProfileService, ProfileService>();
@@ -43,13 +46,19 @@ public static class ServiceCollectionExtensions
 
         public IServiceCollection AddStrategies(IConfigurationRoot config)
         {
-            services.AddTransient<IStrategyBuilderFactory<ApplicationService>, StrategyBuilderFactory<ApplicationService>>();
+            services
+                .AddTransient<IStrategyBuilderFactory<ApplicationService>,
+                    StrategyBuilderFactory<ApplicationService>>();
             services.AddTransient<IStrategyBuilderFactory<UserService>, StrategyBuilderFactory<UserService>>();
             services.AddTransient<IStrategyBuilderFactory<RoleService>, StrategyBuilderFactory<RoleService>>();
             services.AddTransient<IStrategyBuilderFactory<CphService>, StrategyBuilderFactory<CphService>>();
-            services.AddTransient<IStrategyBuilderFactory<CphDelegationService>, StrategyBuilderFactory<CphDelegationService>>();
+            services
+                .AddTransient<IStrategyBuilderFactory<CphDelegationService>,
+                    StrategyBuilderFactory<CphDelegationService>>();
             services.AddTransient<IStrategyBuilderFactory<ProfileService>, StrategyBuilderFactory<ProfileService>>();
-            services.AddTransient<IStrategyBuilderFactory<AnimalSpeciesService>, StrategyBuilderFactory<AnimalSpeciesService>>();
+            services
+                .AddTransient<IStrategyBuilderFactory<AnimalSpeciesService>,
+                    StrategyBuilderFactory<AnimalSpeciesService>>();
 
             return services;
         }
