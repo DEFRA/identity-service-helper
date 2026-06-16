@@ -5,8 +5,8 @@
 namespace Defra.Identity.Endpoint.Tests.Bindings;
 
 using System;
-using System.Net.Http.Json;
 using System.Net.Mime;
+using System.Text;
 using System.Threading.Tasks;
 using Defra.Identity.Endpoint.Tests.Configuration;
 using Defra.Identity.Endpoint.Tests.Contexts;
@@ -85,6 +85,12 @@ public class RequestBindings(
             var client = applicationFactory.CreateClient();
             executionContext.HttpRequestMessage.Method = new HttpMethod(requestedVerb.ToString());
 
+            if (executionContext.RequestContent is HttpContent requestContent)
+            {
+                executionContext.HttpRequestMessage.Content = requestContent;
+                executionContext.RequestContent = null;
+            }
+
             var response = await client
                 .SendAsync(executionContext.HttpRequestMessage)
                 .ConfigureAwait(false);
@@ -110,9 +116,10 @@ public class RequestBindings(
     public void GivenTheJsonPayloadIs(string multilineText)
     {
         multilineText.ShouldNotBeNullOrWhiteSpace();
-        JObject.Parse(multilineText); // This will throw if the JSON is invalid
+        var processed = stringProcessor.ProcessString(multilineText);
+        JObject.Parse(processed); // This will throw if the JSON is invalid
         executionContext.RequestContentType = MediaTypeNames.Application.Json;
-        executionContext.RequestContent = JsonContent.Create(multilineText);
+        executionContext.RequestContent = new StringContent(processed, Encoding.UTF8, MediaTypeNames.Application.Json);
     }
 
     [Given("the FORM encoded payload is:")]

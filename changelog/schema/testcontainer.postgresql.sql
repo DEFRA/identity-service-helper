@@ -106,7 +106,12 @@ DO $$
       ('ab820001-0000-4000-8000-000000000001', 'cd91b1e0-bae4-4cee-becf-3529cc557311', '0c15ba2f-b4ba-406a-a0ae-213de64600a9', ADMIN_USER_ID, '2026-04-16 00:00:00.000000 +00:00', null, null),
       ('ab820002-0000-4000-8000-000000000002', 'cd91b1e0-bae4-4cee-becf-3529cc557311', '0c15ba2f-b4ba-406a-a0ae-213de64600a9', ADMIN_USER_ID, '2026-04-16 00:00:00.000000 +00:00', null, null),
       ('ab820003-0000-4000-8000-000000000003', 'cd91b1e0-bae4-4cee-becf-3529cc557311', '0c15ba2f-b4ba-406a-a0ae-213de64600a9', ADMIN_USER_ID, '2026-04-16 00:00:00.000000 +00:00', null, null),
-      ('ab820006-0000-4000-8000-000000000006', 'cd91b1e0-bae4-4cee-becf-3529cc557311', '0c15ba2f-b4ba-406a-a0ae-213de64600a9', ADMIN_USER_ID, '2026-04-16 00:00:00.000000 +00:00', null, null);
+      ('ab820006-0000-4000-8000-000000000006', 'cd91b1e0-bae4-4cee-becf-3529cc557311', '0c15ba2f-b4ba-406a-a0ae-213de64600a9', ADMIN_USER_ID, '2026-04-16 00:00:00.000000 +00:00', null, null),
+      -- CPH assignments for seeded delegations (aa810004, aa810005, ab820004, ab820005)
+      ('aa810004-0000-4000-8000-000000000004', 'a17a772c-604e-495d-950e-3dbee2ba6e98', '0c15ba2f-b4ba-406a-a0ae-213de64600a9', ADMIN_USER_ID, '2026-04-16 00:00:00.000000 +00:00', null, null),
+      ('aa810005-0000-4000-8000-000000000005', 'a17a772c-604e-495d-950e-3dbee2ba6e98', '0c15ba2f-b4ba-406a-a0ae-213de64600a9', ADMIN_USER_ID, '2026-04-16 00:00:00.000000 +00:00', null, null),
+      ('ab820004-0000-4000-8000-000000000004', 'cd91b1e0-bae4-4cee-becf-3529cc557311', '0c15ba2f-b4ba-406a-a0ae-213de64600a9', ADMIN_USER_ID, '2026-04-16 00:00:00.000000 +00:00', null, null),
+      ('ab820005-0000-4000-8000-000000000005', 'cd91b1e0-bae4-4cee-becf-3529cc557311', '0c15ba2f-b4ba-406a-a0ae-213de64600a9', ADMIN_USER_ID, '2026-04-16 00:00:00.000000 +00:00', null, null);
 
     insert into county_parish_holding_animal_species (county_parish_holding_id, animal_species_id, created_at, created_by_id) values
       ('088967e7-71b8-457a-9001-5b71f24798fd', 'CTT', '2026-02-24 00:00:00.000000 +00:00', ADMIN_USER_ID),
