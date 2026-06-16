@@ -19,6 +19,7 @@ using Defra.Identity.Services.Common.Context;
 using Defra.Identity.Services.Common.Exceptions;
 using Defra.Identity.Services.Common.Strategy.Factories;
 using Defra.Identity.Services.Delegations;
+using Defra.Identity.Services.Delegations.Injection;
 using Defra.Identity.Test.Utilities.Assertions;
 using Defra.Identity.Test.Utilities.Comparison;
 using Defra.Identity.Test.Utilities.Repository;
@@ -55,12 +56,12 @@ public class CphDelegationServiceTests
 
     public CphDelegationServiceTests()
     {
+        var repoContext =
+            new CphDelegationSvcRepoContext(cphDelegationsRepository, userRepository, cphRepository, roleRepository);
+
         sut = SutProvider<CphDelegationService>.CreateFor(
             context => new CphDelegationService(
-                cphDelegationsRepository,
-                userRepository,
-                cphRepository,
-                roleRepository,
+                repoContext,
                 context!,
                 messagingFactory,
                 strategyBuilderFactory,
@@ -352,6 +353,7 @@ public class CphDelegationServiceTests
 
         // Assert
         validatorContext.Calls.ValidateAsyncCallCount.ShouldBe(1);
+        validatorContext.Calls.LastValidateAsync.ShouldNotBeNull();
         validatorContext.Calls.LastValidateAsync.Request.ShouldBe(request);
 
         repositoryContext.Calls.CreateCallCount.ShouldBe(1);
@@ -442,6 +444,7 @@ public class CphDelegationServiceTests
         exception.Message.ShouldBe("County parish holding must exist and not be deleted or expired");
 
         validatorContext.Calls.ValidateAsyncCallCount.ShouldBe(1);
+        validatorContext.Calls.LastValidateAsync.ShouldNotBeNull();
         validatorContext.Calls.LastValidateAsync.Request.ShouldBe(request);
 
         repositoryContext.Calls.ShouldHaveNoCalls();
@@ -503,6 +506,7 @@ public class CphDelegationServiceTests
         exception.Message.ShouldBe("County parish holding must exist and not be deleted or expired");
 
         validatorContext.Calls.ValidateAsyncCallCount.ShouldBe(1);
+        validatorContext.Calls.LastValidateAsync.ShouldNotBeNull();
         validatorContext.Calls.LastValidateAsync.Request.ShouldBe(request);
 
         repositoryContext.Calls.ShouldHaveNoCalls();
@@ -562,6 +566,7 @@ public class CphDelegationServiceTests
         exception.Message.ShouldBe("County parish holding must exist and not be deleted or expired");
 
         validatorContext.Calls.ValidateAsyncCallCount.ShouldBe(1);
+        validatorContext.Calls.LastValidateAsync.ShouldNotBeNull();
         validatorContext.Calls.LastValidateAsync.Request.ShouldBe(request);
 
         repositoryContext.Calls.ShouldHaveNoCalls();
@@ -623,6 +628,7 @@ public class CphDelegationServiceTests
         exception.Message.ShouldBe("Delegating user must exist and not be deleted");
 
         validatorContext.Calls.ValidateAsyncCallCount.ShouldBe(1);
+        validatorContext.Calls.LastValidateAsync.ShouldNotBeNull();
         validatorContext.Calls.LastValidateAsync.Request.ShouldBe(request);
 
         repositoryContext.Calls.ShouldHaveNoCalls();
@@ -679,6 +685,7 @@ public class CphDelegationServiceTests
         exception.Message.ShouldBe("Delegating user must exist and not be deleted");
 
         validatorContext.Calls.ValidateAsyncCallCount.ShouldBe(1);
+        validatorContext.Calls.LastValidateAsync.ShouldNotBeNull();
         validatorContext.Calls.LastValidateAsync.Request.ShouldBe(request);
 
         repositoryContext.Calls.ShouldHaveNoCalls();
@@ -848,6 +855,7 @@ public class CphDelegationServiceTests
         exception.Message.ShouldBe("Delegated user role must exist");
 
         validatorContext.Calls.ValidateAsyncCallCount.ShouldBe(1);
+        validatorContext.Calls.LastValidateAsync.ShouldNotBeNull();
         validatorContext.Calls.LastValidateAsync.Request.ShouldBe(request);
 
         repositoryContext.Calls.ShouldHaveNoCalls();
@@ -916,6 +924,7 @@ public class CphDelegationServiceTests
         exception.Errors.First().ErrorMessage.ShouldBe("Simulated validation failure 1");
 
         validatorContext.Calls.ValidateAsyncCallCount.ShouldBe(1);
+        validatorContext.Calls.LastValidateAsync.ShouldNotBeNull();
         validatorContext.Calls.LastValidateAsync.Request.ShouldBe(request);
 
         repositoryContext.Calls.ShouldHaveNoCalls();

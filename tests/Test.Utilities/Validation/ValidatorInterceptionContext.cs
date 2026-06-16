@@ -14,9 +14,9 @@ public class ValidatorInterceptionContext<T>
 
     public List<ValidatorInterceptionInstance<T>?> ValidateAsyncLog { get; } = [];
 
-    public ValidatorInterceptionInstance<T> LastValidateAsync
+    public ValidatorInterceptionInstance<T>? LastValidateAsync
     {
-        get => ValidateAsyncCallCount == 0 ? throw new InvalidOperationException("No validation result has been set") : field;
+        get;
 
         set
         {

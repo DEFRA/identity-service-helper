@@ -60,6 +60,7 @@ public class CphNumberServiceTests
 
         // Assert
         validatorContext.Calls.ValidateAsyncCallCount.ShouldBe(1);
+        validatorContext.Calls.LastValidateAsync.ShouldNotBeNull();
         validatorContext.Calls.LastValidateAsync.Request.ShouldBe(request);
 
         repositoryContext.Calls.GetCallCount.ShouldBe(1);
@@ -112,6 +113,7 @@ public class CphNumberServiceTests
         exception.Errors.First().ErrorMessage.ShouldBe("Simulated validation failure 1");
 
         validatorContext.Calls.ValidateAsyncCallCount.ShouldBe(1);
+        validatorContext.Calls.LastValidateAsync.ShouldNotBeNull();
         validatorContext.Calls.LastValidateAsync.Request.ShouldBe(request);
 
         repositoryContext.Calls.ShouldHaveNoCalls();
@@ -140,6 +142,7 @@ public class CphNumberServiceTests
         exception.Message.ShouldBe("County parish holding not found");
 
         validatorContext.Calls.ValidateAsyncCallCount.ShouldBe(1);
+        validatorContext.Calls.LastValidateAsync.ShouldNotBeNull();
         validatorContext.Calls.LastValidateAsync.Request.ShouldBe(request);
 
         repositoryContext.Calls.GetCallCount.ShouldBe(1);
@@ -179,6 +182,7 @@ public class CphNumberServiceTests
         exception.Message.ShouldBe("County parish holding not found");
 
         validatorContext.Calls.ValidateAsyncCallCount.ShouldBe(1);
+        validatorContext.Calls.LastValidateAsync.ShouldNotBeNull();
         validatorContext.Calls.LastValidateAsync.Request.ShouldBe(request);
 
         // Check that the repository returned the deleted item for evaluation of the deleted state

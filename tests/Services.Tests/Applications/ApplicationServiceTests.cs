@@ -206,6 +206,7 @@ public class ApplicationServiceTests
 
         // Assert
         validatorContext.Calls.ValidateAsyncCallCount.ShouldBe(1);
+        validatorContext.Calls.LastValidateAsync.ShouldNotBeNull();
         validatorContext.Calls.LastValidateAsync.Request.ShouldBe(request);
 
         repositoryContext.Calls.CreateCallCount.ShouldBe(1);
@@ -288,6 +289,7 @@ public class ApplicationServiceTests
         exception.Errors.First().ErrorMessage.ShouldBe("Simulated validation failure 1");
 
         validatorContext.Calls.ValidateAsyncCallCount.ShouldBe(1);
+        validatorContext.Calls.LastValidateAsync.ShouldNotBeNull();
         validatorContext.Calls.LastValidateAsync.Request.ShouldBe(request);
 
         repositoryContext.Calls.ShouldHaveNoCalls();
@@ -392,6 +394,7 @@ public class ApplicationServiceTests
 
         // Assert
         validatorContext.Calls.ValidateAsyncCallCount.ShouldBe(1);
+        validatorContext.Calls.LastValidateAsync.ShouldNotBeNull();
         validatorContext.Calls.LastValidateAsync.Request.ShouldBe(request);
 
         repositoryContext.Calls.UpdateCallCount.ShouldBe(1);
@@ -473,6 +476,7 @@ public class ApplicationServiceTests
         });
 
         validatorContext.Calls.ValidateAsyncCallCount.ShouldBe(1);
+        validatorContext.Calls.LastValidateAsync.ShouldNotBeNull();
         validatorContext.Calls.LastValidateAsync.Request.ShouldBe(request);
 
         repositoryContext.Calls.ShouldHaveNoCalls();
