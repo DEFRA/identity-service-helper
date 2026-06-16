@@ -55,6 +55,10 @@ public class GetTests(PostgreContainerFixture fixture) : BaseTests(fixture)
             x => x.SamId.ShouldBe("SamId1"),
             x => x.CreatedById.ShouldBe(adminUser.Id),
             x => x.CreatedAt.ShouldBeCloseToUtcNowAddDays(2));
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            "Getting single user account");
     }
 
     [Fact]

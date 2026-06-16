@@ -5,6 +5,7 @@
 namespace Defra.Identity.Api.Endpoints.Health;
 
 using Defra.Identity.Api.MetaData;
+using Defra.Identity.Models.Responses.Health;
 
 public static class HealthEndpoints
 {
@@ -19,9 +20,8 @@ public static class HealthEndpoints
             .WithMetadata(new IgnoreApiKeyCheck());
     }
 
-    private static async Task<IResult> CalculateHealthRoute()
+    private static Task<IResult> CalculateHealthRoute()
     {
-        // TODO: Add database and dependent service checks
-        return Results.Ok(new { status = "ok" });
+        return Task.FromResult(Results.Ok(new HealthStatus() { Status = "ok" }));
     }
 }

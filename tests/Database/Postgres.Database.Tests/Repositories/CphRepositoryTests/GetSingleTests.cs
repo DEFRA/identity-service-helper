@@ -23,7 +23,8 @@ public class GetSingleTests(PostgreContainerFixture fixture) : BaseTests(fixture
         var logger = DefraLoggerExtensions.CreateNSubstituteLogger<CphRepository>();
         var repository = new CphRepository(Context, ReadOnlyContext, logger);
 
-        Expression<Func<CountyParishHoldings, bool>> filter = cph => cph.Id == new Guid("088967e7-71b8-457a-9001-5b71f24798fd");
+        Expression<Func<CountyParishHoldings, bool>> filter = cph =>
+            cph.Id == new Guid("088967e7-71b8-457a-9001-5b71f24798fd");
 
         // Act
         var entity = await repository.GetSingle(filter, TestContext.Current.CancellationToken);
@@ -42,6 +43,10 @@ public class GetSingleTests(PostgreContainerFixture fixture) : BaseTests(fixture
             (x) => x.DeletedAt.ShouldBe(DateTime.Parse("2026-02-13", new DateTimeFormatInfo()).ToUniversalTime()),
             (x) => x.DeletedById.ShouldBe(AdminUserId),
             (x) => x.CountyParishHoldingAnimalSpecies.Count.ShouldBe(1));
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            "Getting single county parish holding");
     }
 
     [Fact]
@@ -60,8 +65,8 @@ public class GetSingleTests(PostgreContainerFixture fixture) : BaseTests(fixture
         var entity = await repository.GetSingle(filter, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.VerifyLogContainsOne(LogLevel.Information, "Getting single county parish holding");
-
         entity.ShouldBeNull();
+
+        logger.VerifyLogContainsOne(LogLevel.Information, "Getting single county parish holding");
     }
 }

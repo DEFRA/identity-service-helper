@@ -1,4 +1,4 @@
-// <copyright file="OperationByGuidIdMappingFilterTests.cs" company="Defra">
+// <copyright file="OperationByStringIdMappingFilterTests.cs" company="Defra">
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
@@ -12,9 +12,9 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Routing;
 using NSubstitute;
 
-public class OperationByGuidIdMappingFilterTests
+public class OperationByStringIdMappingFilterTests
 {
-    private readonly OperationByGuidIdMappingFilter<TestModel> filter = new();
+    private readonly OperationByStringIdMappingFilter<TestModel> filter = new();
 
     [Fact]
     public async Task InvokeAsync_Returns_BadRequest_When_Argument_Missing()
@@ -35,11 +35,10 @@ public class OperationByGuidIdMappingFilterTests
     public async Task InvokeAsync_Returns_InvalidOperationException_When_Id_Mismatch()
     {
         // Arrange
-        var guid = "2e35b982-e427-4917-8b9d-454220553a1e";
-        var model = new TestModel { Id = Guid.Parse(guid), };
+        var model = new TestModel { Id = "TestId", };
         var context = Substitute.For<EndpointFilterInvocationContext>();
         var routeValue = Substitute.For<IRouteValuesFeature>();
-        routeValue.RouteValues = new RouteValueDictionary { { "id2", "2e35b982-e427-4917-8b9d-454220553a1d" }, };
+        routeValue.RouteValues = new RouteValueDictionary { { "id2", "TestId2" }, };
         var httpContext = new DefaultHttpContext();
         httpContext.Features.Set(routeValue);
         context.Arguments.Returns([model]);
@@ -61,11 +60,10 @@ public class OperationByGuidIdMappingFilterTests
     public async Task InvokeAsync_Calls_Next_When_Validation_Succeeds()
     {
         // Arrange
-        var guid = "2e35b982-e427-4917-8b9d-454220553a1d";
-        var model = new TestModel { Id = Guid.Parse(guid), };
+        var model = new TestModel { Id = "TestId", };
         var context = Substitute.For<EndpointFilterInvocationContext>();
         var routeValue = Substitute.For<IRouteValuesFeature>();
-        routeValue.RouteValues = new RouteValueDictionary { { "id", guid }, };
+        routeValue.RouteValues = new RouteValueDictionary { { "id", "TestId" }, };
         var httpContext = new DefaultHttpContext();
         httpContext.Features.Set(routeValue);
         context.Arguments.Returns([model]);
@@ -91,5 +89,5 @@ public class OperationByGuidIdMappingFilterTests
         }
     }
 
-    private class TestModel : OperationById<Guid>;
+    private class TestModel : OperationById<string>;
 }

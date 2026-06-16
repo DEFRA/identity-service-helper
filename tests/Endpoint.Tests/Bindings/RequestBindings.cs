@@ -5,6 +5,7 @@
 namespace Defra.Identity.Endpoint.Tests.Bindings;
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,6 +26,7 @@ using Reqnroll;
 /// <param name="authContext">The auth context.</param>
 /// <param name="stringProcessor">The string processor.</param>
 /// <param name="outputHelper">The reqnroll output helper.</param>
+[ExcludeFromCodeCoverage]
 [Binding]
 public class RequestBindings(
     EndpointTestApplicationFactory applicationFactory,

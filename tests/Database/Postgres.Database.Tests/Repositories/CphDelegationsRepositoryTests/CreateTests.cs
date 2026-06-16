@@ -57,11 +57,6 @@ public class CreateTests(PostgreContainerFixture fixture)
             x => x.InvitationToken.ShouldBeNullOrWhiteSpace(),
             x => x.CreatedById.ShouldBe(adminUser.Id));
 
-        logger.ReceivedWithAnyArgs().Log(
-            LogLevel.Information,
-            Arg.Any<EventId>(),
-            Arg.Any<object>(),
-            Arg.Any<Exception>(),
-            Arg.Any<Func<object, Exception?, string>>());
+        logger.VerifyLogContainsOne(LogLevel.Information, "Creating delegation");
     }
 }

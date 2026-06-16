@@ -4,8 +4,10 @@
 
 namespace Defra.Identity.Endpoint.Tests.Extensions;
 
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Http.Headers;
 
+[ExcludeFromCodeCoverage]
 public static class HttpRequestHeadersExtensions
 {
     /// <summary>

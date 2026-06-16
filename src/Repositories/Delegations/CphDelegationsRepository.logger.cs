@@ -14,8 +14,8 @@ public partial class CphDelegationsRepository
     [LoggerMessage(LogLevel.Information, "Getting list of county parish holding delegations")]
     partial void LogGettingListOfCountyParishHoldingDelegations();
 
-    [LoggerMessage(LogLevel.Information, "Creating delegation with id {Id}")]
-    partial void LogCreatingDelegationWithId(Guid id);
+    [LoggerMessage(LogLevel.Information, "Creating delegation")]
+    partial void LogCreatingDelegationWithId();
 
     [LoggerMessage(LogLevel.Information, "Updating delegation with id {Id}")]
     partial void LogUpdatingDelegationWithId(Guid id);

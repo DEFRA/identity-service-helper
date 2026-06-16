@@ -60,5 +60,7 @@ public class UpdateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
             x => x.DelegatedUserEmail.ShouldBe(delegatedUserEmail),
             x => x.InvitationToken.ShouldBeNullOrWhiteSpace(),
             x => x.CreatedById.ShouldBe(adminUser.Id));
+
+        logger.VerifyLogContainsOne(LogLevel.Information, $"Updating delegation with id {id}");
     }
 }

@@ -14,8 +14,8 @@ public partial class ApplicationsRepository
     [LoggerMessage(LogLevel.Information, "Getting list of applications")]
     partial void LogGettingListOfApplications();
 
-    [LoggerMessage(LogLevel.Information, "Creating application with id {Id}")]
-    partial void LogCreatingApplicationWithId(Guid id);
+    [LoggerMessage(LogLevel.Information, "Creating application")]
+    partial void LogCreatingApplication();
 
     [LoggerMessage(LogLevel.Information, "Updating application with id {Id}")]
     partial void LogUpdatingApplicationWithId(Guid id);

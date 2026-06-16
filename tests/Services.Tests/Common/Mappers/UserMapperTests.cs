@@ -22,21 +22,18 @@ public class UserMapperTests
             LastName = "User",
             KrdsId = Guid.NewGuid(),
             SamId = "C123455",
-            DeletedBy = new UserAccounts(),
+            CreatedById = Guid.NewGuid(),
             CreatedBy = new UserAccounts(),
+            CreatedAt = DateTime.UtcNow,
+            DeletedById = Guid.NewGuid(),
+            DeletedBy = new UserAccounts(),
+            DeletedAt = DateTime.UtcNow,
         };
 
         // Act
         var result = UserMapper.MapUserEntityToUser(user);
 
         // Assert
-        result.ShouldSatisfyAllConditions(
-            x => x.ShouldNotBeNull(),
-            x => x.Id.ShouldBe(user.Id),
-            x => x.Email.ShouldBe(user.EmailAddress),
-            x => x.DisplayName.ShouldBe(user.DisplayName),
-            x => x.FirstName.ShouldBe(user.FirstName),
-            x => x.LastName.ShouldBe(user.LastName),
-            x => x.Active.ShouldBe(user.DeletedBy != null));
+        result.ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(user));
     }
 }

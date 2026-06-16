@@ -5,8 +5,10 @@
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 namespace Defra.Identity.Api.Tests.Common.TestData;
 
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Http;
 
+[ExcludeFromCodeCoverage]
 public class EndpointFake<TRequest>
 {
     private readonly IResult result;

@@ -37,6 +37,8 @@ public class GetTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         // Assert
         result.ShouldNotBeNull();
         result.Name.ShouldBe("Get Single Test");
+
+        logger.VerifyLogContainsOne(LogLevel.Information, "Getting single application");
     }
 
     [Fact]
@@ -81,5 +83,7 @@ public class GetTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         result.ShouldSatisfyAllConditions(
             x => x.ShouldNotBeNull(),
             x => x.Count.ShouldBeGreaterThanOrEqualTo(2));
+
+        logger.VerifyLogContainsOne(LogLevel.Information, "Getting list of applications");
     }
 }

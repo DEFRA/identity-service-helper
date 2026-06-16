@@ -38,7 +38,7 @@ public partial class CphRepository(
         bool orderByDescending,
         CancellationToken cancellationToken = default)
     {
-        LogGettingListOfCountyParishHoldings();
+        LogGettingPagedListOfCountyParishHoldings();
 
         var results = await readOnlyContext.CountyParishHoldings
             .Where(predicate)

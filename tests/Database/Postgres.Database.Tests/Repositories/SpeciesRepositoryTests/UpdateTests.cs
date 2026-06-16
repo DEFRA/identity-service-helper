@@ -41,6 +41,8 @@ public class UpdateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         speciesFromRequery.ShouldSatisfyAllConditions(
             (x) => x.Id.ShouldBe(id),
             (x) => x.IsActive.ShouldBeFalse());
+
+        logger.VerifyLogContainsOne(LogLevel.Information, $"Updating animal species with id {id}");
     }
 
     [Fact]

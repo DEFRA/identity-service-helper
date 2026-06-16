@@ -16,7 +16,10 @@ public class DelegationMapperTests
         var cph = new CountyParishHoldings() { Id = Guid.NewGuid(), Identifier = "12/123/1234", };
         var role = new Roles() { Id = Guid.NewGuid(), Name = "Delegated role", };
         var delegatingUser = new UserAccounts() { Id = Guid.NewGuid(), DisplayName = "Delegating user", };
-        var delegatedUser = new UserAccounts() { Id = Guid.NewGuid(), DisplayName = "Delegated user", EmailAddress = "test@example.com", };
+        var delegatedUser = new UserAccounts()
+        {
+            Id = Guid.NewGuid(), DisplayName = "Delegated user", EmailAddress = "test@example.com",
+        };
         var revokeUser = new UserAccounts() { Id = Guid.NewGuid(), DisplayName = "Revoking user", };
 
         var delegation = new CountyParishHoldingDelegations
@@ -34,36 +37,23 @@ public class DelegationMapperTests
             InvitationExpiresAt = DateTime.UtcNow,
             InvitationAcceptedAt = DateTime.UtcNow,
             InvitationRejectedAt = DateTime.UtcNow,
+            InvitationToken = string.Empty,
             RevokedAt = DateTime.UtcNow,
-            ExpiresAt = DateTime.UtcNow,
             RevokedById = revokeUser.Id,
             RevokedByUser = revokeUser,
-            DeletedByUser = new UserAccounts(),
+            ExpiresAt = DateTime.UtcNow,
+            CreatedById = Guid.NewGuid(),
             CreatedByUser = new UserAccounts(),
+            CreatedAt = DateTime.UtcNow,
+            DeletedById = Guid.NewGuid(),
+            DeletedByUser = new UserAccounts(),
+            DeletedAt = DateTime.UtcNow,
         };
 
         // Act
         var result = DelegationMapper.MapCphDelegationEntityToCphDelegation(delegation);
 
         // Assert
-        result.ShouldSatisfyAllConditions(
-            x => x.ShouldNotBeNull(),
-            x => x.Id.ShouldBe(delegation.Id),
-            x => x.CountyParishHoldingId.ShouldBe(delegation.CountyParishHolding.Id),
-            x => x.CountyParishHoldingNumber.ShouldBe(delegation.CountyParishHolding.Identifier),
-            x => x.DelegatingUserId.ShouldBe(delegation.DelegatingUserId),
-            x => x.DelegatingUserName.ShouldBe(delegation.DelegatingUser.DisplayName),
-            x => x.DelegatedUserId.ShouldBe(delegation.DelegatedUserId),
-            x => x.DelegatedUserName.ShouldBe(delegation.DelegatedUser?.DisplayName),
-            x => x.DelegatedUserEmail.ShouldBe(delegation.DelegatedUserEmail),
-            x => x.DelegatedUserRoleId.ShouldBe(delegation.DelegatedUserRoleId),
-            x => x.DelegatedUserRoleName.ShouldBe(delegation.DelegatedUserRole.Name),
-            x => x.InvitationExpiresAt.ShouldBe(delegation.InvitationExpiresAt),
-            x => x.InvitationAcceptedAt.ShouldBe(delegation.InvitationAcceptedAt),
-            x => x.InvitationRejectedAt.ShouldBe(delegation.InvitationRejectedAt),
-            x => x.RevokedAt.ShouldBe(delegation.RevokedAt),
-            x => x.ExpiresAt.ShouldBe(delegation.ExpiresAt),
-            x => x.RevokedById.ShouldBe(delegation.RevokedById),
-            x => x.RevokedByName.ShouldBe(delegation.RevokedByUser?.DisplayName));
+        result.ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(delegation));
     }
 }

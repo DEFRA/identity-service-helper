@@ -59,7 +59,7 @@ public partial class CphDelegationsRepository(
     {
         ArgumentNullException.ThrowIfNull(entity);
 
-        LogCreatingDelegationWithId(entity.Id);
+        LogCreatingDelegationWithId();
 
         var addedEntry = await context.CountyParishHoldingDelegations.AddAsync(entity, cancellationToken);
 

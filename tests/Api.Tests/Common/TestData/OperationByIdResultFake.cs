@@ -4,6 +4,9 @@
 
 namespace Defra.Identity.Api.Tests.Common.TestData;
 
+using System.Diagnostics.CodeAnalysis;
+
+[ExcludeFromCodeCoverage]
 public class OperationByIdResultFake
 {
     public OperationByIdResultFake(Guid id, string description)

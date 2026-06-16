@@ -10,7 +10,6 @@ using Defra.Identity.Postgres.Database.Tests.Fixtures;
 using Defra.Identity.Repositories.Messaging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using NSubstitute;
 
 public class ExternalMessagingUpdateTests(PostgreContainerFixture fixture)
     : BaseTests(fixture)
@@ -25,6 +24,7 @@ public class ExternalMessagingUpdateTests(PostgreContainerFixture fixture)
 
         var trackedUser = await Context.UserAccounts
             .SingleAsync(x => x.Id == AdminUserId, TestContext.Current.CancellationToken);
+
         var message = await repository.GetSingle(x => x.Id == 1, TestContext.Current.CancellationToken);
 
         message.ShouldNotBeNull();
@@ -40,5 +40,7 @@ public class ExternalMessagingUpdateTests(PostgreContainerFixture fixture)
         // Assert
         result.ResponseCode.ShouldBe(HttpStatusCode.Accepted);
         result.ResponseMessage.ShouldBe("Accepted");
+
+        logger.VerifyLogContainsOne(LogLevel.Information, $"Updating external messaging record with id {message.Id}");
     }
 }

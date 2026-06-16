@@ -4,6 +4,7 @@
 
 namespace Defra.Identity.Endpoint.Tests.Support;
 
+using System.Diagnostics.CodeAnalysis;
 using Defra.Identity.Endpoint.Tests.Configuration;
 using Defra.Identity.Endpoint.Tests.Extensions;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
@@ -17,6 +18,7 @@ using Reqnroll.UnitTestProvider;
 /// <summary>
 /// The Reqnroll plugin for this assembly. Allows us to connect up DI.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public class EndpointTestReqnrollPlugin : IRuntimePlugin
 {
     /// <inheritdoc />

@@ -21,31 +21,28 @@ public class CphMapperTests
             Id = Guid.NewGuid(),
             Identifier = "12/122/1223",
             ExpiredAt = DateTime.UtcNow,
+            CreatedById = Guid.NewGuid(),
+            CreatedByUser = new UserAccounts(),
+            CreatedAt = DateTime.UtcNow,
+            DeletedById = Guid.NewGuid(),
+            DeletedByUser = new UserAccounts(),
+            DeletedAt = DateTime.UtcNow,
         };
+
         cph.CountyParishHoldingAnimalSpecies.Add(new CountyParishHoldingAnimalSpecies
         {
-            AnimalSpeciesId = ctt.Id,
-            AnimalSpecies = ctt,
-            CountyParishHolding = cph,
+            AnimalSpeciesId = ctt.Id, AnimalSpecies = ctt, CountyParishHolding = cph,
         });
+
         cph.CountyParishHoldingAnimalSpecies.Add(new CountyParishHoldingAnimalSpecies
         {
-            AnimalSpeciesId = gt.Id,
-            AnimalSpecies = gt,
-            CountyParishHolding = cph,
+            AnimalSpeciesId = gt.Id, AnimalSpecies = gt, CountyParishHolding = cph,
         });
 
         // Act
         var result = CphMapper.MapCphEntityToCph(cph);
 
         // Assert
-        result.ShouldSatisfyAllConditions(
-            x => x.ShouldNotBeNull(),
-            x => x.Id.ShouldBe(cph.Id),
-            x => x.CountyParishHoldingNumber.ShouldBe(cph.Identifier),
-            x => x.AllowedSpecies.Count().ShouldBe(2),
-            x => x.AllowedSpecies.ToArray()[0].Id.ShouldBe("CTT"),
-            x => x.Expired.ShouldBe(cph.ExpiredAt != null),
-            x => x.ExpiredAt.ShouldBe(cph.ExpiredAt));
+        result.ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(cph));
     }
 }

@@ -32,6 +32,7 @@ public class GetAllTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         speciesList.ShouldSatisfyAllConditions((x) => x.Count.ShouldBe(1));
 
         var firstItem = speciesList[0];
+
         firstItem.ShouldSatisfyAllConditions(
             (x) => x.Id.ShouldBe("CTT"),
             (x) => x.IsActive.ShouldBeTrue());
