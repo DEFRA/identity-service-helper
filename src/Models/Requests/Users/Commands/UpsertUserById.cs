@@ -8,13 +8,13 @@ using System.ComponentModel;
 using Defra.Identity.Models.Requests.Common;
 using Defra.Identity.Models.Requests.Users.Commands.Base;
 
-public class UpsertUserById : UserWriteOperationBase, IOperationById<Guid>
+public class UpsertUserById : UserWriteOperationBase, IOperationById<Guid?>
 {
     [Description(OpenApiMetadata.Users.Id)]
-    public Guid Id { get; set; } = Guid.Empty;
+    public Guid? Id { get; set; } = null;
 
     public string GetLoggableId()
     {
-        return Id.ToString() ?? throw new InvalidOperationException("Id has not been set");
+        return Id?.ToString() ?? throw new InvalidOperationException("Id has not been set");
     }
 }

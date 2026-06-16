@@ -43,8 +43,8 @@ public class CphMapperTests
             x => x.ShouldNotBeNull(),
             x => x.Id.ShouldBe(cph.Id),
             x => x.CountyParishHoldingNumber.ShouldBe(cph.Identifier),
-            x => x.AllowedSpecies.Count.ShouldBe(2),
-            x => x.AllowedSpecies[0].Id.ShouldBe("CTT"),
+            x => x.AllowedSpecies.Count().ShouldBe(2),
+            x => x.AllowedSpecies.ToArray()[0].Id.ShouldBe("CTT"),
             x => x.Expired.ShouldBe(cph.ExpiredAt != null),
             x => x.ExpiredAt.ShouldBe(cph.ExpiredAt));
     }

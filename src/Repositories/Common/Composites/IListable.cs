@@ -5,8 +5,9 @@
 namespace Defra.Identity.Repositories.Common.Composites;
 
 using System.Linq.Expressions;
+using Defra.Identity.Repositories.Common.Composites.Base;
 
-public interface IListable<TEntity>
+public interface IListable<TEntity> : ICapability
     where TEntity : class
 {
     Task<List<TEntity>> GetList(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default);

@@ -6,10 +6,12 @@ namespace Defra.Identity.Api.Utility.OpenApi;
 
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
 
+[ExcludeFromCodeCoverage]
 public class SchemaTransformer
     : IOpenApiSchemaTransformer
 {

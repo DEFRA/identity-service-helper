@@ -9,7 +9,6 @@ using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
 using Defra.Identity.Repositories.Applications;
 using Microsoft.Extensions.Logging;
-using NSubstitute;
 using Shouldly;
 
 public class GetTests(PostgreContainerFixture fixture) : BaseTests(fixture)
@@ -26,16 +25,14 @@ public class GetTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 
         var application = new Applications
         {
-            Name = "Get Single Test",
-            ClientId = Guid.NewGuid(),
-            TenantName = "Test Tenant",
-            CreatedById = adminUser.Id,
+            Name = "Get Single Test", ClientId = Guid.NewGuid(), TenantName = "Test Tenant", CreatedById = adminUser.Id,
         };
         await Context.Applications.AddAsync(application, TestContext.Current.CancellationToken);
         await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
-        var result = await repository.GetSingle(x => x.Name == "Get Single Test", TestContext.Current.CancellationToken);
+        var result =
+            await repository.GetSingle(x => x.Name == "Get Single Test", TestContext.Current.CancellationToken);
 
         // Assert
         result.ShouldNotBeNull();
@@ -54,14 +51,31 @@ public class GetTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 
         var apps = new List<Applications>
         {
-            new() { Name = "App 1", ClientId = Guid.NewGuid(), TenantName = "Tenant 1", CreatedById = adminUser.Id, Scopes = "scope1;scope2", RedirectUris = "uri1;uri2" },
-            new() { Name = "App 2", ClientId = Guid.NewGuid(), TenantName = "Tenant 2", CreatedById = adminUser.Id, Scopes = "scope1;scope2", RedirectUris = "uri1;uri2" },
+            new()
+            {
+                Name = "App 1",
+                ClientId = Guid.NewGuid(),
+                TenantName = "Tenant 1",
+                CreatedById = adminUser.Id,
+                Scopes = "scope1;scope2",
+                RedirectUris = "uri1;uri2",
+            },
+            new()
+            {
+                Name = "App 2",
+                ClientId = Guid.NewGuid(),
+                TenantName = "Tenant 2",
+                CreatedById = adminUser.Id,
+                Scopes = "scope1;scope2",
+                RedirectUris = "uri1;uri2",
+            },
         };
         await Context.Applications.AddRangeAsync(apps, TestContext.Current.CancellationToken);
         await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
-        var result = await repository.GetList(x => x.CreatedById == adminUser.Id, TestContext.Current.CancellationToken);
+        var result =
+            await repository.GetList(x => x.CreatedById == adminUser.Id, TestContext.Current.CancellationToken);
 
         // Assert
         result.ShouldSatisfyAllConditions(

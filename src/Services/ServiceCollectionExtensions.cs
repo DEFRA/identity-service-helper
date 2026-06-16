@@ -5,8 +5,8 @@
 namespace Defra.Identity.Services;
 
 using Defra.Identity.Services.Applications;
-using Defra.Identity.Services.Common.Builders.Strategy.Factories;
 using Defra.Identity.Services.Common.Context;
+using Defra.Identity.Services.Common.Strategy.Factories;
 using Defra.Identity.Services.Cphs;
 using Defra.Identity.Services.Delegations;
 using Defra.Identity.Services.Profiles;
@@ -26,7 +26,7 @@ public static class ServiceCollectionExtensions
             services.AddTransient<IRoleService, RoleService>();
             services.AddTransient<IProfileService, ProfileService>();
             services.AddTransient<IApplicationService, ApplicationService>();
-            services.AddTransient<ICphDelegationsService, CphDelegationsService>();
+            services.AddTransient<ICphDelegationService, CphDelegationService>();
             services.AddTransient<ICphService, CphService>();
             services.AddTransient<ICphNumberService, CphNumberService>();
             services.AddTransient<IAnimalSpeciesService, AnimalSpeciesService>();
@@ -47,7 +47,7 @@ public static class ServiceCollectionExtensions
             services.AddTransient<IStrategyBuilderFactory<UserService>, StrategyBuilderFactory<UserService>>();
             services.AddTransient<IStrategyBuilderFactory<RoleService>, StrategyBuilderFactory<RoleService>>();
             services.AddTransient<IStrategyBuilderFactory<CphService>, StrategyBuilderFactory<CphService>>();
-            services.AddTransient<IStrategyBuilderFactory<CphDelegationsService>, StrategyBuilderFactory<CphDelegationsService>>();
+            services.AddTransient<IStrategyBuilderFactory<CphDelegationService>, StrategyBuilderFactory<CphDelegationService>>();
             services.AddTransient<IStrategyBuilderFactory<ProfileService>, StrategyBuilderFactory<ProfileService>>();
             services.AddTransient<IStrategyBuilderFactory<AnimalSpeciesService>, StrategyBuilderFactory<AnimalSpeciesService>>();
 

@@ -5,8 +5,9 @@
 namespace Defra.Identity.Repositories.Common.Composites;
 
 using System.Linq.Expressions;
+using Defra.Identity.Repositories.Common.Composites.Base;
 
-public interface IPageable<TEntity>
+public interface IPageable<TEntity> : ICapability
     where TEntity : class
 {
     Task<PagedEntities<TEntity>> GetPaged<TOrderBy>(

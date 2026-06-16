@@ -8,12 +8,12 @@ using Microsoft.Extensions.Logging;
 
 public partial class RoleRepository
 {
-    [LoggerMessage(LogLevel.Information, "Validating county parish holding reference with id {Id}")]
-    static partial void LogValidatingCountyParishHoldingReferenceWithId(ILogger logger, Guid id);
-
-    [LoggerMessage(LogLevel.Information, "Getting all roles")]
+    [LoggerMessage(LogLevel.Information, "Getting list of roles")]
     static partial void LogGettingAllRoles(ILogger logger);
 
     [LoggerMessage(LogLevel.Information, "Getting single role")]
     static partial void LogGettingSingleRole(ILogger logger);
+
+    [LoggerMessage(LogLevel.Information, "Creating role")]
+    static partial void LogCreatingRole(ILogger logger);
 }

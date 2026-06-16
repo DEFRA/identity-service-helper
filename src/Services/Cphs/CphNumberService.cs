@@ -39,7 +39,7 @@ public partial class CphNumberService(
         {
             LogCountyParishHoldingWithCphNumberNotFound(formattedCphNumber);
 
-            throw new NotFoundException("County parish holding not found.");
+            throw new NotFoundException("County parish holding not found");
         }
 
         return cphEntity.Id;

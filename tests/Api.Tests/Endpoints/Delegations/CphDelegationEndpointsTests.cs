@@ -18,7 +18,7 @@ using Xunit;
 
 public class CphDelegationEndpointsTests
 {
-    private readonly ICphDelegationsService service = Substitute.For<ICphDelegationsService>();
+    private readonly ICphDelegationService service = Substitute.For<ICphDelegationService>();
 
     [Fact]
     public async Task GetAll_ReturnsOk()

@@ -16,11 +16,10 @@ public static class CphMapper
             Id = cphEntity.Id,
             CountyParishHoldingNumber = cphEntity.Identifier,
             AllowedSpecies = cphEntity.CountyParishHoldingAnimalSpecies
-                .Select(x =>
-                    SpeciesMapper.MapAnimalSpeciesEntityToAnimalSpecies(x.AnimalSpecies))
-                .ToList(),
-            Expired = cphEntity.ExpiredAt != null,
+                .Select(allowedSpecies =>
+                    SpeciesMapper.MapAnimalSpeciesEntityToAnimalSpecies(allowedSpecies.AnimalSpecies)),
             ExpiredAt = cphEntity.ExpiredAt,
+            Expired = cphEntity.ExpiredAt != null,
         };
     }
 }

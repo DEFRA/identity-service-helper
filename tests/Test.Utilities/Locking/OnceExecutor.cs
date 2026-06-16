@@ -4,6 +4,9 @@
 
 namespace Defra.Identity.Test.Utilities.Locking;
 
+using System.Diagnostics.CodeAnalysis;
+
+[ExcludeFromCodeCoverage]
 public class OnceExecutor
 {
     private readonly SemaphoreSlim initLock = new(1, 1);

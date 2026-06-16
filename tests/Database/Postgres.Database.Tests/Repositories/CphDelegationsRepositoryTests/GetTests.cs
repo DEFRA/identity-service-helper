@@ -8,8 +8,8 @@ using System.ComponentModel;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
 using Defra.Identity.Repositories.Delegations;
+using Defra.Identity.Test.Utilities.Assertions;
 using Microsoft.Extensions.Logging;
-using NSubstitute;
 using Shouldly;
 
 public class GetTests(PostgreContainerFixture fixture) : BaseTests(fixture)
@@ -64,6 +64,10 @@ public class GetTests(PostgreContainerFixture fixture) : BaseTests(fixture)
             x => x.InvitationToken.ShouldBeNullOrWhiteSpace(),
             x => x.CreatedById.ShouldBe(adminUser.Id),
             x => x.CreatedAt.ShouldBeEquivalentTo(createdAt));
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            "Getting single delegation");
     }
 
     [Fact]
@@ -74,34 +78,43 @@ public class GetTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         var logger = DefraLoggerExtensions.CreateNSubstituteLogger<CphDelegationsRepository>();
         var repository = new CphDelegationsRepository(Context, ReadOnlyContext, logger);
 
-        var adminUser = Context.UserAccounts.First(x => x.Id == new Guid("cd91b1e0-bae4-4cee-becf-3529cc557311"));
-        var createdAt = new DateTime(2026, 4, 16, 0, 0, 0, DateTimeKind.Utc);
+        var adminUser = Context.UserAccounts.First();
+
+        var cph1 = Context.CountyParishHoldings.First(x => x.Identifier == "44/000/0001");
+        var cph2 = Context.CountyParishHoldings.First(x => x.Identifier == "44/000/0002");
+
+        var delegatingUser1 = Context.UserAccounts.First(x => x.EmailAddress == "test1@test.com");
+        var delegatingUser2 = Context.UserAccounts.First(x => x.EmailAddress == "test2@test.com");
+
+        var delegatedUser1 = Context.UserAccounts.First(x => x.EmailAddress == "test3@test.com");
+        var delegatedUser2 = Context.UserAccounts.First(x => x.EmailAddress == "test4@test.com");
+
+        var delegatedUser1Role = Context.Roles.First(x => x.Name == "test-role-1");
+        var delegatedUser2Role = Context.Roles.First(x => x.Name == "test-role-1");
 
         var delegations = new List<CountyParishHoldingDelegations>
         {
             new()
             {
-                Id = new Guid("3aaaf35e-4fa5-4e99-9721-7dc3bc1c9d7a"),
-                CountyParishHoldingId = new Guid("4435a146-d0ac-4260-8a27-c550e0ed9563"),
-                DelegatingUserId = new Guid("0a629f9f-2d25-4ac5-afbf-e821f5c6e7d1"),
-                DelegatedUserId = new Guid("42bde7a0-9efe-402a-a7c3-9161be7b00ba"),
-                DelegatedUserRoleId = new Guid("0c15ba2f-b4ba-406a-a0ae-213de64600a9"),
-                DelegatedUserEmail = "test1@test.com",
+                CountyParishHoldingId = cph1.Id,
+                DelegatingUserId = delegatingUser1.Id,
+                DelegatedUserId = delegatedUser1.Id,
+                DelegatedUserRoleId = delegatedUser1Role.Id,
+                DelegatedUserEmail = delegatedUser1.EmailAddress,
                 InvitationToken = string.Empty,
                 CreatedById = adminUser.Id,
-                CreatedAt = createdAt,
+                CreatedAt = DateTime.UtcNow.AddDays(2),
             },
             new()
             {
-                Id = new Guid("e4410973-af3f-4cbc-a234-69e8653da748"),
-                CountyParishHoldingId = new Guid("204459b1-3a07-4e65-9122-91c1699e3d3f"),
-                DelegatingUserId = new Guid("1e21b685-2247-4d96-bf39-f7dc30f356c2"),
-                DelegatedUserId = new Guid("83bf35f9-fd59-4c8a-b70a-7d95a1aab2b6"),
-                DelegatedUserRoleId = new Guid("817647b3-d5d2-45e9-8833-df36d8264102"),
-                DelegatedUserEmail = "test3@test.com",
+                CountyParishHoldingId = cph2.Id,
+                DelegatingUserId = delegatingUser2.Id,
+                DelegatedUserId = delegatedUser2.Id,
+                DelegatedUserRoleId = delegatedUser2Role.Id,
+                DelegatedUserEmail = delegatedUser2.EmailAddress,
                 InvitationToken = string.Empty,
                 CreatedById = adminUser.Id,
-                CreatedAt = createdAt,
+                CreatedAt = DateTime.UtcNow.AddDays(2),
             },
         };
 
@@ -109,37 +122,39 @@ public class GetTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
-        var results = await repository.GetList(x => true, TestContext.Current.CancellationToken);
+        var results =
+            (await repository.GetList(
+                x => x.CreatedAt > DateTime.UtcNow,
+                TestContext.Current.CancellationToken))
+            .OrderBy(x => x.CountyParishHolding.Identifier)
+            .ToList();
 
         // Assert
         results.ShouldNotBeNull();
-        results.Count.ShouldBe(6);
+        results.Count.ShouldBe(2);
 
-        var firstDelegation = results[0];
-        var secondDelegation = results[^1];
-
-        firstDelegation.ShouldSatisfyAllConditions(
-            x => x.ShouldNotBeNull(),
-            x => x.Id.ShouldBe(new Guid("dd000004-0000-4000-8000-000000000004")),
-            x => x.CountyParishHoldingId.ShouldBe(new Guid("ab820005-0000-4000-8000-000000000005")),
-            x => x.DelegatingUserId.ShouldBe(new Guid("cd91b1e0-bae4-4cee-becf-3529cc557311")),
-            x => x.DelegatedUserId.ShouldBe(new Guid("a17a772c-604e-495d-950e-3dbee2ba6e98")),
-            x => x.DelegatedUserRoleId.ShouldBe(new Guid("0c15ba2f-b4ba-406a-a0ae-213de64600a9")),
-            x => x.DelegatedUserEmail.ShouldBe("max.bladen-clark@esynergy.co.uk"),
-            x => x.InvitationToken.ShouldBe("0000000000000000000000000000000000000000000000000000000000000004"),
-            x => x.CreatedById.ShouldBe(adminUser.Id),
-            x => x.CreatedAt.ShouldBe(createdAt));
-
-        secondDelegation.ShouldSatisfyAllConditions(
-            x => x.ShouldNotBeNull(),
-            x => x.Id.ShouldBe(new Guid("e4410973-af3f-4cbc-a234-69e8653da748")),
-            x => x.CountyParishHoldingId.ShouldBe(new Guid("204459b1-3a07-4e65-9122-91c1699e3d3f")),
-            x => x.DelegatingUserId.ShouldBe(new Guid("1e21b685-2247-4d96-bf39-f7dc30f356c2")),
-            x => x.DelegatedUserId.ShouldBe(new Guid("83bf35f9-fd59-4c8a-b70a-7d95a1aab2b6")),
-            x => x.DelegatedUserRoleId.ShouldBe(new Guid("817647b3-d5d2-45e9-8833-df36d8264102")),
-            x => x.DelegatedUserEmail.ShouldBe("test3@test.com"),
+        results[0].ShouldSatisfyAllConditions(
+            x => x.CountyParishHoldingId.ShouldBe(cph1.Id),
+            x => x.DelegatingUserId.ShouldBe(delegatingUser1.Id),
+            x => x.DelegatedUserId.ShouldBe(delegatedUser1.Id),
+            x => x.DelegatedUserRoleId.ShouldBe(delegatedUser1Role.Id),
+            x => x.DelegatedUserEmail.ShouldBe(delegatedUser1.EmailAddress),
             x => x.InvitationToken.ShouldBeNullOrWhiteSpace(),
             x => x.CreatedById.ShouldBe(adminUser.Id),
-            x => x.CreatedAt.ShouldBe(createdAt));
+            x => x.CreatedAt.ShouldBeCloseToUtcNowAddDays(2));
+
+        results[1].ShouldSatisfyAllConditions(
+            x => x.CountyParishHoldingId.ShouldBe(cph2.Id),
+            x => x.DelegatingUserId.ShouldBe(delegatingUser2.Id),
+            x => x.DelegatedUserId.ShouldBe(delegatedUser2.Id),
+            x => x.DelegatedUserRoleId.ShouldBe(delegatedUser2Role.Id),
+            x => x.DelegatedUserEmail.ShouldBe(delegatedUser2.EmailAddress),
+            x => x.InvitationToken.ShouldBeNullOrWhiteSpace(),
+            x => x.CreatedById.ShouldBe(adminUser.Id),
+            x => x.CreatedAt.ShouldBeCloseToUtcNowAddDays(2));
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            "Getting list of county parish holding delegations");
     }
 }

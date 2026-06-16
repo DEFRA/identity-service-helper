@@ -11,21 +11,21 @@ using Defra.Identity.Repositories.Assignments;
 using Defra.Identity.Repositories.Delegations;
 using Defra.Identity.Repositories.Users;
 using Defra.Identity.Services.Common;
-using Defra.Identity.Services.Common.Builders.Strategy.Factories;
 using Defra.Identity.Services.Common.Extensions;
 using Defra.Identity.Services.Common.Filters;
 using Defra.Identity.Services.Common.Mappers;
+using Defra.Identity.Services.Common.Strategy.Factories;
 using Microsoft.Extensions.Logging;
 
 public class ProfileService : IProfileService
 {
-    private readonly IUsersRepository userRepository;
+    private readonly IUserRepository userRepository;
     private readonly ICphAssignmentsRepository cphAssignmentsRepository;
     private readonly ICphDelegationsRepository cphDelegationsRepository;
     private readonly IStrategyBuilderFactory<ProfileService> strategyBuilderFactory;
 
     public ProfileService(
-        IUsersRepository userRepository,
+        IUserRepository userRepository,
         ICphAssignmentsRepository cphAssignmentsRepository,
         ICphDelegationsRepository cphDelegationsRepository,
         IStrategyBuilderFactory<ProfileService> strategyBuilderFactory,
@@ -40,12 +40,10 @@ public class ProfileService : IProfileService
             .WithDefaultLogger(logger);
     }
 
-    public async Task<UserProfile> GetUserProfile(GetUserProfileByUserId request, CancellationToken cancellationToken = default)
+    public async Task<UserProfile> GetUserProfile(
+        GetUserProfileByUserId request,
+        CancellationToken cancellationToken = default)
     {
-        var userAccountFilter =
-            FilterLibrary.Users.NotSoftDeleted
-                .AndAlso(userAccount => userAccount.Id == request.Id);
-
         var cphAssignmentsFilter =
             FilterLibrary.CphAssignments.Active
                 .AndAlso(assignment => assignment.UserAccountId == request.Id);
@@ -56,11 +54,10 @@ public class ProfileService : IProfileService
 
         var outboundDelegationsFilter =
             FilterLibrary.CphDelegations.ActiveOrPending
-                .AndAlso(
-                    delegation
-                        => delegation.CountyParishHolding.ApplicationUserAccountHoldingAssignments
-                            .AsQueryable()
-                            .Any(cphAssignmentsFilter));
+                .AndAlso(delegation
+                    => delegation.CountyParishHolding.ApplicationUserAccountHoldingAssignments
+                        .AsQueryable()
+                        .Any(cphAssignmentsFilter));
 
         var userDetails = await strategyBuilderFactory.BuildGetStrategy<UserAccounts>()
             .WithEntityDescription(EntityDescriptions.User)
@@ -68,10 +65,12 @@ public class ProfileService : IProfileService
             .WithRepository(userRepository)
             .WithCancellationToken(cancellationToken)
             .WithRequest(request)
-            .WithEntityFilter(userAccountFilter)
+            .WithEntityFilter(userAccount => userAccount.Id == request.Id)
+            .WithExistenceRules(rules => rules.Add(Users.Rules.RulesLibrary.Existence.NotSoftDeleted))
             .ExecuteAndMap(UserMapper.MapUserEntityToUser);
 
-        var directAssignments = await strategyBuilderFactory.BuildGetListStrategy<UserAccountCountyParishHoldingAssignments>()
+        var directAssignments = await strategyBuilderFactory
+            .BuildGetListStrategy<UserAccountCountyParishHoldingAssignments>()
             .WithEntityDescription(EntityDescriptions.CphAssignment)
             .WithActionDescription("Get county parish holdings assigned to user")
             .WithRepository(cphAssignmentsRepository)

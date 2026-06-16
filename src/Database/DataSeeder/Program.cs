@@ -5,8 +5,10 @@
 namespace Defra.Identity.DataSeeder;
 
 using System.CommandLine;
+using System.Diagnostics.CodeAnalysis;
 using Defra.Identity.DataSeeder.Commands;
 
+[ExcludeFromCodeCoverage]
 internal static class Program
 {
     public static async Task<int> Main(string[] args)

@@ -14,24 +14,18 @@ public partial class RoleRepository(
     ReadOnlyPostgresDbContext readOnlyContext,
     ILogger<RoleRepository> logger) : IRoleRepository
 {
-    public async Task<bool> ValidateReferenceById(Guid id, CancellationToken cancellationToken = default)
-    {
-        LogValidatingCountyParishHoldingReferenceWithId(logger, id);
-
-        var entity = await readOnlyContext.Roles
-            .SingleOrDefaultAsync(entity => entity.Id == id, cancellationToken);
-
-        return entity != null;
-    }
-
-    public Task<List<Roles>> GetList(Expression<Func<Roles, bool>> predicate, CancellationToken cancellationToken = default)
+    public Task<List<Roles>> GetList(
+        Expression<Func<Roles, bool>> predicate,
+        CancellationToken cancellationToken = default)
     {
         LogGettingAllRoles(logger);
 
         return readOnlyContext.Roles.Where(predicate).ToListAsync(cancellationToken);
     }
 
-    public async Task<Roles?> GetSingle(Expression<Func<Roles, bool>> predicate, CancellationToken cancellationToken = default)
+    public async Task<Roles?> GetSingle(
+        Expression<Func<Roles, bool>> predicate,
+        CancellationToken cancellationToken = default)
     {
         LogGettingSingleRole(logger);
 
@@ -43,14 +37,10 @@ public partial class RoleRepository(
 
     public async Task<Roles> Create(Roles entity, CancellationToken cancellationToken = default)
     {
+        LogCreatingRole(logger);
+
         var role = await context.AddAsync(entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
         return role.Entity;
-    }
-
-    public Task<Roles> Update(Roles entity, CancellationToken cancellationToken = default)
-    {
-        context.Roles.Update(entity);
-        return Task.FromResult(entity);
     }
 }

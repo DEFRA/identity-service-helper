@@ -5,6 +5,7 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace Defra.Identity.Postgres.Database.Tests.Fixtures;
 
+using System.Diagnostics.CodeAnalysis;
 using Defra.Identity.Test.Utilities.Database;
 using Defra.Identity.Test.Utilities.Locking;
 using DotNet.Testcontainers.Builders;
@@ -13,6 +14,7 @@ using DotNet.Testcontainers.Containers;
 using DotNet.Testcontainers.Networks;
 using Testcontainers.PostgreSql;
 
+[ExcludeFromCodeCoverage]
 public class PostgreContainerFixture
     : IAsyncLifetime
 {

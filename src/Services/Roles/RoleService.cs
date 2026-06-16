@@ -8,9 +8,9 @@ using Defra.Identity.Models.Responses.Roles;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Roles;
 using Defra.Identity.Services.Common;
-using Defra.Identity.Services.Common.Builders.Strategy.Factories;
 using Defra.Identity.Services.Common.Filters;
 using Defra.Identity.Services.Common.Mappers;
+using Defra.Identity.Services.Common.Strategy.Factories;
 using Microsoft.Extensions.Logging;
 
 public class RoleService : IRoleService

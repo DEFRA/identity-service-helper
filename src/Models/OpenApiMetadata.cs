@@ -47,7 +47,7 @@ public static class OpenApiMetadata
         public const string Id = $"{OpenApiMetadata.BaseId} CphId";
         public const string IncludeExpired = "Whether expired objects should be included in the response";
         public const string CphNumber = "The County Parish Holder number";
-        public const string AllowedSpecies = "The species allowed on this County Pariush Holding";
+        public const string AllowedSpecies = "The species allowed on this County Parish Holding";
     }
 
     public static class Delegations

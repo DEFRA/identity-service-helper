@@ -4,7 +4,9 @@
 
 namespace Defra.Identity.Repositories.Common.Composites;
 
-public interface ICreatable<TEntity>
+using Defra.Identity.Repositories.Common.Composites.Base;
+
+public interface ICreatable<TEntity> : ICapability
     where TEntity : class
 {
     Task<TEntity> Create(TEntity entity, CancellationToken cancellationToken = default);

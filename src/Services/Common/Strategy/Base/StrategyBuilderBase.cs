@@ -1,0 +1,130 @@
+﻿// <copyright file="StrategyBuilderBase.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
+namespace Defra.Identity.Services.Common.Strategy.Base;
+
+using System.Diagnostics.CodeAnalysis;
+using Defra.Identity.Services.Common.Context;
+using Defra.Identity.Services.Common.Strategy.Constants;
+using FluentValidation;
+using Microsoft.Extensions.Logging;
+using ValidationResult = FluentValidation.Results.ValidationResult;
+
+[ExcludeFromCodeCoverage]
+public abstract partial class StrategyBuilderBase<TService, TBuilder>
+    where TService : class
+    where TBuilder : StrategyBuilderBase<TService, TBuilder>
+{
+    protected ILogger<TService>? Logger { get; private set; }
+
+    protected CancellationToken? CancellationToken { get; private set; }
+
+    protected IOperatorContext? OperatorContext { get; private set; }
+
+    protected string? EntityDescription { get; private set; }
+
+    protected string? ActionDescription { get; private set; }
+
+    private Action? BeforeExecuteAction { get; set; }
+
+    private Func<Task<ValidationResult>>? ValidateAction { get; set; }
+
+    public TBuilder WithLogger(ILogger<TService> logger)
+    {
+        Logger = logger;
+        return (TBuilder)this;
+    }
+
+    public TBuilder WithCancellationToken(CancellationToken cancellationToken)
+    {
+        CancellationToken = cancellationToken;
+        return (TBuilder)this;
+    }
+
+    public TBuilder WithOperatorContext(IOperatorContext operatorContext)
+    {
+        OperatorContext = operatorContext;
+        return (TBuilder)this;
+    }
+
+    public TBuilder WithEntityDescription(string entityDescription)
+    {
+        EntityDescription = entityDescription;
+        return (TBuilder)this;
+    }
+
+    public TBuilder WithActionDescription(string actionDescription)
+    {
+        ActionDescription = actionDescription;
+        return (TBuilder)this;
+    }
+
+    public TBuilder WithBeforeExecute(Action beforeExecuteAction)
+    {
+        BeforeExecuteAction = beforeExecuteAction;
+        return (TBuilder)this;
+    }
+
+    public TBuilder WithRequestValidation(Func<Task<ValidationResult>> validateAction)
+    {
+        ValidateAction = validateAction;
+        return (TBuilder)this;
+    }
+
+    protected void InvokeBeforeExecuteAction()
+    {
+        BeforeExecuteAction?.Invoke();
+    }
+
+    protected Guid EnsureOperatorIdProvided()
+    {
+        if (OperatorContext == null)
+        {
+            throw new InvalidOperationException(StrategyBuilderConstants.Errors.OperatorContextRequired);
+        }
+
+        try
+        {
+            return OperatorContext.OperatorId;
+        }
+        catch
+        {
+            throw new UnauthorizedAccessException(StrategyBuilderConstants.Errors
+                .OperatorContextOperatorIdRequired);
+        }
+    }
+
+    protected async Task ExecuteRequestValidation()
+    {
+        if (Logger == null)
+        {
+            throw new InvalidOperationException(StrategyBuilderConstants.Errors.LoggerRequired);
+        }
+
+        if (EntityDescription == null)
+        {
+            throw new InvalidOperationException(StrategyBuilderConstants.Errors.PrimaryEntityDescriptionRequired);
+        }
+
+        if (ActionDescription == null)
+        {
+            throw new InvalidOperationException(StrategyBuilderConstants.Errors.ActionDescriptionRequired);
+        }
+
+        if (ValidateAction != null)
+        {
+            var validationResult = await ValidateAction();
+
+            if (!validationResult.IsValid)
+            {
+                LogExecuteActionEntityFailedValidation(
+                    Logger,
+                    ActionDescription.ToLowerInvariant(),
+                    EntityDescription.ToLowerInvariant());
+
+                throw new ValidationException(validationResult.Errors);
+            }
+        }
+    }
+}
