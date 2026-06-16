@@ -4,6 +4,9 @@
 
 namespace Defra.Identity.Services.Common;
 
+using System.Diagnostics.CodeAnalysis;
+
+[ExcludeFromCodeCoverage]
 public static class EntityDescriptions
 {
     public const string Application = "Application";

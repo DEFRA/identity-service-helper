@@ -6,12 +6,7 @@ namespace Defra.Identity.Repositories.Messaging;
 
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database.Entities;
+using Defra.Identity.Repositories.Common.Composites;
 
 public interface ICountyParishHoldingDelegationsNotificationsRepository :
-    IRepository<CountyParishHoldingDelegationsNotifications>
-{
-    Task<bool> Delete(
-        Expression<Func<CountyParishHoldingDelegationsNotifications, bool>> predicate,
-        Guid operatorId,
-        CancellationToken cancellationToken = default);
-}
+    ICreatable<CountyParishHoldingDelegationsNotifications>;

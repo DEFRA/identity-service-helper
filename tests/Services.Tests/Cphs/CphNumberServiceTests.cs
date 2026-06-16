@@ -5,94 +5,192 @@
 namespace Defra.Identity.Services.Tests.Cphs;
 
 using System.ComponentModel;
-using System.Linq.Expressions;
 using Defra.Identity.Models.Requests.Cphs.Common;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Repositories.Cphs;
 using Defra.Identity.Services.Cphs;
-using Defra.Identity.Services.Tests.Cphs.TestData;
+using Defra.Identity.Test.Utilities.Assertions;
 using Defra.Identity.Test.Utilities.Repository;
+using Defra.Identity.Test.Utilities.Validation;
 using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 
 public class CphNumberServiceTests
 {
-    private readonly ICphRepository cphRepository = Substitute.For<ICphRepository>();
-    private readonly OperationByCphNumberValidator cphNumberValidator = new OperationByCphNumberValidator();
-    private readonly ILogger<CphNumberService> logger = DefraLoggerExtensions.CreateNSubstituteLogger<CphNumberService>();
-    private readonly ICphNumberService cphNumberService;
+    private readonly ICphRepository repository = Substitute.For<ICphRepository>();
+
+    private readonly IValidator<IOperationByCphNumber> cphNumberValidator =
+        Substitute.For<IValidator<IOperationByCphNumber>>();
+
+    private readonly ILogger<CphNumberService> logger =
+        DefraLoggerExtensions.CreateNSubstituteLogger<CphNumberService>();
+
+    private readonly SutProvider<CphNumberService> sut;
 
     public CphNumberServiceTests()
     {
-        cphNumberService = new CphNumberService(cphRepository, cphNumberValidator, logger);
+        sut = SutProvider<CphNumberService>.CreateFor(_ => new CphNumberService(
+            repository,
+            cphNumberValidator,
+            logger));
     }
 
     [Fact]
-    [Description("GetIdFromCphNumber Should return an id given a valid cph number")]
-    public async Task GetIdFromCphNumber_ShouldReturnIdGivenValidCphNumber()
+    [Description("GetIdFromCphNumber returns id for cph associated cph")]
+    public async Task GetIdFromCphNumber_Returns_Id_For_Associated_Cph()
     {
         // Arrange
-        cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(callInfo => PredicateInterceptor.MockGetSingleEntityResult(callInfo, CphRepositoryMockingHelper.GetCphEntitiesForSimpleFilterChecks()));
+        var cph1WithAllowedSpeciesNotExpiredOrDeleted = TestData.Cph.Cph1WithAllowedSpeciesNotExpiredOrDeleted;
 
-        var request = new OperationByCphNumberFake(1, 28, 1);
-        const string formattedCphNumber = "01/028/0001";
+        var validatorContext = MockValidatorContext<IOperationByCphNumber>.CreateFor(cphNumberValidator);
+
+        var repositoryContext = MockRepositoryContext<CountyParishHoldings>.CreateFor(repository).WithData(
+        [
+            cph1WithAllowedSpeciesNotExpiredOrDeleted
+        ]);
+
+        var request = new OperationByCphNumber() { County = 44, Parish = 100, Holding = 0001 };
 
         // Act
-        var result = await cphNumberService.GetIdFromCphNumber(request, TestContext.Current.CancellationToken);
+        var result =
+            await sut.WithoutOperatorContext.GetIdFromCphNumber(request, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.VerifyLogContainsOne(LogLevel.Information, $"Getting county parish holding id by cph number {formattedCphNumber}");
+        validatorContext.Calls.ValidateAsyncCallCount.ShouldBe(1);
+        validatorContext.Calls.LastValidateAsync.Request.ShouldBe(request);
 
-        result.ShouldBe(new Guid("68625a5c-7999-4394-836f-9ee55cac0a21"));
+        repositoryContext.Calls.GetCallCount.ShouldBe(1);
+        repositoryContext.Calls.LastGetResult.ShouldBe(cph1WithAllowedSpeciesNotExpiredOrDeleted);
+
+        result.ShouldBe(cph1WithAllowedSpeciesNotExpiredOrDeleted.Id);
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            $"Getting county parish holding id by cph number 44/100/0001");
     }
 
     [Fact]
-    [Description("GetIdFromCphNumber Should thrown not found exception when cph is deleted")]
-    public void GetIdFromCphNumber_ShouldThrowNotFoundExceptionWhenItemIsDeleted()
+    [Description("GetIdFromCphNumber throws validation exception when request validation fails")]
+    public async Task GetIdFromCphNumber_Throws_Validation_Exception_When_Request_Validation_Fails()
     {
         // Arrange
-        cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(callInfo => PredicateInterceptor.MockGetSingleEntityResult(callInfo, CphRepositoryMockingHelper.GetCphEntitiesForSimpleFilterChecks()));
+        var request = new OperationByCphNumber() { County = 9999, Parish = 9999, Holding = 9999 };
 
-        var request = new OperationByCphNumberFake(1, 28, 2);
-        const string formattedCphNumber = "01/028/0002";
+        var validatorContext = MockValidatorContext<IOperationByCphNumber>.CreateFor(cphNumberValidator)
+            .WithValidationFailures(
+            [
+                new ValidationFailure("Random Property 1", "Simulated validation failure 1"),
+                new ValidationFailure("Random Property 2", "Simulated validation failure 2"),
+            ]);
 
-        // Act & Assert
-        Should.Throw<NotFoundException>(async () => await cphNumberService.GetIdFromCphNumber(request, TestContext.Current.CancellationToken));
+        var repositoryContext = MockRepositoryContext<CountyParishHoldings>.CreateFor(repository);
 
-        logger.VerifyLogContainsOne(LogLevel.Information, $"Getting county parish holding id by cph number {formattedCphNumber}");
-        logger.VerifyLogContainsOne(LogLevel.Warning, $"County parish holding with cph number {formattedCphNumber} not found");
+        // Act
+        Func<Task> act = async () =>
+            await sut.WithoutOperatorContext.GetIdFromCphNumber(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        var exception = await act.ShouldThrowAsync<ValidationException>();
+
+        exception.Message.ShouldContain("Random Property 1: Simulated validation failure 1");
+        exception.Message.ShouldContain("Random Property 2: Simulated validation failure 2");
+
+        exception.Errors.Count().ShouldBe(2);
+
+        exception.Errors.ToList().ShouldSatisfyAllConditions(errors =>
+        {
+            errors[0].PropertyName.ShouldBe("Random Property 1");
+            errors[0].ErrorMessage.ShouldBe("Simulated validation failure 1");
+            errors[1].PropertyName.ShouldBe("Random Property 2");
+            errors[1].ErrorMessage.ShouldBe("Simulated validation failure 2");
+        });
+
+        exception.Errors.First().PropertyName.ShouldBe("Random Property 1");
+        exception.Errors.First().ErrorMessage.ShouldBe("Simulated validation failure 1");
+
+        validatorContext.Calls.ValidateAsyncCallCount.ShouldBe(1);
+        validatorContext.Calls.LastValidateAsync.Request.ShouldBe(request);
+
+        repositoryContext.Calls.ShouldHaveNoCalls();
+
+        logger.VerifyLogDoesNotContain(
+            LogLevel.Information,
+            $"Getting county parish holding id by cph number 9999/9999/9999");
     }
 
     [Fact]
-    [Description("GetIdFromCphNumber Should thrown not found exception when cph is not found")]
-    public void GetIdFromCphNumber_ShouldThrowNotFoundExceptionWhenItemIsNotFound()
+    [Description("GetIdFromCphNumber throws not found exception when cph does not exist")]
+    public async Task GetIdFromCphNumber_Throws_NotFound_Exception_When_Cph_Does_Not_Exist()
     {
         // Arrange
-        cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(callInfo => PredicateInterceptor.MockGetSingleEntityResult(callInfo, CphRepositoryMockingHelper.GetCphEntitiesForSimpleFilterChecks()));
+        var request = new OperationByCphNumber() { County = 99, Parish = 999, Holding = 9999 };
 
-        var requestWithNonExistingCphNumber = new OperationByCphNumberFake(1, 28, 100);
-        const string formattedCphNumber = "01/028/0100";
+        var validatorContext = MockValidatorContext<IOperationByCphNumber>.CreateFor(cphNumberValidator);
+        var repositoryContext = MockRepositoryContext<CountyParishHoldings>.CreateFor(repository);
 
-        // Act & Assert
-        Should.Throw<NotFoundException>(async () => await cphNumberService.GetIdFromCphNumber(requestWithNonExistingCphNumber, TestContext.Current.CancellationToken));
+        // Act
+        Func<Task> act = async () =>
+            await sut.WithoutOperatorContext.GetIdFromCphNumber(request, TestContext.Current.CancellationToken);
 
-        logger.VerifyLogContainsOne(LogLevel.Information, $"Getting county parish holding id by cph number {formattedCphNumber}");
-        logger.VerifyLogContainsOne(LogLevel.Warning, $"County parish holding with cph number {formattedCphNumber} not found");
+        // Assert
+        var exception = await act.ShouldThrowAsync<NotFoundException>();
+        exception.Message.ShouldBe("County parish holding not found");
+
+        validatorContext.Calls.ValidateAsyncCallCount.ShouldBe(1);
+        validatorContext.Calls.LastValidateAsync.Request.ShouldBe(request);
+
+        repositoryContext.Calls.GetCallCount.ShouldBe(1);
+        repositoryContext.Calls.LastGetResult.ShouldBeNull();
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            "Getting county parish holding id by cph number 99/999/9999");
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Warning,
+            "County parish holding with cph number 99/999/9999 not found");
     }
 
     [Fact]
-    [Description("GetIdFromCphNumber Should throw validation exception when cph number invalid")]
-    public void GetIdFromCphNumber_ShouldThrowValidationExceptionWhenCphNumberInvalid()
+    [Description("GetIdFromCphNumber throws not found exception when cph is deleted")]
+    public async Task GetIdFromCphNumber_Throws_NotFound_Exception_When_Cph_Deleted()
     {
         // Arrange
-        var requestWithNonExistingCphNumber = new OperationByCphNumberFake(999, 9999, 99999);
+        var cph3DeletedButNotExpired = TestData.Cph.Cph3DeletedButNotExpired;
 
-        // Act & Assert
-        Should.Throw<ValidationException>(async () => await cphNumberService.GetIdFromCphNumber(requestWithNonExistingCphNumber, TestContext.Current.CancellationToken));
+        var request = new OperationByCphNumber() { County = 44, Parish = 100, Holding = 0003 };
+
+        var validatorContext = MockValidatorContext<IOperationByCphNumber>.CreateFor(cphNumberValidator);
+
+        var repositoryContext = MockRepositoryContext<CountyParishHoldings>.CreateFor(repository).WithData(
+        [
+            cph3DeletedButNotExpired
+        ]);
+
+        // Act
+        Func<Task> act = async () =>
+            await sut.WithoutOperatorContext.GetIdFromCphNumber(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        var exception = await act.ShouldThrowAsync<NotFoundException>();
+        exception.Message.ShouldBe("County parish holding not found");
+
+        validatorContext.Calls.ValidateAsyncCallCount.ShouldBe(1);
+        validatorContext.Calls.LastValidateAsync.Request.ShouldBe(request);
+
+        // Check that the repository returned the deleted item for evaluation of the deleted state
+        repositoryContext.Calls.GetCallCount.ShouldBe(1);
+        repositoryContext.Calls.LastGetResult.ShouldBe(cph3DeletedButNotExpired);
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            "Getting county parish holding id by cph number 44/100/0003");
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Warning,
+            "County parish holding with cph number 44/100/0003 not found");
     }
 }

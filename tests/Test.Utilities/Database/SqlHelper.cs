@@ -4,8 +4,10 @@
 
 namespace Defra.Identity.Test.Utilities.Database;
 
+using System.Diagnostics.CodeAnalysis;
 using Npgsql;
 
+[ExcludeFromCodeCoverage]
 public static class SqlHelper
 {
     public static async Task ExecuteSqlFile(string connectionString, string sqlFilePath)

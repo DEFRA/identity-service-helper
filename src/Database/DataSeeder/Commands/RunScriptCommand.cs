@@ -5,10 +5,12 @@
 namespace Defra.Identity.DataSeeder.Commands;
 
 using System.CommandLine;
+using System.Diagnostics.CodeAnalysis;
 
 /// <summary>
 /// Command to run a script on the specified database.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public class RunScriptCommand : BaseCommand
 {
     public RunScriptCommand()

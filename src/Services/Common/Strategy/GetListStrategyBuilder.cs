@@ -1,0 +1,83 @@
+﻿// <copyright file="GetListStrategyBuilder.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
+namespace Defra.Identity.Services.Common.Strategy;
+
+using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
+using Defra.Identity.Repositories.Common.Composites;
+using Defra.Identity.Services.Common.Strategy.Base;
+using Defra.Identity.Services.Common.Strategy.Constants;
+
+[ExcludeFromCodeCoverage]
+public partial class GetListStrategyBuilder<TService, TEntity>
+    : StrategyBuilderBase<TService, GetListStrategyBuilder<TService, TEntity>>
+    where TService : class
+    where TEntity : class
+{
+    private IListable<TEntity>? ListableRepository { get; set; }
+
+    private Expression<Func<TEntity, bool>>? EntityFilter { get; set; }
+
+    public GetListStrategyBuilder<TService, TEntity> WithRepository<TRepository>(TRepository repository)
+        where TRepository : IListable<TEntity>
+    {
+        ListableRepository = repository;
+        return this;
+    }
+
+    public GetListStrategyBuilder<TService, TEntity> WithEntityFilter(Expression<Func<TEntity, bool>> entityFilter)
+    {
+        EntityFilter = entityFilter;
+        return this;
+    }
+
+    public async Task<List<TResult>> ExecuteAndMap<TResult>(Func<TEntity, TResult> map)
+        where TResult : class
+    {
+        if (Logger == null)
+        {
+            throw new InvalidOperationException(StrategyBuilderConstants.Errors.LoggerRequired);
+        }
+
+        if (CancellationToken == null)
+        {
+            throw new InvalidOperationException(StrategyBuilderConstants.Errors.CancellationTokenRequired);
+        }
+
+        if (ListableRepository == null)
+        {
+            throw new InvalidOperationException(StrategyBuilderConstants.Errors.ListableRepositoryRequired);
+        }
+
+        if (EntityDescription == null)
+        {
+            throw new InvalidOperationException(StrategyBuilderConstants.Errors.PrimaryEntityDescriptionRequired);
+        }
+
+        if (ActionDescription == null)
+        {
+            throw new InvalidOperationException(StrategyBuilderConstants.Errors.ActionDescriptionRequired);
+        }
+
+        if (EntityFilter == null)
+        {
+            throw new InvalidOperationException(StrategyBuilderConstants.Errors.EntityFilterRequired);
+        }
+
+        LogExecutingAction(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant());
+
+        InvokeBeforeExecuteAction();
+
+        await ExecuteRequestValidation();
+
+        var entities = await ListableRepository.GetList(EntityFilter, CancellationToken.Value);
+
+        var mappedEntities = entities.Select(map).ToList();
+
+        LogSuccessfullyExecutedAction(Logger, ActionDescription.ToLowerInvariant(), EntityDescription.ToLowerInvariant());
+
+        return mappedEntities;
+    }
+}

@@ -10,17 +10,17 @@ using Defra.Identity.Models.Responses.Users;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Users;
 using Defra.Identity.Services.Common;
-using Defra.Identity.Services.Common.Builders.Strategy.Factories;
 using Defra.Identity.Services.Common.Context;
 using Defra.Identity.Services.Common.Filters;
 using Defra.Identity.Services.Common.Mappers;
+using Defra.Identity.Services.Common.Strategy.Factories;
 using Defra.Identity.Services.Users.Rules;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
 
 public class UserService : IUserService
 {
-    private readonly IUsersRepository repository;
+    private readonly IUserRepository repository;
     private readonly IOperatorContext operatorContext;
     private readonly IStrategyBuilderFactory<UserService> strategyBuilderFactory;
     private readonly IValidator<CreateUser> createUserValidator;
@@ -28,7 +28,7 @@ public class UserService : IUserService
     private readonly IValidator<UpsertUserById> upsertUserValidator;
 
     public UserService(
-        IUsersRepository repository,
+        IUserRepository repository,
         IOperatorContext operatorContext,
         IStrategyBuilderFactory<UserService> strategyBuilderFactory,
         IValidator<CreateUser> createUserValidator,
@@ -82,15 +82,15 @@ public class UserService : IUserService
             .WithRepository(repository)
             .WithCancellationToken(cancellationToken)
             .WithRequestValidation(() => createUserValidator.ValidateAsync(request, cancellationToken))
-            .WithCreate(
-                () => new UserAccounts()
-                {
-                    EmailAddress = request.Email,
-                    FirstName = request.FirstName,
-                    LastName = request.LastName,
-                    DisplayName = request.DisplayName,
-                    CreatedById = operatorContext.OperatorId,
-                })
+            .WithCreate(() => new UserAccounts()
+            {
+                EmailAddress = request.Email.ToLowerInvariant(),
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                DisplayName = request.DisplayName,
+                CreatedById = operatorContext.OperatorId,
+                CreatedAt = DateTime.UtcNow,
+            })
             .ExecuteAndMap(UserMapper.MapUserEntityToUser);
     }
 
@@ -104,14 +104,13 @@ public class UserService : IUserService
             .WithRequest(request)
             .WithEntityFilter(user => request.Id == user.Id)
             .WithExistenceRules(rules => rules.Add(RulesLibrary.Existence.NotSoftDeleted))
-            .WithUpdate(
-                user =>
-                {
-                    user.FirstName = request.FirstName;
-                    user.LastName = request.LastName;
-                    user.EmailAddress = request.Email;
-                    user.DisplayName = request.DisplayName;
-                })
+            .WithUpdate(user =>
+            {
+                user.EmailAddress = request.Email.ToLowerInvariant();
+                user.FirstName = request.FirstName;
+                user.LastName = request.LastName;
+                user.DisplayName = request.DisplayName;
+            })
             .ExecuteAndMap(UserMapper.MapUserEntityToUser);
     }
 
@@ -123,20 +122,24 @@ public class UserService : IUserService
             .WithCancellationToken(cancellationToken)
             .WithRequestValidation(() => upsertUserValidator.ValidateAsync(request, cancellationToken))
             .WithRequest(request)
-            .WithEntityFilter(user => request.Id == user.Id)
+            .WithEntityFilter(user => request.Id.HasValue && request.Id.Value == user.Id)
             .WithExistenceRules(rules => rules.Add(RulesLibrary.Existence.NotSoftDeleted))
-            .WithCreate(
-                () => new UserAccounts
-                {
-                    Id = request.Id, EmailAddress = request.Email, FirstName = request.FirstName, LastName = request.LastName,
-                })
-            .WithUpdate(
-                user =>
-                {
-                    user.FirstName = request.FirstName;
-                    user.LastName = request.LastName;
-                    user.EmailAddress = request.Email;
-                })
+            .WithCreate(() => new UserAccounts
+            {
+                EmailAddress = request.Email.ToLowerInvariant(),
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                DisplayName = request.DisplayName,
+                CreatedById = operatorContext.OperatorId,
+                CreatedAt = DateTime.UtcNow,
+            })
+            .WithUpdate(user =>
+            {
+                user.EmailAddress = request.Email.ToLowerInvariant();
+                user.FirstName = request.FirstName;
+                user.LastName = request.LastName;
+                user.DisplayName = request.DisplayName;
+            })
             .ExecuteAndMap(UserMapper.MapUserEntityToUser);
     }
 
@@ -149,12 +152,11 @@ public class UserService : IUserService
             .WithRequest(request)
             .WithEntityFilter(user => request.Id == user.Id)
             .WithExistenceRules(rules => rules.Add(RulesLibrary.Existence.NotSoftDeleted))
-            .WithUpdate(
-                user =>
-                {
-                    user.DeletedAt = DateTime.UtcNow;
-                    user.DeletedById = operatorContext.OperatorId;
-                })
+            .WithUpdate(user =>
+            {
+                user.DeletedAt = DateTime.UtcNow;
+                user.DeletedById = operatorContext.OperatorId;
+            })
             .Execute();
     }
 

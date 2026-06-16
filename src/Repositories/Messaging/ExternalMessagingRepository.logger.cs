@@ -19,10 +19,4 @@ public partial class ExternalMessagingRepository
 
     [LoggerMessage(LogLevel.Information, "Updating external messaging record with id {Id}")]
     partial void LogUpdatingExternalMessagingRecordWithId(int id);
-
-    [LoggerMessage(LogLevel.Information, "Deleting external messaging record with operator id {OperatorId}")]
-    partial void LogDeletingExternalMessagingRecordWithOperatorId(Guid operatorId);
-
-    [LoggerMessage(LogLevel.Warning, "External messaging record not found for deletion")]
-    partial void LogExternalMessagingRecordNotFoundForDeletion();
 }

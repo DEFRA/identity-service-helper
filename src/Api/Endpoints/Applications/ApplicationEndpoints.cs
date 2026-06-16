@@ -81,10 +81,9 @@ public static class ApplicationEndpoints
     }
 
     private static async Task<IResult> GetAllRoute(
-        [AsParameters] GetApplications request,
         IApplicationService service)
     {
-        var applications = await service.GetAll(request);
+        var applications = await service.GetAll();
 
         return Results.Ok(applications);
     }

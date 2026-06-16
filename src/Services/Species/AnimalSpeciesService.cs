@@ -4,15 +4,14 @@
 
 namespace Defra.Identity.Services.Species;
 
-using System.Linq.Expressions;
 using Defra.Identity.Models.Requests.Species.Commands;
 using Defra.Identity.Models.Requests.Species.Queries;
 using Defra.Identity.Repositories.Species;
 using Defra.Identity.Services.Common;
-using Defra.Identity.Services.Common.Builders.Strategy.Factories;
 using Defra.Identity.Services.Common.Context;
 using Defra.Identity.Services.Common.Filters;
 using Defra.Identity.Services.Common.Mappers;
+using Defra.Identity.Services.Common.Strategy.Factories;
 using Microsoft.Extensions.Logging;
 using ModelAnimalSpecies = Defra.Identity.Postgres.Database.Entities.AnimalSpecies;
 using ResponseAnimalSpecies = Defra.Identity.Models.Responses.Species.AnimalSpecies;
@@ -42,7 +41,9 @@ public class AnimalSpeciesService : IAnimalSpeciesService
         CancellationToken cancellationToken = default)
     {
         var includeInactiveInferred = IncludeInactiveInferred(request);
-        var animalSpeciesFilter = includeInactiveInferred ? FilterLibrary.AnimalSpecies.All : FilterLibrary.AnimalSpecies.Active;
+        var animalSpeciesFilter = includeInactiveInferred
+            ? FilterLibrary.AnimalSpecies.All
+            : FilterLibrary.AnimalSpecies.Active;
 
         return await strategyBuilderFactory.BuildGetListStrategy<ModelAnimalSpecies>()
             .WithActionDescription($"Get all animal species, includeHidden: {includeInactiveInferred}")
@@ -52,20 +53,22 @@ public class AnimalSpeciesService : IAnimalSpeciesService
             .ExecuteAndMap(SpeciesMapper.MapAnimalSpeciesEntityToAnimalSpecies);
     }
 
-    public async Task<ResponseAnimalSpecies> Get(GetAnimalSpeciesById request, CancellationToken cancellationToken = default)
+    public async Task<ResponseAnimalSpecies> Get(
+        GetAnimalSpeciesById request,
+        CancellationToken cancellationToken = default)
     {
-        Expression<Func<ModelAnimalSpecies, bool>> animalSpeciesFilter = animalSpecies => animalSpecies.Id == request.Id;
-
         return await strategyBuilderFactory.BuildGetStrategy<ModelAnimalSpecies>()
             .WithActionDescription("Get animal species")
             .WithRepository(repository)
             .WithCancellationToken(cancellationToken)
             .WithRequest(request)
-            .WithEntityFilter(animalSpeciesFilter)
+            .WithEntityFilter(animalSpecies => animalSpecies.Id == request.Id)
             .ExecuteAndMap(SpeciesMapper.MapAnimalSpeciesEntityToAnimalSpecies);
     }
 
-    public async Task<ResponseAnimalSpecies> Toggle(ToggleAnimalSpeciesById request, CancellationToken cancellationToken = default)
+    public async Task<ResponseAnimalSpecies> Toggle(
+        ToggleAnimalSpeciesById request,
+        CancellationToken cancellationToken = default)
     {
         return await strategyBuilderFactory.BuildUpdateStrategy<ModelAnimalSpecies>()
             .WithActionDescription("Toggle animal species")

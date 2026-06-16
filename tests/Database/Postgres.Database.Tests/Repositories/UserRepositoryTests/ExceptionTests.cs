@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Postgres.Database.Tests.Repositories;
+namespace Defra.Identity.Postgres.Database.Tests.Repositories.UserRepositoryTests;
 
 using System.ComponentModel;
 using Defra.Identity.Postgres.Database.Entities;
@@ -23,8 +23,8 @@ public class ExceptionTests(PostgreContainerFixture fixture)
     public async Task ShouldThrowDuplicateException()
     {
         // Arrange
-        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<UsersRepository>();
-        var repository = new UsersRepository(Context, ReadOnlyContext, logger);
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<UserRepository>();
+        var repository = new UserRepository(Context, ReadOnlyContext, logger);
 
         var adminUser = await repository
             .GetSingle(x => x.EmailAddress == EmailAddress, TestContext.Current.CancellationToken);
@@ -47,11 +47,6 @@ public class ExceptionTests(PostgreContainerFixture fixture)
         var ex = await act.ShouldThrowAsync<DbUpdateException>();
         ex.InnerException.ShouldNotBeNull(); // often contains provider-specific details
 
-        logger.ReceivedWithAnyArgs().Log(
-            LogLevel.Information,
-            Arg.Any<EventId>(),
-            Arg.Any<object>(),
-            Arg.Any<Exception>(),
-            Arg.Any<Func<object, Exception?, string>>());
+        logger.VerifyLogContainsOne(LogLevel.Information, "Creating user account");
     }
 }

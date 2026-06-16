@@ -10,7 +10,6 @@ using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
 using Defra.Identity.Repositories.Species;
 using Microsoft.Extensions.Logging;
-using NSubstitute;
 
 public class GetSingleTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 {

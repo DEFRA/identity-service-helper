@@ -11,11 +11,10 @@ using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Applications;
 using Defra.Identity.Services.Applications.Rules;
 using Defra.Identity.Services.Common;
-using Defra.Identity.Services.Common.Builders.Strategy.Factories;
 using Defra.Identity.Services.Common.Context;
-using Defra.Identity.Services.Common.Extensions;
 using Defra.Identity.Services.Common.Filters;
 using Defra.Identity.Services.Common.Mappers;
+using Defra.Identity.Services.Common.Strategy.Factories;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
 
@@ -47,9 +46,7 @@ public class ApplicationService : IApplicationService
             .WithDefaultEntityDescription(EntityDescriptions.Application);
     }
 
-    public async Task<List<Application>> GetAll(
-        GetApplications request,
-        CancellationToken cancellationToken = default)
+    public async Task<List<Application>> GetAll(CancellationToken cancellationToken = default)
     {
         return await strategyBuilderFactory.BuildGetListStrategy<Applications>()
             .WithActionDescription("Get all applications")
@@ -89,10 +86,11 @@ public class ApplicationService : IApplicationService
                     ClientId = request.Id,
                     TenantName = request.TenantName,
                     Description = request.Description,
-                    CreatedById = operatorContext.OperatorId,
-                    Scopes = string.Join(ApplicationMapper.ScopeSeparator, request.Scopes),
                     Secret = request.Secret,
                     RedirectUris = string.Join(ApplicationMapper.RedirectUriSeparator, request.RedirectUris),
+                    Scopes = string.Join(ApplicationMapper.ScopeSeparator, request.Scopes),
+                    CreatedById = operatorContext.OperatorId,
+                    CreatedAt = DateTime.UtcNow,
                 })
             .ExecuteAndMap(ApplicationMapper.MapApplicationEntityToApplication);
     }
@@ -122,7 +120,9 @@ public class ApplicationService : IApplicationService
             .ExecuteAndMap(ApplicationMapper.MapApplicationEntityToApplication);
     }
 
-    public async Task Delete(DeleteApplicationByClientId request, CancellationToken cancellationToken = default)
+    public async Task Delete(
+        DeleteApplicationByClientId request,
+        CancellationToken cancellationToken = default)
     {
         await strategyBuilderFactory.BuildUpdateStrategy<Applications>()
             .WithActionDescription("Delete application")

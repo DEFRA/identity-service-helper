@@ -1,0 +1,71 @@
+﻿// <copyright file="UpdateTests.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
+namespace Defra.Identity.Postgres.Database.Tests.Repositories.CphRepositoryTests;
+
+using System.ComponentModel;
+using System.Globalization;
+using Defra.Identity.Postgres.Database.Entities;
+using Defra.Identity.Postgres.Database.Tests.Fixtures;
+using Defra.Identity.Repositories.Cphs;
+using Microsoft.Extensions.Logging;
+
+public class UpdateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
+{
+    [Fact]
+    [Description("Should update an existing entity")]
+    public async Task ShouldUpdateEntity()
+    {
+        // Arrange
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<CphRepository>();
+        var repository = new CphRepository(Context, ReadOnlyContext, logger);
+        var id = Guid.NewGuid();
+        const string identifier = "44/001/0001";
+        var createAtDate = DateTime.Parse("2026-02-20", new DateTimeFormatInfo()).ToUniversalTime();
+        var createdById = AdminUserId;
+
+        var newEntity = new CountyParishHoldings
+        {
+            Id = id, Identifier = identifier, CreatedAt = createAtDate, CreatedById = createdById,
+        };
+
+        await Context.CountyParishHoldings.AddAsync(newEntity, TestContext.Current.CancellationToken);
+        await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
+        Context.ChangeTracker.Clear();
+
+        var entityToUpdate = await repository.GetSingle(x => x.Identifier == identifier, TestContext.Current.CancellationToken);
+
+        entityToUpdate.ShouldNotBeNull();
+
+        // Act
+        entityToUpdate.ExpiredAt = DateTime.Parse("2026-03-21", new DateTimeFormatInfo()).ToUniversalTime();
+        entityToUpdate.DeletedAt = DateTime.Parse("2026-03-22", new DateTimeFormatInfo()).ToUniversalTime();
+        entityToUpdate.DeletedById = AdminUserId;
+
+        var updatedEntityReturnedFromUpdate = await repository.Update(entityToUpdate, TestContext.Current.CancellationToken);
+        var updatedEntityReturnedFromRequery = await repository.GetSingle(x => x.Id == id, TestContext.Current.CancellationToken);
+
+        // Assert
+        updatedEntityReturnedFromUpdate.ShouldNotBeNull();
+        updatedEntityReturnedFromRequery.ShouldNotBeNull();
+
+        updatedEntityReturnedFromUpdate.ShouldSatisfyAllConditions(
+            (x) => x.Id.ShouldBe(id),
+            (x) => x.Identifier.ShouldBe(identifier),
+            (x) => x.CreatedAt.ShouldBe(createAtDate),
+            (x) => x.CreatedById.ShouldBe(createdById),
+            (x) => x.ExpiredAt.ShouldBe(DateTime.Parse("2026-03-21", new DateTimeFormatInfo()).ToUniversalTime()),
+            (x) => x.DeletedAt.ShouldBe(DateTime.Parse("2026-03-22", new DateTimeFormatInfo()).ToUniversalTime()),
+            (x) => x.DeletedById.ShouldBe(AdminUserId));
+
+        updatedEntityReturnedFromRequery.ShouldSatisfyAllConditions(
+            (x) => x.Id.ShouldBe(id),
+            (x) => x.Identifier.ShouldBe(identifier),
+            (x) => x.CreatedAt.ShouldBe(createAtDate),
+            (x) => x.CreatedById.ShouldBe(createdById),
+            (x) => x.ExpiredAt.ShouldBe(DateTime.Parse("2026-03-21", new DateTimeFormatInfo()).ToUniversalTime()),
+            (x) => x.DeletedAt.ShouldBe(DateTime.Parse("2026-03-22", new DateTimeFormatInfo()).ToUniversalTime()),
+            (x) => x.DeletedById.ShouldBe(AdminUserId));
+    }
+}

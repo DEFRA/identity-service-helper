@@ -4,6 +4,7 @@
 
 namespace Defra.Identity.Postgres.Database.Tests;
 
+using System.Diagnostics.CodeAnalysis;
 using Defra.Identity.Postgres.Database;
 using Defra.Identity.Postgres.Database.Tests.Collections;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
@@ -17,6 +18,7 @@ using NSubstitute;
 /// The base class for the database fixture driven tests.
 /// </summary>
 /// <param name="fixture">The test fixture used for this test.</param>
+[ExcludeFromCodeCoverage]
 [Collection(nameof(PostgreCollection))]
 public abstract partial class BaseTests(PostgreContainerFixture fixture) : IAsyncLifetime
 {
