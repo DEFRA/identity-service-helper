@@ -86,6 +86,19 @@ INSERT INTO user_accounts (id, email_address, display_name, first_name, last_nam
     '2026-01-01 00:00:00.000000',
     'df6990d6-e61a-4e14-aa79-5479dc7b3569');
 
+-- test.automation-3: 0 owned CPH
+INSERT INTO user_accounts (id, email_address, display_name, first_name, last_name, krds_id, sam_id, created_at,
+   created_by_id) VALUES
+   ('44444444-0000-5000-a000-000000000003',
+    'test.automation-3@defra.gov.uk',
+    'Test Automation 3',
+    'Test',
+    'Automation 3',
+    '00000000-0000-0000-0000-000000000000',
+    '00000000-0000-0000-0000-000000000000',
+    '2026-01-01 00:00:00.000000',
+    'df6990d6-e61a-4e14-aa79-5479dc7b3569');
+
 -- test.automation-1's CPHs (00/083/)
 INSERT INTO county_parish_holdings (identifier, created_at, created_by_id)
 SELECT v.identifier, now(), 'df6990d6-e61a-4e14-aa79-5479dc7b3569'
