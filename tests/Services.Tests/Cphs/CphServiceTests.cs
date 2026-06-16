@@ -5,699 +5,1045 @@
 namespace Defra.Identity.Services.Tests.Cphs;
 
 using System.ComponentModel;
-using System.Globalization;
-using System.Linq.Expressions;
 using Defra.Identity.Models.Requests.Common.Queries;
 using Defra.Identity.Models.Requests.Cphs.Commands;
 using Defra.Identity.Models.Requests.Cphs.Queries;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Common.Exceptions;
 using Defra.Identity.Repositories.Cphs;
-using Defra.Identity.Services.Common.Builders.Strategy.Factories;
 using Defra.Identity.Services.Common.Context;
 using Defra.Identity.Services.Common.Exceptions;
+using Defra.Identity.Services.Common.Strategy.Factories;
 using Defra.Identity.Services.Cphs;
-using Defra.Identity.Services.Tests.Cphs.TestData;
+using Defra.Identity.Test.Utilities.Assertions;
+using Defra.Identity.Test.Utilities.Comparison;
 using Defra.Identity.Test.Utilities.Repository;
+using Defra.Identity.Test.Utilities.Validation;
 using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 
 public class CphServiceTests
 {
-    private readonly ICphRepository cphRepository = Substitute.For<ICphRepository>();
-    private readonly IOperatorContext operatorContext = Substitute.For<IOperatorContext>();
-    private readonly IStrategyBuilderFactory<CphService> strategyBuilderFactory = new StrategyBuilderFactory<CphService>();
-    private readonly IValidator<PagedQuery> pagedQueryValidator = new PagedQueryValidator();
-    private readonly ILogger<CphService> logger = DefraLoggerExtensions.CreateNSubstituteLogger<CphService>();
-    private readonly ICphService cphService;
+    private readonly ICphRepository repository = Substitute.For<ICphRepository>();
 
-    private readonly Guid operatorId = new Guid("a4ae3558-90b7-48a4-90c4-a32c086ff769");
+    private readonly IStrategyBuilderFactory<CphService> strategyBuilderFactory =
+        new StrategyBuilderFactory<CphService>();
+
+    private readonly IValidator<PagedQuery> pagedQueryValidator =
+        Substitute.For<IValidator<PagedQuery>>();
+
+    private readonly ILogger<CphService> logger =
+        DefraLoggerExtensions.CreateNSubstituteLogger<CphService>();
+
+    private readonly IOperatorContext? operatorContext = Substitute.For<IOperatorContext>();
+
+    private readonly SutProvider<CphService> sut;
 
     public CphServiceTests()
     {
-        cphService = new CphService(cphRepository, operatorContext, strategyBuilderFactory, pagedQueryValidator, logger);
-
-        operatorContext.OperatorId.Returns(operatorId);
+        sut = SutProvider<CphService>.CreateFor(
+            context => new CphService(
+                repository,
+                context!,
+                strategyBuilderFactory,
+                pagedQueryValidator,
+                logger),
+            operatorContext);
     }
 
-    [Fact]
-    [Description("GetAllPaged Should return page one results in ascending order and does not return expired or deleted")]
-    public async Task GetAllPaged_ShouldReturnPageOneResultsAscendingOrderAndDoesNotReturnExpiredOrDeleted()
+    [Theory]
+    [InlineData(null)]
+    [InlineData("False")]
+    [InlineData("false")]
+    [InlineData("FALSE")]
+    [InlineData("InvalidValue")]
+    [Description(
+        "GetAllPaged returns page one in ascending order excluding expired or deleted with given IncludeExpired property")]
+    public async Task GetAllPaged_Returns_Page_One_Ascending_Excluding_Expired_Or_Deleted_Given_IncludeExpired(
+        string? includeExpired)
     {
         // Arrange
-        cphRepository.GetPaged(
-                Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(),
-                Arg.Any<int>(),
-                Arg.Any<int>(),
-                Arg.Any<Expression<Func<CountyParishHoldings, string>>>(),
-                Arg.Any<bool>(),
-                Arg.Any<CancellationToken>())
-            .Returns(callInfo => PredicateInterceptor.MockGetAllPagedEntitiesResult(callInfo, CphRepositoryMockingHelper.GetCphEntities()));
+        var request = new GetCphs { PageNumber = 1, PageSize = 2, Expired = includeExpired };
 
-        var request = new GetCphs
-        {
-            Expired = null, PageNumber = 1, PageSize = 2,
-        };
+        var validatorContext = MockValidatorContext<GetCphs>.CreateFor(pagedQueryValidator);
+
+        MockRepositoryContext<CountyParishHoldings>.CreateFor(repository).WithData(
+        [
+            TestData.Cph.Cph7NotExpiredOrDeleted,
+            TestData.Cph.Cph1WithAllowedSpeciesNotExpiredOrDeleted,
+            TestData.Cph.Cph4NotExpiredOrDeleted,
+            TestData.Cph.Cph3DeletedButNotExpired,
+            TestData.Cph.Cph2ExpiredButNotDeleted,
+            TestData.Cph.Cph6DeletedButNotExpired,
+            TestData.Cph.Cph5ExpiredButNotDeleted,
+            TestData.Cph.Cph8ExpiredAndDeleted
+        ]);
 
         // Act
-        var pagedResults = await cphService.GetAllPaged(request, TestContext.Current.CancellationToken);
+        var result = await sut.WithoutOperatorId.GetAllPaged(request, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.VerifyLogContainsOne(LogLevel.Information, "Executing get all county parish holdings paged [county parish holding]");
+        validatorContext.Calls.ValidateAsyncCallCount.ShouldBe(1);
+        validatorContext.Calls.LastValidateAsync.Request.ShouldBe(request);
 
-        pagedResults.ShouldSatisfyAllConditions(
+        result.ShouldSatisfyAllConditions(
             (x) => x.Items.Count().ShouldBe(2),
             (x) => x.PageNumber.ShouldBe(1),
             (x) => x.PageSize.ShouldBe(2),
             (x) => x.TotalCount.ShouldBe(3),
             (x) => x.TotalPages.ShouldBe(2));
 
-        var pagedResultItems = pagedResults.Items.ToList();
+        var pagedResultItems = result.Items.ToList();
 
-        var firstItem = pagedResultItems[0];
-        var secondItem = pagedResultItems[1];
+        pagedResultItems[0]
+            .ShouldSatisfyAllConditions(
+                Assertions.ShouldMapFromEntity(TestData.Cph.Cph1WithAllowedSpeciesNotExpiredOrDeleted));
 
-        firstItem.ShouldSatisfyAllConditions(
-            (x) => x.Id.ShouldBe(new Guid("1cd09a5b-6b00-4f30-b03e-8de45130cad6")),
-            (x) => x.CountyParishHoldingNumber.ShouldBe("44/100/0001"),
-            (x) => x.Expired.ShouldBe(false),
-            (x) => x.ExpiredAt.ShouldBeNull());
+        pagedResultItems[1]
+            .ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(TestData.Cph.Cph4NotExpiredOrDeleted));
 
-        secondItem.ShouldSatisfyAllConditions(
-            (x) => x.Id.ShouldBe(new Guid("77b9c956-2780-4b48-9abc-71bf505466f9")),
-            (x) => x.CountyParishHoldingNumber.ShouldBe("44/100/0004"),
-            (x) => x.Expired.ShouldBe(false),
-            (x) => x.ExpiredAt.ShouldBeNull());
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            "Executing get all county parish holdings paged [county parish holding]");
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            "Successfully executed get all county parish holdings paged [county parish holding]");
     }
 
-    [Fact]
-    [Description("GetAllPaged Should return page two results in ascending order and does not return expired or deleted")]
-    public async Task GetAllPaged_ShouldReturnPageTwoResultsAscendingOrderAndDoesNotReturnExpiredOrDeleted()
+    [Theory]
+    [InlineData(null)]
+    [InlineData("False")]
+    [InlineData("false")]
+    [InlineData("FALSE")]
+    [InlineData("InvalidValue")]
+    [Description(
+        "GetAllPaged returns page two in ascending order excluding expired or deleted with given IncludeExpired property")]
+    public async Task GetAllPaged_Returns_Page_Two_Ascending_Excluding_Expired_Or_Deleted_Given_IncludeExpired(
+        string? includeExpired)
     {
         // Arrange
-        cphRepository.GetPaged(
-                Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(),
-                Arg.Any<int>(),
-                Arg.Any<int>(),
-                Arg.Any<Expression<Func<CountyParishHoldings, string>>>(),
-                Arg.Any<bool>(),
-                Arg.Any<CancellationToken>())
-            .Returns(callInfo => PredicateInterceptor.MockGetAllPagedEntitiesResult(callInfo, CphRepositoryMockingHelper.GetCphEntities()));
+        var request = new GetCphs { PageNumber = 2, PageSize = 2, Expired = includeExpired };
 
-        var request = new GetCphs
-        {
-            Expired = null, PageNumber = 2, PageSize = 2,
-        };
+        var validatorContext = MockValidatorContext<GetCphs>.CreateFor(pagedQueryValidator);
+
+        MockRepositoryContext<CountyParishHoldings>.CreateFor(repository).WithData(
+        [
+            TestData.Cph.Cph7NotExpiredOrDeleted,
+            TestData.Cph.Cph1WithAllowedSpeciesNotExpiredOrDeleted,
+            TestData.Cph.Cph4NotExpiredOrDeleted,
+            TestData.Cph.Cph3DeletedButNotExpired,
+            TestData.Cph.Cph2ExpiredButNotDeleted,
+            TestData.Cph.Cph6DeletedButNotExpired,
+            TestData.Cph.Cph5ExpiredButNotDeleted,
+            TestData.Cph.Cph8ExpiredAndDeleted
+        ]);
 
         // Act
-        var pagedResults = await cphService.GetAllPaged(request, TestContext.Current.CancellationToken);
+        var result = await sut.WithoutOperatorId.GetAllPaged(request, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.VerifyLogContainsOne(LogLevel.Information, "Executing get all county parish holdings paged [county parish holding]");
+        validatorContext.Calls.ValidateAsyncCallCount.ShouldBe(1);
+        validatorContext.Calls.LastValidateAsync.Request.ShouldBe(request);
 
-        pagedResults.ShouldSatisfyAllConditions(
+        result.ShouldSatisfyAllConditions(
             (x) => x.Items.Count().ShouldBe(1),
             (x) => x.PageNumber.ShouldBe(2),
             (x) => x.PageSize.ShouldBe(2),
             (x) => x.TotalCount.ShouldBe(3),
             (x) => x.TotalPages.ShouldBe(2));
 
-        var pagedResultItems = pagedResults.Items.ToList();
+        var pagedResultItems = result.Items.ToList();
 
-        var firstItem = pagedResultItems[0];
+        pagedResultItems[0]
+            .ShouldSatisfyAllConditions(
+                Assertions.ShouldMapFromEntity(TestData.Cph.Cph7NotExpiredOrDeleted));
 
-        firstItem.ShouldSatisfyAllConditions(
-            (x) => x.Id.ShouldBe(new Guid("7140056b-b2ee-40d6-9be1-882bdff30cc2")),
-            (x) => x.CountyParishHoldingNumber.ShouldBe("44/100/0007"),
-            (x) => x.Expired.ShouldBe(false),
-            (x) => x.ExpiredAt.ShouldBeNull());
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            "Executing get all county parish holdings paged [county parish holding]");
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            "Successfully executed get all county parish holdings paged [county parish holding]");
     }
 
-    [Fact]
-    [Description("GetAllPaged Should return page one results in ascending order with expired and does not return deleted")]
-    public async Task GetAllPaged_ShouldReturnPageOneResultsAscendingOrderWithExpiredAndDoesNotReturnDeleted()
+    [Theory]
+    [InlineData(null)]
+    [InlineData("False")]
+    [InlineData("false")]
+    [InlineData("FALSE")]
+    [InlineData("InvalidValue")]
+    [Description(
+        "GetAllPaged returns page one in descending order excluding expired or deleted with given IncludeExpired property")]
+    public async Task GetAllPaged_Returns_Page_One_Descending_Excluding_Expired_Or_Deleted_Given_IncludeExpired(
+        string? includeExpired)
     {
         // Arrange
-        cphRepository.GetPaged(
-                Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(),
-                Arg.Any<int>(),
-                Arg.Any<int>(),
-                Arg.Any<Expression<Func<CountyParishHoldings, string>>>(),
-                Arg.Any<bool>(),
-                Arg.Any<CancellationToken>())
-            .Returns(callInfo => PredicateInterceptor.MockGetAllPagedEntitiesResult(callInfo, CphRepositoryMockingHelper.GetCphEntities()));
+        var request = new GetCphs { PageNumber = 1, PageSize = 2, Expired = includeExpired, OrderByDescending = true };
 
-        var request = new GetCphs
-        {
-            Expired = string.Empty, PageNumber = 1, PageSize = 2,
-        };
+        var validatorContext = MockValidatorContext<GetCphs>.CreateFor(pagedQueryValidator);
 
-        // Act
-        var pagedResults = await cphService.GetAllPaged(request, TestContext.Current.CancellationToken);
-
-        // Assert
-        logger.VerifyLogContainsOne(LogLevel.Information, "Executing get all county parish holdings paged [county parish holding]");
-
-        pagedResults.ShouldSatisfyAllConditions(
-            (x) => x.Items.Count().ShouldBe(2),
-            (x) => x.PageNumber.ShouldBe(1),
-            (x) => x.PageSize.ShouldBe(2),
-            (x) => x.TotalCount.ShouldBe(5),
-            (x) => x.TotalPages.ShouldBe(3));
-
-        var pagedResultItems = pagedResults.Items.ToList();
-
-        var firstItem = pagedResultItems[0];
-        var secondItem = pagedResultItems[1];
-
-        firstItem.ShouldSatisfyAllConditions(
-            (x) => x.Id.ShouldBe(new Guid("1cd09a5b-6b00-4f30-b03e-8de45130cad6")),
-            (x) => x.CountyParishHoldingNumber.ShouldBe("44/100/0001"),
-            (x) => x.Expired.ShouldBe(false),
-            (x) => x.ExpiredAt.ShouldBeNull());
-
-        secondItem.ShouldSatisfyAllConditions(
-            (x) => x.Id.ShouldBe(new Guid("e7009d6d-0a29-4e3f-ac0b-7bf0c7497f46")),
-            (x) => x.CountyParishHoldingNumber.ShouldBe("44/100/0002"),
-            (x) => x.Expired.ShouldBe(true),
-            (x) => x.ExpiredAt.ShouldBe(DateTime.Parse("2026-02-12", new DateTimeFormatInfo()).ToUniversalTime()));
-    }
-
-    [Fact]
-    [Description("GetAllPaged Should return page two results in ascending order with expired and does not return deleted")]
-    public async Task GetAllPaged_ShouldReturnPageTwoResultsAscendingOrderWithExpiredAndDoesNotReturnDeleted()
-    {
-        // Arrange
-        cphRepository.GetPaged(
-                Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(),
-                Arg.Any<int>(),
-                Arg.Any<int>(),
-                Arg.Any<Expression<Func<CountyParishHoldings, string>>>(),
-                Arg.Any<bool>(),
-                Arg.Any<CancellationToken>())
-            .Returns(callInfo => PredicateInterceptor.MockGetAllPagedEntitiesResult(callInfo, CphRepositoryMockingHelper.GetCphEntities()));
-
-        var request = new GetCphs
-        {
-            Expired = string.Empty, PageNumber = 2, PageSize = 2,
-        };
+        MockRepositoryContext<CountyParishHoldings>.CreateFor(repository).WithData(
+        [
+            TestData.Cph.Cph7NotExpiredOrDeleted,
+            TestData.Cph.Cph1WithAllowedSpeciesNotExpiredOrDeleted,
+            TestData.Cph.Cph4NotExpiredOrDeleted,
+            TestData.Cph.Cph3DeletedButNotExpired,
+            TestData.Cph.Cph2ExpiredButNotDeleted,
+            TestData.Cph.Cph6DeletedButNotExpired,
+            TestData.Cph.Cph5ExpiredButNotDeleted,
+            TestData.Cph.Cph8ExpiredAndDeleted
+        ]);
 
         // Act
-        var pagedResults = await cphService.GetAllPaged(request, TestContext.Current.CancellationToken);
+        var result = await sut.WithoutOperatorId.GetAllPaged(request, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.VerifyLogContainsOne(LogLevel.Information, "Executing get all county parish holdings paged [county parish holding]");
+        validatorContext.Calls.ValidateAsyncCallCount.ShouldBe(1);
+        validatorContext.Calls.LastValidateAsync.Request.ShouldBe(request);
 
-        pagedResults.ShouldSatisfyAllConditions(
-            (x) => x.Items.Count().ShouldBe(2),
-            (x) => x.PageNumber.ShouldBe(2),
-            (x) => x.PageSize.ShouldBe(2),
-            (x) => x.TotalCount.ShouldBe(5),
-            (x) => x.TotalPages.ShouldBe(3));
-
-        var pagedResultItems = pagedResults.Items.ToList();
-
-        var firstItem = pagedResultItems[0];
-        var secondItem = pagedResultItems[1];
-
-        firstItem.ShouldSatisfyAllConditions(
-            (x) => x.Id.ShouldBe(new Guid("77b9c956-2780-4b48-9abc-71bf505466f9")),
-            (x) => x.CountyParishHoldingNumber.ShouldBe("44/100/0004"),
-            (x) => x.Expired.ShouldBe(false),
-            (x) => x.ExpiredAt.ShouldBeNull());
-
-        secondItem.ShouldSatisfyAllConditions(
-            (x) => x.Id.ShouldBe(new Guid("802428bd-0411-451b-b75c-2fb6c037f271")),
-            (x) => x.CountyParishHoldingNumber.ShouldBe("44/100/0005"),
-            (x) => x.Expired.ShouldBe(true),
-            (x) => x.ExpiredAt.ShouldBe(DateTime.Parse("2026-02-10", new DateTimeFormatInfo()).ToUniversalTime()));
-    }
-
-    [Fact]
-    [Description("GetAllPaged Should return page one results in descending order and does not return expired or deleted")]
-    public async Task GetAllPaged_ShouldReturnPageOneResultsDescendingOrderAndDoesNotReturnExpiredOrDeleted()
-    {
-        // Arrange
-        cphRepository.GetPaged(
-                Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(),
-                Arg.Any<int>(),
-                Arg.Any<int>(),
-                Arg.Any<Expression<Func<CountyParishHoldings, string>>>(),
-                Arg.Any<bool>(),
-                Arg.Any<CancellationToken>())
-            .Returns(callInfo => PredicateInterceptor.MockGetAllPagedEntitiesResult(callInfo, CphRepositoryMockingHelper.GetCphEntities()));
-
-        var request = new GetCphs
-        {
-            Expired = null, PageNumber = 1, PageSize = 2, OrderByDescending = true,
-        };
-
-        // Act
-        var pagedResults = await cphService.GetAllPaged(request, TestContext.Current.CancellationToken);
-
-        // Assert
-        logger.VerifyLogContainsOne(LogLevel.Information, "Executing get all county parish holdings paged [county parish holding]");
-
-        pagedResults.ShouldSatisfyAllConditions(
+        result.ShouldSatisfyAllConditions(
             (x) => x.Items.Count().ShouldBe(2),
             (x) => x.PageNumber.ShouldBe(1),
             (x) => x.PageSize.ShouldBe(2),
             (x) => x.TotalCount.ShouldBe(3),
             (x) => x.TotalPages.ShouldBe(2));
 
-        var pagedResultItems = pagedResults.Items.ToList();
+        var pagedResultItems = result.Items.ToList();
 
-        var firstItem = pagedResultItems[0];
-        var secondItem = pagedResultItems[1];
+        pagedResultItems[0]
+            .ShouldSatisfyAllConditions(
+                Assertions.ShouldMapFromEntity(TestData.Cph.Cph7NotExpiredOrDeleted));
 
-        firstItem.ShouldSatisfyAllConditions(
-            (x) => x.Id.ShouldBe(new Guid("7140056b-b2ee-40d6-9be1-882bdff30cc2")),
-            (x) => x.CountyParishHoldingNumber.ShouldBe("44/100/0007"),
-            (x) => x.Expired.ShouldBe(false),
-            (x) => x.ExpiredAt.ShouldBeNull());
+        pagedResultItems[1]
+            .ShouldSatisfyAllConditions(
+                Assertions.ShouldMapFromEntity(TestData.Cph.Cph4NotExpiredOrDeleted));
 
-        secondItem.ShouldSatisfyAllConditions(
-            (x) => x.Id.ShouldBe(new Guid("77b9c956-2780-4b48-9abc-71bf505466f9")),
-            (x) => x.CountyParishHoldingNumber.ShouldBe("44/100/0004"),
-            (x) => x.Expired.ShouldBe(false),
-            (x) => x.ExpiredAt.ShouldBeNull());
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            "Executing get all county parish holdings paged [county parish holding]");
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            "Successfully executed get all county parish holdings paged [county parish holding]");
     }
 
-    [Fact]
-    [Description("GetAllPaged Should return page two results in descending order and does not return expired or deleted")]
-    public async Task GetAllPaged_ShouldReturnPageTwoResultsDescendingOrderAndDoesNotReturnExpiredOrDeleted()
+    [Theory]
+    [InlineData(null)]
+    [InlineData("False")]
+    [InlineData("false")]
+    [InlineData("FALSE")]
+    [InlineData("InvalidValue")]
+    [Description(
+        "GetAllPaged returns page two in descending order excluding expired or deleted with given IncludeExpired property")]
+    public async Task GetAllPaged_Returns_Page_Two_Descending_Excluding_Expired_Or_Deleted_Given_IncludeExpired(
+        string? includeExpired)
     {
         // Arrange
-        cphRepository.GetPaged(
-                Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(),
-                Arg.Any<int>(),
-                Arg.Any<int>(),
-                Arg.Any<Expression<Func<CountyParishHoldings, string>>>(),
-                Arg.Any<bool>(),
-                Arg.Any<CancellationToken>())
-            .Returns(callInfo => PredicateInterceptor.MockGetAllPagedEntitiesResult(callInfo, CphRepositoryMockingHelper.GetCphEntities()));
+        var request = new GetCphs { PageNumber = 2, PageSize = 2, Expired = includeExpired, OrderByDescending = true };
 
-        var request = new GetCphs
-        {
-            Expired = null, PageNumber = 2, PageSize = 2, OrderByDescending = true,
-        };
+        var validatorContext = MockValidatorContext<GetCphs>.CreateFor(pagedQueryValidator);
+
+        MockRepositoryContext<CountyParishHoldings>.CreateFor(repository).WithData(
+        [
+            TestData.Cph.Cph7NotExpiredOrDeleted,
+            TestData.Cph.Cph1WithAllowedSpeciesNotExpiredOrDeleted,
+            TestData.Cph.Cph4NotExpiredOrDeleted,
+            TestData.Cph.Cph3DeletedButNotExpired,
+            TestData.Cph.Cph2ExpiredButNotDeleted,
+            TestData.Cph.Cph6DeletedButNotExpired,
+            TestData.Cph.Cph5ExpiredButNotDeleted,
+            TestData.Cph.Cph8ExpiredAndDeleted
+        ]);
 
         // Act
-        var pagedResults = await cphService.GetAllPaged(request, TestContext.Current.CancellationToken);
+        var result = await sut.WithoutOperatorId.GetAllPaged(request, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.VerifyLogContainsOne(LogLevel.Information, "Executing get all county parish holdings paged [county parish holding]");
+        validatorContext.Calls.ValidateAsyncCallCount.ShouldBe(1);
+        validatorContext.Calls.LastValidateAsync.Request.ShouldBe(request);
 
-        pagedResults.ShouldSatisfyAllConditions(
+        result.ShouldSatisfyAllConditions(
             (x) => x.Items.Count().ShouldBe(1),
             (x) => x.PageNumber.ShouldBe(2),
             (x) => x.PageSize.ShouldBe(2),
             (x) => x.TotalCount.ShouldBe(3),
             (x) => x.TotalPages.ShouldBe(2));
 
-        var pagedResultItems = pagedResults.Items.ToList();
+        var pagedResultItems = result.Items.ToList();
 
-        var firstItem = pagedResultItems[0];
+        pagedResultItems[0]
+            .ShouldSatisfyAllConditions(
+                Assertions.ShouldMapFromEntity(TestData.Cph.Cph1WithAllowedSpeciesNotExpiredOrDeleted));
 
-        firstItem.ShouldSatisfyAllConditions(
-            (x) => x.Id.ShouldBe(new Guid("1cd09a5b-6b00-4f30-b03e-8de45130cad6")),
-            (x) => x.CountyParishHoldingNumber.ShouldBe("44/100/0001"),
-            (x) => x.Expired.ShouldBe(false),
-            (x) => x.ExpiredAt.ShouldBeNull());
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            "Executing get all county parish holdings paged [county parish holding]");
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            "Successfully executed get all county parish holdings paged [county parish holding]");
     }
 
-    [Fact]
-    [Description("GetAllPaged Should return page one results in descending order with expired and does not return deleted")]
-    public async Task GetAllPaged_ShouldReturnPageOneResultsDescendingOrderWithExpiredAndDoesNotReturnDeleted()
+    [Theory]
+    [InlineData("")]
+    [InlineData("True")]
+    [InlineData("true")]
+    [InlineData("TRUE")]
+    [Description(
+        "GetAllPaged returns page one in ascending order including expired but excluding deleted with given IncludeExpired property")]
+    public async Task GetAllPaged_Returns_Page_One_Ascending_Including_Expired_Excluding_Deleted_Given_IncludeExpired(
+        string? includeExpired)
     {
         // Arrange
-        cphRepository.GetPaged(
-                Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(),
-                Arg.Any<int>(),
-                Arg.Any<int>(),
-                Arg.Any<Expression<Func<CountyParishHoldings, string>>>(),
-                Arg.Any<bool>(),
-                Arg.Any<CancellationToken>())
-            .Returns(callInfo => PredicateInterceptor.MockGetAllPagedEntitiesResult(callInfo, CphRepositoryMockingHelper.GetCphEntities()));
+        var request = new GetCphs { PageNumber = 1, PageSize = 2, Expired = includeExpired };
 
-        var request = new GetCphs
-        {
-            Expired = string.Empty, PageNumber = 1, PageSize = 2, OrderByDescending = true,
-        };
+        var validatorContext = MockValidatorContext<GetCphs>.CreateFor(pagedQueryValidator);
+
+        MockRepositoryContext<CountyParishHoldings>.CreateFor(repository).WithData(
+        [
+            TestData.Cph.Cph7NotExpiredOrDeleted,
+            TestData.Cph.Cph1WithAllowedSpeciesNotExpiredOrDeleted,
+            TestData.Cph.Cph4NotExpiredOrDeleted,
+            TestData.Cph.Cph3DeletedButNotExpired,
+            TestData.Cph.Cph2ExpiredButNotDeleted,
+            TestData.Cph.Cph6DeletedButNotExpired,
+            TestData.Cph.Cph5ExpiredButNotDeleted,
+            TestData.Cph.Cph8ExpiredAndDeleted
+        ]);
 
         // Act
-        var pagedResults = await cphService.GetAllPaged(request, TestContext.Current.CancellationToken);
+        var result = await sut.WithoutOperatorId.GetAllPaged(request, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.VerifyLogContainsOne(LogLevel.Information, "Executing get all county parish holdings paged [county parish holding]");
+        validatorContext.Calls.ValidateAsyncCallCount.ShouldBe(1);
+        validatorContext.Calls.LastValidateAsync.Request.ShouldBe(request);
 
-        pagedResults.ShouldSatisfyAllConditions(
+        result.ShouldSatisfyAllConditions(
             (x) => x.Items.Count().ShouldBe(2),
             (x) => x.PageNumber.ShouldBe(1),
             (x) => x.PageSize.ShouldBe(2),
             (x) => x.TotalCount.ShouldBe(5),
             (x) => x.TotalPages.ShouldBe(3));
 
-        var pagedResultItems = pagedResults.Items.ToList();
+        var pagedResultItems = result.Items.ToList();
 
-        var firstItem = pagedResultItems[0];
-        var secondItem = pagedResultItems[1];
+        pagedResultItems[0]
+            .ShouldSatisfyAllConditions(
+                Assertions.ShouldMapFromEntity(TestData.Cph.Cph1WithAllowedSpeciesNotExpiredOrDeleted));
 
-        firstItem.ShouldSatisfyAllConditions(
-            (x) => x.Id.ShouldBe(new Guid("7140056b-b2ee-40d6-9be1-882bdff30cc2")),
-            (x) => x.CountyParishHoldingNumber.ShouldBe("44/100/0007"),
-            (x) => x.Expired.ShouldBe(false),
-            (x) => x.ExpiredAt.ShouldBeNull());
+        pagedResultItems[1]
+            .ShouldSatisfyAllConditions(
+                Assertions.ShouldMapFromEntity(TestData.Cph.Cph2ExpiredButNotDeleted));
 
-        secondItem.ShouldSatisfyAllConditions(
-            (x) => x.Id.ShouldBe(new Guid("802428bd-0411-451b-b75c-2fb6c037f271")),
-            (x) => x.CountyParishHoldingNumber.ShouldBe("44/100/0005"),
-            (x) => x.Expired.ShouldBe(true),
-            (x) => x.ExpiredAt.ShouldBe(DateTime.Parse("2026-02-10", new DateTimeFormatInfo()).ToUniversalTime()));
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            "Executing get all county parish holdings paged [county parish holding]");
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            "Successfully executed get all county parish holdings paged [county parish holding]");
     }
 
-    [Fact]
-    [Description("GetAllPaged Should return page two results in descending order with expired and does not return deleted")]
-    public async Task GetAllPaged_ShouldReturnPageTwoResultsDescendingOrderWithExpiredAndDoesNotReturnDeleted()
+    [Theory]
+    [InlineData("")]
+    [InlineData("True")]
+    [InlineData("true")]
+    [InlineData("TRUE")]
+    [Description(
+        "GetAllPaged returns page two in ascending order including expired but excluding deleted with given IncludeExpired property")]
+    public async Task GetAllPaged_Returns_Page_Two_Ascending_Including_Expired_Excluding_Deleted_Given_IncludeExpired(
+        string? includeExpired)
     {
         // Arrange
-        cphRepository.GetPaged(
-                Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(),
-                Arg.Any<int>(),
-                Arg.Any<int>(),
-                Arg.Any<Expression<Func<CountyParishHoldings, string>>>(),
-                Arg.Any<bool>(),
-                Arg.Any<CancellationToken>())
-            .Returns(callInfo => PredicateInterceptor.MockGetAllPagedEntitiesResult(callInfo, CphRepositoryMockingHelper.GetCphEntities()));
+        var request = new GetCphs { PageNumber = 2, PageSize = 2, Expired = includeExpired };
 
-        var request = new GetCphs
-        {
-            Expired = string.Empty, PageNumber = 2, PageSize = 2, OrderByDescending = true,
-        };
+        var validatorContext = MockValidatorContext<GetCphs>.CreateFor(pagedQueryValidator);
+
+        MockRepositoryContext<CountyParishHoldings>.CreateFor(repository).WithData(
+        [
+            TestData.Cph.Cph7NotExpiredOrDeleted,
+            TestData.Cph.Cph1WithAllowedSpeciesNotExpiredOrDeleted,
+            TestData.Cph.Cph4NotExpiredOrDeleted,
+            TestData.Cph.Cph3DeletedButNotExpired,
+            TestData.Cph.Cph2ExpiredButNotDeleted,
+            TestData.Cph.Cph6DeletedButNotExpired,
+            TestData.Cph.Cph5ExpiredButNotDeleted,
+            TestData.Cph.Cph8ExpiredAndDeleted
+        ]);
 
         // Act
-        var pagedResults = await cphService.GetAllPaged(request, TestContext.Current.CancellationToken);
+        var result = await sut.WithoutOperatorId.GetAllPaged(request, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.VerifyLogContainsOne(LogLevel.Information, "Executing get all county parish holdings paged [county parish holding]");
+        validatorContext.Calls.ValidateAsyncCallCount.ShouldBe(1);
+        validatorContext.Calls.LastValidateAsync.Request.ShouldBe(request);
 
-        pagedResults.ShouldSatisfyAllConditions(
+        result.ShouldSatisfyAllConditions(
             (x) => x.Items.Count().ShouldBe(2),
             (x) => x.PageNumber.ShouldBe(2),
             (x) => x.PageSize.ShouldBe(2),
             (x) => x.TotalCount.ShouldBe(5),
             (x) => x.TotalPages.ShouldBe(3));
 
-        var pagedResultItems = pagedResults.Items.ToList();
+        var pagedResultItems = result.Items.ToList();
 
-        var firstItem = pagedResultItems[0];
-        var secondItem = pagedResultItems[1];
+        pagedResultItems[0]
+            .ShouldSatisfyAllConditions(
+                Assertions.ShouldMapFromEntity(TestData.Cph.Cph4NotExpiredOrDeleted));
 
-        firstItem.ShouldSatisfyAllConditions(
-            (x) => x.Id.ShouldBe(new Guid("77b9c956-2780-4b48-9abc-71bf505466f9")),
-            (x) => x.CountyParishHoldingNumber.ShouldBe("44/100/0004"),
-            (x) => x.Expired.ShouldBe(false),
-            (x) => x.ExpiredAt.ShouldBeNull());
+        pagedResultItems[1]
+            .ShouldSatisfyAllConditions(
+                Assertions.ShouldMapFromEntity(TestData.Cph.Cph5ExpiredButNotDeleted));
 
-        secondItem.ShouldSatisfyAllConditions(
-            (x) => x.Id.ShouldBe(new Guid("e7009d6d-0a29-4e3f-ac0b-7bf0c7497f46")),
-            (x) => x.CountyParishHoldingNumber.ShouldBe("44/100/0002"),
-            (x) => x.Expired.ShouldBe(true),
-            (x) => x.ExpiredAt.ShouldBe(DateTime.Parse("2026-02-12", new DateTimeFormatInfo()).ToUniversalTime()));
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            "Executing get all county parish holdings paged [county parish holding]");
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            "Successfully executed get all county parish holdings paged [county parish holding]");
     }
 
-    [Fact]
-    [Description("Get Should return result when item is not expired and not deleted")]
-    public async Task Get_ShouldReturnResultWhenItemIsNotExpiredAndNotDeleted()
+    [Theory]
+    [InlineData("")]
+    [InlineData("True")]
+    [InlineData("true")]
+    [InlineData("TRUE")]
+    [Description(
+        "GetAllPaged returns page one in descending order including expired but excluding deleted with given IncludeExpired property")]
+    public async Task GetAllPaged_Returns_Page_One_Descending_Including_Expired_Excluding_Deleted_Given_IncludeExpired(
+        string? includeExpired)
     {
         // Arrange
-        cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(callInfo => PredicateInterceptor.MockGetSingleEntityResult(callInfo, CphRepositoryMockingHelper.GetCphEntities()));
+        var request = new GetCphs { PageNumber = 1, PageSize = 2, Expired = includeExpired, OrderByDescending = true };
 
-        var request = new GetCphByCphId
-        {
-            Id = new Guid("77b9c956-2780-4b48-9abc-71bf505466f9"),
-        };
+        var validatorContext = MockValidatorContext<GetCphs>.CreateFor(pagedQueryValidator);
+
+        MockRepositoryContext<CountyParishHoldings>.CreateFor(repository).WithData(
+        [
+            TestData.Cph.Cph7NotExpiredOrDeleted,
+            TestData.Cph.Cph1WithAllowedSpeciesNotExpiredOrDeleted,
+            TestData.Cph.Cph4NotExpiredOrDeleted,
+            TestData.Cph.Cph3DeletedButNotExpired,
+            TestData.Cph.Cph2ExpiredButNotDeleted,
+            TestData.Cph.Cph6DeletedButNotExpired,
+            TestData.Cph.Cph5ExpiredButNotDeleted,
+            TestData.Cph.Cph8ExpiredAndDeleted
+        ]);
 
         // Act
-        var result = await cphService.Get(request, TestContext.Current.CancellationToken);
+        var result = await sut.WithoutOperatorId.GetAllPaged(request, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.VerifyLogContainsOne(LogLevel.Information, $"Executing get county parish holding [county parish holding] with id {request.Id.ToString()}");
+        validatorContext.Calls.ValidateAsyncCallCount.ShouldBe(1);
+        validatorContext.Calls.LastValidateAsync.Request.ShouldBe(request);
 
         result.ShouldSatisfyAllConditions(
-            (x) => x.Id.ShouldBe(new Guid("77b9c956-2780-4b48-9abc-71bf505466f9")),
-            (x) => x.CountyParishHoldingNumber.ShouldBe("44/100/0004"),
-            (x) => x.Expired.ShouldBe(false),
-            (x) => x.ExpiredAt.ShouldBeNull());
+            (x) => x.Items.Count().ShouldBe(2),
+            (x) => x.PageNumber.ShouldBe(1),
+            (x) => x.PageSize.ShouldBe(2),
+            (x) => x.TotalCount.ShouldBe(5),
+            (x) => x.TotalPages.ShouldBe(3));
+
+        var pagedResultItems = result.Items.ToList();
+
+        pagedResultItems[0]
+            .ShouldSatisfyAllConditions(
+                Assertions.ShouldMapFromEntity(TestData.Cph.Cph7NotExpiredOrDeleted));
+
+        pagedResultItems[1]
+            .ShouldSatisfyAllConditions(
+                Assertions.ShouldMapFromEntity(TestData.Cph.Cph5ExpiredButNotDeleted));
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            "Executing get all county parish holdings paged [county parish holding]");
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            "Successfully executed get all county parish holdings paged [county parish holding]");
     }
 
-    [Fact]
-    [Description("Get Should return result when item is expired and not deleted")]
-    public async Task Get_ShouldReturnResultWhenItemIsExpiredAndNotDeleted()
+    [Theory]
+    [InlineData("")]
+    [InlineData("True")]
+    [InlineData("true")]
+    [InlineData("TRUE")]
+    [Description(
+        "GetAllPaged returns page two in descending order including expired but excluding deleted with given IncludeExpired property")]
+    public async Task GetAllPaged_Returns_Page_Two_Descending_Including_Expired_Excluding_Deleted_Given_IncludeExpired(
+        string? includeExpired)
     {
         // Arrange
-        cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(callInfo => PredicateInterceptor.MockGetSingleEntityResult(callInfo, CphRepositoryMockingHelper.GetCphEntities()));
+        var request = new GetCphs { PageNumber = 2, PageSize = 2, Expired = includeExpired, OrderByDescending = true };
 
-        var request = new GetCphByCphId
-        {
-            Id = new Guid("e7009d6d-0a29-4e3f-ac0b-7bf0c7497f46"),
-        };
+        var validatorContext = MockValidatorContext<GetCphs>.CreateFor(pagedQueryValidator);
+
+        MockRepositoryContext<CountyParishHoldings>.CreateFor(repository).WithData(
+        [
+            TestData.Cph.Cph7NotExpiredOrDeleted,
+            TestData.Cph.Cph1WithAllowedSpeciesNotExpiredOrDeleted,
+            TestData.Cph.Cph4NotExpiredOrDeleted,
+            TestData.Cph.Cph3DeletedButNotExpired,
+            TestData.Cph.Cph2ExpiredButNotDeleted,
+            TestData.Cph.Cph6DeletedButNotExpired,
+            TestData.Cph.Cph5ExpiredButNotDeleted,
+            TestData.Cph.Cph8ExpiredAndDeleted
+        ]);
 
         // Act
-        var result = await cphService.Get(request, TestContext.Current.CancellationToken);
+        var result = await sut.WithoutOperatorId.GetAllPaged(request, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.VerifyLogContainsOne(LogLevel.Information, $"Executing get county parish holding [county parish holding] with id {request.Id.ToString()}");
+        validatorContext.Calls.ValidateAsyncCallCount.ShouldBe(1);
+        validatorContext.Calls.LastValidateAsync.Request.ShouldBe(request);
 
         result.ShouldSatisfyAllConditions(
-            (x) => x.Id.ShouldBe(new Guid("e7009d6d-0a29-4e3f-ac0b-7bf0c7497f46")),
-            (x) => x.CountyParishHoldingNumber.ShouldBe("44/100/0002"),
-            (x) => x.Expired.ShouldBe(true),
-            (x) => x.ExpiredAt.ShouldBe(DateTime.Parse("2026-02-12", new DateTimeFormatInfo()).ToUniversalTime()));
+            (x) => x.Items.Count().ShouldBe(2),
+            (x) => x.PageNumber.ShouldBe(2),
+            (x) => x.PageSize.ShouldBe(2),
+            (x) => x.TotalCount.ShouldBe(5),
+            (x) => x.TotalPages.ShouldBe(3));
+
+        var pagedResultItems = result.Items.ToList();
+
+        pagedResultItems[0]
+            .ShouldSatisfyAllConditions(
+                Assertions.ShouldMapFromEntity(TestData.Cph.Cph4NotExpiredOrDeleted));
+
+        pagedResultItems[1]
+            .ShouldSatisfyAllConditions(
+                Assertions.ShouldMapFromEntity(TestData.Cph.Cph2ExpiredButNotDeleted));
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            "Executing get all county parish holdings paged [county parish holding]");
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            "Successfully executed get all county parish holdings paged [county parish holding]");
     }
 
-    [Fact]
-    [Description("Get Should throw not found exception when item is deleted")]
-    public void Get_ShouldThrowNotFoundExceptionWhenItemIsDeleted()
+    [Theory]
+    [InlineData("")]
+    [InlineData("True")]
+    [InlineData("true")]
+    [InlineData("TRUE")]
+    [InlineData(null)]
+    [InlineData("False")]
+    [InlineData("false")]
+    [InlineData("FALSE")]
+    [InlineData("InvalidValue")]
+    [Description(
+        "GetAllPaged throws validation exception when request validation fails with given IncludeExpired property")]
+    public async Task GetAllPaged_Throws_Validation_Exception_When_Request_Validation_Fails_Given_IncludeExpired(
+        string? includeExpired)
     {
         // Arrange
-        cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(
-                new CountyParishHoldings()
-                {
-                    Id = new Guid("5bc8f1a5-2d44-40b5-93e4-52b613bf099f"), DeletedAt = DateTime.Parse("2026-02-13", new DateTimeFormatInfo()).ToUniversalTime(),
-                });
+        var request = new GetCphs { PageNumber = 1, PageSize = 1, Expired = includeExpired };
 
-        var request = new GetCphByCphId
-        {
-            Id = new Guid("5bc8f1a5-2d44-40b5-93e4-52b613bf099f"),
-        };
+        var validatorContext = MockValidatorContext<PagedQuery>.CreateFor(pagedQueryValidator)
+            .WithValidationFailures(
+            [
+                new ValidationFailure("Random Property 1", "Simulated validation failure 1"),
+                new ValidationFailure("Random Property 2", "Simulated validation failure 2"),
+            ]);
 
-        // Act & Assert
-        Should.Throw<NotFoundException>(async () => await cphService.Get(request, TestContext.Current.CancellationToken));
-
-        logger.VerifyLogContainsOne(LogLevel.Information, $"Executing get county parish holding [county parish holding] with id {request.Id.ToString()}");
-        logger.VerifyLogContainsOne(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");
-    }
-
-    [Fact]
-    [Description("Get Should throw not found exception when the entity does not exist")]
-    public void Get_ShouldThrowNotFoundExceptionWhenEntityDoesNotExist()
-    {
-        // Arrange
-        cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(Task.FromResult<CountyParishHoldings?>(null));
-
-        var nonExistingEntityId = new Guid("109d340f-16b7-45fc-83d4-9ea8968df112");
-
-        var request = new GetCphByCphId
-        {
-            Id = nonExistingEntityId,
-        };
-
-        // Act & Assert
-        Should.Throw<NotFoundException>(async () => await cphService.Get(request, TestContext.Current.CancellationToken));
-
-        logger.VerifyLogContainsOne(LogLevel.Information, $"Executing get county parish holding [county parish holding] with id {request.Id.ToString()}");
-        logger.VerifyLogContainsOne(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");
-    }
-
-    [Fact]
-    [Description("Expire Should expire none expired and none deleted item")]
-    public async Task Expire_ShouldExpireNoneExpiredAndNonDeletedItem()
-    {
-        // Arrange
-        cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(callInfo => PredicateInterceptor.MockGetSingleEntityResult(callInfo, CphRepositoryMockingHelper.GetCphEntities()));
-
-        var request = new ExpireCphByCphId
-        {
-            Id = new Guid("1cd09a5b-6b00-4f30-b03e-8de45130cad6"),
-        };
+        var repositoryContext = MockRepositoryContext<UserAccounts>.CreateFor(repository);
 
         // Act
-        await cphService.Expire(request, TestContext.Current.CancellationToken);
+        Func<Task> act = async () =>
+            await sut.WithOperatorId.GetAllPaged(request, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.VerifyLogContainsOne(LogLevel.Information, $"Executing expire county parish holding [county parish holding] with id {request.Id.ToString()} by operator {operatorId}");
+        var exception = await act.ShouldThrowAsync<ValidationException>();
 
-        await cphRepository.Received(1).Update(Arg.Is<CountyParishHoldings>(v => v.ExpiredAt != null), Arg.Any<CancellationToken>());
+        exception.Message.ShouldContain("Random Property 1: Simulated validation failure 1");
+        exception.Message.ShouldContain("Random Property 2: Simulated validation failure 2");
+
+        exception.Errors.Count().ShouldBe(2);
+
+        exception.Errors.ToList().ShouldSatisfyAllConditions(errors =>
+        {
+            errors[0].PropertyName.ShouldBe("Random Property 1");
+            errors[0].ErrorMessage.ShouldBe("Simulated validation failure 1");
+            errors[1].PropertyName.ShouldBe("Random Property 2");
+            errors[1].ErrorMessage.ShouldBe("Simulated validation failure 2");
+        });
+
+        exception.Errors.First().PropertyName.ShouldBe("Random Property 1");
+        exception.Errors.First().ErrorMessage.ShouldBe("Simulated validation failure 1");
+
+        validatorContext.Calls.ValidateAsyncCallCount.ShouldBe(1);
+        validatorContext.Calls.LastValidateAsync.Request.ShouldBe(request);
+
+        repositoryContext.Calls.ShouldHaveNoCalls();
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            "Executing get all county parish holdings paged [county parish holding]");
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Warning,
+            $"Execute get all county parish holdings paged [county parish holding] failed validation");
     }
 
     [Fact]
-    [Description("Expire Should throw conflict exception when already expired")]
-    public async Task Expire_ShouldThrowConflictExceptionWhenAlreadyExpired()
+    [Description("Get returns the requested cph")]
+    public async Task Get_Returns_Requested_Cph()
     {
         // Arrange
-        cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(callInfo => PredicateInterceptor.MockGetSingleEntityResult(callInfo, CphRepositoryMockingHelper.GetCphEntities()));
+        var cph1WithAllowedSpeciesNotExpiredOrDeleted = TestData.Cph.Cph1WithAllowedSpeciesNotExpiredOrDeleted;
+        var cph4NotExpiredOrDeleted = TestData.Cph.Cph4NotExpiredOrDeleted;
+        var cph5ExpiredButNotDeleted = TestData.Cph.Cph5ExpiredButNotDeleted;
 
-        var request = new ExpireCphByCphId
-        {
-            Id = new Guid("802428bd-0411-451b-b75c-2fb6c037f271"),
-        };
+        var request = new GetCphByCphId() { Id = cph1WithAllowedSpeciesNotExpiredOrDeleted.Id };
 
-        // Act & Assert
-        await Should.ThrowAsync<ConflictException>(
-            () =>
-                cphService.Expire(request, TestContext.Current.CancellationToken));
-
-        logger.VerifyLogContainsOne(LogLevel.Information, $"Executing expire county parish holding [county parish holding] with id {request.Id.ToString()} by operator {operatorId}");
-        logger.VerifyLogContainsOne(LogLevel.Warning, $"Execute expire county parish holding [county parish holding] with id {request.Id.ToString()} failed conflict rule 'County parish holding must not have already expired'");
-
-        await cphRepository.DidNotReceive().Update(Arg.Any<CountyParishHoldings>(), Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    [Description("Expire Should throw not found exception when deleted")]
-    public async Task Expire_ShouldThrowNotFoundExceptionWhenDeleted()
-    {
-        // Arrange
-        cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(
-                new CountyParishHoldings()
-                {
-                    Id = new Guid("a4343f59-011c-46dc-a9fe-553923338e0a"), DeletedAt = DateTime.Parse("2026-02-13", new DateTimeFormatInfo()).ToUniversalTime(),
-                });
-
-        var request = new ExpireCphByCphId
-        {
-            Id = new Guid("a4343f59-011c-46dc-a9fe-553923338e0a"),
-        };
-
-        // Act & Assert
-        await Should.ThrowAsync<NotFoundException>(
-            () =>
-                cphService.Expire(request, TestContext.Current.CancellationToken));
-
-        logger.VerifyLogContainsOne(LogLevel.Information, $"Executing expire county parish holding [county parish holding] with id {request.Id.ToString()} by operator {operatorId}");
-        logger.VerifyLogContainsOne(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");
-
-        await cphRepository.DidNotReceive().Update(Arg.Any<CountyParishHoldings>(), Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    [Description("Expire Should throw not found exception when entity does not exist")]
-    public async Task Expire_ShouldThrowNotFoundExceptionWhenEntityDoesNotExist()
-    {
-        // Arrange
-        cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(Task.FromResult<CountyParishHoldings?>(null));
-
-        var nonExistingEntityId = new Guid("109d340f-16b7-45fc-83d4-9ea8968df112");
-
-        var request = new ExpireCphByCphId
-        {
-            Id = nonExistingEntityId,
-        };
-
-        // Act & Assert
-        await Should.ThrowAsync<NotFoundException>(
-            () =>
-                cphService.Expire(request, TestContext.Current.CancellationToken));
-
-        logger.VerifyLogContainsOne(LogLevel.Information, $"Executing expire county parish holding [county parish holding] with id {request.Id.ToString()} by operator {operatorId}");
-        logger.VerifyLogContainsOne(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");
-
-        await cphRepository.DidNotReceive().Update(Arg.Any<CountyParishHoldings>(), Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    [Description("Delete Should delete none deleted item")]
-    public async Task Delete_ShouldDeleteNoneDeletedItem()
-    {
-        // Arrange
-        cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(callInfo => PredicateInterceptor.MockGetSingleEntityResult(callInfo, CphRepositoryMockingHelper.GetCphEntities()));
-
-        var request = new DeleteCphByCphId
-        {
-            Id = new Guid("1cd09a5b-6b00-4f30-b03e-8de45130cad6"),
-        };
+        MockRepositoryContext<CountyParishHoldings>.CreateFor(repository).WithData(
+        [
+            cph1WithAllowedSpeciesNotExpiredOrDeleted,
+            cph4NotExpiredOrDeleted,
+            cph5ExpiredButNotDeleted,
+        ]);
 
         // Act
-        await cphService.Delete(request, TestContext.Current.CancellationToken);
+        var result = await sut.WithoutOperatorId.Get(request, TestContext.Current.CancellationToken);
 
         // Assert
-        logger.VerifyLogContainsOne(LogLevel.Information, $"Executing delete county parish holding [county parish holding] with id {request.Id.ToString()} by operator {operatorId}");
+        result.ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(cph1WithAllowedSpeciesNotExpiredOrDeleted));
 
-        await cphRepository.Received(1).Update(Arg.Is<CountyParishHoldings>(v => v.DeletedAt != null && v.DeletedById == operatorId), Arg.Any<CancellationToken>());
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            $"Executing get county parish holding [county parish holding] with id {request.Id}");
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            $"Successfully executed get county parish holding [county parish holding] with id {request.Id}");
     }
 
     [Fact]
-    [Description("Delete Should throw not found exception when deleted")]
-    public async Task Delete_ShouldThrowNotFoundExceptionWhenDeleted()
+    [Description("Get returns the requested expired cph")]
+    public async Task Get_Returns_Requested_Expired_Cph()
     {
         // Arrange
-        cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(
-                new CountyParishHoldings()
-                {
-                    Id = new Guid("a4343f59-011c-46dc-a9fe-553923338e0a"), DeletedAt = DateTime.Parse("2026-02-13", new DateTimeFormatInfo()).ToUniversalTime(),
-                });
+        var cph5ExpiredButNotDeleted = TestData.Cph.Cph5ExpiredButNotDeleted;
 
-        var request = new DeleteCphByCphId
-        {
-            Id = new Guid("a4343f59-011c-46dc-a9fe-553923338e0a"),
-        };
+        var request = new GetCphByCphId() { Id = cph5ExpiredButNotDeleted.Id };
 
-        // Act & Assert
-        await Should.ThrowAsync<NotFoundException>(
-            () =>
-                cphService.Delete(request, TestContext.Current.CancellationToken));
+        MockRepositoryContext<CountyParishHoldings>.CreateFor(repository).WithData(
+        [
+            cph5ExpiredButNotDeleted,
+        ]);
 
-        logger.VerifyLogContainsOne(LogLevel.Information, $"Executing delete county parish holding [county parish holding] with id {request.Id.ToString()} by operator {operatorId}");
-        logger.VerifyLogContainsOne(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");
+        // Act
+        var result = await sut.WithoutOperatorId.Get(request, TestContext.Current.CancellationToken);
 
-        await cphRepository.DidNotReceive().Update(Arg.Any<CountyParishHoldings>(), Arg.Any<CancellationToken>());
+        // Assert
+        result.ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(cph5ExpiredButNotDeleted));
+
+        result.ExpiredAt.ShouldBe(cph5ExpiredButNotDeleted.ExpiredAt);
+        result.Expired.ShouldBeTrue();
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            $"Executing get county parish holding [county parish holding] with id {request.Id}");
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            $"Successfully executed get county parish holding [county parish holding] with id {request.Id}");
     }
 
     [Fact]
-    [Description("Expire Should throw not found exception when entity does not exist")]
-    public async Task Delete_ShouldThrowNotFoundExceptionWhenEntityDoesNotExist()
+    [Description("Get throws not found exception when requested cph does not exist")]
+    public async Task Get_Throws_NotFound_Exception_When_Requested_Cph_Does_Not_Exist()
     {
         // Arrange
-        cphRepository.GetSingle(Arg.Any<Expression<Func<CountyParishHoldings, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(Task.FromResult<CountyParishHoldings?>(null));
+        var request = new GetCphByCphId() { Id = Guid.NewGuid(), };
+        var repositoryContext = MockRepositoryContext<CountyParishHoldings>.CreateFor(repository);
 
-        var nonExistingEntityId = new Guid("109d340f-16b7-45fc-83d4-9ea8968df112");
+        // Act
+        Func<Task> act = async () =>
+            await sut.WithoutOperatorId.Get(request, TestContext.Current.CancellationToken);
 
-        var request = new DeleteCphByCphId
+        // Assert
+        var exception = await act.ShouldThrowAsync<NotFoundException>();
+        exception.Message.ShouldBe("County parish holding not found");
+
+        repositoryContext.Calls.GetCallCount.ShouldBe(1);
+        repositoryContext.Calls.LastGetResult.ShouldBeNull();
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            $"Executing get county parish holding [county parish holding] with id {request.Id}");
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Warning,
+            $"County parish holding with id {request.Id} not found");
+    }
+
+    [Fact]
+    [Description("Get throws not found exception when requested cph is deleted")]
+    public async Task Get_Throws_NotFound_Exception_When_Requested_Cph_Deleted()
+    {
+        // Arrange
+        var cph3DeletedButNotExpired = TestData.Cph.Cph3DeletedButNotExpired;
+
+        var request = new GetCphByCphId() { Id = cph3DeletedButNotExpired.Id, };
+
+        var repositoryContext = MockRepositoryContext<CountyParishHoldings>.CreateFor(repository)
+            .WithData([cph3DeletedButNotExpired]);
+
+        // Act
+        Func<Task> act = async () =>
+            await sut.WithoutOperatorId.Get(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        var exception = await act.ShouldThrowAsync<NotFoundException>();
+        exception.Message.ShouldBe("County parish holding not found");
+
+        // Check that the repository returned the deleted item for evaluation of the deleted state
+        repositoryContext.Calls.GetCallCount.ShouldBe(1);
+        repositoryContext.Calls.LastGetResult.ShouldBe(cph3DeletedButNotExpired);
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            $"Executing get county parish holding [county parish holding] with id {request.Id}");
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Warning,
+            $"County parish holding with id {request.Id} not found");
+    }
+
+    [Fact]
+    [Description("Expire expires the requested cph")]
+    public async Task Expire_Expires_Requested_Cph()
+    {
+        // Arrange
+        var cph4NotExpiredOrDeleted = TestData.Cph.Cph4NotExpiredOrDeleted;
+        var originalCph4NotExpiredOrDeleted = TestData.Cph.Cph4NotExpiredOrDeleted;
+
+        var request = new ExpireCphByCphId() { Id = cph4NotExpiredOrDeleted.Id };
+
+        var repositoryContext = MockRepositoryContext<CountyParishHoldings>.CreateFor(repository)
+            .WithData(
+            [
+                cph4NotExpiredOrDeleted
+            ]);
+
+        // Act
+        await sut.WithOperatorId.Expire(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        repositoryContext.Calls.UpdateCallCount.ShouldBe(1);
+        repositoryContext.Calls.LastUpdateResult.ShouldNotBeNull();
+        repositoryContext.Calls.LastUpdateResult.ShouldBe(cph4NotExpiredOrDeleted);
+
+        EntityComparer.CreateFor(originalCph4NotExpiredOrDeleted, cph4NotExpiredOrDeleted)
+            .VariancesAtTopLevelWithoutObjectsOrEnumerables
+            .ShouldOnlyHaveChanged(nameof(CountyParishHoldings.ExpiredAt));
+
+        repositoryContext.Calls.LastUpdateResult.ShouldSatisfyAllConditions(expiredEntity =>
         {
-            Id = nonExistingEntityId,
-        };
+            expiredEntity.ExpiredAt.ShouldNotBeNull();
+            expiredEntity.ExpiredAt.Value.ShouldBeCloseToUtcNow();
+        });
 
-        // Act & Assert
-        await Should.ThrowAsync<NotFoundException>(
-            () =>
-                cphService.Delete(request, TestContext.Current.CancellationToken));
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            $"Executing expire county parish holding [county parish holding] with id {request.Id}");
 
-        logger.VerifyLogContainsOne(LogLevel.Information, $"Executing delete county parish holding [county parish holding] with id {request.Id.ToString()} by operator {operatorId}");
-        logger.VerifyLogContainsOne(LogLevel.Warning, $"County parish holding with id {request.Id.ToString()} not found");
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            $"Successfully executed expire county parish holding [county parish holding] with id {request.Id}");
+    }
 
-        await cphRepository.DidNotReceive().Update(Arg.Any<CountyParishHoldings>(), Arg.Any<CancellationToken>());
+    [Fact]
+    [Description("Expire throws not found exception when cph does not exist")]
+    public async Task Expire_Throws_NotFound_Exception_When_Cph_Does_Not_Exist()
+    {
+        // Arrange
+        var request = new ExpireCphByCphId() { Id = Guid.NewGuid() };
+        var repositoryContext = MockRepositoryContext<CountyParishHoldings>.CreateFor(repository);
+
+        // Act
+        var act = async () => await sut.WithOperatorId.Expire(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        var exception = await act.ShouldThrowAsync<NotFoundException>();
+        exception.Message.ShouldBe("County parish holding not found");
+
+        repositoryContext.Calls.GetCallCount.ShouldBe(1);
+        repositoryContext.Calls.LastGetResult.ShouldBeNull();
+        repositoryContext.Calls.UpdateCallCount.ShouldBe(0);
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            $"Executing expire county parish holding [county parish holding] with id {request.Id}");
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Warning,
+            $"County parish holding with id {request.Id} not found");
+    }
+
+    [Fact]
+    [Description("Expire throws conflict exception when cph is already expired")]
+    public async Task Expire_Throws_Conflict_Exception_When_Cph_Already_Expired()
+    {
+        // Arrange
+        var cph2ExpiredButNotDeleted = TestData.Cph.Cph2ExpiredButNotDeleted;
+
+        var request = new ExpireCphByCphId() { Id = cph2ExpiredButNotDeleted.Id };
+
+        var repositoryContext = MockRepositoryContext<CountyParishHoldings>.CreateFor(repository)
+            .WithData(
+            [
+                cph2ExpiredButNotDeleted
+            ]);
+
+        // Act
+        var act = async () => await sut.WithOperatorId.Expire(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        var exception = await act.ShouldThrowAsync<ConflictException>();
+        exception.Message.ShouldBe("County parish holding must not have already expired");
+
+        // Check that the repository returned the expired item for evaluation of the expired state
+        repositoryContext.Calls.GetCallCount.ShouldBe(1);
+        repositoryContext.Calls.LastGetResult.ShouldBe(cph2ExpiredButNotDeleted);
+
+        repositoryContext.Calls.UpdateCallCount.ShouldBe(0);
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            $"Executing expire county parish holding [county parish holding] with id {request.Id}");
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Warning,
+            $"Execute expire county parish holding [county parish holding] with id {request.Id} failed conflict rule 'County parish holding must not have already expired'");
+    }
+
+    [Fact]
+    [Description("Expire throws not found exception when cph is deleted")]
+    public async Task Expire_Throws_NotFound_Exception_When_Cph_Deleted()
+    {
+        // Arrange
+        var cph3DeletedButNotExpired = TestData.Cph.Cph3DeletedButNotExpired;
+
+        var request = new ExpireCphByCphId() { Id = cph3DeletedButNotExpired.Id };
+
+        var repositoryContext = MockRepositoryContext<CountyParishHoldings>.CreateFor(repository)
+            .WithData(
+            [
+                cph3DeletedButNotExpired
+            ]);
+
+        // Act
+        var act = async () => await sut.WithOperatorId.Expire(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        var exception = await act.ShouldThrowAsync<NotFoundException>();
+        exception.Message.ShouldBe("County parish holding not found");
+
+        // Check that the repository returned the deleted item for evaluation of the deleted state
+        repositoryContext.Calls.GetCallCount.ShouldBe(1);
+        repositoryContext.Calls.LastGetResult.ShouldBe(cph3DeletedButNotExpired);
+
+        repositoryContext.Calls.UpdateCallCount.ShouldBe(0);
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            $"Executing expire county parish holding [county parish holding] with id {request.Id}");
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Warning,
+            $"County parish holding with id {request.Id} not found");
+    }
+
+    [Fact]
+    [Description("Expire throws invalid operation exception when operator context is not provided")]
+    public async Task Expire_Throws_Invalid_Operation_Exception_When_Operator_Context_Not_Provided()
+    {
+        // Arrange
+        var request = new ExpireCphByCphId() { Id = Guid.NewGuid() };
+        var repositoryContext = MockRepositoryContext<CountyParishHoldings>.CreateFor(repository);
+
+        // Act
+        var act = async () =>
+            await sut.WithoutOperatorContext.Expire(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        var exception = await act.ShouldThrowAsync<InvalidOperationException>();
+
+        exception.Message.ShouldContain("Operator context must be provided for this operation");
+
+        repositoryContext.Calls.ShouldHaveNoCalls();
+    }
+
+    [Fact]
+    [Description("Expire throws unauthorised access exception when operator id is not provided")]
+    public async Task Expire_Throws_Unauthorised_Access_Exception_When_Operator_Id_Not_Provided()
+    {
+        // Arrange
+        var request = new ExpireCphByCphId() { Id = Guid.NewGuid() };
+        var repositoryContext = MockRepositoryContext<CountyParishHoldings>.CreateFor(repository);
+
+        // Act
+        var act = async () =>
+            await sut.WithoutOperatorId.Expire(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        var exception = await act.ShouldThrowAsync<UnauthorizedAccessException>();
+
+        exception.Message.ShouldContain("Operator id must be provided for this operation");
+
+        repositoryContext.Calls.ShouldHaveNoCalls();
+    }
+
+    [Fact]
+    [Description("Delete soft deletes cph")]
+    public async Task Delete_Soft_Deletes_Cph()
+    {
+        var cph1WithAllowedSpeciesNotExpiredOrDeleted = TestData.Cph.Cph1WithAllowedSpeciesNotExpiredOrDeleted;
+        var originalCph1WithAllowedSpeciesNotExpiredOrDeleted = TestData.Cph.Cph1WithAllowedSpeciesNotExpiredOrDeleted;
+
+        var request = new DeleteCphByCphId() { Id = cph1WithAllowedSpeciesNotExpiredOrDeleted.Id };
+
+        var repositoryContext = MockRepositoryContext<CountyParishHoldings>.CreateFor(repository)
+            .WithData([cph1WithAllowedSpeciesNotExpiredOrDeleted]);
+
+        // Act
+        await sut.WithOperatorId.Delete(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        repositoryContext.Calls.UpdateCallCount.ShouldBe(1);
+        repositoryContext.Calls.LastUpdateResult.ShouldNotBeNull();
+        repositoryContext.Calls.LastUpdateResult.ShouldBe(cph1WithAllowedSpeciesNotExpiredOrDeleted);
+
+        EntityComparer.CreateFor(
+                originalCph1WithAllowedSpeciesNotExpiredOrDeleted,
+                repositoryContext.Calls.LastUpdateResult)
+            .VariancesAtTopLevelWithoutObjectsOrEnumerables
+            .ShouldOnlyHaveChanged(nameof(CountyParishHoldings.DeletedById), nameof(CountyParishHoldings.DeletedAt));
+
+        repositoryContext.Calls.LastUpdateResult.ShouldSatisfyAllConditions(softDeletedEntity =>
+        {
+            softDeletedEntity.DeletedById.ShouldBe(operatorContext!.OperatorId);
+            softDeletedEntity.DeletedAt.ShouldNotBeNull();
+            softDeletedEntity.DeletedAt.Value.ShouldBeCloseToUtcNow();
+        });
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            $"Executing delete county parish holding [county parish holding] with id {request.Id}");
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            $"Successfully executed delete county parish holding [county parish holding] with id {request.Id}");
+    }
+
+    [Fact]
+    [Description("Delete throws not found exception when cph does not exist")]
+    public async Task Delete_Throws_NotFound_Exception_When_Cph_Does_Not_Exist()
+    {
+        // Arrange
+        var request = new DeleteCphByCphId() { Id = Guid.NewGuid() };
+        var repositoryContext = MockRepositoryContext<CountyParishHoldings>.CreateFor(repository);
+
+        // Act
+        var act = async () => await sut.WithOperatorId.Delete(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        var exception = await act.ShouldThrowAsync<NotFoundException>();
+        exception.Message.ShouldBe("County parish holding not found");
+
+        repositoryContext.Calls.GetCallCount.ShouldBe(1);
+        repositoryContext.Calls.LastGetResult.ShouldBeNull();
+        repositoryContext.Calls.UpdateCallCount.ShouldBe(0);
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            $"Executing delete county parish holding [county parish holding] with id {request.Id} by operator {operatorContext!.OperatorId}");
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Warning,
+            $"County parish holding with id {request.Id} not found");
+    }
+
+    [Fact]
+    [Description("Delete throws not found exception when cph is deleted")]
+    public async Task Delete_Throws_NotFound_Exception_When_Cph_Deleted()
+    {
+        // Arrange
+        var cph3DeletedButNotExpired = TestData.Cph.Cph3DeletedButNotExpired;
+
+        var request = new DeleteCphByCphId() { Id = cph3DeletedButNotExpired.Id };
+
+        var repositoryContext = MockRepositoryContext<CountyParishHoldings>.CreateFor(repository)
+            .WithData([cph3DeletedButNotExpired]);
+
+        // Act
+        var act = async () => await sut.WithOperatorId.Delete(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        var exception = await act.ShouldThrowAsync<NotFoundException>();
+        exception.Message.ShouldBe("County parish holding not found");
+
+        // Check that the repository returned the deleted item for evaluation of the deleted state
+        repositoryContext.Calls.GetCallCount.ShouldBe(1);
+        repositoryContext.Calls.LastGetResult.ShouldBe(cph3DeletedButNotExpired);
+
+        repositoryContext.Calls.UpdateCallCount.ShouldBe(0);
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            $"Executing delete county parish holding [county parish holding] with id {request.Id} by operator {operatorContext!.OperatorId}");
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Warning,
+            $"County parish holding with id {request.Id} not found");
+    }
+
+    [Fact]
+    [Description("Delete throws invalid operation exception when operator context is not provided")]
+    public async Task Delete_Throws_Invalid_Operation_Exception_When_Operator_Context_Not_Provided()
+    {
+        // Arrange
+        var request = new DeleteCphByCphId() { Id = Guid.NewGuid() };
+        var repositoryContext = MockRepositoryContext<CountyParishHoldings>.CreateFor(repository);
+
+        // Act
+        var act = async () =>
+            await sut.WithoutOperatorContext.Delete(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        var exception = await act.ShouldThrowAsync<InvalidOperationException>();
+
+        exception.Message.ShouldContain("Operator context must be provided for this operation");
+
+        repositoryContext.Calls.ShouldHaveNoCalls();
+    }
+
+    [Fact]
+    [Description("Delete throws unauthorised access exception when operator id is not provided")]
+    public async Task Delete_Throws_Unauthorised_Access_Exception_When_Operator_Id_Not_Provided()
+    {
+        // Arrange
+        var request = new DeleteCphByCphId() { Id = Guid.NewGuid() };
+        var repositoryContext = MockRepositoryContext<CountyParishHoldings>.CreateFor(repository);
+
+        // Act
+        var act = async () =>
+            await sut.WithoutOperatorId.Delete(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        var exception = await act.ShouldThrowAsync<UnauthorizedAccessException>();
+
+        exception.Message.ShouldContain("Operator id must be provided for this operation");
+
+        repositoryContext.Calls.ShouldHaveNoCalls();
     }
 }

@@ -5,6 +5,7 @@
 namespace Defra.Identity.DataSeeder.Commands;
 
 using System.CommandLine;
+using System.Diagnostics.CodeAnalysis;
 using Npgsql;
 
 /// <summary>
@@ -12,6 +13,7 @@ using Npgsql;
 /// </summary>
 /// <param name="name">Name of the command.</param>
 /// <param name="description">Description of the command.</param>
+[ExcludeFromCodeCoverage]
 public class BaseCommand(string name, string description)
     : Command(name, description)
 {

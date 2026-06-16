@@ -16,22 +16,15 @@ public partial class CphRepository(
     ILogger<CphRepository> logger)
     : ICphRepository
 {
-    public async Task<bool> ValidateReferenceById(Guid id, CancellationToken cancellationToken = default)
-    {
-        LogValidatingCountyParishHoldingReferenceWithId(logger, id);
-
-        var entity = await readOnlyContext.CountyParishHoldings
-            .SingleOrDefaultAsync((entity) => entity.Id == id, cancellationToken);
-
-        return entity is { DeletedAt: null } && (entity.ExpiredAt == null || DateTime.UtcNow < entity.ExpiredAt);
-    }
-
-    public async Task<CountyParishHoldings?> GetSingle(Expression<Func<CountyParishHoldings, bool>> predicate, CancellationToken cancellationToken = default)
+    public async Task<CountyParishHoldings?> GetSingle(
+        Expression<Func<CountyParishHoldings, bool>> predicate,
+        CancellationToken cancellationToken = default)
     {
         LogGettingSingleCountyParishHolding();
 
         var result = await readOnlyContext.CountyParishHoldings
             .Include(p => p.CountyParishHoldingAnimalSpecies)
+            .ThenInclude(p => p.AnimalSpecies)
             .SingleOrDefaultAsync(predicate, cancellationToken);
 
         return result;
@@ -50,12 +43,26 @@ public partial class CphRepository(
         var results = await readOnlyContext.CountyParishHoldings
             .Where(predicate)
             .Include(p => p.CountyParishHoldingAnimalSpecies)
+            .ThenInclude(p => p.AnimalSpecies)
             .ToPaged(pageNumber, pageSize, orderBy, orderByDescending, cancellationToken);
 
         return results;
     }
 
-    public async Task<CountyParishHoldings> Update(CountyParishHoldings entity, CancellationToken cancellationToken = default)
+    public async Task<CountyParishHoldings> Create(
+        CountyParishHoldings entity,
+        CancellationToken cancellationToken = default)
+    {
+        LogCreatingCountyParishHolding();
+
+        var newCph = await context.AddAsync(entity, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
+        return newCph.Entity;
+    }
+
+    public async Task<CountyParishHoldings> Update(
+        CountyParishHoldings entity,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entity);
 
@@ -66,12 +73,5 @@ public partial class CphRepository(
         await context.SaveChangesAsync(cancellationToken);
 
         return entity;
-    }
-
-    public async Task<CountyParishHoldings> Create(CountyParishHoldings entity, CancellationToken cancellationToken = default)
-    {
-      var newCph = await context.AddAsync(entity, cancellationToken);
-      await context.SaveChangesAsync(cancellationToken);
-      return newCph.Entity;
     }
 }

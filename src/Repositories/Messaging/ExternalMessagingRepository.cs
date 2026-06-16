@@ -7,7 +7,6 @@ namespace Defra.Identity.Repositories.Messaging;
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database;
 using Defra.Identity.Postgres.Database.Entities;
-using Defra.Identity.Repositories.Common.Exceptions;
 using Microsoft.Extensions.Logging;
 
 public partial class ExternalMessagingRepository(
@@ -86,25 +85,5 @@ public partial class ExternalMessagingRepository(
             .SingleAsync(x => x.Id == entity.Id, cancellationToken);
 
         return result;
-    }
-
-    public async Task<bool> Delete(
-        Expression<Func<ExternalMessaging, bool>> predicate,
-        Guid operatorId,
-        CancellationToken cancellationToken = default)
-    {
-        LogDeletingExternalMessagingRecordWithOperatorId(operatorId);
-
-        var entity = await context.ExternalMessaging
-            .SingleOrDefaultAsync(predicate, cancellationToken);
-
-        if (entity == null)
-        {
-            LogExternalMessagingRecordNotFoundForDeletion();
-            throw new NotFoundException("External messaging record not found");
-        }
-
-        context.ExternalMessaging.Remove(entity);
-        return await context.SaveChangesAsync(cancellationToken) > 0;
     }
 }

@@ -7,7 +7,6 @@ namespace Defra.Identity.Repositories.Assignments;
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database;
 using Defra.Identity.Postgres.Database.Entities;
-using Defra.Identity.Repositories.Common;
 using Microsoft.Extensions.Logging;
 
 public partial class CphAssignmentsRepository(
@@ -27,23 +26,8 @@ public partial class CphAssignmentsRepository(
         return results;
     }
 
-    public async Task<PagedEntities<UserAccountCountyParishHoldingAssignments>> GetPaged<TOrderBy>(
-        Expression<Func<UserAccountCountyParishHoldingAssignments, bool>> predicate,
-        int pageNumber,
-        int pageSize,
-        Expression<Func<UserAccountCountyParishHoldingAssignments, TOrderBy>> orderBy,
-        bool orderByDescending,
-        CancellationToken cancellationToken = default)
-    {
-        LogGettingListOfAssignmentsForCountyParishHolding();
-
-        var results = await GetQueryable(predicate)
-            .ToPaged(pageNumber, pageSize, orderBy, orderByDescending, cancellationToken);
-
-        return results;
-    }
-
-    private IQueryable<UserAccountCountyParishHoldingAssignments> GetQueryable(Expression<Func<UserAccountCountyParishHoldingAssignments, bool>> predicate)
+    private IQueryable<UserAccountCountyParishHoldingAssignments> GetQueryable(
+        Expression<Func<UserAccountCountyParishHoldingAssignments, bool>> predicate)
     {
         var results = readOnlyContext.UserAccountCountyParishHoldingAssignments
             .Include(p => p.CountyParishHolding)

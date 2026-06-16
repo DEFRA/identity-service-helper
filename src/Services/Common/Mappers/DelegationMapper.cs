@@ -6,7 +6,6 @@ namespace Defra.Identity.Services.Common.Mappers;
 
 using Defra.Identity.Models.Responses.Delegations;
 using Defra.Identity.Postgres.Database.Entities;
-using Defra.Identity.Services.Delegations.Helpers;
 
 public static class DelegationMapper
 {
@@ -31,7 +30,27 @@ public static class DelegationMapper
             ExpiresAt = delegationEntity.ExpiresAt,
             RevokedById = delegationEntity.RevokedById,
             RevokedByName = delegationEntity.RevokedByUser?.DisplayName,
-            Active = DelegationsHelper.IsActiveDelegation(delegationEntity),
+            Active = IsActiveDelegation(delegationEntity),
         };
+    }
+
+    private static bool IsActiveDelegation(CountyParishHoldingDelegations entity)
+    {
+        var hasValidReferences = entity.CountyParishHolding.DeletedAt == null &&
+                                 entity.CountyParishHolding.ExpiredAt == null &&
+                                 entity.DelegatingUser.DeletedAt == null &&
+                                 entity.DelegatedUser is { DeletedAt: null };
+
+        var hasAtLeastOneActiveCphOwnerAssignment = entity.CountyParishHolding
+            .ApplicationUserAccountHoldingAssignments.Any(assignment =>
+                assignment.DeletedAt == null && assignment.UserAccount.DeletedAt == null);
+
+        var isDeleted = entity.DeletedAt != null;
+        var isExpired = entity.ExpiresAt != null && DateTime.UtcNow < entity.ExpiresAt;
+        var isRejectedOrRevoked = entity.InvitationRejectedAt != null || entity.RevokedAt != null;
+        var isAccepted = entity.InvitationAcceptedAt != null;
+
+        return hasValidReferences && hasAtLeastOneActiveCphOwnerAssignment && !isExpired && !isDeleted &&
+               !isRejectedOrRevoked && isAccepted;
     }
 }

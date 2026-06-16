@@ -1,0 +1,56 @@
+// <copyright file="UpdateTests.cs" company="Defra">
+// Copyright (c) Defra. All rights reserved.
+// </copyright>
+
+namespace Defra.Identity.Postgres.Database.Tests.Repositories.UserRepositoryTests;
+
+using System.ComponentModel;
+using Defra.Identity.Postgres.Database.Entities;
+using Defra.Identity.Postgres.Database.Tests.Fixtures;
+using Defra.Identity.Repositories.Users;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using NSubstitute;
+using Shouldly;
+
+public class UpdateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
+{
+    [Fact]
+    [Description("Should update an existing user account")]
+    public async Task ShouldUpdateUserAccount()
+    {
+        // Arrange
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<UserRepository>();
+        var repository = new UserRepository(Context, ReadOnlyContext, logger);
+
+        var user = new UserAccounts
+        {
+            Id = Guid.NewGuid(),
+            DisplayName = "Test User",
+            FirstName = "Test",
+            LastName = "User",
+            EmailAddress = "test20@test.com",
+            CreatedById = AdminUserId,
+        };
+
+        await Context.UserAccounts.AddAsync(user, TestContext.Current.CancellationToken);
+        await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
+
+        user.DisplayName = "Updated Name";
+
+        // Act
+        var result = await repository.Update(user, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ShouldSatisfyAllConditions(x => x.DisplayName.ShouldBe("Updated Name"));
+
+        var savedUser = await Context.UserAccounts.FirstAsync(x => x.EmailAddress.Equals(user.EmailAddress), TestContext.Current.CancellationToken);
+
+        savedUser.ShouldSatisfyAllConditions(x => x.DisplayName.ShouldBe("Updated Name"));
+
+        savedUser.ShouldNotBeNull();
+        savedUser.DisplayName.ShouldBe("Updated Name");
+
+        logger.VerifyLogContainsOne(LogLevel.Information, $"Updating user account with id {user.Id}");
+    }
+}

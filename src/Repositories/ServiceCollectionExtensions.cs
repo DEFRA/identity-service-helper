@@ -19,7 +19,7 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddRepositories(this IServiceCollection services, IConfigurationRoot config)
     {
-        services.AddTransient<IUsersRepository, UsersRepository>();
+        services.AddTransient<IUserRepository, UserRepository>();
         services.AddTransient<IRoleRepository, RoleRepository>();
         services.AddTransient<IApplicationsRepository, ApplicationsRepository>();
         services.AddTransient<IAnimalSpeciesRepository, AnimalSpeciesRepository>();

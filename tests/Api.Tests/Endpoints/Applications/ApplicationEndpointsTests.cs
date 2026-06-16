@@ -5,7 +5,6 @@
 namespace Defra.Identity.Api.Tests.Endpoints.Applications;
 
 using Defra.Identity.Api.Endpoints.Applications;
-using Defra.Identity.Api.Middleware.Headers;
 using Defra.Identity.Models.Requests.Applications.Commands;
 using Defra.Identity.Models.Requests.Applications.Queries;
 using Defra.Identity.Models.Responses.Applications;
@@ -25,7 +24,6 @@ public class ApplicationEndpointsTests
     public async Task GetAll_ReturnsOk()
     {
         // Arrange
-        var request = new GetApplications();
         var applications = new List<Application>
         {
             new()
@@ -33,12 +31,13 @@ public class ApplicationEndpointsTests
                 Id = Guid.NewGuid(), Name = "App1",
             },
         };
-        service.GetAll(request, Arg.Any<CancellationToken>()).Returns(applications);
+
+        service.GetAll(Arg.Any<CancellationToken>()).Returns(applications);
 
         // Act
         var result = await (Task<IResult>)typeof(ApplicationEndpoints)
             .GetMethod("GetAllRoute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
-            .Invoke(null, [request, service])!;
+            .Invoke(null, [service])!;
 
         // Assert
         result.ShouldBeOfType<Ok<List<Application>>>();

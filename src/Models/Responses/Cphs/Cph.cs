@@ -22,5 +22,5 @@ public class Cph
     public DateTime? ExpiredAt { get; init; }
 
     [Description(OpenApiMetadata.Cphs.AllowedSpecies)]
-    public List<AnimalSpecies> AllowedSpecies { get; init; } = [];
+    public IEnumerable<AnimalSpecies> AllowedSpecies { get; init; } = [];
 }

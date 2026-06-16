@@ -4,7 +4,9 @@
 
 namespace Defra.Identity.Repositories.Common.Composites;
 
-public interface IUpdatable<TEntity>
+using Defra.Identity.Repositories.Common.Composites.Base;
+
+public interface IUpdatable<TEntity> : ICapability
     where TEntity : class
 {
     Task<TEntity> Update(TEntity entity, CancellationToken cancellationToken = default);

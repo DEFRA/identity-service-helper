@@ -23,6 +23,8 @@ public partial class CphDelegationsRepository(
 
         var result = await readOnlyContext.CountyParishHoldingDelegations
             .Include(p => p.CountyParishHolding)
+            .ThenInclude(p => p.ApplicationUserAccountHoldingAssignments)
+            .ThenInclude(p => p.UserAccount)
             .Include(p => p.DelegatingUser)
             .Include(p => p.DelegatedUser)
             .Include(p => p.DelegatedUserRole)
@@ -39,6 +41,8 @@ public partial class CphDelegationsRepository(
 
         var results = await readOnlyContext.CountyParishHoldingDelegations
             .Include(p => p.CountyParishHolding)
+            .ThenInclude(p => p.ApplicationUserAccountHoldingAssignments)
+            .ThenInclude(p => p.UserAccount)
             .Include(p => p.DelegatingUser)
             .Include(p => p.DelegatedUser)
             .Include(p => p.DelegatedUserRole)

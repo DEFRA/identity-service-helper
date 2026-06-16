@@ -6,12 +6,8 @@ namespace Defra.Identity.Repositories.Messaging;
 
 using System.Linq.Expressions;
 using Defra.Identity.Postgres.Database.Entities;
+using Defra.Identity.Repositories.Common.Composites;
 
 public interface IExternalMessagingRepository :
-    IRepository<ExternalMessaging>
-{
-    Task<bool> Delete(
-        Expression<Func<ExternalMessaging, bool>> predicate,
-        Guid operatorId,
-        CancellationToken cancellationToken = default);
-}
+    IGettable<ExternalMessaging>, IListable<ExternalMessaging>, ICreatable<ExternalMessaging>,
+    IUpdatable<ExternalMessaging>;

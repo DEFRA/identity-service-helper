@@ -101,7 +101,7 @@ public static class CphDelegationEndpoints
 
     private static async Task<IResult> GetByIdRoute(
         [AsParameters] GetCphDelegationById request,
-        ICphDelegationsService service)
+        ICphDelegationService service)
     {
         var delegation = await service.Get(request);
 
@@ -109,7 +109,7 @@ public static class CphDelegationEndpoints
     }
 
     private static async Task<IResult> GetAllRoute(
-        ICphDelegationsService service)
+        ICphDelegationService service)
     {
         var delegations = await service.GetAll();
 
@@ -118,7 +118,7 @@ public static class CphDelegationEndpoints
 
     private static async Task<IResult> PostRoute(
         [FromBody] CreateCphDelegation request,
-        ICphDelegationsService service)
+        ICphDelegationService service)
     {
         var result = await service.Create(request);
 
@@ -130,7 +130,7 @@ public static class CphDelegationEndpoints
 
     private static async Task<IResult> AcceptByIdRoute(
         [AsParameters] AcceptCphDelegationById request,
-        ICphDelegationsService service)
+        ICphDelegationService service)
     {
         await service.Accept(request);
 
@@ -139,7 +139,7 @@ public static class CphDelegationEndpoints
 
     private static async Task<IResult> RejectByIdRoute(
         [AsParameters] RejectCphDelegationById request,
-        ICphDelegationsService service)
+        ICphDelegationService service)
     {
         await service.Reject(request);
 
@@ -148,7 +148,7 @@ public static class CphDelegationEndpoints
 
     private static async Task<IResult> RevokeByIdRoute(
         [AsParameters] RevokeCphDelegationById request,
-        ICphDelegationsService service)
+        ICphDelegationService service)
     {
         await service.Revoke(request);
 
@@ -157,7 +157,7 @@ public static class CphDelegationEndpoints
 
     private static async Task<IResult> ExpireByIdRoute(
         [AsParameters] ExpireCphDelegationById request,
-        ICphDelegationsService service)
+        ICphDelegationService service)
     {
         await service.Expire(request);
 
@@ -166,7 +166,7 @@ public static class CphDelegationEndpoints
 
     private static async Task<IResult> DeleteByIdRoute(
         [AsParameters] DeleteCphDelegationById request,
-        ICphDelegationsService service)
+        ICphDelegationService service)
     {
         await service.Delete(request);
 

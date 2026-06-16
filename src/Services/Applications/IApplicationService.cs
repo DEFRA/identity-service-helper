@@ -10,7 +10,7 @@ using Defra.Identity.Models.Responses.Applications;
 
 public interface IApplicationService
 {
-    Task<List<Application>> GetAll(GetApplications request, CancellationToken cancellationToken = default);
+    Task<List<Application>> GetAll(CancellationToken cancellationToken = default);
 
     Task<Application> Get(GetApplicationByClientId request, CancellationToken cancellationToken = default);
 
