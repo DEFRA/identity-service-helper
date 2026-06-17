@@ -2,7 +2,7 @@
 // Copyright (c) Defra. All rights reserved.
 // </copyright>
 
-namespace Defra.Identity.Models.Tests.Requests.Users.Commands.Update;
+namespace Defra.Identity.Models.Tests.Requests.Users.Commands;
 
 using Defra.Identity.Models.Requests.Users.Commands;
 using FluentValidation.TestHelper;
@@ -10,6 +10,14 @@ using FluentValidation.TestHelper;
 public class UpdateUserValidatorTests
 {
     private readonly UpdateUserValidator validator = new();
+
+    [Fact]
+    public void Should_Have_Error_When_Id_Is_Empty()
+    {
+        var model = new UpdateUserById { Id = Guid.Empty };
+        var result = this.validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.Id);
+    }
 
     [Fact]
     public void Should_Have_Error_When_DisplayName_Is_Empty()
@@ -68,10 +76,43 @@ public class UpdateUserValidatorTests
     }
 
     [Fact]
+    public void Should_Have_Error_When_EmailAddress_Is_WhiteSpace()
+    {
+        var model = new UpdateUserById { Email = "    ", };
+        var result = this.validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.Email);
+    }
+
+    [Fact]
+    public void Should_Have_Error_When_Email_Exceeds_256_Characters()
+    {
+        var model = new UpdateUserById { Email = new string('a', 257) };
+        var result = this.validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.Email);
+    }
+
+    [Fact]
     public void Should_Have_Error_When_Email_Is_Invalid()
     {
         var model = new UpdateUserById { Email = "invalid-email" };
         var result = this.validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Email);
     }
-  }
+
+    [Fact]
+    public void Should_Not_Have_Error_When_Model_Is_Valid()
+    {
+        var model = new UpdateUserById
+        {
+            Id = Guid.NewGuid(),
+            DisplayName = "John Doe",
+            FirstName = "John",
+            LastName = "Doe",
+            Email = "john.doe@example.com",
+        };
+
+        var result = this.validator.TestValidate(model);
+
+        result.ShouldNotHaveAnyValidationErrors();
+    }
+}
