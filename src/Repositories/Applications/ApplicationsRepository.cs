@@ -9,13 +9,16 @@ using Defra.Identity.Postgres.Database;
 using Defra.Identity.Postgres.Database.Entities;
 using Microsoft.Extensions.Logging;
 
+/// <inheritdoc />
 public partial class ApplicationsRepository(
     PostgresDbContext context,
     ReadOnlyPostgresDbContext readOnlyContext,
     ILogger<ApplicationsRepository> logger)
     : IApplicationsRepository
 {
-    public async Task<Applications?> GetSingle(Expression<Func<Applications, bool>> predicate, CancellationToken cancellationToken = default)
+    public async Task<Applications?> GetSingle(
+        Expression<Func<Applications, bool>> predicate,
+        CancellationToken cancellationToken = default)
     {
         LogGettingSingleApplication();
         var query = await readOnlyContext.Applications
@@ -24,11 +27,14 @@ public partial class ApplicationsRepository(
         return query;
     }
 
-    public async Task<List<Applications>> GetList(Expression<Func<Applications, bool>> predicate, CancellationToken cancellationToken = default)
+    public async Task<List<Applications>> GetList(
+        Expression<Func<Applications, bool>> predicate,
+        CancellationToken cancellationToken = default)
     {
         LogGettingListOfApplications();
+
         var query = await readOnlyContext.Applications
-            .Where(predicate).ToListAsync<Applications>(cancellationToken);
+            .Where(predicate).ToListAsync(cancellationToken);
 
         return query;
     }
@@ -37,7 +43,8 @@ public partial class ApplicationsRepository(
     {
         ArgumentNullException.ThrowIfNull(entity);
 
-        LogCreatingApplicationWithId(entity.Id);
+        LogCreatingApplication();
+
         var addedEntry = await context.Applications.AddAsync(entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 

@@ -4,9 +4,11 @@
 
 namespace Defra.Identity.Api.Tests.Common.TestData;
 
+using System.Diagnostics.CodeAnalysis;
 using Defra.Identity.Models.Requests.Common;
 using Defra.Identity.Models.Requests.Common.Queries;
 
+[ExcludeFromCodeCoverage]
 public class OperationByIdWithPagingFake : PagedQuery, IOperationById<Guid>
 {
     public Guid Id { get; set; }

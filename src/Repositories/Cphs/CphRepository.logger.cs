@@ -11,8 +11,8 @@ public partial class CphRepository
     [LoggerMessage(LogLevel.Information, "Getting single county parish holding")]
     partial void LogGettingSingleCountyParishHolding();
 
-    [LoggerMessage(LogLevel.Information, "Getting list of county parish holdings")]
-    partial void LogGettingListOfCountyParishHoldings();
+    [LoggerMessage(LogLevel.Information, "Getting paged list of county parish holdings")]
+    partial void LogGettingPagedListOfCountyParishHoldings();
 
     [LoggerMessage(LogLevel.Information, "Creating county parish holding")]
     partial void LogCreatingCountyParishHolding();

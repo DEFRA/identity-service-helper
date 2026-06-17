@@ -9,6 +9,7 @@ using Defra.Identity.Postgres.Database;
 using Defra.Identity.Postgres.Database.Entities;
 using Microsoft.Extensions.Logging;
 
+/// <inheritdoc />
 public partial class CphDelegationsRepository(
     PostgresDbContext context,
     ReadOnlyPostgresDbContext readOnlyContext,
@@ -59,7 +60,7 @@ public partial class CphDelegationsRepository(
     {
         ArgumentNullException.ThrowIfNull(entity);
 
-        LogCreatingDelegationWithId(entity.Id);
+        LogCreatingDelegationWithId();
 
         var addedEntry = await context.CountyParishHoldingDelegations.AddAsync(entity, cancellationToken);
 

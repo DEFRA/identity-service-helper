@@ -9,6 +9,7 @@ using Defra.Identity.Postgres.Database;
 using Defra.Identity.Postgres.Database.Entities;
 using Microsoft.Extensions.Logging;
 
+/// <inheritdoc />
 public partial class RoleRepository(
     PostgresDbContext context,
     ReadOnlyPostgresDbContext readOnlyContext,

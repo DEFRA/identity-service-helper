@@ -17,22 +17,29 @@ public class AssignmentMapperTests
         {
             Id = Guid.NewGuid(),
             Identifier = "Test identifier",
+            CreatedById = Guid.NewGuid(),
             CreatedByUser = new UserAccounts(),
+            CreatedAt = DateTime.UtcNow,
+            DeletedById = Guid.NewGuid(),
             DeletedByUser = new UserAccounts(),
+            DeletedAt = DateTime.UtcNow,
         };
 
-        var role = new Roles
-        {
-            Id = Guid.NewGuid(),
-            Name = "Test role",
-            Description = "Test description",
-        };
+        var role = new Roles { Id = Guid.NewGuid(), Name = "Test role", Description = "Test description", };
 
         var user = new UserAccounts
         {
             Id = Guid.NewGuid(),
-            EmailAddress = "test@example.com",
             DisplayName = "Test User",
+            FirstName = "Test",
+            LastName = "User",
+            EmailAddress = "test@example.com",
+            CreatedById = Guid.NewGuid(),
+            CreatedBy = new UserAccounts(),
+            CreatedAt = DateTime.UtcNow,
+            DeletedById = Guid.NewGuid(),
+            DeletedBy = new UserAccounts(),
+            DeletedAt = DateTime.UtcNow,
         };
 
         var assignment = new UserAccountCountyParishHoldingAssignments
@@ -44,23 +51,18 @@ public class AssignmentMapperTests
             RoleId = role.Id,
             Role = role,
             UserAccount = user,
-            DeletedByUser = new UserAccounts(),
+            CreatedById = Guid.NewGuid(),
             CreatedByUser = new UserAccounts(),
+            CreatedAt = DateTime.UtcNow,
+            DeletedById = Guid.NewGuid(),
+            DeletedByUser = new UserAccounts(),
+            DeletedAt = DateTime.UtcNow,
         };
 
         // Act
         var result = AssignmentMapper.MapCphAssignmentEntityToCphAssignment(assignment);
 
         // Assert
-        result.ShouldSatisfyAllConditions(
-            x => x.ShouldNotBeNull(),
-            x => x.Id.ShouldBe(assignment.Id),
-            x => x.CountyParishHoldingId.ShouldBe(assignment.CountyParishHoldingId),
-            x => x.CountyParishHoldingNumber.ShouldBe(assignment.CountyParishHolding.Identifier),
-            x => x.UserId.ShouldBe(assignment.UserAccountId),
-            x => x.RoleId.ShouldBe(assignment.RoleId),
-            x => x.RoleName.ShouldBe(assignment.Role.Name),
-            x => x.Email.ShouldBe(assignment.UserAccount.EmailAddress),
-            x => x.DisplayName.ShouldBe(assignment.UserAccount.DisplayName));
+        result.ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(assignment));
     }
 }

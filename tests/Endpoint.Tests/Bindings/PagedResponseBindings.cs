@@ -4,6 +4,7 @@
 
 namespace Defra.Identity.Endpoint.Tests.Bindings;
 
+using System.Diagnostics.CodeAnalysis;
 using Defra.Identity.Endpoint.Tests.Contexts;
 using Defra.Identity.Models.Responses.Common;
 using Newtonsoft.Json;
@@ -11,6 +12,7 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using Reqnroll;
 
+[ExcludeFromCodeCoverage]
 [Binding]
 public class PagedResponseBindings(
     ExecutionContext executionContext,

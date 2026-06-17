@@ -4,9 +4,11 @@
 
 namespace Defra.Identity.Api.Tests.Common.TestData;
 
+using System.Diagnostics.CodeAnalysis;
 using Defra.Identity.Models.Requests.Common.Queries;
 using Defra.Identity.Models.Requests.Cphs.Common;
 
+[ExcludeFromCodeCoverage]
 public class OperationByCphNumberWithPagingFake : PagedQuery, IOperationByCphNumber
 {
     public OperationByCphNumberWithPagingFake(int county, int parish, int holding, int pageNumber, int pageSize, bool? orderByDescending = null)

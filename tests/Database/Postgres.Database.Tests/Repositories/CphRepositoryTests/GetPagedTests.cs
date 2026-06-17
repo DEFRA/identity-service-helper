@@ -11,7 +11,6 @@ using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
 using Defra.Identity.Repositories.Cphs;
 using Microsoft.Extensions.Logging;
-using NSubstitute;
 
 public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 {
@@ -31,11 +30,15 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         const bool descendingOrder = false;
 
         // Act
-        var pagedEntities = await repository.GetPaged(filter, pageNumber, pageSize, orderBy, descendingOrder, TestContext.Current.CancellationToken);
+        var pagedEntities = await repository.GetPaged(
+            filter,
+            pageNumber,
+            pageSize,
+            orderBy,
+            descendingOrder,
+            TestContext.Current.CancellationToken);
 
         // Assert
-        logger.VerifyLogContainsOne(LogLevel.Information, "Getting list of county parish holdings");
-
         pagedEntities.ShouldSatisfyAllConditions(
             (x) => x.Items.Count.ShouldBe(3),
             (x) => x.PageSize.ShouldBe(pageSize),
@@ -73,6 +76,10 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
             (x) => x.ExpiredAt.ShouldBeNull(),
             (x) => x.DeletedAt.ShouldBeNull(),
             (x) => x.DeletedById.ShouldBeNull());
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            "Getting paged list of county parish holdings");
     }
 
     [Fact]
@@ -91,11 +98,15 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         const bool descendingOrder = true;
 
         // Act
-        var pagedEntities = await repository.GetPaged(filter, pageNumber, pageSize, orderBy, descendingOrder, TestContext.Current.CancellationToken);
+        var pagedEntities = await repository.GetPaged(
+            filter,
+            pageNumber,
+            pageSize,
+            orderBy,
+            descendingOrder,
+            TestContext.Current.CancellationToken);
 
         // Assert
-        logger.VerifyLogContainsOne(LogLevel.Information, "Getting list of county parish holdings");
-
         pagedEntities.ShouldSatisfyAllConditions(
             (x) => x.Items.Count.ShouldBe(3),
             (x) => x.PageSize.ShouldBe(pageSize),
@@ -133,5 +144,9 @@ public class GetPagedTests(PostgreContainerFixture fixture) : BaseTests(fixture)
             (x) => x.ExpiredAt.ShouldBeNull(),
             (x) => x.DeletedAt.ShouldBeNull(),
             (x) => x.DeletedById.ShouldBeNull());
+
+        logger.VerifyLogContainsOne(
+            LogLevel.Information,
+            "Getting paged list of county parish holdings");
     }
 }

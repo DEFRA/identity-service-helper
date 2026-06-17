@@ -22,8 +22,8 @@ public class CreateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
     public async Task ShouldCreateApplication()
     {
         // Arrange
-        var appLogger = DefraLoggerExtensions.CreateNSubstituteLogger<ApplicationsRepository>();
-        var repository = new ApplicationsRepository(Context, ReadOnlyContext, appLogger);
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<ApplicationsRepository>();
+        var repository = new ApplicationsRepository(Context, ReadOnlyContext, logger);
 
         var userLogger = DefraLoggerExtensions.CreateNSubstituteLogger<UserRepository>();
         var userRepository = new UserRepository(Context, ReadOnlyContext, userLogger);
@@ -55,11 +55,6 @@ public class CreateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
             x => x.Description.ShouldBe("Test Description"),
             x => x.CreatedById.ShouldBe(adminUser.Id));
 
-        appLogger.ReceivedWithAnyArgs().Log(
-            LogLevel.Information,
-            Arg.Any<EventId>(),
-            Arg.Any<object>(),
-            Arg.Any<Exception>(),
-            Arg.Any<Func<object, Exception?, string>>());
+        logger.VerifyLogContainsOne(LogLevel.Information, "Creating application");
     }
 }

@@ -34,7 +34,8 @@ public class UpdateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
         Context.ChangeTracker.Clear();
 
-        var entityToUpdate = await repository.GetSingle(x => x.Identifier == identifier, TestContext.Current.CancellationToken);
+        var entityToUpdate =
+            await repository.GetSingle(x => x.Identifier == identifier, TestContext.Current.CancellationToken);
 
         entityToUpdate.ShouldNotBeNull();
 
@@ -43,8 +44,10 @@ public class UpdateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         entityToUpdate.DeletedAt = DateTime.Parse("2026-03-22", new DateTimeFormatInfo()).ToUniversalTime();
         entityToUpdate.DeletedById = AdminUserId;
 
-        var updatedEntityReturnedFromUpdate = await repository.Update(entityToUpdate, TestContext.Current.CancellationToken);
-        var updatedEntityReturnedFromRequery = await repository.GetSingle(x => x.Id == id, TestContext.Current.CancellationToken);
+        var updatedEntityReturnedFromUpdate =
+            await repository.Update(entityToUpdate, TestContext.Current.CancellationToken);
+        var updatedEntityReturnedFromRequery =
+            await repository.GetSingle(x => x.Id == id, TestContext.Current.CancellationToken);
 
         // Assert
         updatedEntityReturnedFromUpdate.ShouldNotBeNull();
@@ -67,5 +70,7 @@ public class UpdateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
             (x) => x.ExpiredAt.ShouldBe(DateTime.Parse("2026-03-21", new DateTimeFormatInfo()).ToUniversalTime()),
             (x) => x.DeletedAt.ShouldBe(DateTime.Parse("2026-03-22", new DateTimeFormatInfo()).ToUniversalTime()),
             (x) => x.DeletedById.ShouldBe(AdminUserId));
+
+        logger.VerifyLogContainsOne(LogLevel.Information, $"Updating county parish holding with id {id}");
     }
 }

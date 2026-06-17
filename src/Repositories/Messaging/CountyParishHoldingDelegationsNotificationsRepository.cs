@@ -8,6 +8,7 @@ using Defra.Identity.Postgres.Database;
 using Defra.Identity.Postgres.Database.Entities;
 using Microsoft.Extensions.Logging;
 
+/// <inheritdoc />
 public partial class CountyParishHoldingDelegationsNotificationsRepository(
     PostgresDbContext context,
     ReadOnlyPostgresDbContext readOnlyContext,

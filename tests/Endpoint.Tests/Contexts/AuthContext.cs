@@ -4,8 +4,10 @@
 
 namespace Defra.Identity.Endpoint.Tests.Contexts;
 
+using System.Diagnostics.CodeAnalysis;
 using Defra.Identity.Endpoint.Tests.Configuration;
 
+[ExcludeFromCodeCoverage]
 public class AuthContext(
     ApiConfiguration configuration)
     : ITestContext

@@ -25,8 +25,13 @@ public class UpdateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 
         var application = new Applications
         {
-            Name = "Original Name", ClientId = Guid.NewGuid(), TenantName = "Test Tenant", CreatedById = adminUser.Id,
+            Id = Guid.NewGuid(),
+            Name = "Original Name",
+            ClientId = Guid.NewGuid(),
+            TenantName = "Test Tenant",
+            CreatedById = adminUser.Id,
         };
+
         await Context.Applications.AddAsync(application, TestContext.Current.CancellationToken);
         await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
@@ -40,5 +45,7 @@ public class UpdateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         var dbApp = await Context.Applications.FindAsync([application.Id], TestContext.Current.CancellationToken);
         dbApp.ShouldNotBeNull();
         dbApp.Name.ShouldBe("Updated Name");
+
+        logger.VerifyLogContainsOne(LogLevel.Information, $"Updating application with id {application.Id}");
     }
 }

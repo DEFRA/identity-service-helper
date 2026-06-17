@@ -4,9 +4,11 @@
 
 namespace Defra.Identity.Endpoint.Tests.Support;
 
+using System.Diagnostics.CodeAnalysis;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
 using Reqnroll;
 
+[ExcludeFromCodeCoverage]
 [Binding]
 public class FeatureHooks
 {

@@ -8,6 +8,7 @@ using System.ComponentModel;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
 using Defra.Identity.Repositories.Users;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 public class CreateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
@@ -45,6 +46,39 @@ public class CreateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
             x => x.DisplayName.ShouldBe("Test User"),
             x => x.FirstName.ShouldBe("Test"),
             x => x.LastName.ShouldBe("User"));
+
+        logger.VerifyLogContainsOne(LogLevel.Information, "Creating user account");
+    }
+
+    [Fact]
+    [Trait("Category", "Integration")]
+    [Description("Should throw duplicate exception")]
+    public async Task ShouldThrowDuplicateException()
+    {
+        // Arrange
+        var logger = DefraLoggerExtensions.CreateNSubstituteLogger<UserRepository>();
+        var repository = new UserRepository(Context, ReadOnlyContext, logger);
+
+        var adminUser = await repository
+            .GetSingle(x => x.EmailAddress == EmailAddress, TestContext.Current.CancellationToken);
+        adminUser.ShouldNotBeNull();
+
+        var duplicateUser = new UserAccounts
+        {
+            DisplayName = "Dup User",
+            FirstName = "Dup",
+            LastName = "User",
+            EmailAddress = EmailAddress, // <-- violates unique constraint om email address field
+            CreatedById = adminUser.Id,
+        };
+
+        // Act
+        Func<Task> act = async () => await repository
+            .Create(duplicateUser, TestContext.Current.CancellationToken);
+
+        // Assert
+        var ex = await act.ShouldThrowAsync<DbUpdateException>();
+        ex.InnerException.ShouldNotBeNull();
 
         logger.VerifyLogContainsOne(LogLevel.Information, "Creating user account");
     }

@@ -15,6 +15,7 @@ public class ApplicationMapperTests
         // Arrange
         var application = new Applications
         {
+            Id = Guid.NewGuid(),
             ClientId = Guid.NewGuid(),
             Name = "Test name",
             TenantName = "Test tenant",
@@ -22,24 +23,18 @@ public class ApplicationMapperTests
             Scopes = "Scope1;Scope2;Scope3",
             Secret = "Test secret",
             RedirectUris = "https://example.com;https://example1.com;https://example2.com",
-            DeletedByUser = new UserAccounts(),
+            CreatedById = Guid.NewGuid(),
             CreatedByUser = new UserAccounts(),
+            CreatedAt = DateTime.UtcNow,
+            DeletedById = Guid.NewGuid(),
+            DeletedByUser = new UserAccounts(),
+            DeletedAt = DateTime.UtcNow,
         };
 
         // Act
         var result = ApplicationMapper.MapApplicationEntityToApplication(application);
 
         // Assert
-        result.ShouldSatisfyAllConditions(
-            x => x.ShouldNotBeNull(),
-            x => x.Id.ShouldBe(application.ClientId),
-            x => x.Name.ShouldBe(application.Name),
-            x => x.TenantName.ShouldBe(application.TenantName),
-            x => x.Description.ShouldBe(application.Description),
-            x => x.Secret.ShouldBe(application.Secret),
-            x => x.Scopes.Count.ShouldBe(3),
-            x => x.Scopes.ShouldContain("Scope1"),
-            x => x.RedirectUris.Count.ShouldBe(3),
-            x => x.RedirectUris.ShouldContain("https://example.com"));
+        result.ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(application));
     }
 }

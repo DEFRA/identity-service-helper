@@ -5,7 +5,6 @@
 namespace Defra.Identity.Api.Tests.Endpoints.Delegations;
 
 using Defra.Identity.Api.Endpoints.Delegations;
-using Defra.Identity.Api.Middleware.Headers;
 using Defra.Identity.Models.Requests.Delegations.Commands;
 using Defra.Identity.Models.Requests.Delegations.Queries;
 using Defra.Identity.Models.Responses.Delegations;
@@ -60,10 +59,7 @@ public class CphDelegationEndpointsTests
         // Arrange
         var id = Guid.NewGuid();
 
-        var request = new GetCphDelegationById
-        {
-            Id = id,
-        };
+        var request = new GetCphDelegationById { Id = id, };
 
         var delegation = new CphDelegation()
         {
@@ -84,7 +80,9 @@ public class CphDelegationEndpointsTests
 
         // Act
         var result = await (Task<IResult>)typeof(CphDelegationEndpoints)
-            .GetMethod("GetByIdRoute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
+            .GetMethod(
+                "GetByIdRoute",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
             .Invoke(null, [request, service])!;
 
         // Assert
@@ -98,7 +96,10 @@ public class CphDelegationEndpointsTests
         // Arrange
         var request = new CreateCphDelegation
         {
-            CountyParishHoldingId = Guid.NewGuid(), DelegatingUserId = Guid.NewGuid(), DelegatedUserEmail = "test200@test.com", DelegatedUserRoleId = Guid.NewGuid(),
+            CountyParishHoldingId = Guid.NewGuid(),
+            DelegatingUserId = Guid.NewGuid(),
+            DelegatedUserEmail = "test200@test.com",
+            DelegatedUserRoleId = Guid.NewGuid(),
         };
 
         var delegation = new CphDelegation()
@@ -132,36 +133,16 @@ public class CphDelegationEndpointsTests
     }
 
     [Fact]
-    public async Task Delete_ReturnsNoContent()
-    {
-        // Arrange
-        var request = new DeleteCphDelegationById()
-        {
-            Id = Guid.NewGuid(),
-        };
-
-        // Act
-        var result = await (Task<IResult>)typeof(CphDelegationEndpoints)
-            .GetMethod("DeleteByIdRoute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
-            .Invoke(null, [request, service])!;
-
-        // Assert
-        result.ShouldBeOfType<NoContent>();
-        await service.Received(1).Delete(Arg.Any<DeleteCphDelegationById>(), Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
     public async Task AcceptInvitation_ReturnsNoContent()
     {
         // Arrange
-        var request = new AcceptCphDelegationById
-        {
-            Id = Guid.NewGuid(),
-        };
+        var request = new AcceptCphDelegationById { Id = Guid.NewGuid(), };
 
         // Act
         var result = await (Task<IResult>)typeof(CphDelegationEndpoints)
-            .GetMethod("AcceptByIdRoute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
+            .GetMethod(
+                "AcceptByIdRoute",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
             .Invoke(null, [request, service])!;
 
         // Assert
@@ -173,18 +154,71 @@ public class CphDelegationEndpointsTests
     public async Task RejectInvitation_ReturnsNoContent()
     {
         // Arrange
-        var request = new RejectCphDelegationById
-        {
-            Id = Guid.NewGuid(),
-        };
+        var request = new RejectCphDelegationById { Id = Guid.NewGuid(), };
 
         // Act
         var result = await (Task<IResult>)typeof(CphDelegationEndpoints)
-            .GetMethod("RejectByIdRoute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
+            .GetMethod(
+                "RejectByIdRoute",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
             .Invoke(null, [request, service])!;
 
         // Assert
         result.ShouldBeOfType<NoContent>();
         await service.Received(1).Reject(request, Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Expire_ReturnsNoContent()
+    {
+        // Arrange
+        var request = new ExpireCphDelegationById() { Id = Guid.NewGuid(), };
+
+        // Act
+        var result = await (Task<IResult>)typeof(CphDelegationEndpoints)
+            .GetMethod(
+                "ExpireByIdRoute",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
+            .Invoke(null, [request, service])!;
+
+        // Assert
+        result.ShouldBeOfType<NoContent>();
+        await service.Received(1).Expire(Arg.Any<ExpireCphDelegationById>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Revoke_ReturnsNoContent()
+    {
+        // Arrange
+        var request = new RevokeCphDelegationById() { Id = Guid.NewGuid(), };
+
+        // Act
+        var result = await (Task<IResult>)typeof(CphDelegationEndpoints)
+            .GetMethod(
+                "RevokeByIdRoute",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
+            .Invoke(null, [request, service])!;
+
+        // Assert
+        result.ShouldBeOfType<NoContent>();
+        await service.Received(1).Revoke(Arg.Any<RevokeCphDelegationById>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Delete_ReturnsNoContent()
+    {
+        // Arrange
+        var request = new DeleteCphDelegationById() { Id = Guid.NewGuid(), };
+
+        // Act
+        var result = await (Task<IResult>)typeof(CphDelegationEndpoints)
+            .GetMethod(
+                "DeleteByIdRoute",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
+            .Invoke(null, [request, service])!;
+
+        // Assert
+        result.ShouldBeOfType<NoContent>();
+        await service.Received(1).Delete(Arg.Any<DeleteCphDelegationById>(), Arg.Any<CancellationToken>());
     }
 }

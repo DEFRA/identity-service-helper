@@ -48,6 +48,8 @@ public class ExternalMessagingGetSingleTests(PostgreContainerFixture fixture)
             (x) => x.ExceptionMessage.ShouldBeEmpty(),
             (x) => x.CreatedAt.ShouldBe(DateTime.Parse("2020-01-01", new DateTimeFormatInfo()).ToUniversalTime()),
             (x) => x.CreatedById.ShouldBe(AdminUserId));
+
+        logger.VerifyLogContainsOne(LogLevel.Information, "Getting single external messaging record");
     }
 
     [Fact]

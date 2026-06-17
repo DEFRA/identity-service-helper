@@ -4,6 +4,7 @@
 
 namespace Defra.Identity.Endpoint.Tests.Bindings;
 
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using Defra.Identity.Endpoint.Tests.Contexts;
 using Defra.Identity.Endpoint.Tests.Support;
@@ -14,6 +15,7 @@ using Reqnroll;
 /// <summary>
 /// Methods of response bindings.
 /// </summary>
+[ExcludeFromCodeCoverage]
 [Binding]
 public class ResponseBindings(
     ExecutionContext executionContext,

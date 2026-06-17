@@ -4,8 +4,10 @@
 
 namespace Defra.Identity.Api.Tests.Common.TestData;
 
+using System.Diagnostics.CodeAnalysis;
 using Defra.Identity.Models.Requests.Cphs.Common;
 
+[ExcludeFromCodeCoverage]
 public class OperationByCphNumberFake : IOperationByCphNumber
 {
     public OperationByCphNumberFake(int county, int parish, int holding)

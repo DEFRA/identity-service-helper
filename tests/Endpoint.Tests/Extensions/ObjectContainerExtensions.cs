@@ -4,6 +4,7 @@
 
 namespace Defra.Identity.Endpoint.Tests.Extensions;
 
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using Microsoft;
@@ -12,6 +13,7 @@ using Reqnroll.BoDi;
 /// <summary>
 /// Collection of functions that extend the Reqnroll object collection.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public static class ObjectContainerExtensions
 {
     /// <summary>

@@ -29,6 +29,7 @@ using Defra.Identity.Services;
 using FluentValidation;
 using Serilog;
 
+[ExcludeFromCodeCoverage]
 public class Program
 {
     public static async Task Main(string[] args)
@@ -69,8 +70,7 @@ public class Program
         builder.Host.UseSerilog(CdpLogging.Configuration);
         builder.Services.AddProblemDetails();
         builder.Services.AddExceptionHandler<ApiExceptionHandler>();
-        builder.Services.ConfigureHttpJsonOptions(
-            options =>
+        builder.Services.ConfigureHttpJsonOptions(options =>
         {
             options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
             options.SerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.SnakeCaseLower;
@@ -88,8 +88,7 @@ public class Program
             .ConfigurePrimaryHttpMessageHandler<ProxyHttpMessageHandler>();
 
         // Propagate trace header.
-        builder.Services.AddHeaderPropagation(
-            options =>
+        builder.Services.AddHeaderPropagation(options =>
         {
             var traceHeader = builder.Configuration.GetValue<string>("TraceHeader");
             if (!string.IsNullOrWhiteSpace(traceHeader))
@@ -117,7 +116,6 @@ public class Program
         builder.Services.AddDataIngestServices(configuration);
         builder.Services.AddKeeperRecordsDataIntegrationService(configuration);
 
-        // intentionally commented out until we get a queue to interact with  -- Gary Woodfine
         builder.Services.AddKeeperReferenceDataQueueIntegration(configuration);
     }
 

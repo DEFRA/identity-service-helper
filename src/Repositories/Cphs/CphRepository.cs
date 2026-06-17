@@ -10,6 +10,7 @@ using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Common;
 using Microsoft.Extensions.Logging;
 
+/// <inheritdoc />
 public partial class CphRepository(
     PostgresDbContext context,
     ReadOnlyPostgresDbContext readOnlyContext,
@@ -38,7 +39,7 @@ public partial class CphRepository(
         bool orderByDescending,
         CancellationToken cancellationToken = default)
     {
-        LogGettingListOfCountyParishHoldings();
+        LogGettingPagedListOfCountyParishHoldings();
 
         var results = await readOnlyContext.CountyParishHoldings
             .Where(predicate)
