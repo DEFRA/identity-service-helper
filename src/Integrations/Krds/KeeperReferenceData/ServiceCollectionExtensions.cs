@@ -22,13 +22,19 @@ public static class ServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(configuration);
 
-        var krdsApi = configuration.GetRequiredSection(nameof(KrdsApi)).Get<KrdsApi>();
-        if (krdsApi == null)
+        var krdsApiSection = configuration.GetSection(nameof(KrdsApi));
+        if (!krdsApiSection.Exists())
         {
             throw new KeeperReferenceDataConfigurationException($"Configuration section '{nameof(KrdsApi)}' not found.");
         }
 
-        services.Configure<KrdsApi>(configuration.GetSection(nameof(KrdsApi)));
+        var krdsApi = krdsApiSection.Get<KrdsApi>();
+        if (krdsApi == null)
+        {
+            throw new KeeperReferenceDataConfigurationException($"Configuration section '{nameof(KrdsApi)}' is empty or invalid.");
+        }
+
+        services.Configure<KrdsApi>(krdsApiSection);
 
         services.AddTransient<KrdsAuthorizationHandler>();
         services.AddHttpClient<IKrdsTokenProvider, KrdsTokenProvider>()

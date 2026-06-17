@@ -12,7 +12,7 @@ Task("Clean")
  
    if (BuildSystem.GitHubActions.IsRunningOnGitHubActions)
     {
-      Information("Nothing to clean on Azure Pipelines.");
+      Information("Nothing to clean on Github Pipelines.");
     }
     else
     {

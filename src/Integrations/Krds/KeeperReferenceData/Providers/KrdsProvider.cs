@@ -35,17 +35,17 @@ public partial class KrdsProvider(HttpClient client, ILogger<KrdsProvider> logge
 
         try
         {
-            if (!result.TrimStart().StartsWith('['))
+            if (result.TrimStart().StartsWith('['))
             {
-                return JsonSerializer.Deserialize<SiteResponse>(result)!;
+                var sites = JsonSerializer.Deserialize<List<Site>>(result);
+                return new SiteResponse
+                {
+                    Values = sites ?? [],
+                    Count = sites?.Count ?? 0,
+                };
             }
 
-            var sites = JsonSerializer.Deserialize<List<Site>>(result);
-            return new SiteResponse
-            {
-                Values = sites ?? [],
-                Count = sites?.Count ?? 0,
-            };
+            return JsonSerializer.Deserialize<SiteResponse>(result)!;
         }
         catch (JsonException jsonException)
         {
