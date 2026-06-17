@@ -15,7 +15,8 @@ public partial class ApplicationsRepository(
     ILogger<ApplicationsRepository> logger)
     : IApplicationsRepository
 {
-    public async Task<Applications?> GetSingle(Expression<Func<Applications, bool>> predicate,
+    public async Task<Applications?> GetSingle(
+        Expression<Func<Applications, bool>> predicate,
         CancellationToken cancellationToken = default)
     {
         LogGettingSingleApplication();
@@ -32,7 +33,7 @@ public partial class ApplicationsRepository(
         LogGettingListOfApplications();
 
         var query = await readOnlyContext.Applications
-            .Where(predicate).ToListAsync<Applications>(cancellationToken);
+            .Where(predicate).ToListAsync(cancellationToken);
 
         return query;
     }
