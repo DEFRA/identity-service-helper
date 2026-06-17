@@ -28,7 +28,7 @@ public static class ObjectContainerExtensions
         var interfaceType = typeof(T);
         var implementations = Assembly.GetExecutingAssembly()
             .GetTypes()
-            .Where(t => interfaceType.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract);
+            .Where(t => interfaceType.IsAssignableFrom(t) && t is { IsClass: true, IsAbstract: false });
 
         foreach (var implementation in implementations)
         {

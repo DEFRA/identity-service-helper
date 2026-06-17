@@ -46,7 +46,7 @@ public class KrdsProviderTests
         Assert.Equal(3, result.Count);
 
         // Verify the request path was called at least once
-        Assert.True(server.LogEntries.Count(le => le.RequestMessage.Path == "/sites" && le.RequestMessage.Method == "GET") >= 1);
+        Assert.True(server.LogEntries.Count(le => le.RequestMessage is { Path: "/sites", Method: "GET" }) >= 1);
     }
 
     [Fact]
@@ -71,8 +71,7 @@ public class KrdsProviderTests
         await sut.Sites(DateTime.UtcNow, CancellationToken.None);
 
         Assert.True(server.LogEntries.Count(le =>
-            le.RequestMessage.Path == "/sites" &&
-            le.RequestMessage.Method == "GET" &&
+            le.RequestMessage is { Path: "/sites", Method: "GET" } &&
             le.RequestMessage.Headers?["Authorization"].ToString() == "Bearer test-key") >= 1);
     }
 
@@ -156,7 +155,7 @@ public class KrdsProviderTests
         Assert.Equal(3, result.Count);
 
         // Verify the request path was called at least once
-        Assert.True(server.LogEntries.Count(le => le.RequestMessage.Path == "/parties" && le.RequestMessage.Method == "GET") >= 1);
+        Assert.True(server.LogEntries.Count(le => le.RequestMessage is { Path: "/parties", Method: "GET" }) >= 1);
     }
 
     [Fact]
@@ -222,7 +221,7 @@ public class KrdsProviderTests
 
         Assert.NotNull(result);
         Assert.Empty(result.Values);
-        Assert.True(server.LogEntries.Count(le => le.RequestMessage.Path == "/parties" && le.RequestMessage.Method == "GET") >= 1);
+        Assert.True(server.LogEntries.Count(le => le.RequestMessage is { Path: "/parties", Method: "GET" }) >= 1);
     }
 
     [Fact]
@@ -239,7 +238,7 @@ public class KrdsProviderTests
         using var sut = new KrdsProvider(httpClient, logger);
 
         await Assert.ThrowsAsync<HttpRequestException>(() => sut.Parties(DateTime.UtcNow, CancellationToken.None));
-        Assert.True(server.LogEntries.Count(le => le.RequestMessage.Path == "/parties" && le.RequestMessage.Method == "GET") >= 1);
+        Assert.True(server.LogEntries.Count(le => le.RequestMessage is { Path: "/parties", Method: "GET" }) >= 1);
     }
 
     [Fact]
@@ -273,7 +272,7 @@ public class KrdsProviderTests
 
         Assert.NotNull(result);
         Assert.Empty(result.Values);
-        Assert.True(server.LogEntries.Count(le => le.RequestMessage.Path == "/sites" && le.RequestMessage.Method == "GET") >= 1);
+        Assert.True(server.LogEntries.Count(le => le.RequestMessage is { Path: "/sites", Method: "GET" }) >= 1);
     }
 
     [Fact]
@@ -290,7 +289,7 @@ public class KrdsProviderTests
         using var sut = new KrdsProvider(httpClient, logger);
 
         await Assert.ThrowsAsync<HttpRequestException>(() => sut.Sites(DateTime.UtcNow, CancellationToken.None));
-        Assert.True(server.LogEntries.Count(le => le.RequestMessage.Path == "/sites" && le.RequestMessage.Method == "GET") >= 1);
+        Assert.True(server.LogEntries.Count(le => le.RequestMessage is { Path: "/sites", Method: "GET" }) >= 1);
     }
 
     [Fact]
@@ -326,6 +325,6 @@ public class KrdsProviderTests
         var result = await retryPolicy.ExecuteAsync(() => sut.Sites(DateTime.UtcNow, CancellationToken.None));
 
         Assert.NotNull(result);
-        Assert.Equal(2, server.LogEntries.Count(le => le.RequestMessage.Path == "/sites" && le.RequestMessage.Method == "GET"));
+        Assert.Equal(2, server.LogEntries.Count(le => le.RequestMessage is { Path: "/sites", Method: "GET" }));
     }
 }
