@@ -41,8 +41,9 @@ public class PostgreContainerFixture
         .WithCommand("tail -f /dev/null") // keep container alive
         .Build();
 
-    private readonly OnceExecutor liquibaseStartExecutor = new OnceExecutor();
-    private readonly OnceExecutor liquibaseUpdateExecutor = new OnceExecutor();
+    private static readonly OnceExecutor LiquibaseStartExecutor = new OnceExecutor();
+    private static readonly OnceExecutor LiquibaseUpdateExecutor = new OnceExecutor();
+    private static readonly SemaphoreSlim ResetLock = new(1, 1);
 
     public static string ConnectionString => Db.GetConnectionString();
 
@@ -54,9 +55,18 @@ public class PostgreContainerFixture
 
     public async ValueTask InitializeAsync()
     {
-        await liquibaseStartExecutor.ExecuteOnce(StartLiquibase);
-        await liquibaseUpdateExecutor.ExecuteOnce(UpdateLiquibase);
-        await ResetData();
+        await LiquibaseStartExecutor.ExecuteOnce(StartLiquibase);
+        await LiquibaseUpdateExecutor.ExecuteOnce(UpdateLiquibase);
+
+        await ResetLock.WaitAsync();
+        try
+        {
+            await ResetData();
+        }
+        finally
+        {
+            ResetLock.Release();
+        }
     }
 
     private static async Task StartLiquibase()

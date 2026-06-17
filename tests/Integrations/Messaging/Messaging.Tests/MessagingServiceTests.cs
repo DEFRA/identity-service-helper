@@ -5,9 +5,11 @@
 namespace Defra.Identity.Messaging.Tests;
 
 using System.Collections;
+using System.Diagnostics;
 using System.Net;
 using Defra.Identity.Messaging.Configuration;
 using Defra.Identity.Messaging.Models.Request;
+using Defra.Identity.Messaging.Models.Response;
 using Defra.Identity.Messaging.Services;
 using Defra.Identity.Postgres.Database;
 using Microsoft.Extensions.Logging;
@@ -47,8 +49,20 @@ public class MessagingServiceTests
         result.ShouldNotBeNull();
         result.IsSuccess.ShouldBeTrue();
 
-        await Task.Delay(1000, TestContext.Current.CancellationToken);
-        var notification = await service.GetNotificationAsync(result.NotifyId);
+        // Polling for status because it might not be "delivered" immediately
+        MessageStatus notification = null!;
+        var stopwatch = Stopwatch.StartNew();
+        while (stopwatch.Elapsed < TimeSpan.FromSeconds(10))
+        {
+            notification = await service.GetNotificationAsync(result.NotifyId);
+            if (notification.Status == "delivered")
+            {
+                break;
+            }
+
+            await Task.Delay(500);
+        }
+
         notification.ShouldNotBeNull();
         notification.Status.ShouldBe(response);
     }
@@ -78,7 +92,19 @@ public class MessagingServiceTests
         var sendResult = await service.SendEmailMessageAsync(request);
 
         // Act
-        var notification = await service.GetNotificationAsync(sendResult.NotifyId);
+        // Polling for status because it might not be "delivered" immediately
+        MessageStatus notification = null!;
+        var stopwatch = Stopwatch.StartNew();
+        while (stopwatch.Elapsed < TimeSpan.FromSeconds(10))
+        {
+            notification = await service.GetNotificationAsync(sendResult.NotifyId);
+            if (notification.Status == "delivered")
+            {
+                break;
+            }
+
+            await Task.Delay(500);
+        }
 
         // Assert
         notification.ShouldNotBeNull();
