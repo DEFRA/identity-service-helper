@@ -59,6 +59,13 @@ public partial class UserRepository(
         ArgumentNullException.ThrowIfNull(entity);
 
         LogUpdatingUserAccountWithId(entity.Id);
+
+        var trackedEntity = context.UserAccounts.Local.FirstOrDefault(e => e.Id == entity.Id);
+        if (trackedEntity != null && trackedEntity != entity)
+        {
+            context.Entry(trackedEntity).State = EntityState.Detached;
+        }
+
         context.Update(entity);
         await context.SaveChangesAsync(cancellationToken);
         return entity;
