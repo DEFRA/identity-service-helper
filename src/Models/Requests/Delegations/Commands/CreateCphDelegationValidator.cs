@@ -10,9 +10,9 @@ public class CreateCphDelegationValidator : AbstractValidator<CreateCphDelegatio
 {
     public CreateCphDelegationValidator()
     {
-        RuleFor(x => x.CountyParishHoldingId).NotEmpty();
-        RuleFor(x => x.DelegatingUserId).NotEmpty();
-        RuleFor(x => x.DelegatedUserRoleId).NotEmpty();
-        RuleFor(x => x.DelegatedUserEmail).NotEmpty().EmailAddress();
+        RuleFor(x => x.CountyParishHoldingId).NotEqual(Guid.Empty);
+        RuleFor(x => x.DelegatingUserId).NotEqual(Guid.Empty);
+        RuleFor(x => x.DelegatedUserRoleId).NotEqual(Guid.Empty);
+        RuleFor(x => x.DelegatedUserEmail).NotEmpty().MaximumLength(256).EmailAddress();
     }
 }

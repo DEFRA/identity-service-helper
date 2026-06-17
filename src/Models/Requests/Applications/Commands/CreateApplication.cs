@@ -10,5 +10,5 @@ using Defra.Identity.Models.Requests.Applications.Commands.Base;
 public class CreateApplication : ApplicationWriteOperationBase
 {
     [Description(OpenApiMetadata.Applications.Id)]
-    public Guid Id { get; init; }
+    public Guid Id { get; set; }
 }
