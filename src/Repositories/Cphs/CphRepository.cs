@@ -10,6 +10,7 @@ using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Repositories.Common;
 using Microsoft.Extensions.Logging;
 
+/// <inheritdoc />
 public partial class CphRepository(
     PostgresDbContext context,
     ReadOnlyPostgresDbContext readOnlyContext,

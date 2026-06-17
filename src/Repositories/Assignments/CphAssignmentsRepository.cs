@@ -9,6 +9,7 @@ using Defra.Identity.Postgres.Database;
 using Defra.Identity.Postgres.Database.Entities;
 using Microsoft.Extensions.Logging;
 
+/// <inheritdoc />
 public partial class CphAssignmentsRepository(
     ReadOnlyPostgresDbContext readOnlyContext,
     ILogger<CphAssignmentsRepository> logger)
