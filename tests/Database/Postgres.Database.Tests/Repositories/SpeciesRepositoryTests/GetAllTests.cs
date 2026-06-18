@@ -58,9 +58,11 @@ public class GetAllTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 
         var activeSpecies = speciesList.First(x => x.IsActive);
         var inactiveSpecies = speciesList.First(x => !x.IsActive);
+
         activeSpecies.ShouldSatisfyAllConditions(
             (x) => x.Id.ShouldBe("CTT"),
             (x) => x.IsActive.ShouldBeTrue());
+
         inactiveSpecies.ShouldSatisfyAllConditions(
             (x) => x.Id.ShouldNotBe("CTT"),
             (x) => x.IsActive.ShouldBeFalse());
