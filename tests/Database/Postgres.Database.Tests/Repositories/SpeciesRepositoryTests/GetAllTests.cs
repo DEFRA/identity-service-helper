@@ -35,6 +35,7 @@ public class GetAllTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 
         firstItem.ShouldSatisfyAllConditions(
             (x) => x.Id.ShouldBe("CTT"),
+            (x) => x.Name.ShouldBe("Cattle"),
             (x) => x.IsActive.ShouldBeTrue());
     }
 
@@ -61,10 +62,12 @@ public class GetAllTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 
         activeSpecies.ShouldSatisfyAllConditions(
             (x) => x.Id.ShouldBe("CTT"),
+            (x) => x.Name.ShouldBe("Cattle"),
             (x) => x.IsActive.ShouldBeTrue());
 
         inactiveSpecies.ShouldSatisfyAllConditions(
-            (x) => x.Id.ShouldNotBe("CTT"),
+            (x) => x.Id.ShouldBe("CHK"),
+            (x) => x.Name.ShouldBe("Chicken"),
             (x) => x.IsActive.ShouldBeFalse());
     }
 }

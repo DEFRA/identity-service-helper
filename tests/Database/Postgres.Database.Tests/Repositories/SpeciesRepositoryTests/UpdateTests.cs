@@ -26,7 +26,9 @@ public class UpdateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         speciesToUpdate.ShouldNotBeNull();
 
         // Act
+        speciesToUpdate.Name = "Cattle Updated";
         speciesToUpdate.IsActive = false;
+
         var updatedSpecies = await repository.Update(speciesToUpdate, TestContext.Current.CancellationToken);
         var speciesFromRequery = await repository.GetSingle(x => x.Id == id, TestContext.Current.CancellationToken);
 
@@ -36,10 +38,12 @@ public class UpdateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 
         updatedSpecies.ShouldSatisfyAllConditions(
             (x) => x.Id.ShouldBe(id),
+            (x) => x.Name.ShouldBe("Cattle Updated"),
             (x) => x.IsActive.ShouldBeFalse());
 
         speciesFromRequery.ShouldSatisfyAllConditions(
             (x) => x.Id.ShouldBe(id),
+            (x) => x.Name.ShouldBe("Cattle Updated"),
             (x) => x.IsActive.ShouldBeFalse());
 
         logger.VerifyLogContainsOne(LogLevel.Information, $"Updating animal species with id {id}");
