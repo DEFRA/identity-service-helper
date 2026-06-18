@@ -67,6 +67,89 @@ public class KrdsTokenProviderTests
     }
 
     [Fact]
+    public async Task GetTokenAsync_Refreshes_Token_When_Expired()
+    {
+        using var server = WireMockServer.Start();
+        var tokenUrl = $"{server.Url}/oauth2/token";
+        var expectedToken1 = "token-1";
+        var expectedToken2 = "token-2";
+
+        server
+            .Given(Request.Create().WithPath("/oauth2/token").UsingPost())
+            .InScenario("Expiration")
+            .WillSetStateTo("First Token Requested")
+            .RespondWith(Response.Create()
+                .WithStatusCode(200)
+                .WithHeader("Content-Type", "application/json")
+                .WithBody(JsonSerializer.Serialize(new
+                {
+                    access_token = expectedToken1,
+                    expires_in = 0, // Expire immediately (or at least less than 1 min buffer)
+                    token_type = "Bearer",
+                })));
+
+        server
+            .Given(Request.Create().WithPath("/oauth2/token").UsingPost())
+            .InScenario("Expiration")
+            .WhenStateIs("First Token Requested")
+            .RespondWith(Response.Create()
+                .WithStatusCode(200)
+                .WithHeader("Content-Type", "application/json")
+                .WithBody(JsonSerializer.Serialize(new
+                {
+                    access_token = expectedToken2,
+                    expires_in = 3600,
+                    token_type = "Bearer",
+                })));
+
+        var options = Options.Create(new KrdsApi
+        {
+            TokenUrl = tokenUrl,
+            ClientId = "id",
+            ClientSecret = "secret",
+        });
+
+        var httpClient = new HttpClient();
+        var sut = new KrdsTokenProvider(httpClient, options);
+
+        // Act
+        var token1 = await sut.GetTokenAsync(TestContext.Current.CancellationToken);
+        var token2 = await sut.GetTokenAsync(TestContext.Current.CancellationToken);
+
+        // Assert
+        Assert.Equal(expectedToken1, token1);
+        Assert.Equal(expectedToken2, token2);
+        Assert.Equal(2, server.LogEntries.Count(le => le?.RequestMessage?.Path == "/oauth2/token"));
+    }
+
+    [Fact]
+    public async Task GetTokenAsync_Throws_When_Response_Is_Invalid()
+    {
+        using var server = WireMockServer.Start();
+        var tokenUrl = $"{server.Url}/oauth2/token";
+
+        server
+            .Given(Request.Create().WithPath("/oauth2/token").UsingPost())
+            .RespondWith(Response.Create()
+                .WithStatusCode(200)
+                .WithHeader("Content-Type", "application/json")
+                .WithBody("{}")); // Empty object, no access_token
+
+        var options = Options.Create(new KrdsApi
+        {
+            TokenUrl = tokenUrl,
+            ClientId = "id",
+            ClientSecret = "secret",
+        });
+
+        var httpClient = new HttpClient();
+        var sut = new KrdsTokenProvider(httpClient, options);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<InvalidOperationException>(() => sut.GetTokenAsync(TestContext.Current.CancellationToken));
+    }
+
+    [Fact]
     public async Task GetTokenAsync_ThrowsException_OnFailure()
     {
         using var server = WireMockServer.Start();

@@ -56,6 +56,13 @@ public partial class ApplicationsRepository(
         ArgumentNullException.ThrowIfNull(entity);
 
         LogUpdatingApplicationWithId(entity.Id);
+
+        var trackedEntity = context.Applications.Local.FirstOrDefault(e => e.Id == entity.Id);
+        if (trackedEntity != null && trackedEntity != entity)
+        {
+            context.Entry(trackedEntity).State = EntityState.Detached;
+        }
+
         context.Update(entity);
         await context.SaveChangesAsync(cancellationToken);
         return entity;
