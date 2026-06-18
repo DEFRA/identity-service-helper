@@ -25,7 +25,12 @@ public class CreateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 
         var newCph = new CountyParishHoldings()
         {
-            Identifier = "99/001/0001", CreatedById = adminUser.Id, CreatedAt = DateTime.UtcNow,
+            Identifier = "99/001/0001",
+            CreatedById = adminUser.Id,
+            CreatedAt = DateTime.UtcNow.AddDays(-3),
+            ExpiredAt = DateTime.UtcNow.AddDays(-2),
+            DeletedById = adminUser.Id,
+            DeletedAt = DateTime.UtcNow.AddDays(-1),
         };
 
         // Act
@@ -36,7 +41,12 @@ public class CreateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         createdCph.ShouldSatisfyAllConditions(
             x => x.Identifier.ShouldBe("99/001/0001"),
             x => x.CreatedById.ShouldBe(adminUser.Id),
-            x => x.CreatedAt.ShouldBeCloseToUtcNow());
+            x => x.CreatedAt.ShouldBeCloseToUtcNowAddDays(-3),
+            x => x.ExpiredAt.ShouldNotBeNull(),
+            x => x.ExpiredAt!.Value.ShouldBeCloseToUtcNowAddDays(-2),
+            x => x.DeletedById.ShouldBe(adminUser.Id),
+            x => x.DeletedAt.ShouldNotBeNull(),
+            x => x.DeletedAt!.Value.ShouldBeCloseToUtcNowAddDays(-1));
 
         logger.VerifyLogContainsOne(
             LogLevel.Information,
