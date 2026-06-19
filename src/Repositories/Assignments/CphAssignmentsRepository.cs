@@ -19,7 +19,7 @@ public partial class CphAssignmentsRepository(
         Expression<Func<UserAccountCountyParishHoldingAssignments, bool>> predicate,
         CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Getting list of county parish holding assignments");
+        LogGettingListOfCountyParishHoldingAssignments();
 
         var results = await GetQueryable(predicate)
             .ToListAsync(cancellationToken);
