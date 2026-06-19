@@ -8,9 +8,9 @@ using System.ComponentModel;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
 using Defra.Identity.Repositories.Users;
+using Defra.Identity.Test.Utilities.Assertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using NSubstitute;
 using Shouldly;
 
 public class UpdateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
@@ -31,25 +31,38 @@ public class UpdateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
             LastName = "User",
             EmailAddress = "test20@test.com",
             CreatedById = AdminUserId,
+            CreatedAt = DateTime.UtcNow.AddDays(1),
+            DeletedById = null,
+            DeletedAt = null,
         };
 
         await Context.UserAccounts.AddAsync(user, TestContext.Current.CancellationToken);
         await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
-        user.DisplayName = "Updated Name";
+        user.DisplayName = "Updated Display Name";
+        user.FirstName = "Updated First Name";
+        user.LastName = "Updated Last Name";
+        user.EmailAddress = "updated@test.com";
+        user.DeletedById = AdminUserId;
+        user.DeletedAt = DateTime.UtcNow.AddDays(2);
 
         // Act
-        var result = await repository.Update(user, TestContext.Current.CancellationToken);
+        await repository.Update(user, TestContext.Current.CancellationToken);
 
         // Assert
-        result.ShouldSatisfyAllConditions(x => x.DisplayName.ShouldBe("Updated Name"));
+        var updatedUser = await Context.UserAccounts.FirstAsync(
+            x => x.EmailAddress.Equals(user.EmailAddress),
+            TestContext.Current.CancellationToken);
 
-        var savedUser = await Context.UserAccounts.FirstAsync(x => x.EmailAddress.Equals(user.EmailAddress), TestContext.Current.CancellationToken);
-
-        savedUser.ShouldSatisfyAllConditions(x => x.DisplayName.ShouldBe("Updated Name"));
-
-        savedUser.ShouldNotBeNull();
-        savedUser.DisplayName.ShouldBe("Updated Name");
+        updatedUser.ShouldSatisfyAllConditions(
+            x => x.DisplayName.ShouldBe("Updated Display Name"),
+            x => x.FirstName.ShouldBe("Updated First Name"),
+            x => x.LastName.ShouldBe("Updated Last Name"),
+            x => x.EmailAddress.ShouldBe("updated@test.com"),
+            x => x.CreatedById.ShouldBe(AdminUserId),
+            x => x.CreatedAt.ShouldBeCloseToUtcNowAddDays(1),
+            x => x.DeletedById.ShouldBe(AdminUserId),
+            x => x.DeletedAt!.Value.ShouldBeCloseToUtcNowAddDays(2));
 
         logger.VerifyLogContainsOne(LogLevel.Information, $"Updating user account with id {user.Id}");
     }
