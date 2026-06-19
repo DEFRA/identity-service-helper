@@ -8,6 +8,7 @@ using System.ComponentModel;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
 using Defra.Identity.Repositories.Delegations;
+using Defra.Identity.Test.Utilities.Assertions;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Shouldly;
@@ -29,7 +30,6 @@ public class CreateTests(PostgreContainerFixture fixture)
         var delegatedUserId = new Guid("42bde7a0-9efe-402a-a7c3-9161be7b00ba");
         var delegatedUserRoleId = new Guid("0c15ba2f-b4ba-406a-a0ae-213de64600a9");
         const string delegatedUserEmail = "test1@test.com";
-        var createdAt = DateTime.UtcNow;
 
         var newDelegation = new CountyParishHoldingDelegations
         {
@@ -39,8 +39,15 @@ public class CreateTests(PostgreContainerFixture fixture)
             DelegatedUserRoleId = delegatedUserRoleId,
             DelegatedUserEmail = delegatedUserEmail,
             InvitationToken = string.Empty,
+            RevokedById = adminUser.Id,
             CreatedById = adminUser.Id,
-            CreatedAt = createdAt,
+            CreatedAt = DateTime.UtcNow.AddDays(-5),
+            InvitationExpiresAt = DateTime.UtcNow.AddDays(-4),
+            InvitationAcceptedAt = DateTime.UtcNow.AddDays(-3),
+            InvitationRejectedAt = null,
+            ExpiresAt = DateTime.UtcNow.AddDays(-2),
+            DeletedById = adminUser.Id,
+            DeletedAt = DateTime.UtcNow.AddDays(-1),
         };
 
         // Act
@@ -55,7 +62,15 @@ public class CreateTests(PostgreContainerFixture fixture)
             x => x.DelegatedUserRoleId.ShouldBe(delegatedUserRoleId),
             x => x.DelegatedUserEmail.ShouldBe(delegatedUserEmail),
             x => x.InvitationToken.ShouldBeNullOrWhiteSpace(),
-            x => x.CreatedById.ShouldBe(adminUser.Id));
+            x => x.RevokedById.ShouldBe(adminUser.Id),
+            x => x.CreatedById.ShouldBe(adminUser.Id),
+            x => x.CreatedAt.ShouldBeCloseToUtcNowAddDays(-5),
+            x => x.InvitationExpiresAt.ShouldBeCloseToUtcNowAddDays(-4),
+            x => x.InvitationAcceptedAt!.Value.ShouldBeCloseToUtcNowAddDays(-3),
+            x => x.InvitationRejectedAt.ShouldBeNull(),
+            x => x.ExpiresAt!.Value.ShouldBeCloseToUtcNowAddDays(-2),
+            x => x.DeletedById.ShouldBe(adminUser.Id),
+            x => x.DeletedAt!.Value.ShouldBeCloseToUtcNowAddDays(-1));
 
         logger.VerifyLogContainsOne(LogLevel.Information, "Creating delegation");
     }
