@@ -33,6 +33,7 @@ public class GetSingleTests(PostgreContainerFixture fixture) : BaseTests(fixture
 
         entity.ShouldSatisfyAllConditions(
             (x) => x.Id.ShouldBe("CTT"),
+            (x) => x.Name.ShouldBe("Cattle"),
             (x) => x.IsActive.ShouldBeTrue());
     }
 

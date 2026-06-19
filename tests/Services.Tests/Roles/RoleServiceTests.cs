@@ -43,13 +43,10 @@ public class RoleServiceTests
     public async Task GetAll_Returns_All_Roles()
     {
         // Arrange
-        var role1 = TestData.Role.Role1;
-        var role2 = TestData.Role.Role2;
-
         MockRepositoryContext<Roles>.CreateFor(repository).WithData(
         [
-            role1,
-            role2,
+            TestData.Role.Role1,
+            TestData.Role.Role1,
         ]);
 
         // Act
@@ -58,8 +55,8 @@ public class RoleServiceTests
         // Assert
         result.Count.ShouldBe(2);
 
-        result[0].ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(role1));
-        result[1].ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(role2));
+        result[0].ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(TestData.Role.Role1));
+        result[1].ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(TestData.Role.Role1));
 
         logger.VerifyLogContainsOne(LogLevel.Information, "Executing get all roles [role]");
         logger.VerifyLogContainsOne(LogLevel.Information, "Successfully executed get all roles [role]");

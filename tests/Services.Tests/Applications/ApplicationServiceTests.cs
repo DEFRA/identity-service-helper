@@ -60,15 +60,11 @@ public class ApplicationServiceTests
     public async Task GetAll_Returns_All_Applications_Excluding_Deleted()
     {
         // Arrange
-        var application1NotDeleted = TestData.Application.Application1NotDeleted;
-        var application2NotDeleted = TestData.Application.Application2NotDeleted;
-        var application3Deleted = TestData.Application.Application3Deleted;
-
         MockRepositoryContext<Applications>.CreateFor(repository).WithData(
         [
-            application1NotDeleted,
-            application2NotDeleted,
-            application3Deleted,
+            TestData.Application.Application1NotDeleted,
+            TestData.Application.Application2NotDeleted,
+            TestData.Application.Application3Deleted
         ]);
 
         // Act
@@ -77,8 +73,11 @@ public class ApplicationServiceTests
         // Assert
         result.Count.ShouldBe(2);
 
-        result[0].ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(application1NotDeleted));
-        result[1].ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(application2NotDeleted));
+        result[0].ShouldSatisfyAllConditions(
+            Assertions.ShouldMapFromEntity(TestData.Application.Application1NotDeleted));
+
+        result[1].ShouldSatisfyAllConditions(
+            Assertions.ShouldMapFromEntity(TestData.Application.Application2NotDeleted));
 
         logger.VerifyLogContainsOne(LogLevel.Information, "Executing get all applications [application]");
         logger.VerifyLogContainsOne(LogLevel.Information, "Successfully executed get all applications [application]");
@@ -89,24 +88,20 @@ public class ApplicationServiceTests
     public async Task Get_Returns_Requested_Application()
     {
         // Arrange
-        var application1NotDeleted = TestData.Application.Application1NotDeleted;
-        var application2NotDeleted = TestData.Application.Application2NotDeleted;
-        var application3Deleted = TestData.Application.Application3Deleted;
-
-        var request = new GetApplicationByClientId() { Id = application2NotDeleted.ClientId, };
+        var request = new GetApplicationByClientId() { Id = TestData.Application.Application2NotDeleted.ClientId, };
 
         MockRepositoryContext<Applications>.CreateFor(repository).WithData(
         [
-            application1NotDeleted,
-            application2NotDeleted,
-            application3Deleted,
+            TestData.Application.Application1NotDeleted,
+            TestData.Application.Application2NotDeleted,
+            TestData.Application.Application3Deleted
         ]);
 
         // Act
         var result = await sut.WithoutOperatorId.Get(request, TestContext.Current.CancellationToken);
 
         // Assert
-        result.ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(application2NotDeleted));
+        result.ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(TestData.Application.Application2NotDeleted));
 
         logger.VerifyLogContainsOne(
             LogLevel.Information,

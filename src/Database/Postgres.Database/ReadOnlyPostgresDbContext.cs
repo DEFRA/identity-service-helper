@@ -4,12 +4,14 @@
 
 namespace Defra.Identity.Postgres.Database;
 
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 /// <summary>
 /// The Read-Only Authorisation DbContext.
 /// </summary>
 /// <param name="options">options to apply to the context.</param>
+[ExcludeFromCodeCoverage]
 public class ReadOnlyPostgresDbContext(DbContextOptions<ReadOnlyPostgresDbContext> options)
     : PostgresDbContextBase<ReadOnlyPostgresDbContext>(options)
 {

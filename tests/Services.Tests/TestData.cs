@@ -5,6 +5,7 @@
 namespace Defra.Identity.Services.Tests;
 
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using Defra.Identity.Postgres.Database.Entities;
 
 [ExcludeFromCodeCoverage]
@@ -1195,5 +1196,46 @@ public static class TestData
                 }
             }
         }
+    }
+
+#pragma warning disable SA1201
+    public static List<T> GetEntitiesOfType<T>()
+#pragma warning restore SA1201
+        where T : class
+    {
+        var entities = new List<T>();
+
+        GetEntitiesOfType(typeof(TestData), entities);
+
+        return entities;
+    }
+
+    private static void GetEntitiesOfType<T>(
+        Type sourceDataType,
+        List<T> cphAssignments)
+        where T : class
+    {
+        const BindingFlags bindingFlags = BindingFlags.Static | BindingFlags.Public;
+
+        cphAssignments.AddRange(from prop in sourceDataType.GetProperties(bindingFlags)
+            where prop.PropertyType == typeof(T)
+            select prop.GetValue(null) as T
+            into propertyValue
+            select propertyValue!);
+
+        foreach (var nestedType in sourceDataType.GetNestedTypes(bindingFlags))
+        {
+            GetEntitiesOfType(nestedType, cphAssignments);
+        }
+    }
+
+    private static CountyParishHoldings WithCphAssignmentsFromTestData(this CountyParishHoldings cphEntity)
+    {
+        var cphAssignmentEntities = GetEntitiesOfType<UserAccountCountyParishHoldingAssignments>()
+            .Where(x => x.CountyParishHoldingId == cphEntity.Id);
+
+        cphEntity.ApplicationUserAccountHoldingAssignments = cphAssignmentEntities.ToList();
+
+        return cphEntity;
     }
 }

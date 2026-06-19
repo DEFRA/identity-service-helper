@@ -8,6 +8,7 @@ using System.ComponentModel;
 using Defra.Identity.Postgres.Database.Entities;
 using Defra.Identity.Postgres.Database.Tests.Fixtures;
 using Defra.Identity.Repositories.Users;
+using Defra.Identity.Test.Utilities.Assertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -36,6 +37,9 @@ public class CreateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
             LastName = "User",
             EmailAddress = "test1@example.com",
             CreatedById = adminUser.Id,
+            CreatedAt = DateTime.UtcNow.AddDays(-2),
+            DeletedById = adminUser.Id,
+            DeletedAt = DateTime.UtcNow.AddDays(-1),
         };
 
         // Act
@@ -45,7 +49,12 @@ public class CreateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         createdUser.ShouldSatisfyAllConditions(
             x => x.DisplayName.ShouldBe("Test User"),
             x => x.FirstName.ShouldBe("Test"),
-            x => x.LastName.ShouldBe("User"));
+            x => x.LastName.ShouldBe("User"),
+            x => x.EmailAddress.ShouldBe("test1@example.com"),
+            x => x.CreatedById.ShouldBe(adminUser.Id),
+            x => x.CreatedAt.ShouldBeCloseToUtcNowAddDays(-2),
+            x => x.DeletedById.ShouldBe(adminUser.Id),
+            x => x.DeletedAt!.Value.ShouldBeCloseToUtcNowAddDays(-1));
 
         logger.VerifyLogContainsOne(LogLevel.Information, "Creating user account");
     }
@@ -61,6 +70,7 @@ public class CreateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
 
         var adminUser = await repository
             .GetSingle(x => x.EmailAddress == EmailAddress, TestContext.Current.CancellationToken);
+
         adminUser.ShouldNotBeNull();
 
         var duplicateUser = new UserAccounts

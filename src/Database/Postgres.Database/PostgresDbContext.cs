@@ -4,6 +4,7 @@
 
 namespace Defra.Identity.Postgres.Database;
 
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Defra.Identity.Postgres.Database.Entities.Base;
 
@@ -11,6 +12,7 @@ using Defra.Identity.Postgres.Database.Entities.Base;
 /// The Read-Write Authorisation DbContext.
 /// </summary>
 /// <param name="options">options to apply to the context.</param>
+[ExcludeFromCodeCoverage]
 public class PostgresDbContext(DbContextOptions<PostgresDbContext> options)
     : PostgresDbContextBase<PostgresDbContext>(options)
 {

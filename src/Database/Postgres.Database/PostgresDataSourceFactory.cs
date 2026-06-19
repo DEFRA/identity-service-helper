@@ -7,7 +7,10 @@ namespace Defra.Identity.Postgres.Database;
 using System.Diagnostics.CodeAnalysis;
 using Npgsql;
 
-public sealed class PostgresDataSourceFactory(PostgresConfiguration config, IPostgresIamTokenGeneratorService? iamTokenGenerator = null) : IPostgresDataSourceFactory, IDisposable
+[ExcludeFromCodeCoverage]
+public sealed class PostgresDataSourceFactory(
+    PostgresConfiguration config,
+    IPostgresIamTokenGeneratorService? iamTokenGenerator = null) : IPostgresDataSourceFactory, IDisposable
 {
     private const string DefaultConnectionIdentifier = "Default";
     private const string ReadOnlyConnectionIdentifier = "ReadOnly";
@@ -16,6 +19,7 @@ public sealed class PostgresDataSourceFactory(PostgresConfiguration config, IPos
     private readonly SemaphoreSlim @lock = new(1, 1);
     private bool disposed;
 
+    [ExcludeFromCodeCoverage]
     public NpgsqlDataSource CreateDataSource(string connectionIdentifier)
     {
         ObjectDisposedException.ThrowIf(disposed, this);
@@ -101,7 +105,7 @@ public sealed class PostgresDataSourceFactory(PostgresConfiguration config, IPos
 
         // Register password provider that generates IAM tokens
         builder.UsePeriodicPasswordProvider(
-            passwordProvider: async (_, ct) =>
+            passwordProvider: async (_, _) =>
             {
                 var token = await iamTokenGenerator!.GenerateAuthTokenAsync(
                     host,
@@ -115,8 +119,9 @@ public sealed class PostgresDataSourceFactory(PostgresConfiguration config, IPos
         return builder.Build();
     }
 
-    [ExcludeFromCodeCoverage]
+#pragma warning disable SA1202
     public void Dispose()
+#pragma warning restore SA1202
     {
         if (disposed)
         {
