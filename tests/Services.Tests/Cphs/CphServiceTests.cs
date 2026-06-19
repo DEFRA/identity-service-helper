@@ -606,24 +606,21 @@ public class CphServiceTests
     public async Task Get_Returns_Requested_Cph()
     {
         // Arrange
-        var cph1WithAllowedSpeciesNotExpiredOrDeleted = TestData.Cph.Cph1WithAllowedSpeciesNotExpiredOrDeleted;
-        var cph4NotExpiredOrDeleted = TestData.Cph.Cph4NotExpiredOrDeleted;
-        var cph5ExpiredButNotDeleted = TestData.Cph.Cph5ExpiredButNotDeleted;
-
-        var request = new GetCphByCphId() { Id = cph1WithAllowedSpeciesNotExpiredOrDeleted.Id };
+        var request = new GetCphByCphId() { Id = TestData.Cph.Cph1WithAllowedSpeciesNotExpiredOrDeleted.Id };
 
         MockRepositoryContext<CountyParishHoldings>.CreateFor(repository).WithData(
         [
-            cph1WithAllowedSpeciesNotExpiredOrDeleted,
-            cph4NotExpiredOrDeleted,
-            cph5ExpiredButNotDeleted,
+            TestData.Cph.Cph1WithAllowedSpeciesNotExpiredOrDeleted,
+            TestData.Cph.Cph4NotExpiredOrDeleted,
+            TestData.Cph.Cph5ExpiredButNotDeleted,
         ]);
 
         // Act
         var result = await sut.WithoutOperatorId.Get(request, TestContext.Current.CancellationToken);
 
         // Assert
-        result.ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(cph1WithAllowedSpeciesNotExpiredOrDeleted));
+        result.ShouldSatisfyAllConditions(
+            Assertions.ShouldMapFromEntity(TestData.Cph.Cph1WithAllowedSpeciesNotExpiredOrDeleted));
 
         logger.VerifyLogContainsOne(
             LogLevel.Information,
@@ -639,22 +636,20 @@ public class CphServiceTests
     public async Task Get_Returns_Requested_Expired_Cph()
     {
         // Arrange
-        var cph5ExpiredButNotDeleted = TestData.Cph.Cph5ExpiredButNotDeleted;
-
-        var request = new GetCphByCphId() { Id = cph5ExpiredButNotDeleted.Id };
+        var request = new GetCphByCphId() { Id = TestData.Cph.Cph5ExpiredButNotDeleted.Id };
 
         MockRepositoryContext<CountyParishHoldings>.CreateFor(repository).WithData(
         [
-            cph5ExpiredButNotDeleted,
+            TestData.Cph.Cph5ExpiredButNotDeleted,
         ]);
 
         // Act
         var result = await sut.WithoutOperatorId.Get(request, TestContext.Current.CancellationToken);
 
         // Assert
-        result.ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(cph5ExpiredButNotDeleted));
+        result.ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(TestData.Cph.Cph5ExpiredButNotDeleted));
 
-        result.ExpiredAt.ShouldBe(cph5ExpiredButNotDeleted.ExpiredAt);
+        result.ExpiredAt.ShouldBe(TestData.Cph.Cph5ExpiredButNotDeleted.ExpiredAt);
         result.Expired.ShouldBeTrue();
 
         logger.VerifyLogContainsOne(

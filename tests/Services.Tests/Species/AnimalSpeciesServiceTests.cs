@@ -54,17 +54,13 @@ public class AnimalSpeciesServiceTests
     public async Task GetAll_Returns_All_AnimalSpecies_Excluding_Inactive_Given_IncludeInactive(string? includeInactive)
     {
         // Arrange
-        var animalSpecies1Active = TestData.Species.AnimalSpecies1Active;
-        var animalSpecies2Active = TestData.Species.AnimalSpecies2Active;
-        var animalSpecies3Inactive = TestData.Species.AnimalSpecies3Inactive;
-
         var request = new GetAllAnimalSpecies() { IncludeInactive = includeInactive };
 
         MockRepositoryContext<AnimalSpecies>.CreateFor(repository).WithData(
         [
-            animalSpecies1Active,
-            animalSpecies2Active,
-            animalSpecies3Inactive,
+            TestData.Species.AnimalSpecies1Active,
+            TestData.Species.AnimalSpecies2Active,
+            TestData.Species.AnimalSpecies3Inactive,
         ]);
 
         // Act
@@ -73,8 +69,8 @@ public class AnimalSpeciesServiceTests
         // Assert
         result.Count.ShouldBe(2);
 
-        result[0].ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(animalSpecies1Active));
-        result[1].ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(animalSpecies2Active));
+        result[0].ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(TestData.Species.AnimalSpecies1Active));
+        result[1].ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(TestData.Species.AnimalSpecies2Active));
 
         logger.VerifyLogContainsOne(
             LogLevel.Information,
@@ -94,17 +90,13 @@ public class AnimalSpeciesServiceTests
     public async Task GetAll_Returns_All_AnimalSpecies_Including_Inactive_Given_IncludeInactive(string? includeInactive)
     {
         // Arrange
-        var animalSpecies1Active = TestData.Species.AnimalSpecies1Active;
-        var animalSpecies2Active = TestData.Species.AnimalSpecies2Active;
-        var animalSpecies3Inactive = TestData.Species.AnimalSpecies3Inactive;
-
         var request = new GetAllAnimalSpecies() { IncludeInactive = includeInactive };
 
         MockRepositoryContext<AnimalSpecies>.CreateFor(repository).WithData(
         [
-            animalSpecies1Active,
-            animalSpecies2Active,
-            animalSpecies3Inactive,
+            TestData.Species.AnimalSpecies1Active,
+            TestData.Species.AnimalSpecies2Active,
+            TestData.Species.AnimalSpecies3Inactive,
         ]);
 
         // Act
@@ -113,9 +105,9 @@ public class AnimalSpeciesServiceTests
         // Assert
         result.Count.ShouldBe(3);
 
-        result[0].ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(animalSpecies1Active));
-        result[1].ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(animalSpecies2Active));
-        result[2].ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(animalSpecies3Inactive));
+        result[0].ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(TestData.Species.AnimalSpecies1Active));
+        result[1].ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(TestData.Species.AnimalSpecies2Active));
+        result[2].ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(TestData.Species.AnimalSpecies3Inactive));
 
         logger.VerifyLogContainsOne(
             LogLevel.Information,
@@ -131,24 +123,20 @@ public class AnimalSpeciesServiceTests
     public async Task Get_Returns_Requested_AnimalSpecies()
     {
         // Arrange
-        var animalSpecies1Active = TestData.Species.AnimalSpecies1Active;
-        var animalSpecies2Active = TestData.Species.AnimalSpecies2Active;
-        var animalSpecies3Inactive = TestData.Species.AnimalSpecies3Inactive;
-
-        var request = new GetAnimalSpeciesById() { Id = animalSpecies2Active.Id };
+        var request = new GetAnimalSpeciesById() { Id = TestData.Species.AnimalSpecies2Active.Id };
 
         MockRepositoryContext<AnimalSpecies>.CreateFor(repository).WithData(
         [
-            animalSpecies1Active,
-            animalSpecies2Active,
-            animalSpecies3Inactive,
+            TestData.Species.AnimalSpecies1Active,
+            TestData.Species.AnimalSpecies2Active,
+            TestData.Species.AnimalSpecies3Inactive,
         ]);
 
         // Act
         var result = await sut.WithoutOperatorId.Get(request, TestContext.Current.CancellationToken);
 
         // Assert
-        result.ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(animalSpecies2Active));
+        result.ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(TestData.Species.AnimalSpecies2Active));
 
         logger.VerifyLogContainsOne(
             LogLevel.Information,
@@ -164,19 +152,18 @@ public class AnimalSpeciesServiceTests
     public async Task Get_Returns_Requested_Inactive_AnimalSpecies()
     {
         // Arrange
-        var animalSpecies3Inactive = TestData.Species.AnimalSpecies3Inactive;
-        var request = new GetAnimalSpeciesById() { Id = animalSpecies3Inactive.Id };
+        var request = new GetAnimalSpeciesById() { Id = TestData.Species.AnimalSpecies3Inactive.Id };
 
         MockRepositoryContext<AnimalSpecies>.CreateFor(repository).WithData(
         [
-            animalSpecies3Inactive,
+            TestData.Species.AnimalSpecies3Inactive,
         ]);
 
         // Act
         var result = await sut.WithoutOperatorId.Get(request, TestContext.Current.CancellationToken);
 
         // Assert
-        result.ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(animalSpecies3Inactive));
+        result.ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(TestData.Species.AnimalSpecies3Inactive));
 
         result.IsActive.ShouldBeFalse();
 

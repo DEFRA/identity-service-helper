@@ -69,17 +69,13 @@ public class UserServiceTests
     public async Task GetAll_Returns_All_Users_Excluding_Deleted_Given_IncludeInactive(string? includeInactive)
     {
         // Arrange
-        var user1NotDeleted = TestData.User.User1NotDeleted;
-        var user2NotDeleted = TestData.User.User2NotDeleted;
-        var user3Deleted = TestData.User.User3Deleted;
-
         var request = new GetAllUsers() { IncludeInactive = includeInactive };
 
         MockRepositoryContext<UserAccounts>.CreateFor(repository).WithData(
         [
-            user1NotDeleted,
-            user2NotDeleted,
-            user3Deleted,
+            TestData.User.User1NotDeleted,
+            TestData.User.User2NotDeleted,
+            TestData.User.User3Deleted,
         ]);
 
         // Act
@@ -88,8 +84,8 @@ public class UserServiceTests
         // Assert
         result.Count.ShouldBe(2);
 
-        result[0].ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(user1NotDeleted));
-        result[1].ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(user2NotDeleted));
+        result[0].ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(TestData.User.User1NotDeleted));
+        result[1].ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(TestData.User.User2NotDeleted));
 
         logger.VerifyLogContainsOne(
             LogLevel.Information,
@@ -109,17 +105,13 @@ public class UserServiceTests
     public async Task GetAll_Returns_All_Users_Including_Deleted_Given_IncludeInactive(string? includeInactive)
     {
         // Arrange
-        var user1NotDeleted = TestData.User.User1NotDeleted;
-        var user2NotDeleted = TestData.User.User2NotDeleted;
-        var user3Deleted = TestData.User.User3Deleted;
-
         var request = new GetAllUsers() { IncludeInactive = includeInactive };
 
         MockRepositoryContext<UserAccounts>.CreateFor(repository).WithData(
         [
-            user1NotDeleted,
-            user2NotDeleted,
-            user3Deleted,
+            TestData.User.User1NotDeleted,
+            TestData.User.User2NotDeleted,
+            TestData.User.User3Deleted,
         ]);
 
         // Act
@@ -128,9 +120,9 @@ public class UserServiceTests
         // Assert
         result.Count.ShouldBe(3);
 
-        result[0].ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(user1NotDeleted));
-        result[1].ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(user2NotDeleted));
-        result[2].ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(user3Deleted));
+        result[0].ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(TestData.User.User1NotDeleted));
+        result[1].ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(TestData.User.User2NotDeleted));
+        result[2].ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(TestData.User.User3Deleted));
 
         logger.VerifyLogContainsOne(
             LogLevel.Information,
@@ -146,24 +138,20 @@ public class UserServiceTests
     public async Task Get_Returns_Requested_User()
     {
         // Arrange
-        var user1NotDeleted = TestData.User.User1NotDeleted;
-        var user2NotDeleted = TestData.User.User2NotDeleted;
-        var user3Deleted = TestData.User.User3Deleted;
-
-        var request = new GetUserById() { Id = user2NotDeleted.Id };
+        var request = new GetUserById() { Id = TestData.User.User2NotDeleted.Id };
 
         MockRepositoryContext<UserAccounts>.CreateFor(repository).WithData(
         [
-            user1NotDeleted,
-            user2NotDeleted,
-            user3Deleted,
+            TestData.User.User1NotDeleted,
+            TestData.User.User2NotDeleted,
+            TestData.User.User3Deleted,
         ]);
 
         // Act
         var result = await sut.WithoutOperatorId.Get(request, TestContext.Current.CancellationToken);
 
         // Assert
-        result.ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(user2NotDeleted));
+        result.ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(TestData.User.User2NotDeleted));
 
         logger.VerifyLogContainsOne(
             LogLevel.Information,
@@ -179,20 +167,18 @@ public class UserServiceTests
     public async Task Get_Returns_Requested_Deleted_User()
     {
         // Arrange
-        var user3Deleted = TestData.User.User3Deleted;
-
-        var request = new GetUserById() { Id = user3Deleted.Id };
+        var request = new GetUserById() { Id = TestData.User.User3Deleted.Id };
 
         MockRepositoryContext<UserAccounts>.CreateFor(repository).WithData(
         [
-            user3Deleted,
+            TestData.User.User3Deleted,
         ]);
 
         // Act
         var result = await sut.WithoutOperatorId.Get(request, TestContext.Current.CancellationToken);
 
         // Assert
-        result.ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(user3Deleted));
+        result.ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(TestData.User.User3Deleted));
 
         result.Active.ShouldBeFalse();
 
