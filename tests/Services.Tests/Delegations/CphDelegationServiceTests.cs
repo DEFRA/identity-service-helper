@@ -178,6 +178,9 @@ public class CphDelegationServiceTests
             CountyParishHoldingDelegations delegationEntity)
     {
         // Arrange
+        var delegationEntityForEvaluation = TestData.GetEntitiesOfType<CountyParishHoldingDelegations>()
+            .First(delegation => delegation.Id == delegationEntity.Id);
+
         var request = new GetCphDelegationById { Id = delegationEntity.Id };
 
         MockRepositoryContext<CountyParishHoldingDelegations>.CreateFor(cphDelegationsRepository)
@@ -190,7 +193,7 @@ public class CphDelegationServiceTests
         var result = await sut.WithoutOperatorId.Get(request, TestContext.Current.CancellationToken);
 
         // Assert
-        result.ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(delegationEntity));
+        result.ShouldSatisfyAllConditions(Assertions.ShouldMapFromEntity(delegationEntityForEvaluation));
 
         logger.VerifyLogContainsOne(
             LogLevel.Information,
