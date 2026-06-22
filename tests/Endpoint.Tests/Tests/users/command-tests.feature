@@ -1,4 +1,4 @@
-@user @command
+@sequential @user @command
 Feature: User command tests
 
   @single-result @command-create @success
@@ -19,12 +19,12 @@ Feature: User command tests
     Then I receive the HTTP status code 'Created'
     And I have received JSON data in the response
     And the response contains the following values:
-      | path          | value             |
-      | email         | new.user.1@test.com |
-      | first_name    | New               |
-      | last_name     | User 1            |
-      | display_name  | New User 1        |
-      | active        | True              |
+      | path         | value               |
+      | email        | new.user.1@test.com |
+      | first_name   | New                 |
+      | last_name    | User 1              |
+      | display_name | New User 1          |
+      | active       | True                |
 
   @single-result @command-create @error @error-unprocessable
   Scenario: Creating a user with an invalid email returns a 422
@@ -76,12 +76,12 @@ Feature: User command tests
     Then I receive the HTTP status code 'OK'
     And I have received JSON data in the response
     And the response contains the following values:
-      | path          | value                       |
-      | email         | new.user.2.updated@test.com |
-      | first_name    | Updated                     |
-      | last_name     | User 2                      |
-      | display_name  | New User 2 Updated          |
-      | active        | True                        |
+      | path         | value                       |
+      | email        | new.user.2.updated@test.com |
+      | first_name   | Updated                     |
+      | last_name    | User 2                      |
+      | display_name | New User 2 Updated          |
+      | active       | True                        |
 
   @single-result @command-update @error @error-unprocessable
   Scenario: Updating a user with an invalid email returns a 422

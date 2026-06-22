@@ -1,4 +1,4 @@
-@role @query
+@sequential @role @query
 Feature: Role query tests
 
   @list-result @success
