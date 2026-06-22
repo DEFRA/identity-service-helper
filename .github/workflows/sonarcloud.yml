@@ -76,5 +76,4 @@ jobs:
           DOTNET_ENVIRONMENT: Development
           ASPNETCORE_ENVIRONMENT: Development
         run: |
-          dotnet tool restore
-          dotnet cake --target=Sonar --configuration=Release
+            dotnet cake --target=Sonar --configuration=Release
