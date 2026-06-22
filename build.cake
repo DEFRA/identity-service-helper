@@ -77,11 +77,7 @@ Task("Test")
                CoverletOutputFormat = CoverletOutputFormat.cobertura,
                CoverletOutputDirectory =  coverageOutput,
                CoverletOutputName =codeCoverageOutputName,
-               ArgumentCustomization = args => args
-                .Append($"--logger trx")
-                .Append("RunConfiguration.DisableParallelization=true")
-                .Append("xUnit.ParallelizeAssembly=false")
-                .Append("xUnit.ParallelizeTestCollections=false")
+               ArgumentCustomization = args => args.Append($"--logger trx")
           };
                   
           Information($"Running Tests : { project.ToString()}");
