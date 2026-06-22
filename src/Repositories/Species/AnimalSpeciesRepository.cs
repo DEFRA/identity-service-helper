@@ -51,6 +51,10 @@ public partial class AnimalSpeciesRepository(
 
         context.Update(entity);
         await context.SaveChangesAsync(cancellationToken);
-        return entity;
+
+        var result =
+            await readOnlyContext.AnimalSpecies.FirstAsync(e => e.Id == entity.Id, cancellationToken);
+
+        return result;
     }
 }

@@ -48,7 +48,10 @@ public partial class ApplicationsRepository(
         var addedEntry = await context.Applications.AddAsync(entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
-        return addedEntry.Entity;
+        var result =
+            await readOnlyContext.Applications.FirstAsync(e => e.Id == addedEntry.Entity.Id, cancellationToken);
+
+        return result;
     }
 
     public async Task<Applications> Update(Applications entity, CancellationToken cancellationToken = default)
@@ -57,14 +60,12 @@ public partial class ApplicationsRepository(
 
         LogUpdatingApplicationWithId(entity.Id);
 
-        var trackedEntity = context.Applications.Local.FirstOrDefault(e => e.Id == entity.Id);
-        if (trackedEntity != null && trackedEntity != entity)
-        {
-            context.Entry(trackedEntity).State = EntityState.Detached;
-        }
-
         context.Update(entity);
         await context.SaveChangesAsync(cancellationToken);
-        return entity;
+
+        var result =
+            await readOnlyContext.Applications.FirstAsync(e => e.Id == entity.Id, cancellationToken);
+
+        return result;
     }
 }

@@ -32,8 +32,9 @@ public partial class UserRepository(
         CancellationToken cancellationToken = default)
     {
         LogGettingListOfUserAccounts();
+
         var query = await readOnlyContext.UserAccounts
-            .Where(predicate).ToListAsync<UserAccounts>(cancellationToken);
+            .Where(predicate).ToListAsync(cancellationToken);
 
         return query;
     }
@@ -49,7 +50,12 @@ public partial class UserRepository(
         var addedEntry = await context.UserAccounts.AddAsync(entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
-        return addedEntry.Entity;
+        var result =
+            await readOnlyContext.UserAccounts.FirstAsync(
+                e => e.Id == addedEntry.Entity.Id,
+                cancellationToken);
+
+        return result;
     }
 
     public async Task<UserAccounts> Update(
@@ -60,14 +66,12 @@ public partial class UserRepository(
 
         LogUpdatingUserAccountWithId(entity.Id);
 
-        var trackedEntity = context.UserAccounts.Local.FirstOrDefault(e => e.Id == entity.Id);
-        if (trackedEntity != null && trackedEntity != entity)
-        {
-            context.Entry(trackedEntity).State = EntityState.Detached;
-        }
-
         context.Update(entity);
         await context.SaveChangesAsync(cancellationToken);
-        return entity;
+
+        var result =
+            await readOnlyContext.UserAccounts.FirstAsync(e => e.Id == entity.Id, cancellationToken);
+
+        return result;
     }
 }
