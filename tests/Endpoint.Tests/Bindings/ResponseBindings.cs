@@ -21,7 +21,8 @@ public class ResponseBindings(
     ExecutionContext executionContext,
     CaughtExceptionContext exceptionContext,
     FeatureContext featureContext,
-    StringProcessor stringProcessor)
+    StringProcessor stringProcessor,
+    IReqnrollOutputHelper outputHelper)
 {
     /// <summary>
     /// Check that the HTTP status code is the passed in value.
@@ -47,6 +48,7 @@ public class ResponseBindings(
             '[' => JArray.Parse(tmp),
             _ => throw new JsonException("Received unexpected response format."),
         };
+        outputHelper.WriteLine($"Received JSON data: {executionContext.ResponseContent}");
     }
 
     [Then("I have an empty response")]
