@@ -4,6 +4,7 @@
 
 namespace Defra.Identity.Postgres.Database;
 
+using System.Diagnostics.CodeAnalysis;
 using Amazon;
 using Amazon.RDS.Util;
 using Amazon.Runtime;
@@ -13,10 +14,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Npgsql;
 
+[ExcludeFromCodeCoverage]
 public static class ServiceCollectionExtensions
 {
     private const int MaxRetryCount = 5;
@@ -127,8 +128,10 @@ public static class ServiceCollectionExtensions
                                  .Get<PostgresConfiguration>()
                              ?? new PostgresConfiguration();
 
-        postgresConfig.ConnectionString = configuration.GetConnectionString(DatabaseConstants.ConnectionStringName) ?? string.Empty;
-        postgresConfig.ReadOnlyConnectionString = configuration.GetConnectionString(DatabaseConstants.ReadOnlyConnectionStringName) ?? string.Empty;
+        postgresConfig.ConnectionString =
+            configuration.GetConnectionString(DatabaseConstants.ConnectionStringName) ?? string.Empty;
+        postgresConfig.ReadOnlyConnectionString =
+            configuration.GetConnectionString(DatabaseConstants.ReadOnlyConnectionStringName) ?? string.Empty;
 
         return postgresConfig;
     }

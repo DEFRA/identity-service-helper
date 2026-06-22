@@ -33,6 +33,8 @@ public class GetTests(PostgreContainerFixture fixture) : BaseTests(fixture)
             SamId = "SamId1",
             CreatedById = adminUser.Id,
             CreatedAt = DateTime.UtcNow.AddDays(2),
+            DeletedById = adminUser.Id,
+            DeletedAt = DateTime.UtcNow.AddDays(3),
         };
 
         await Context.UserAccounts.AddAsync(userToQuery, TestContext.Current.CancellationToken);
@@ -54,7 +56,9 @@ public class GetTests(PostgreContainerFixture fixture) : BaseTests(fixture)
             x => x.KrdsId.ShouldBe(new Guid("11cc4506-1ece-4970-9eac-93a26d7d4b80")),
             x => x.SamId.ShouldBe("SamId1"),
             x => x.CreatedById.ShouldBe(adminUser.Id),
-            x => x.CreatedAt.ShouldBeCloseToUtcNowAddDays(2));
+            x => x.CreatedAt.ShouldBeCloseToUtcNowAddDays(2),
+            x => x.DeletedById.ShouldBe(adminUser.Id),
+            x => x.DeletedAt!.Value.ShouldBeCloseToUtcNowAddDays(3));
 
         logger.VerifyLogContainsOne(
             LogLevel.Information,
@@ -83,6 +87,8 @@ public class GetTests(PostgreContainerFixture fixture) : BaseTests(fixture)
                 SamId = "SamId1",
                 CreatedById = adminUser.Id,
                 CreatedAt = DateTime.UtcNow.AddDays(2),
+                DeletedById = adminUser.Id,
+                DeletedAt = DateTime.UtcNow.AddDays(3),
             },
             new()
             {
@@ -94,6 +100,8 @@ public class GetTests(PostgreContainerFixture fixture) : BaseTests(fixture)
                 SamId = "SamId2",
                 CreatedById = adminUser.Id,
                 CreatedAt = DateTime.UtcNow.AddDays(2),
+                DeletedById = adminUser.Id,
+                DeletedAt = DateTime.UtcNow.AddDays(4),
             },
         };
 
@@ -120,7 +128,9 @@ public class GetTests(PostgreContainerFixture fixture) : BaseTests(fixture)
             x => x.KrdsId.ShouldBe(new Guid("3a312595-21c8-46d7-8226-da3d01ec5610")),
             x => x.SamId.ShouldBe("SamId1"),
             x => x.CreatedById.ShouldBe(adminUser.Id),
-            x => x.CreatedAt.ShouldBeCloseToUtcNowAddDays(2));
+            x => x.CreatedAt.ShouldBeCloseToUtcNowAddDays(2),
+            x => x.DeletedById.ShouldBe(adminUser.Id),
+            x => x.DeletedAt!.Value.ShouldBeCloseToUtcNowAddDays(3));
 
         results[1].ShouldSatisfyAllConditions(
             x => x.DisplayName.ShouldBe("List Test User 2 Display Name"),
@@ -130,7 +140,9 @@ public class GetTests(PostgreContainerFixture fixture) : BaseTests(fixture)
             x => x.KrdsId.ShouldBe(new Guid("219c1ddd-d498-4e54-b6b2-ebfd832ba899")),
             x => x.SamId.ShouldBe("SamId2"),
             x => x.CreatedById.ShouldBe(adminUser.Id),
-            x => x.CreatedAt.ShouldBeCloseToUtcNowAddDays(2));
+            x => x.CreatedAt.ShouldBeCloseToUtcNowAddDays(2),
+            x => x.DeletedById.ShouldBe(adminUser.Id),
+            x => x.DeletedAt!.Value.ShouldBeCloseToUtcNowAddDays(4));
 
         logger.VerifyLogContainsOne(
             LogLevel.Information,
