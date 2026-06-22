@@ -1,4 +1,4 @@
-@cph @command
+@sequential @cph @command
 Feature: CPH command tests
 
   @single-result @command-expire
@@ -47,9 +47,9 @@ Feature: CPH command tests
 
   @error @error-not-found
   Examples:  
-    | scenario              | uri_value                            | http_result |
-    | deleted internal id   | 82181a8b-7f7f-470c-9263-2b94675599df | NotFound    |
-    | deleted cph number    | 44/000/0006                          | NotFound    |
-    | unknown internal id   | d4a7f0d7-9999-9999-9999-547a5f494738 | NotFound    |
-    | unknown cph number    | 99/999/9876                          | NotFound    |
+    | scenario            | uri_value                            | http_result |
+    | deleted internal id | 82181a8b-7f7f-470c-9263-2b94675599df | NotFound    |
+    | deleted cph number  | 44/000/0006                          | NotFound    |
+    | unknown internal id | d4a7f0d7-9999-9999-9999-547a5f494738 | NotFound    |
+    | unknown cph number  | 99/999/9876                          | NotFound    |
           

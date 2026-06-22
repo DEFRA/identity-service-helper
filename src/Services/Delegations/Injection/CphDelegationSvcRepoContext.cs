@@ -11,14 +11,6 @@ using Defra.Identity.Repositories.Users;
 
 public class CphDelegationSvcRepoContext : ICphDelegationSvcRepoContext
 {
-    public ICphDelegationsRepository DelegationRepository { get; }
-
-    public IUserRepository UserRepository { get; }
-
-    public ICphRepository CphRepository { get; }
-
-    public IRoleRepository RoleRepository { get; }
-
     public CphDelegationSvcRepoContext(
         ICphDelegationsRepository delegationRepository,
         IUserRepository userRepository,
@@ -30,4 +22,12 @@ public class CphDelegationSvcRepoContext : ICphDelegationSvcRepoContext
         CphRepository = cphRepository;
         RoleRepository = roleRepository;
     }
+
+    public ICphDelegationsRepository DelegationRepository { get; }
+
+    public IUserRepository UserRepository { get; }
+
+    public ICphRepository CphRepository { get; }
+
+    public IRoleRepository RoleRepository { get; }
 }

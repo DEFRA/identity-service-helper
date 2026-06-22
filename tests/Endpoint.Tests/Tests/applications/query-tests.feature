@@ -1,4 +1,4 @@
-@application @query
+@sequential @application @query
 Feature: Application query tests
 
   @list-result @success
@@ -20,15 +20,15 @@ Feature: Application query tests
     Then I receive the HTTP status code 'OK'
     And I have received JSON data in the response
     And the response contains the following values:
-      | path           | value                          |
-      | id             | df9ab2b8-1f01-4eda-bbdf-13814d91ebb6 |
-      | name           | Test Livestock Service 1      |
-      | tenant_name    | Test Tenant 1                 |
-      | description    | Test Description 1            |
-      | secret         | secret123                      |
-      | scopes[0]      | scope1                         |
-      | scopes[1]      | scope2                         |
-      | redirect_uris[0] | https://localhost:5001/signin-oidc |
+      | path             | value                                        |
+      | id               | df9ab2b8-1f01-4eda-bbdf-13814d91ebb6         |
+      | name             | Test Livestock Service 1                     |
+      | tenant_name      | Test Tenant 1                                |
+      | description      | Test Description 1                           |
+      | secret           | secret123                                    |
+      | scopes[0]        | scope1                                       |
+      | scopes[1]        | scope2                                       |
+      | redirect_uris[0] | https://localhost:5001/signin-oidc           |
       | redirect_uris[1] | https://localhost:5001/signout-callback-oidc |
 
   @error @error-not-found

@@ -1,4 +1,4 @@
-@application @command
+@sequential @application @command
 Feature: Application command tests
 
   @single-result @command-create @success

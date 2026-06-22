@@ -44,7 +44,7 @@ public partial class RoleRepository(
         await context.SaveChangesAsync(cancellationToken);
 
         var result =
-            await readOnlyContext.Roles.FirstAsync(e => e.Id == addedEntity.Entity.Id, cancellationToken);
+            await readOnlyContext.Roles.SingleAsync(e => e.Id == addedEntity.Entity.Id, cancellationToken);
 
         return result;
     }

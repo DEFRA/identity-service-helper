@@ -1,4 +1,4 @@
-@ignore @cph @query
+@sequential @ignore @cph @query
 Feature: CPH query tests
 
   @paged-result @success @data-live-only

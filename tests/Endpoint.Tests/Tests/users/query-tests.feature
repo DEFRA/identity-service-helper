@@ -1,4 +1,4 @@
-@user @query
+@sequential @user @query
 Feature: User query tests
 
   @list-result @success
@@ -20,16 +20,16 @@ Feature: User query tests
     Then I receive the HTTP status code 'OK'
     And I have received JSON data in the response
     And the response contains the following values:
-      | path          | value             |
-      | email         | <email>           |
-      | first_name    | <first_name>      |
-      | last_name     | <last_name>       |
-      | display_name  | <display_name>    |
-      | active        | True              |
+      | path         | value          |
+      | email        | <email>        |
+      | first_name   | <first_name>   |
+      | last_name    | <last_name>    |
+      | display_name | <display_name> |
+      | active       | True           |
   Examples:
-    | id                                   | email                            | first_name | last_name    | display_name     |
-    | 0a629f9f-2d25-4ac5-afbf-e821f5c6e7d1 | test@test.com                    | test       | user         | Test User         |
-    | a17a772c-604e-495d-950e-3dbee2ba6e98 | max.bladen-clark@esynergy.co.uk  | Max        | Bladen-Clark | Max Bladen-Clark  |
+    | id                                   | email                           | first_name | last_name    | display_name     |
+    | 0a629f9f-2d25-4ac5-afbf-e821f5c6e7d1 | test@test.com                   | test       | user         | Test User        |
+    | a17a772c-604e-495d-950e-3dbee2ba6e98 | max.bladen-clark@esynergy.co.uk | Max        | Bladen-Clark | Max Bladen-Clark |
 
   @error @error-not-found
   Scenario: Getting a user by an unknown id returns a 404

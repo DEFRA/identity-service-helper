@@ -51,7 +51,7 @@ public partial class UserRepository(
         await context.SaveChangesAsync(cancellationToken);
 
         var result =
-            await readOnlyContext.UserAccounts.FirstAsync(
+            await readOnlyContext.UserAccounts.SingleAsync(
                 e => e.Id == addedEntry.Entity.Id,
                 cancellationToken);
 
@@ -70,7 +70,7 @@ public partial class UserRepository(
         await context.SaveChangesAsync(cancellationToken);
 
         var result =
-            await readOnlyContext.UserAccounts.FirstAsync(e => e.Id == entity.Id, cancellationToken);
+            await readOnlyContext.UserAccounts.SingleAsync(e => e.Id == entity.Id, cancellationToken);
 
         return result;
     }

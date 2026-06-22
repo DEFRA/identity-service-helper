@@ -60,7 +60,7 @@ public partial class CphRepository(
         await context.SaveChangesAsync(cancellationToken);
 
         var result =
-            await readOnlyContext.CountyParishHoldings.FirstAsync(
+            await readOnlyContext.CountyParishHoldings.SingleAsync(
                 e => e.Id == addedEntity.Entity.Id,
                 cancellationToken);
 
@@ -80,7 +80,7 @@ public partial class CphRepository(
         await context.SaveChangesAsync(cancellationToken);
 
         var result =
-            await readOnlyContext.CountyParishHoldings.FirstAsync(e => e.Id == entity.Id, cancellationToken);
+            await readOnlyContext.CountyParishHoldings.SingleAsync(e => e.Id == entity.Id, cancellationToken);
 
         return result;
     }

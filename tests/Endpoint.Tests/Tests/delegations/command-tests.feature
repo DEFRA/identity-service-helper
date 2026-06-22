@@ -1,4 +1,4 @@
-@delegation @command
+@sequential @delegation @command
 Feature: CPH delegation command tests
 
   @single-result @command-create @success
@@ -19,12 +19,12 @@ Feature: CPH delegation command tests
     Then I receive the HTTP status code 'Created'
     And I have received JSON data in the response
     And the response contains the following values:
-      | path                          | value                            |
-      | county_parish_holding_number  | 44/081/0001                      |
-      | delegating_user_name          | Test User                        |
-      | delegated_user_name           | Test User 3                      |
-      | delegated_user_email          | test3@test.com                   |
-      | delegated_user_role_name      | test-role-2                      |
+      | path                         | value          |
+      | county_parish_holding_number | 44/081/0001    |
+      | delegating_user_name         | Test User      |
+      | delegated_user_name          | Test User 3    |
+      | delegated_user_email         | test3@test.com |
+      | delegated_user_role_name     | test-role-2    |
 
   @single-result @command-create @error @error-unprocessable
   Scenario: Creating a delegation invite with an invalid email returns a 422
@@ -60,11 +60,11 @@ Feature: CPH delegation command tests
     When I 'POST' this request
     Then I receive the HTTP status code 'NotFound'
   Examples:
-    | scenario                      | cph_id                                | delegating_user_id                    | role_id                               | email             |
-    | unknown cph                   | 99999999-9999-9999-9999-999999999999  | 0a629f9f-2d25-4ac5-afbf-e821f5c6e7d1   | 0c15ba2f-b4ba-406a-a0ae-213de64600a9  | test4@test.com    |
-    | unknown delegating user       | 4435a146-d0ac-4260-8a27-c550e0ed9563   | 99999999-9999-9999-9999-999999999999  | 0c15ba2f-b4ba-406a-a0ae-213de64600a9  | test5@test.com    |
-    | unknown delegated user role   | 4435a146-d0ac-4260-8a27-c550e0ed9563   | 0a629f9f-2d25-4ac5-afbf-e821f5c6e7d1   | 99999999-9999-9999-9999-999999999999 | test6@test.com    |
-    | unknown delegated user email  | 4435a146-d0ac-4260-8a27-c550e0ed9563   | 0a629f9f-2d25-4ac5-afbf-e821f5c6e7d1   | 0c15ba2f-b4ba-406a-a0ae-213de64600a9  | unknown@test.com  |
+    | scenario                     | cph_id                               | delegating_user_id                   | role_id                              | email            |
+    | unknown cph                  | 99999999-9999-9999-9999-999999999999 | 0a629f9f-2d25-4ac5-afbf-e821f5c6e7d1 | 0c15ba2f-b4ba-406a-a0ae-213de64600a9 | test4@test.com   |
+    | unknown delegating user      | 4435a146-d0ac-4260-8a27-c550e0ed9563 | 99999999-9999-9999-9999-999999999999 | 0c15ba2f-b4ba-406a-a0ae-213de64600a9 | test5@test.com   |
+    | unknown delegated user role  | 4435a146-d0ac-4260-8a27-c550e0ed9563 | 0a629f9f-2d25-4ac5-afbf-e821f5c6e7d1 | 99999999-9999-9999-9999-999999999999 | test6@test.com   |
+    | unknown delegated user email | 4435a146-d0ac-4260-8a27-c550e0ed9563 | 0a629f9f-2d25-4ac5-afbf-e821f5c6e7d1 | 0c15ba2f-b4ba-406a-a0ae-213de64600a9 | unknown@test.com |
 
   @single-result @command-accept @success
   Scenario: Accepting a delegation invite as the delegated user marks it as accepted
