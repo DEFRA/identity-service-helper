@@ -80,6 +80,8 @@ Task("Test")
                ArgumentCustomization = args => args
                 .Append($"--logger trx")
                 .Append("RunConfiguration.DisableParallelization=true")
+                .Append("xUnit.ParallelizeAssembly=false")
+                .Append("xUnit.ParallelizeTestCollections=false")
           };
                   
           Information($"Running Tests : { project.ToString()}");
