@@ -35,4 +35,5 @@ jobs:
       - name: Run the Cake script
         env:
           DOTNET_ENVIRONMENT: Development
+          ASPNETCORE_ENVIRONMENT: Development
         uses: cake-build/cake-action@v3

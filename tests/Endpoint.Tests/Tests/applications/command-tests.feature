@@ -22,15 +22,15 @@ Feature: Application command tests
     Then I receive the HTTP status code 'Created'
     And I have received JSON data in the response
     And the response contains the following values:
-      | path           | value                                |
-      | id             | 11111111-1111-1111-1111-111111111111 |
-      | name           | New Test Application                 |
-      | tenant_name    | New Test Tenant                       |
-      | description    | New Test Description                  |
-      | secret         | newsecret123                          |
-      | scopes[0]      | scope1                                 |
-      | scopes[1]      | scope2                                 |
-      | redirect_uris[0] | https://localhost:6001/signin-oidc  |
+      | path             | value                                |
+      | id               | 11111111-1111-1111-1111-111111111111 |
+      | name             | New Test Application                 |
+      | tenant_name      | New Test Tenant                      |
+      | description      | New Test Description                 |
+      | secret           | newsecret123                         |
+      | scopes[0]        | scope1                               |
+      | scopes[1]        | scope2                               |
+      | redirect_uris[0] | https://localhost:6001/signin-oidc   |
 
   @single-result @command-create @error @error-unprocessable
   Scenario: Creating an application with a missing name returns a 422
@@ -72,6 +72,12 @@ Feature: Application command tests
     When I 'POST' this request
     Then I receive the HTTP status code 'Created'
     And I have received JSON data in the response
+    Given the request url is '/applications'
+    And I am using the default header settings
+    When I 'GET' this request
+    Then I receive the HTTP status code 'OK'
+    And I have received JSON data in the response
+    
     Given the request url is '/applications/33333333-3333-3333-3333-333333333333'
     And I am using the default header settings
     And the JSON payload is:
@@ -89,16 +95,16 @@ Feature: Application command tests
     Then I receive the HTTP status code 'OK'
     And I have received JSON data in the response
     And the response contains the following values:
-      | path           | value                                |
-      | id             | 33333333-3333-3333-3333-333333333333 |
-      | name           | Updated Application Name             |
-      | tenant_name    | Updated Tenant Name                  |
-      | description    | Updated Description                  |
-      | secret         | updatedsecret123                     |
-      | scopes[0]      | scope1                                |
-      | scopes[1]      | scope2                                |
-      | scopes[2]      | scope3                                |
-      | redirect_uris[0] | https://localhost:6002/signin-oidc |
+      | path             | value                                |
+      | id               | 33333333-3333-3333-3333-333333333333 |
+      | name             | Updated Application Name             |
+      | tenant_name      | Updated Tenant Name                  |
+      | description      | Updated Description                  |
+      | secret           | updatedsecret123                     |
+      | scopes[0]        | scope1                               |
+      | scopes[1]        | scope2                               |
+      | scopes[2]        | scope3                               |
+      | redirect_uris[0] | https://localhost:6002/signin-oidc   |
 
   @single-result @command-update @error @error-unprocessable
   Scenario: Updating an application with a missing name returns a 422
