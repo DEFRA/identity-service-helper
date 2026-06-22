@@ -4,6 +4,13 @@
 
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
+
+var sonarToken = EnvironmentVariable("SONAR_TOKEN");
+var sonarVersion = EnvironmentVariable("SONAR_VERSION");
+var SonarScannerPath = Argument("sonarscannerpath", "./.sonar/scanner/dotnet-sonarscanner");
+var DotNetCoveragePath = Argument("dotnetcoveragepath", "./.sonar/coverage/dotnet-coverage");
+const string SonarCoverageFile = "coverage.xml";
+
 const string TEST_COVERAGE_OUTPUT_DIR = "coverage";
 const string SolutionFileName = "IdentityServiceHelper.slnx";
 

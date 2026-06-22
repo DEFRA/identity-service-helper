@@ -51,6 +51,18 @@ jobs:
           path: ./.sonar/coverage
           key: ${{ runner.os }}-sonar-coverage
           restore-keys: ${{ runner.os }}-sonar-coverage
+      - name: Cache Cake tool
+        id: cache-cake
+        uses: actions/cache@v4
+        with:
+          path: ./.sonar/cake
+          key: ${{ runner.os }}-cake
+          restore-keys: ${{ runner.os }}-cake
+      - name: Install Cake tool
+        if: steps.cache-cake.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ./.sonar/cake
+          dotnet tool update Cake.Tool --tool-path ./.sonar/cake
       - name: Install SonarCloud scanner
         if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
         run: |
@@ -76,4 +88,6 @@ jobs:
           DOTNET_ENVIRONMENT: Development
           ASPNETCORE_ENVIRONMENT: Development
         run: |
-            dotnet cake --target=Sonar --configuration=Release
+            export SONAR_SCANNER_PATH=$(pwd)/.sonar/scanner/dotnet-sonarscanner
+            export DOTNET_COVERAGE_PATH=$(pwd)/.sonar/coverage/dotnet-coverage
+            ./.sonar/cake/dotnet-cake --target=Sonar --configuration=Release --sonarscannerpath="$SONAR_SCANNER_PATH" --dotnetcoveragepath="$DOTNET_COVERAGE_PATH"
