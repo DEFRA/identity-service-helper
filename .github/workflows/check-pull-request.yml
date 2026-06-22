@@ -38,4 +38,4 @@ jobs:
           ASPNETCORE_ENVIRONMENT: Development
         uses: cake-build/cake-action@v3
         with:
-          target: Build
+          target: pr-build
