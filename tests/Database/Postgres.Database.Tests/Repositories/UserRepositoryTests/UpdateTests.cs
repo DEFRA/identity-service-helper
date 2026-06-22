@@ -50,7 +50,7 @@ public class UpdateTests(PostgreContainerFixture fixture) : BaseTests(fixture)
         await repository.Update(user, TestContext.Current.CancellationToken);
 
         // Assert
-        var updatedUser = await Context.UserAccounts.FirstAsync(
+        var updatedUser = await Context.UserAccounts.SingleAsync(
             x => x.EmailAddress.Equals(user.EmailAddress),
             TestContext.Current.CancellationToken);
 

@@ -53,7 +53,7 @@ public partial class AnimalSpeciesRepository(
         await context.SaveChangesAsync(cancellationToken);
 
         var result =
-            await readOnlyContext.AnimalSpecies.FirstAsync(e => e.Id == entity.Id, cancellationToken);
+            await readOnlyContext.AnimalSpecies.SingleAsync(e => e.Id == entity.Id, cancellationToken);
 
         return result;
     }

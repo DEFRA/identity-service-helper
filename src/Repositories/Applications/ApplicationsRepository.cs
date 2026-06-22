@@ -49,7 +49,7 @@ public partial class ApplicationsRepository(
         await context.SaveChangesAsync(cancellationToken);
 
         var result =
-            await readOnlyContext.Applications.FirstAsync(e => e.Id == addedEntry.Entity.Id, cancellationToken);
+            await readOnlyContext.Applications.SingleAsync(e => e.Id == addedEntry.Entity.Id, cancellationToken);
 
         return result;
     }
@@ -64,7 +64,7 @@ public partial class ApplicationsRepository(
         await context.SaveChangesAsync(cancellationToken);
 
         var result =
-            await readOnlyContext.Applications.FirstAsync(e => e.Id == entity.Id, cancellationToken);
+            await readOnlyContext.Applications.SingleAsync(e => e.Id == entity.Id, cancellationToken);
 
         return result;
     }
