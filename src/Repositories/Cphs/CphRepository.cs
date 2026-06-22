@@ -56,9 +56,15 @@ public partial class CphRepository(
     {
         LogCreatingCountyParishHolding();
 
-        var newCph = await context.AddAsync(entity, cancellationToken);
+        var addedEntity = await context.AddAsync(entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
-        return newCph.Entity;
+
+        var result =
+            await readOnlyContext.CountyParishHoldings.FirstAsync(
+                e => e.Id == addedEntity.Entity.Id,
+                cancellationToken);
+
+        return result;
     }
 
     public async Task<CountyParishHoldings> Update(
@@ -73,6 +79,9 @@ public partial class CphRepository(
 
         await context.SaveChangesAsync(cancellationToken);
 
-        return entity;
+        var result =
+            await readOnlyContext.CountyParishHoldings.FirstAsync(e => e.Id == entity.Id, cancellationToken);
+
+        return result;
     }
 }

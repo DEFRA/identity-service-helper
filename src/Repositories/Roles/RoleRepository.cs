@@ -40,8 +40,12 @@ public partial class RoleRepository(
     {
         LogCreatingRole(logger);
 
-        var role = await context.AddAsync(entity, cancellationToken);
+        var addedEntity = await context.AddAsync(entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
-        return role.Entity;
+
+        var result =
+            await readOnlyContext.Roles.FirstAsync(e => e.Id == addedEntity.Entity.Id, cancellationToken);
+
+        return result;
     }
 }
