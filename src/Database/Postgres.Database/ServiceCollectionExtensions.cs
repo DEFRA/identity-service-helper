@@ -6,7 +6,6 @@ namespace Defra.Identity.Postgres.Database;
 
 using System.Diagnostics.CodeAnalysis;
 using Amazon;
-using Amazon.RDS.Util;
 using Amazon.Runtime;
 using Amazon.Runtime.Credentials;
 using Microsoft.AspNetCore.Builder;
@@ -36,7 +35,7 @@ public static class ServiceCollectionExtensions
     /// 57P02: Crash shutdown
     /// 57P03: Cannot connect now
     /// 58030: I/O error
-    /// 08000/08003/08006/08001/08004/08007/08P01: Connection-related errors (connection exception class 08)
+    /// 08000/08003/08006/08001/08004/08007/08P01: Connection-related errors (connection exception class 08).
     /// </summary>
     private static readonly string[] ErrorCodes =
     [
@@ -61,7 +60,7 @@ public static class ServiceCollectionExtensions
             });
         }
 
-        services.AddSingleton<IPostgresDataSourceFactory, PostgresDataSourceFactory>();
+        services.AddScoped<IPostgresDataSourceFactory, PostgresDataSourceFactory>();
 
         services.AddDbContext<PostgresDbContext>((sp, options) =>
         {
