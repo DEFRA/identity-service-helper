@@ -2,11 +2,15 @@
 
 Core delivery C# ASP.NET backend template.
 
+> **TODO — ADD (stage 3):** A short overview of what this service actually does — its domain/purpose, the HTTP API it exposes, the API-key authentication, and the integrations it orchestrates (KRDS reference data, AWS SQS queue processing, Quartz scheduled jobs, GOV.UK Notify). The README currently never states what the service is for.
+
 * [Install MongoDB](#install-mongodb)
 * [Inspect MongoDB](#inspect-mongodb)
 * [Testing](#testing)
 * [Running](#running)
 * [Dependabot](#dependabot)
+
+> **TODO — FIX (stage 4):** This contents list is incomplete and links to MongoDB sections that will be removed. Regenerate it once the content is settled.
 
 
 ### Docker Compose
@@ -22,6 +26,8 @@ A local environment with:
 - This service.
 - A commented out frontend example.
 
+> **TODO — VERIFY/REMOVE (stage 2):** Confirm this list against the actual `compose.yml`. This service uses PostgreSQL (+ AWS via LocalStack); MongoDB and Redis appear to be unused (no references in code) — remove them if `compose.yml` does not include them.
+
 ```bash
 docker compose up --build -d
 ```
@@ -30,7 +36,7 @@ docker compose up --build -d
 
 The database is configured to use PostgreSQL and to use Liquibase to manage migrations.
 
-Thew best way to run liquibase locally is to use Homebrew to install
+The best way to run Liquibase locally is to use Homebrew to install
 ```shell
 brew install liquibase
 ```
@@ -38,7 +44,7 @@ brew install liquibase
 > Liquibase properties file in the root of the project defines all the properties that can be used 
 > to configure the database.
 
-Liquibase is a Java based tool that can be used to manage database migrations. Therefore you will need to have Java 
+Liquibase is a Java-based tool that can be used to manage database migrations. Therefore you will need to have Java 
 installed. On both Linux and MacOS you can install Java using Homebrew.
 
 ```shell
@@ -53,27 +59,27 @@ Running liquibase migrations locally:
 
 ```
 
-### How to do create Database Migrations
+### How to create Database Migrations
 
-On this project we make use of a Hybrid approach to database migrations, making use of **Liquibase** to manage the database 
+On this project we make use of a hybrid approach to database migrations, making use of **Liquibase** to manage the database 
 schema and  **Entity Framework Core Migrations**.  This may at first seem counter-intuitive, but it has proven to be a 
 reliable approach, although it does require some additional configuration and manual steps.
 
 If you make changes to the database schema, you will need to create a new migration.
 
-To create a new migration, change into the `~src/Database` directory and run dotnet ef migrations as follows:
+To create a new migration, change into the `src/Database` directory and run dotnet ef migrations as follows:
 
 ```bash
 cd src/Database
 dotnet ef migrations add <migration-name>    ### <Migration-name> to be replaced with a meaningful name  i.e. AddDeltaTable
 
-````
+```
 The above command will create a new migration in the `Migrations` directory, within the Database project.
-In the Database folder there is a Console Application project named `Postgres.Database.Console` that can be run that will
-exexcute the migration to your local database.
+In the Database folder there is a Console Application project named `Postgres.Database.Console` that can be run, which will
+execute the migration against your local database.
 
-The Console application will then automatically apply this migration to the database. In the Local Development environment, if
-the project is run.   There is code within the `ServiceCollectionExtensions` class that will automatically apply the
+The Console application will then automatically apply this migration to the database. In the local development environment, if
+the project is run, there is code within the `ServiceCollectionExtensions` class that will automatically apply the
 migrations to the database on Debug builds.
 
 ``` csharp
@@ -86,11 +92,10 @@ migrations to the database on Debug builds.
     #endif
  ```
 
-> Note: We still need to run the migrations locally, to test migrations. etc.
+> Note: We still need to run the migrations locally, to test migrations, etc.
 
-Once you are satisfied with the migration, and it works and has been tested, locally,
-and you have created Unit Tests etc.  You can then generate a SQL script using 
-EF Core Migrations script command, defining the output folder as the schema folder in the project.
+Once you are satisfied with the migration, and it works and has been tested locally, and you have created Unit Tests etc., you can then generate a SQL script using 
+the EF Core Migrations script command, defining the output folder as the schema folder in the project.
 
 ```bash
 ### <meaningful-name> to be replaced with a meaningful name  i.e. AddDeltaTable
@@ -103,7 +108,7 @@ before the script is applied there may be some manual steps required to edit the
 > Note: The SQL script generated by EF Core Migrations script command will include statements that cannot be used in Liquibase
 > migration scripts.
 
-Once you have edited your script to make it parseable and usable in Liquibase. Then you can add the script to the Liquibase
+Once you have edited your script to make it parseable and usable in Liquibase, you can add the script to the Liquibase
 changelog file.
 
 ``` bash
@@ -134,6 +139,8 @@ END $EF$;
 
 A more extensive setup is available in [github.com/DEFRA/cdp-local-environment](https://github.com/DEFRA/cdp-local-environment)
 
+> **TODO — REMOVE (stage 2):** This service does **not** use MongoDB — there are no MongoDB references anywhere in the code; persistence is PostgreSQL only. Delete every MongoDB section below (via Docker, locally, in CDP) and the "Inspect MongoDB" section, plus the related entries in the contents list.
+
 ### MongoDB
 
 #### MongoDB via Docker
@@ -157,7 +164,7 @@ sudo mongod --dbpath ~/mongodb-cdp
 #### MongoDB in CDP environments
 
 In CDP environments a MongoDB instance is already set up
-and the credentials exposed as enviromment variables.
+and the credentials exposed as environment variables.
 
 
 ### Inspect MongoDB
@@ -171,6 +178,8 @@ You can use the CDP Terminal to access the environments' MongoDB.
 
 ### Testing
 
+> **TODO — FIX (stage 2):** This is inaccurate. Tests use xUnit with NSubstitute (so they *do* mock) for unit tests, and Testcontainers.PostgreSQL for database-backed tests — not "Ephemeral MongoDB", and not "no mocking of any sort".
+
 Run the tests with:
 
 Tests run by running a full `WebApplication` backed by [Ephemeral MongoDB](https://github.com/asimmon/ephemeral-mongo).
@@ -178,9 +187,11 @@ Tests do not use mocking of any sort and read and write from the in-memory datab
 
 ```bash
 dotnet test
-````
+```
 
 ### Running
+
+> **TODO — FIX (stage 2):** "CDP-Deployments application" is the wrong name — this is the identity-service-helper.
 
 Run CDP-Deployments application:
 ```bash
@@ -189,7 +200,7 @@ dotnet run --project ./src/Api   --launch-profile Development
 
 ### SonarCloud
 
-Example SonarCloud configuration are available in the GitHub Action workflows.
+Example SonarCloud configurations are available in the GitHub Action workflows.
 
 ### Dependabot
 
@@ -206,8 +217,8 @@ licence.
 It is designed to encourage use and re-use of information freely and flexibly, with only a few conditions.
 
 ### HTTP Client Tests
-To run HTTP Client tests locally,  you can use the [ijhttp](https://github.com/asimmon/ijhttp) tool.
-on Mac/Linux install using `brew install ijhttp`   on Windows use chocolatey `choco install ijhttp`
+To run HTTP Client tests locally, you can use the [ijhttp](https://github.com/asimmon/ijhttp) tool.
+On Mac/Linux install using `brew install ijhttp`; on Windows use Chocolatey `choco install ijhttp`.
 Then run the following command from the root of the project.
 ```shell
 ijhttp --env-file ./tests/Endpoint.Tests/Tests/http-client.env.json --env local ./tests/Endpoint.Tests/**/**/**.http
