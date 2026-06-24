@@ -37,3 +37,5 @@ jobs:
           DOTNET_ENVIRONMENT: Development
           ASPNETCORE_ENVIRONMENT: Development
         uses: cake-build/cake-action@v3
+        with:
+          target: pr-build

@@ -193,4 +193,10 @@ Task("Default")
        .IsDependentOn("Test")
        .IsDependentOn("Publish");
 
+Task("pr-build")
+       .IsDependentOn("Clean")
+       .IsDependentOn("Restore")
+       .IsDependentOn("Build")
+       .IsDependentOn("Publish");
+       
 RunTarget(target);
