@@ -4,13 +4,11 @@ Core delivery C# ASP.NET backend template.
 
 > **TODO — ADD (stage 3):** A short overview of what this service actually does — its domain/purpose, the HTTP API it exposes, the API-key authentication, and the integrations it orchestrates (KRDS reference data, AWS SQS queue processing, Quartz scheduled jobs, GOV.UK Notify). The README currently never states what the service is for.
 
-* [Install MongoDB](#install-mongodb)
-* [Inspect MongoDB](#inspect-mongodb)
 * [Testing](#testing)
 * [Running](#running)
 * [Dependabot](#dependabot)
 
-> **TODO — FIX (stage 4):** This contents list is incomplete and links to MongoDB sections that will be removed. Regenerate it once the content is settled.
+> **TODO — FIX (stage 4):** This contents list only covers a few sections. Regenerate it to cover the whole document once the content is settled.
 
 
 ### Docker Compose
@@ -21,12 +19,11 @@ A local environment with:
 
 - Localstack for AWS services (S3, SQS)
 - Redis
-- MongoDB
 - Postgres
 - This service.
 - A commented out frontend example.
 
-> **TODO — VERIFY/REMOVE (stage 2):** Confirm this list against the actual `compose.yml`. This service uses PostgreSQL (+ AWS via LocalStack); MongoDB and Redis appear to be unused (no references in code) — remove them if `compose.yml` does not include them.
+> **TODO — VERIFY (stage 2):** Confirm this list against the actual `compose.yml`. Redis is not referenced anywhere in the code — remove it from this list if `compose.yml` does not provision it.
 
 ```bash
 docker compose up --build -d
@@ -139,63 +136,21 @@ END $EF$;
 
 A more extensive setup is available in [github.com/DEFRA/cdp-local-environment](https://github.com/DEFRA/cdp-local-environment)
 
-> **TODO — REMOVE (stage 2):** This service does **not** use MongoDB — there are no MongoDB references anywhere in the code; persistence is PostgreSQL only. Delete every MongoDB section below (via Docker, locally, in CDP) and the "Inspect MongoDB" section, plus the related entries in the contents list.
-
-### MongoDB
-
-#### MongoDB via Docker
-
-See above.
-
-```
-docker compose up -d mongodb
-```
-
-#### MongoDB locally
-
-Alternatively install MongoDB locally:
-
-- Install [MongoDB](https://www.mongodb.com/docs/manual/tutorial/#installation) on your local machine
-- Start MongoDB:
-```bash
-sudo mongod --dbpath ~/mongodb-cdp
-```
-
-#### MongoDB in CDP environments
-
-In CDP environments a MongoDB instance is already set up
-and the credentials exposed as environment variables.
-
-
-### Inspect MongoDB
-
-To inspect the Database and Collections locally:
-```bash
-mongosh
-```
-
-You can use the CDP Terminal to access the environments' MongoDB.
-
 ### Testing
 
-> **TODO — FIX (stage 2):** This is inaccurate. Tests use xUnit with NSubstitute (so they *do* mock) for unit tests, and Testcontainers.PostgreSQL for database-backed tests — not "Ephemeral MongoDB", and not "no mocking of any sort".
-
 Run the tests with:
-
-Tests run by running a full `WebApplication` backed by [Ephemeral MongoDB](https://github.com/asimmon/ephemeral-mongo).
-Tests do not use mocking of any sort and read and write from the in-memory database.
 
 ```bash
 dotnet test
 ```
 
+The unit tests use [xUnit](https://xunit.net/) and mock their dependencies with [NSubstitute](https://nsubstitute.github.io/). The database-backed tests run against a real PostgreSQL instance started on demand with [Testcontainers](https://testcontainers.com/), so Docker must be running for those tests to pass.
+
 ### Running
 
-> **TODO — FIX (stage 2):** "CDP-Deployments application" is the wrong name — this is the identity-service-helper.
-
-Run CDP-Deployments application:
+Run the identity-service-helper:
 ```bash
-dotnet run --project ./src/Api   --launch-profile Development
+dotnet run --project ./src/Api --launch-profile Development
 ```
 
 ### SonarCloud
