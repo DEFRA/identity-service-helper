@@ -23,7 +23,7 @@ services:
       start_period: 5s
       retries: 3
     networks:
-      - shared
+      - identity-services
 
   redis:
     image: redis:7.2.3-alpine3.18
@@ -31,7 +31,7 @@ services:
       - '6380:6380'
     restart: always
     networks:
-      - shared
+      - identity-services
 
   postgres:
     image: postgres:16-alpine
@@ -42,7 +42,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: identity_service_helper
     networks:
-      - shared
+      - identity-services
     volumes:
       - postgres-data:/data
     restart: always
@@ -65,7 +65,7 @@ services:
       "/liquibase/liquibase lpm add postgresql || true &&
       /liquibase/liquibase --url=jdbc:postgresql://postgres:5432/identity_service_helper --username=identity_service_helper_ddl --password=postgres --searchPath=/liquibase/changelog --changeLogFile=db.changelog.xml --liquibaseSchemaName=public update --context-filter=default"
     networks:
-      - shared
+      - identity-services
       
   identity-service-helper:
     container_name: identity-service-helper
@@ -98,12 +98,11 @@ services:
       ConnectionStrings__PostgresConnection: "User ID=identity_service_helper_ddl;Password=postgres;Host=postgres;Database=identity_service_helper;"
       ConnectionStrings__ReadOnlyPostgresConnection: "User ID=identity_service_helper_ddl;Password=postgres;Host=postgres;Database=identity_service_helper;"
     networks:
-      - shared
+      - identity-services
 
 volumes:
   postgres-data:
 
 networks:
-  shared:
-    name: identity-services
+  identity-services:
     external: true
