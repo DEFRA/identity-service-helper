@@ -30,8 +30,6 @@ At a high level the service:
 - runs **scheduled jobs** (Quartz) that drive the KRDS synchronisation and messaging on a configurable cadence;
 - sends outbound messages through **GOV.UK Notify**, using an outbox table so messages are persisted before dispatch.
 
-`SampleEntity` is the example domain entity used to demonstrate the CRUD slice; replace or extend it with the real entities for the service.
-
 ## Architecture
 
 The solution follows a layered structure under `src/`:
