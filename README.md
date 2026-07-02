@@ -3,6 +3,7 @@
 Core delivery C# ASP.NET backend service.
 
 * [Overview](#overview)
+* [Runbook](#runbook)
 * [Architecture](#architecture)
 * [Integrations](#integrations)
 * [API and authentication](#api-and-authentication)
@@ -29,6 +30,11 @@ At a high level the service:
 - consumes events from an **AWS SQS** queue (for example, notification that a keeper-data import has completed);
 - runs **scheduled jobs** (Quartz) that drive the KRDS synchronisation and messaging on a configurable cadence;
 - sends outbound messages through **GOV.UK Notify**, using an outbox table so messages are persisted before dispatch.
+
+## Runbook
+
+The operational runbook — architecture, dependencies, background jobs, configuration reference,
+full API catalogue and troubleshooting — lives in [docs/runbook/runbook.md](docs/runbook/runbook.md).
 
 ## Architecture
 
