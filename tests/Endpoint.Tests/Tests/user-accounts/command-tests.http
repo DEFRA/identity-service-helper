@@ -1,0 +1,47 @@
+### Ensure a user account should fail validation when the subject is missing
+POST {{host}}/ensure-user-account
+Content-Type: application/json
+x-correlation-id: {{correlation-id}}
+x-api-key: {{api-key}}
+x-operator-id: {{operator-id}}
+
+{
+  "sub": "",
+  "email": "jane.farmer@example.com",
+  "given_name": "Jane",
+  "family_name": "Farmer"
+}
+
+> ../../Asserts/Should_be_422_error_response.js
+
+### Ensure a user account should fail validation when the email is not an email address
+POST {{host}}/ensure-user-account
+Content-Type: application/json
+x-correlation-id: {{correlation-id}}
+x-api-key: {{api-key}}
+x-operator-id: {{operator-id}}
+
+{
+  "sub": "9f3a1c2e-0b6d-4f4e-9d2a-7c8b1e5f0a3d",
+  "email": "not-an-email",
+  "given_name": "Jane",
+  "family_name": "Farmer"
+}
+
+> ../../Asserts/Should_be_422_error_response.js
+
+### Ensure a user account for a new subject, requires the keeper records data service
+POST {{host}}/ensure-user-account
+Content-Type: application/json
+x-correlation-id: {{correlation-id}}
+x-api-key: {{api-key}}
+x-operator-id: {{operator-id}}
+
+{
+  "sub": "{{$uuid}}",
+  "email": "{{$random.internet.safeEmailAddress}}",
+  "given_name": "{{$random.name.firstName}}",
+  "family_name": "{{$random.name.lastName}}"
+}
+
+> ../../Asserts/Should_be_201_created.js

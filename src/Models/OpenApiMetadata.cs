@@ -95,6 +95,19 @@ public static class OpenApiMetadata
         public const string Active = "The active state of the user";
     }
 
+    public static class UserAccounts
+    {
+        public const string Subject = "The identity provider subject claim bound to the user account";
+        public const string GivenName = "The given name claim from the identity provider";
+        public const string FamilyName = "The family name claim from the identity provider";
+        public const string CphAssociations = "The County Parish Holdings the user is associated with";
+        public const string AssociationsRefreshedAt = "When the County Parish Holding associations were last rebuilt";
+        public const string PartyId = "The identifier of the associated SAM party";
+        public const string HoldingId = "The identifier of the associated SAM holding";
+        public const string HoldingName = "The name of the associated SAM holding";
+        public const string Role = "The role held against the County Parish Holding";
+    }
+
     public static class Roles
     {
         public const string Id = $"{OpenApiMetadata.BaseId} RoleId";

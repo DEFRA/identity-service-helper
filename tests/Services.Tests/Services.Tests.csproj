@@ -1,6 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
     <ProjectReference Include="..\..\src\Services\Services.csproj" />
     <ProjectReference Include="..\Test.Utilities\Test.Utilities.csproj" />
+    <ProjectReference Include="..\..\src\Integrations\Krds\KeeperReferenceData\KeeperReferenceData.csproj" />
+    <ProjectReference Include="..\..\src\Database\Postgres.Database\Postgres.Database.csproj" />
+    <ProjectReference Include="..\..\src\Integrations\Messaging\Messaging\Messaging.csproj" />
+    <ProjectReference Include="..\..\src\Models\Models.csproj" />
+    <ProjectReference Include="..\..\src\Repositories\Repositories.csproj" />
   </ItemGroup>
 </Project>

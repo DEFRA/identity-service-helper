@@ -49,7 +49,24 @@ public static class ServiceCollectionExtensions
             .SetHandlerLifetime(TimeSpan.FromMinutes(5))
             .AddPolicyHandler(GetRetryPolicy());
 
+        services.AddHttpClient<IUserAccountsProvider, UserAccountsProvider>()
+            .ConfigureHttpClient(client =>
+            {
+                client.BaseAddress = new Uri(krdsApi.Url);
+            })
+            .AddHttpMessageHandler<KrdsAuthorizationHandler>()
+            .SetHandlerLifetime(TimeSpan.FromMinutes(5))
+            .AddPolicyHandler(GetUserAccountsRetryPolicy());
+
         return services;
+    }
+
+    private static IAsyncPolicy<HttpResponseMessage> GetUserAccountsRetryPolicy()
+    {
+        return HttpPolicyExtensions
+            .HandleTransientHttpError()
+            .OrResult(msg => (int)msg.StatusCode == 429)
+            .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
     }
 
     private static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()

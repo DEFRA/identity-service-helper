@@ -49,19 +49,19 @@ public partial class CphDelegationService : ICphDelegationService
         IValidator<CreateCphDelegation> createCphDelegationValidator,
         ILogger<CphDelegationService> logger)
     {
-        this.delegationRepository = repoContext.DelegationRepository;
-        this.userRepository = repoContext.UserRepository;
-        this.cphRepository = repoContext.CphRepository;
-        this.roleRepository = repoContext.RoleRepository;
+        delegationRepository = repoContext.DelegationRepository;
+        userRepository = repoContext.UserRepository;
+        cphRepository = repoContext.CphRepository;
+        roleRepository = repoContext.RoleRepository;
         this.operatorContext = operatorContext;
         this.messagingFactory = messagingFactory;
         this.strategyBuilderFactory = strategyBuilderFactory;
         this.createCphDelegationValidator = createCphDelegationValidator;
         this.logger = logger;
 
-        this.strategyBuilderFactory
-            .WithDefaultLogger(this.logger)
-            .WithDefaultOperatorContext(this.operatorContext)
+        strategyBuilderFactory
+            .WithDefaultLogger(logger)
+            .WithDefaultOperatorContext(operatorContext)
             .WithDefaultEntityDescription(EntityDescriptions.CphDelegation);
     }
 
