@@ -6,7 +6,7 @@ namespace Defra.Identity.KeeperReferenceData.Providers;
 
 using Defra.Identity.KeeperReferenceData.Models.UserAccounts;
 
-public interface IUserAccountsProvider : IDisposable
+public interface IUserAccountsProvider
 {
     /// <summary>
     /// Ensures the user account exists in KRDS, refreshing the profile from the supplied claims and

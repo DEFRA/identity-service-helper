@@ -59,7 +59,8 @@ public class UserAccountsProviderTests
                 .WithHeader("Content-Type", "application/json")
                 .WithBody(AccountBody));
 
-        using var sut = CreateProvider(server);
+        using var httpClient = CreateClient(server);
+        var sut = CreateProvider(httpClient);
 
         var result = await sut.EnsureUserAccount(Claims, CancellationToken.None);
 
@@ -80,7 +81,8 @@ public class UserAccountsProviderTests
                 .WithHeader("Content-Type", "application/json")
                 .WithBody(AccountBody));
 
-        using var sut = CreateProvider(server);
+        using var httpClient = CreateClient(server);
+        var sut = CreateProvider(httpClient);
 
         var result = await sut.EnsureUserAccount(Claims, CancellationToken.None);
 
@@ -96,7 +98,8 @@ public class UserAccountsProviderTests
             .Given(Request.Create().WithPath("/v2/user-accounts").UsingPost())
             .RespondWith(Response.Create().WithStatusCode(500));
 
-        using var sut = CreateProvider(server);
+        using var httpClient = CreateClient(server);
+        var sut = CreateProvider(httpClient);
 
         await Assert.ThrowsAsync<HttpRequestException>(
             () => sut.EnsureUserAccount(Claims, CancellationToken.None));
@@ -115,7 +118,8 @@ public class UserAccountsProviderTests
                 .WithHeader("Content-Type", "application/json")
                 .WithBody(AccountBody));
 
-        using var sut = CreateProvider(server);
+        using var httpClient = CreateClient(server);
+        var sut = CreateProvider(httpClient);
 
         var result = await sut.GetUserAccountBySubject(
             "9f3a1c2e-0b6d-4f4e-9d2a-7c8b1e5f0a3d",
@@ -133,7 +137,8 @@ public class UserAccountsProviderTests
             .Given(Request.Create().WithPath("/v2/user-accounts/unknown").UsingGet())
             .RespondWith(Response.Create().WithStatusCode(404));
 
-        using var sut = CreateProvider(server);
+        using var httpClient = CreateClient(server);
+        var sut = CreateProvider(httpClient);
 
         var result = await sut.GetUserAccountBySubject("unknown", CancellationToken.None);
 
@@ -151,17 +156,17 @@ public class UserAccountsProviderTests
                 .WithHeader("Content-Type", "application/json")
                 .WithBody(AccountBody));
 
-        using var sut = CreateProvider(server);
+        using var httpClient = CreateClient(server);
+        var sut = CreateProvider(httpClient);
 
         var result = await sut.GetUserAccountBySubject("a b", CancellationToken.None);
 
         Assert.NotNull(result);
     }
 
-    private static UserAccountsProvider CreateProvider(WireMockServer server)
-    {
-        var httpClient = new HttpClient { BaseAddress = new Uri(server.Url + "/") };
+    private static HttpClient CreateClient(WireMockServer server) =>
+        new() { BaseAddress = new Uri(server.Url + "/") };
 
-        return new UserAccountsProvider(httpClient, NullLogger<UserAccountsProvider>.Instance);
-    }
+    private static UserAccountsProvider CreateProvider(HttpClient client) =>
+        new(client, NullLogger<UserAccountsProvider>.Instance);
 }

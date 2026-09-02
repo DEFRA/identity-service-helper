@@ -49,12 +49,6 @@ public partial class UserAccountsProvider(HttpClient client, ILogger<UserAccount
         return await ReadAccount(response, cancellationToken);
     }
 
-    public void Dispose()
-    {
-        client.Dispose();
-        GC.SuppressFinalize(this);
-    }
-
     private async Task<UserAccount> ReadAccount(HttpResponseMessage response, CancellationToken cancellationToken)
     {
         var body = await response.Content.ReadAsStringAsync(cancellationToken);
