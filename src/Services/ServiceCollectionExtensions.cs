@@ -13,6 +13,7 @@ using Defra.Identity.Services.Delegations.Injection;
 using Defra.Identity.Services.Profiles;
 using Defra.Identity.Services.Roles;
 using Defra.Identity.Services.Species;
+using Defra.Identity.Services.UserAccounts;
 using Defra.Identity.Services.Users;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,6 +34,7 @@ public static class ServiceCollectionExtensions
             services.AddTransient<ICphService, CphService>();
             services.AddTransient<ICphNumberService, CphNumberService>();
             services.AddTransient<IAnimalSpeciesService, AnimalSpeciesService>();
+            services.AddTransient<IUserAccountService, UserAccountService>();
 
             return services;
         }

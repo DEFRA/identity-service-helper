@@ -13,6 +13,7 @@ using Defra.Identity.Api.Endpoints.Health;
 using Defra.Identity.Api.Endpoints.Profiles;
 using Defra.Identity.Api.Endpoints.Roles;
 using Defra.Identity.Api.Endpoints.Species;
+using Defra.Identity.Api.Endpoints.UserAccounts;
 using Defra.Identity.Api.Endpoints.Users;
 using Defra.Identity.Api.Exceptions;
 using Defra.Identity.Api.Extensions;
@@ -136,6 +137,7 @@ public class Program
         app.UseCphEndpoints();
         app.UseCphDelegationEndpoints();
         app.UseAnimalSpeciesEndpoints();
+        app.UseUserAccountsEndpoints();
 
         return app;
     }

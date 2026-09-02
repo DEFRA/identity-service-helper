@@ -1,0 +1,15 @@
+### Get a user account for an unrecognised subject
+GET {{host}}/user/account/{{$uuid}}
+x-correlation-id: {{correlation-id}}
+x-api-key: {{api-key}}
+x-operator-id: {{operator-id}}
+
+> ../../Asserts/Should_be_404.js
+
+### Get a user account for a known subject, requires an ensured account
+GET {{host}}/user/account/9f3a1c2e-0b6d-4f4e-9d2a-7c8b1e5f0a3d
+x-correlation-id: {{correlation-id}}
+x-api-key: {{api-key}}
+x-operator-id: {{operator-id}}
+
+> ../../Asserts/Should_be_200_OK.js
